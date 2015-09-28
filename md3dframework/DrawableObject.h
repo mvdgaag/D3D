@@ -42,6 +42,8 @@ private:
 
 	struct ConstantBufferData
 	{
+		DirectX::XMMATRIX View;
+		DirectX::XMMATRIX Projection;
 		DirectX::XMMATRIX WVP;
 		DirectX::XMMATRIX MV;
 	};

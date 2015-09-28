@@ -31,7 +31,7 @@ struct PS_OUTPUT
 float3 NormalMap(float3 inGeometryNormal, float3 inTangent, float2 inTexCoord)
 {
 	float3 result = inGeometryNormal;
-	result += 0.0001 * cNormalTexture.Sample(cNormalSampler, inTexCoord);
+	result += 0.0001 * cNormalTexture.Sample(cNormalSampler, inTexCoord).xyz;
 	return result;
 }
 

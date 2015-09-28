@@ -47,6 +47,8 @@ private:
 	ID3D11DeviceContext1*			mImmediateContext1 = nullptr;
 	IDXGISwapChain*					mSwapChain = nullptr;
 	IDXGISwapChain1*				mSwapChain1 = nullptr;
+	ID3D11RasterizerState*			mRasterState = nullptr;
+	ID3D11RasterizerState1*			mRasterState1 = nullptr;
 	ID3D11RenderTargetView*			mRenderTargetView = nullptr;
 
 	// for rendering fullscreen quad

@@ -4,6 +4,7 @@
 #include "main.h"
 #include "FrameWork.h"
 
+
 struct SimpleVertex
 {
 	float3 Position;
@@ -21,35 +22,41 @@ void Mesh::InitCube()
 	mNumVerts = 24;
 	SimpleVertex vertices[] =
 	{
-		{ float3(-1.0f, 1.0f, -1.0f), float3(0.0f, 1.0f, 0.0f), float3(1.0f, 0.0f, 0.0f), float2(1.0f, 0.0f) },
-		{ float3(1.0f, 1.0f, -1.0f), float3(0.0f, 1.0f, 0.0f), float3(1.0f, 0.0f, 0.0f), float2(0.0f, 0.0f) },
-		{ float3(1.0f, 1.0f, 1.0f), float3(0.0f, 1.0f, 0.0f), float3(1.0f, 0.0f, 0.0f), float2(0.0f, 1.0f) },
-		{ float3(-1.0f, 1.0f, 1.0f), float3(0.0f, 1.0f, 0.0f), float3(1.0f, 0.0f, 0.0f), float2(1.0f, 1.0f) },
+		// +Y
+		{ float3(-1.0f, 1.0f, -1.0f), float3(0.0f, 1.0f, 0.0f),  float3(1.0f, 0.0f, 0.0f),  float2(1.0f, 0.0f) },
+		{ float3( 1.0f, 1.0f, -1.0f), float3(0.0f, 1.0f, 0.0f),  float3(1.0f, 0.0f, 0.0f),  float2(0.0f, 0.0f) },
+		{ float3( 1.0f, 1.0f,  1.0f), float3(0.0f, 1.0f, 0.0f),  float3(1.0f, 0.0f, 0.0f),  float2(0.0f, 1.0f) },
+		{ float3(-1.0f, 1.0f,  1.0f), float3(0.0f, 1.0f, 0.0f),  float3(1.0f, 0.0f, 0.0f),  float2(1.0f, 1.0f) },
 
-		{ float3(-1.0f, -1.0f, -1.0f), float3(0.0f, -1.0f, 0.0f), float3(1.0f, 0.0f, 0.0f), float2(0.0f, 0.0f) },
-		{ float3(1.0f, -1.0f, -1.0f), float3(0.0f, -1.0f, 0.0f), float3(1.0f, 0.0f, 0.0f), float2(1.0f, 0.0f) },
-		{ float3(1.0f, -1.0f, 1.0f), float3(0.0f, -1.0f, 0.0f), float3(1.0f, 0.0f, 0.0f), float2(1.0f, 1.0f) },
-		{ float3(-1.0f, -1.0f, 1.0f), float3(0.0f, -1.0f, 0.0f), float3(1.0f, 0.0f, 0.0f), float2(0.0f, 1.0f) },
+		// -Y
+		{ float3(-1.0f, -1.0f, -1.0f), float3(0.0f, -1.0f, 0.0f), float3(1.0f, 0.0f, 0.0f),  float2(0.0f, 0.0f) },
+		{ float3( 1.0f, -1.0f, -1.0f), float3(0.0f, -1.0f, 0.0f), float3(1.0f, 0.0f, 0.0f),  float2(1.0f, 0.0f) },
+		{ float3( 1.0f, -1.0f,  1.0f), float3(0.0f, -1.0f, 0.0f), float3(1.0f, 0.0f, 0.0f),  float2(1.0f, 1.0f) },
+		{ float3(-1.0f, -1.0f,  1.0f), float3(0.0f, -1.0f, 0.0f), float3(1.0f, 0.0f, 0.0f),  float2(0.0f, 1.0f) },
 
-		{ float3(-1.0f, -1.0f, 1.0f), float3(-1.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 1.0f), float2(0.0f, 1.0f) },
-		{ float3(-1.0f, -1.0f, -1.0f), float3(-1.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 1.0f), float2(1.0f, 1.0f) },
-		{ float3(-1.0f, 1.0f, -1.0f), float3(-1.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 1.0f), float2(1.0f, 0.0f) },
-		{ float3(-1.0f, 1.0f, 1.0f), float3(-1.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 1.0f), float2(0.0f, 0.0f) },
+		// -X
+		{ float3(-1.0f, -1.0f,  1.0f), float3(-1.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 1.0f),  float2(0.0f, 1.0f) },
+		{ float3(-1.0f, -1.0f, -1.0f), float3(-1.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 1.0f),  float2(1.0f, 1.0f) },
+		{ float3(-1.0f,  1.0f, -1.0f), float3(-1.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 1.0f),  float2(1.0f, 0.0f) },
+		{ float3(-1.0f,  1.0f,  1.0f), float3(-1.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 1.0f),  float2(0.0f, 0.0f) },
 
-		{ float3(1.0f, -1.0f, 1.0f), float3(1.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 1.0f), float2(1.0f, 1.0f) },
-		{ float3(1.0f, -1.0f, -1.0f), float3(1.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 1.0f), float2(0.0f, 1.0f) },
-		{ float3(1.0f, 1.0f, -1.0f), float3(1.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 1.0f), float2(0.0f, 0.0f) },
-		{ float3(1.0f, 1.0f, 1.0f), float3(1.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 1.0f), float2(1.0f, 0.0f) },
+		// +X
+		{ float3(1.0f, -1.0f,  1.0f),  float3(1.0f, 0.0f, 0.0f),  float3(0.0f, 0.0f, 1.0f),  float2(1.0f, 1.0f) },
+		{ float3(1.0f, -1.0f, -1.0f),  float3(1.0f, 0.0f, 0.0f),  float3(0.0f, 0.0f, 1.0f),  float2(0.0f, 1.0f) },
+		{ float3(1.0f,  1.0f, -1.0f),  float3(1.0f, 0.0f, 0.0f),  float3(0.0f, 0.0f, 1.0f),  float2(0.0f, 0.0f) },
+		{ float3(1.0f,  1.0f,  1.0f),  float3(1.0f, 0.0f, 0.0f),  float3(0.0f, 0.0f, 1.0f),  float2(1.0f, 0.0f) },
 
+		// -Z
 		{ float3(-1.0f, -1.0f, -1.0f), float3(0.0f, 0.0f, -1.0f), float3(-1.0f, 0.0f, 0.0f), float2(0.0f, 1.0f) },
-		{ float3(1.0f, -1.0f, -1.0f), float3(0.0f, 0.0f, -1.0f), float3(-1.0f, 0.0f, 0.0f), float2(1.0f, 1.0f) },
-		{ float3(1.0f, 1.0f, -1.0f), float3(0.0f, 0.0f, -1.0f), float3(-1.0f, 0.0f, 0.0f), float2(1.0f, 0.0f) },
-		{ float3(-1.0f, 1.0f, -1.0f), float3(0.0f, 0.0f, -1.0f), float3(-1.0f, 0.0f, 0.0f), float2(0.0f, 0.0f) },
+		{ float3( 1.0f, -1.0f, -1.0f), float3(0.0f, 0.0f, -1.0f), float3(-1.0f, 0.0f, 0.0f), float2(1.0f, 1.0f) },
+		{ float3( 1.0f,  1.0f, -1.0f), float3(0.0f, 0.0f, -1.0f), float3(-1.0f, 0.0f, 0.0f), float2(1.0f, 0.0f) },
+		{ float3(-1.0f,  1.0f, -1.0f), float3(0.0f, 0.0f, -1.0f), float3(-1.0f, 0.0f, 0.0f), float2(0.0f, 0.0f) },
 
-		{ float3(-1.0f, -1.0f, 1.0f), float3(0.0f, 0.0f, 1.0f), float3(-1.0f, 0.0f, 0.0f), float2(1.0f, 1.0f) },
-		{ float3(1.0f, -1.0f, 1.0f), float3(0.0f, 0.0f, 1.0f), float3(-1.0f, 0.0f, 0.0f), float2(0.0f, 1.0f) },
-		{ float3(1.0f, 1.0f, 1.0f), float3(0.0f, 0.0f, 1.0f), float3(-1.0f, 0.0f, 0.0f), float2(0.0f, 0.0f) },
-		{ float3(-1.0f, 1.0f, 1.0f), float3(0.0f, 0.0f, 1.0f), float3(-1.0f, 0.0f, 0.0f), float2(1.0f, 0.0f) },
+		// +Z
+		{ float3(-1.0f, -1.0f, 1.0f), float3(0.0f, 0.0f, 1.0f),  float3(-1.0f, 0.0f, 0.0f), float2(1.0f, 1.0f) },
+		{ float3( 1.0f, -1.0f, 1.0f), float3(0.0f, 0.0f, 1.0f),  float3(-1.0f, 0.0f, 0.0f), float2(0.0f, 1.0f) },
+		{ float3( 1.0f,  1.0f, 1.0f), float3(0.0f, 0.0f, 1.0f),  float3(-1.0f, 0.0f, 0.0f), float2(0.0f, 0.0f) },
+		{ float3(-1.0f,  1.0f, 1.0f), float3(0.0f, 0.0f, 1.0f),  float3(-1.0f, 0.0f, 0.0f), float2(1.0f, 0.0f) }
 	};
 
 	D3D11_BUFFER_DESC bd;
@@ -64,7 +71,6 @@ void Mesh::InitCube()
 	InitData.pSysMem = vertices;
 	D3DCall(theFrameWork.GetDevice()->CreateBuffer(&bd, &InitData, &mVertexBuffer));
 	
-	// Set vertex buffer
 	mStride = sizeof(SimpleVertex);
 	mOffset = 0;
 	
@@ -72,23 +78,12 @@ void Mesh::InitCube()
 	mNumIndices = 36;
 	WORD indices[] =
 	{
-		3, 1, 0,
-		2, 1, 3,
-
-		6, 4, 5,
-		7, 4, 6,
-
-		11, 9, 8,
-		10, 9, 11,
-
-		14, 12, 13,
-		15, 12, 14,
-
-		19, 17, 16,
-		18, 17, 19,
-
-		22, 20, 21,
-		23, 20, 22
+		3, 1, 0, 		2, 1, 3,		
+		6, 4, 5,		7, 4, 6,		
+		11, 9, 8,		10, 9, 11,	
+		14, 12, 13,		15, 12, 14,		
+		19, 17, 16,		18, 17, 19,		
+		22, 20, 21,		23, 20, 22
 	};
 
 	bd.Usage = D3D11_USAGE_DEFAULT;
@@ -111,9 +106,9 @@ void Mesh::InitTriangle()
 	mNumVerts = 3;
 	SimpleVertex vertices[] =
 	{
-		{ float3(0.0f, 1.0f, 0.0f),		float3(0.0f, 0.0f, 1.0f), float3(1.0f, 0.0f, 0.0f), float2(0.5f, 1.0f) },
-		{ float3(-0.5f, 0.0f, 0.0f),	float3(0.0f, 0.0f, 1.0f), float3(1.0f, 0.0f, 0.0f), float2(0.0f, 0.0f) },
-		{ float3(0.5f, 0.0f, 0.0f),		float3(0.0f, 0.0f, 1.0f), float3(1.0f, 0.0f, 0.0f), float2(1.0f, 0.0f) },
+		{ float3(0.0f, 1.0f, 0.0f),  float3(0.0f, 0.0f, 1.0f), float3(1.0f, 0.0f, 0.0f), float2(0.5f, 1.0f) },
+		{ float3(-0.5f, 0.0f, 0.0f), float3(0.0f, 0.0f, 1.0f), float3(1.0f, 0.0f, 0.0f), float2(0.0f, 0.0f) },
+		{ float3(0.5f, 0.0f, 0.0f),	 float3(0.0f, 0.0f, 1.0f), float3(1.0f, 0.0f, 0.0f), float2(1.0f, 0.0f) },
 	};
 
 	D3D11_BUFFER_DESC bd;
@@ -134,10 +129,7 @@ void Mesh::InitTriangle()
 
 	// Create index buffer
 	mNumIndices = 3;
-	WORD indices[] =
-	{
-		1, 2, 0,
-	};
+	WORD indices[] = { 0, 1, 2 };
 
 	bd.Usage = D3D11_USAGE_DEFAULT;
 	bd.ByteWidth = sizeof(WORD) * mNumIndices;

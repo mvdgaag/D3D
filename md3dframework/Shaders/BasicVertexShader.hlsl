@@ -1,5 +1,7 @@
 cbuffer cMatrices : register(b0)
 {
+	matrix View;
+	matrix Projection;
 	matrix WorldViewProjection;
 	matrix MotionVectorMatrix;
 };
@@ -7,10 +9,10 @@ cbuffer cMatrices : register(b0)
 
 struct VS_INPUT
 {
-	float4 Position : POSITION;
+	float3 Position : POSITION;
 	float3 Normal	: NORMAL;
 	float3 Tangent	: TANGENT;
-	float2 TexCoord : TEXCOORD0;
+	float2 TexCoord : TEXCOORD;
 };
 
 
@@ -30,6 +32,15 @@ struct PS_INPUT
 PS_INPUT VS(VS_INPUT input)
 {
 	PS_INPUT output =		(PS_INPUT)0;
+
+	float4x4 VP = mul(View, Projection);
+/*
+	output.Position = mul(float4(input.Position, 0.0), VP);
+	output.Normal = mul(float4(input.Normal, 0.0), VP).xyz;
+	output.Tangent = mul(float4(input.Tangent, 0.0), VP).xyz;
+	output.TexCoord = input.TexCoord.xy;
+	output.MotionVectors = mul(float4(input.Position, 0.0), MotionVectorMatrix).xy;
+	*/
 	output.Position =		mul(input.Position, WorldViewProjection);
 	output.Normal =			mul(input.Normal, WorldViewProjection).xyz;
 	output.Tangent =		mul(input.Tangent, WorldViewProjection).xyz;

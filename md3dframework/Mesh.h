@@ -9,7 +9,7 @@ public:
 	Mesh(std::string inName) : BaseResource(inName) {}
 	~Mesh() { CleanUp(); }
 
-	void Init() { InitCube(); } // initializes to cube as default
+	void Init() { InitCube(); }
 	void InitCube();
 	void InitTriangle();
 	void InitFromFile(std::string inFileName);

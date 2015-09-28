@@ -8,7 +8,7 @@ Camera::Camera()
 	mPosition = DirectX::XMVectorSet(0.0f, 0.0f, -5.0f, 0.0);
 	mTarget = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0);
 	mUp = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0);
-	SetProjectionMatrix(0.1, 100.0, 0.4 * 3.1415);
+	SetProjectionMatrix(0.1, 100.0, DirectX::XM_PIDIV4);
 }
 
 
@@ -25,6 +25,7 @@ DirectX::XMMATRIX Camera::GetProjectionMatrix()
 
 DirectX::XMMATRIX Camera::GetViewMatrix()
 {
+	//return DirectX::XMMatrixTranspose(DirectX::XMMatrixLookAtLH(mPosition, mTarget, mUp));
 	return DirectX::XMMatrixLookAtLH(mPosition, mTarget, mUp);
 }
 
@@ -32,7 +33,8 @@ DirectX::XMMATRIX Camera::GetViewMatrix()
 void Camera::SetProjectionMatrix(float inNear, float inFar, float inFovY)
 {
 	float aspect = float(theFrameWork.GetScreenHeight()) / theFrameWork.GetScreenWidth();
-	mProjection = DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(inFovY, aspect, inNear, inFar));
+	//mProjection = DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(inFovY, aspect, inNear, inFar));
+	mProjection = DirectX::XMMatrixPerspectiveFovLH(inFovY, aspect, inNear, inFar);
 }
 
 

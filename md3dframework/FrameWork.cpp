@@ -159,6 +159,24 @@ HRESULT FrameWork::InitDevice(HWND hWnd)
 
 	mCamera = new Camera();
 
+	// setup rasterizer
+	D3D11_RASTERIZER_DESC rasterDesc;
+	rasterDesc.AntialiasedLineEnable = false;
+	rasterDesc.CullMode = D3D11_CULL_NONE;
+	rasterDesc.DepthBias = 0;
+	rasterDesc.DepthBiasClamp = 0.0f;
+	rasterDesc.DepthClipEnable = true;
+	rasterDesc.FillMode = D3D11_FILL_SOLID;
+	rasterDesc.FrontCounterClockwise = false;
+	rasterDesc.MultisampleEnable = false;
+	rasterDesc.ScissorEnable = false;
+	rasterDesc.SlopeScaledDepthBias = 0.0f;
+
+	hr = mD3DDevice->CreateRasterizerState(&rasterDesc, &mRasterState);
+	if (FAILED(hr)) 
+		return hr;
+	mImmediateContext->RSSetState(mRasterState);
+
 	// Setup the viewport
 	D3D11_VIEWPORT vp;
 	vp.Width = (FLOAT)mWidth;
@@ -226,8 +244,8 @@ float a = 0;
 void FrameWork::Render()
 {
 	// setup camera
-	mCamera->SetPosition(5.0 * sin(a), 0, 5.0 * cos(a));
-	a += 0.001;
+	mCamera->SetPosition(50 * sin(a), 10, 50 * cos(a));
+	a += 0.01;
 
 	// render to gbuffer
 	std::vector<ID3D11RenderTargetView*> gbuffer_targets = mDeferredRenderer->GetGBuffer()->GetRenderTargetViewArray();
@@ -240,6 +258,7 @@ void FrameWork::Render()
 	mImmediateContext->ClearDepthStencilView(gbuffer_depth_stencil, D3D11_CLEAR_DEPTH, 1.0f, 0);
 	mDeferredRenderer->Render(mImmediateContext, mObjectList);
 	
+
 	// clear render targets and set screen target
 	ID3D11RenderTargetView* render_targets[] = { mRenderTargetView, nullptr, nullptr, nullptr, nullptr };
 	mImmediateContext->ClearRenderTargetView(mRenderTargetView, DirectX::Colors::MidnightBlue);
@@ -285,6 +304,8 @@ void FrameWork::CleanUpDevice()
 	if (mRenderTargetView) mRenderTargetView->Release();
 	if (mSwapChain1) mSwapChain1->Release();
 	if (mSwapChain) mSwapChain->Release();
+	if (mRasterState) mRasterState->Release();
+	if (mRasterState1) mRasterState1->Release();
 	if (mImmediateContext1) mImmediateContext1->Release();
 	if (mImmediateContext) mImmediateContext->Release();
 	if (mD3DDevice1) mD3DDevice1->Release();
