@@ -84,28 +84,13 @@ void DrawableObject::Draw(ID3D11DeviceContext* inContext)
 	// set constant buffers
 	ID3D11Buffer* cbuf = mConstantBuffer->GetBuffer();
 
-	//DirectX::XMMATRIX WVP = mTransform * theFrameWork.GetCamera()->GetViewProjectionMatrix();
-	DirectX::XMMATRIX WVP = theFrameWork.GetCamera()->GetViewProjectionMatrix();
-
 	// todo: check if this leads to proper motion vectors
+	mConstantBufferData.View = theFrameWork.GetCamera()->GetViewMatrix();
+	mConstantBufferData.Projection = theFrameWork.GetCamera()->GetProjectionMatrix();
+	DirectX::XMMATRIX WVP = theFrameWork.GetCamera()->GetViewProjectionMatrix();
 	DirectX::XMVECTOR det = DirectX::XMMatrixDeterminant(WVP);
 	mConstantBufferData.MV = DirectX::XMMatrixInverse(&det, WVP) * mConstantBufferData.WVP;
 	mConstantBufferData.WVP = WVP;
-
-	static float a;
-	a += 0.01;
-	DirectX::XMVECTOR eye = DirectX::XMVectorSet(5.0f * sin(a), 1.0f, 5.0f * cos(a), 0.0f);
-	DirectX::XMVECTOR tar = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
-	DirectX::XMVECTOR up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	
-	mConstantBufferData.View = DirectX::XMMatrixLookAtLH(eye, tar, up);
-	mConstantBufferData.Projection = DirectX::XMMatrixPerspectiveFovLH(DirectX::XM_PIDIV4, 800.0f/600.0f, 0.01f, 100.0f);
-	
-	mConstantBufferData.View = DirectX::XMMatrixTranspose(mConstantBufferData.View);
-	mConstantBufferData.Projection = DirectX::XMMatrixTranspose(mConstantBufferData.Projection);
-
-	//mConstantBufferData.View = theFrameWork.GetCamera()->GetViewMatrix();
-	//mConstantBufferData.Projection = theFrameWork.GetCamera()->GetViewProjectionMatrix();
 
 	inContext->UpdateSubresource(cbuf, 0, nullptr, &mConstantBufferData, 0, 0);
 	inContext->VSSetConstantBuffers(0, 1, &cbuf);

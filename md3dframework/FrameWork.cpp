@@ -241,12 +241,14 @@ HRESULT FrameWork::InitFullScreenQuad()
 
 
 
-float a = 0;
+float a = 0.666;
 void FrameWork::Render()
 {
 	// setup camera
-	mCamera->SetPosition(50 * sin(a), 10, 50 * cos(a));
-	a += 0.01;
+	mCamera->SetPosition(10.0 * sin(a), -5.0, 10.0 * cos(a));
+	mCamera->SetTarget(0.0, 0.0, 0.0);
+	mCamera->SetUp(0.0, 1.0, 0.0);
+	a += 0.001;
 
 	// render to gbuffer
 	std::vector<ID3D11RenderTargetView*> gbuffer_targets = mDeferredRenderer->GetGBuffer()->GetRenderTargetViewArray();
@@ -280,7 +282,7 @@ void FrameWork::Render()
 	mImmediateContext->PSSetShader(ps, NULL, 0);
 
 	// bind shader resources
-	ID3D11ShaderResourceView* output_texture = mDeferredRenderer->GetGBuffer()->GetRenderTarget(GBuffer::DIFFUSE)->GetShaderResourceView();
+	ID3D11ShaderResourceView* output_texture = mDeferredRenderer->GetGBuffer()->GetRenderTarget(GBuffer::NORMAL)->GetShaderResourceView();
 	mImmediateContext->PSSetShaderResources(0, 1, &output_texture);
 	
 	// draw

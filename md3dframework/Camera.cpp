@@ -26,19 +26,18 @@ DirectX::XMMATRIX Camera::GetProjectionMatrix()
 DirectX::XMMATRIX Camera::GetViewMatrix()
 {
 	return DirectX::XMMatrixTranspose(DirectX::XMMatrixLookAtLH(mPosition, mTarget, mUp));
-	//return DirectX::XMMatrixLookAtLH(mPosition, mTarget, mUp);
 }
 
 
 void Camera::SetProjectionMatrix(float inNear, float inFar, float inFovY)
 {
-	float aspect = float(theFrameWork.GetScreenHeight()) / theFrameWork.GetScreenWidth();
+	float aspect = float(theFrameWork.GetScreenWidth()) / theFrameWork.GetScreenHeight();
 	mProjection = DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(inFovY, aspect, inNear, inFar));
-	//mProjection = DirectX::XMMatrixPerspectiveFovLH(inFovY, aspect, inNear, inFar);
 }
 
 
 DirectX::XMMATRIX Camera::GetViewProjectionMatrix()
 {
+	// TODO: doesn't work, multiply before transposes?
 	return GetViewMatrix() * GetProjectionMatrix();
 }

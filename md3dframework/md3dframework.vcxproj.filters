@@ -222,4 +222,15 @@
       <Filter>Shaders</Filter>
     </FxCompile>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="LibNormals.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="LibDepth.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="LibLight.hlsli">
+      <Filter>Shaders</Filter>
+    </None>
+  </ItemGroup>
 </Project>

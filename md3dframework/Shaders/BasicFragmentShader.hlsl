@@ -1,3 +1,4 @@
+#include "LibNormals.hlsli"
 
 Texture2D cDiffuseTexture : register(t0);
 Texture2D cNormalTexture : register(t1);
@@ -35,22 +36,6 @@ float3 NormalMap(float3 inGeometryNormal, float3 inTangent, float2 inTexCoord)
 	return result;
 }
 
-
-half2 AzimuthalEncodeNormal(float3 inNormal)
-{
-	half f = sqrt(8.0 * inNormal.z + 8.0);
-	return inNormal.xy / f + 0.5;
-}
-
-
-half3 AzimuthalDecodeNormal(half2 inEncodedNormal)
-{
-	half2 fenc = inEncodedNormal * 4.0 - 2.0;
-	half f = dot(fenc, fenc);
-	half g = sqrt(1.0 - f / 4.0);
-	half3 normal = half3(fenc * g, 1.0 - f / 2.0);
-	return normal;
-}
 
 
 //--------------------------------------------------------------------------------------
