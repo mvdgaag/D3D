@@ -240,6 +240,7 @@ HRESULT FrameWork::InitFullScreenQuad()
 }
 
 
+
 float a = 0;
 void FrameWork::Render()
 {
