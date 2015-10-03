@@ -69,7 +69,7 @@ void Mesh::InitCube()
 	D3D11_SUBRESOURCE_DATA InitData;
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem = vertices;
-	D3DCall(theFrameWork.GetDevice()->CreateBuffer(&bd, &InitData, &mVertexBuffer));
+	D3DCall(theFramework.GetDevice()->CreateBuffer(&bd, &InitData, &mVertexBuffer));
 	
 	mStride = sizeof(SimpleVertex);
 	mOffset = 0;
@@ -91,7 +91,7 @@ void Mesh::InitCube()
 	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	bd.CPUAccessFlags = 0;
 	InitData.pSysMem = indices;
-	D3DCall(theFrameWork.GetDevice()->CreateBuffer(&bd, &InitData, &mIndexBuffer));
+	D3DCall(theFramework.GetDevice()->CreateBuffer(&bd, &InitData, &mIndexBuffer));
 
 	assert(mVertexBuffer != nullptr);
 	assert(mIndexBuffer != nullptr);
@@ -121,7 +121,7 @@ void Mesh::InitTriangle()
 	D3D11_SUBRESOURCE_DATA InitData;
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem = vertices;
-	D3DCall(theFrameWork.GetDevice()->CreateBuffer(&bd, &InitData, &mVertexBuffer));
+	D3DCall(theFramework.GetDevice()->CreateBuffer(&bd, &InitData, &mVertexBuffer));
 
 	// Set vertex buffer
 	mStride = sizeof(SimpleVertex);
@@ -136,7 +136,7 @@ void Mesh::InitTriangle()
 	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	bd.CPUAccessFlags = 0;
 	InitData.pSysMem = indices;
-	D3DCall(theFrameWork.GetDevice()->CreateBuffer(&bd, &InitData, &mIndexBuffer));
+	D3DCall(theFramework.GetDevice()->CreateBuffer(&bd, &InitData, &mIndexBuffer));
 
 	assert(mVertexBuffer != nullptr);
 	assert(mIndexBuffer != nullptr);

@@ -28,9 +28,9 @@ public:
 
 protected:
 	static void CleanUpResources();
+	std::string mName;
 
 private:
-	std::string mName;
 	static std::unordered_map<std::string, BaseResource*> sResourceMap;
 };
 

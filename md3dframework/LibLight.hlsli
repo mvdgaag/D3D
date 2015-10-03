@@ -46,6 +46,21 @@ float DistributionFactor(float inNormalDotHalf, float inSquareRoughness)
 }
 
 
+float OrenNayarDiffuse(float3 inLightVec, float3 inNormal, float3 inViewVec, float inSquareRoughness)
+{
+	float a = 1.0 - 0.5 * (inSquareRoughness / (inSquareRoughness + 0.57));
+	float b = 0.45 * (inSquareRoughness / (inSquareRoughness + 0.09));
+
+	float ndl = dot(inNormal, inLightVec);
+	float ndv = dot(inNormal, inViewVec);
+
+	float ga = dot(inViewVec - inNormal*ndv, inNormal - inNormal*ndl);
+
+	return max(0.0, ndl) * (a + b * max(0.0, ga) * 
+		sqrt((1.0 - ndv*ndv)*(1.0 - ndl*ndl)) / max(ndl, ndv));
+}
+
+
 float3 CalculateLight(Material inMaterial, float3 inPosition, float3 inNormal, Light inLight)
 {
 	float3 light_vec = normalize(L.pos - p);
@@ -72,7 +87,7 @@ float3 CalculateLight(Material inMaterial, float3 inPosition, float3 inNormal, L
 	float spec = (F * G * D) / (4.0 * ndl * ndv);
 
 	// cheap approximation of energy conservation between diff and spec
-	float diff = falloff * ndl * (1.0 - inMaterial.Reflectivity);
+	float diff = falloff * OrenNayarDiffuse(light_vec, normal, view_vec, roughness_sqr) * (1.0 - inMaterial.Reflectivity);
 
 	return inLight.Color * inMaterial.Diffuse * (spec + diff);
 }

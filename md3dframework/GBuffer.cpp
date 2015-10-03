@@ -51,7 +51,7 @@ void GBuffer::Init(int inWidth, int inHeight)
 	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
 	descDepth.CPUAccessFlags = 0;
 	descDepth.MiscFlags = 0;
-	D3DCall(theFrameWork.GetDevice()->CreateTexture2D(&descDepth, nullptr, &mDepthStencil));
+	D3DCall(theFramework.GetDevice()->CreateTexture2D(&descDepth, nullptr, &mDepthStencil));
 
 	// Create the depth stencil view
 	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
@@ -59,9 +59,15 @@ void GBuffer::Init(int inWidth, int inHeight)
 	descDSV.Format = descDepth.Format;
 	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	descDSV.Texture2D.MipSlice = 0;
-	D3DCall(theFrameWork.GetDevice()->CreateDepthStencilView(mDepthStencil, &descDSV, &mDepthStencilView));
+	D3DCall(theFramework.GetDevice()->CreateDepthStencilView(mDepthStencil, &descDSV, &mDepthStencilView));
 
 	mInitialized = true;
+}
+
+
+Texture* GBuffer::GetTexture(GBufferType inType)				
+{ 
+	return mRenderTargets[inType]->GetTexture(); 
 }
 
 
@@ -99,6 +105,6 @@ std::vector<ID3D11RenderTargetView*>GBuffer::GetRenderTargetViewArray()
 	assert(mInitialized == true);
 	std::vector<ID3D11RenderTargetView*> targets;
 	for (int i = 0; i < NUM_RENDER_TARGETS; i++)
-		targets.push_back(mRenderTargets[i]->GetRenderTargetView());
+		targets.push_back(mRenderTargets[i]->GetRenderTargetView(0));
 	return targets;
 }

@@ -57,15 +57,15 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	if (FAILED(InitWindow(hInstance, nCmdShow)))
 		return 0;
 
-	if (FAILED(theFrameWork.InitDevice(g_hWnd)))
+	if (FAILED(theFramework.InitDevice(g_hWnd)))
 	{
-		theFrameWork.CleanUpDevice();
+		theFramework.CleanUpDevice();
 		return 0;
 	}
 
-	if (FAILED(theFrameWork.InitFullScreenQuad()))
+	if (FAILED(theFramework.InitFullScreenQuad()))
 	{
-		theFrameWork.CleanUpDevice();
+		theFramework.CleanUpDevice();
 		return 0;
 	}
 
@@ -82,13 +82,13 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 		}
 		else
 		{
-			theFrameWork.Render();
+			theFramework.Render();
 		}
 	}
 
 	CleanUpContent();
 
-	theFrameWork.CleanUpDevice();
+	theFramework.CleanUpDevice();
 
 	return (int)msg.wParam;
 }
@@ -211,7 +211,7 @@ void InitContent()
 		g_normal_texture, g_normal_sampler,
 		g_material_texture, g_material_sampler);
 
-	theFrameWork.RegisterObject(g_obj);
+	theFramework.RegisterObject(g_obj);
 }
 
 

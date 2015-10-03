@@ -13,23 +13,16 @@ class ShaderResourceBinding;
 class DepthPyramidRenderer
 {
 public:
-	DepthPyramidRenderer();
+	DepthPyramidRenderer() {};
 	~DepthPyramidRenderer() { CleanUp(); }
 
-	void Init(RenderTarget* inSource);
+	void Init(int inSourceWidth, int inSourceHeight);
 	void CleanUp();
-	void Render(ID3D11DeviceContext* inDeviceContext);
-	Texture* GetDepthPyramidTexture() { return mTargetTexture; }
+	void Render(Texture* inSource, RenderTarget* inTarget);
 
 private:
-	ComputeShader*		mShader = nullptr;
-
-	Texture*			mSourceTexture = nullptr;
-	Texture*			mTargetTexture = nullptr;
-
-	RenderTarget*		mRenderTargets[5];
-	const int			kNumMipLevels = 5;
-
-	bool mInitialized = false;
+	ComputeShader*				mShader = nullptr;
+	const int					kNumMipLevels = 3; // 1/2 .. 1/8
+	bool						mInitialized = false;
 };
 

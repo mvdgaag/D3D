@@ -251,22 +251,12 @@ void FrameWork::Render()
 	a += 0.001;
 
 	// render to gbuffer
-	std::vector<ID3D11RenderTargetView*> gbuffer_targets = mDeferredRenderer->GetGBuffer()->GetRenderTargetViewArray();
+	mDeferredRenderer->Render(mObjectList);
 
-	for (int i = 0; i < GBuffer::NUM_RENDER_TARGETS; i++)
-		mImmediateContext->ClearRenderTargetView(gbuffer_targets[i], DirectX::Colors::Red);
-
-	ID3D11DepthStencilView* gbuffer_depth_stencil = mDeferredRenderer->GetGBuffer()->GetDepthStencilView();
-	mImmediateContext->OMSetRenderTargets(GBuffer::NUM_RENDER_TARGETS, gbuffer_targets.data(), gbuffer_depth_stencil);
-	mImmediateContext->ClearDepthStencilView(gbuffer_depth_stencil, D3D11_CLEAR_DEPTH, 1.0f, 0);
-	mDeferredRenderer->Render(mImmediateContext, mObjectList);
-	
-
-	// clear render targets and set screen target
-	ID3D11RenderTargetView* render_targets[] = { mRenderTargetView, nullptr, nullptr, nullptr, nullptr };
+	// render to screen
+	mImmediateContext->OMSetRenderTargets(1, &mRenderTargetView, nullptr);
 	mImmediateContext->ClearRenderTargetView(mRenderTargetView, DirectX::Colors::MidnightBlue);
-	mImmediateContext->OMSetRenderTargets(5, render_targets, nullptr);
-	
+
 	// set vertex buffer for full screen quad
 	UINT stride = sizeof(float) * 3;
 	UINT offset = 0;
@@ -282,15 +272,20 @@ void FrameWork::Render()
 	mImmediateContext->PSSetShader(ps, NULL, 0);
 
 	// bind shader resources
-	ID3D11ShaderResourceView* output_texture = mDeferredRenderer->GetGBuffer()->GetRenderTarget(GBuffer::NORMAL)->GetShaderResourceView();
+	ID3D11ShaderResourceView* output_texture = mDeferredRenderer->GetGBuffer()->GetTexture(GBuffer::NORMAL)->GetShaderResourceView();
+	
 	mImmediateContext->PSSetShaderResources(0, 1, &output_texture);
 	
 	// draw
 	mImmediateContext->DrawIndexed(6, 0, 0);
 
-	// unbind shader resources
-	ID3D11ShaderResourceView* none[] = { nullptr };
+	// reset state
+	ID3D11ShaderResourceView* none[] = { NULL };
 	mImmediateContext->PSSetShaderResources(0, 1, none);
+	ID3D11RenderTargetView* render_target = NULL;
+	mImmediateContext->OMSetRenderTargets(1, &render_target, NULL);
+	mImmediateContext->PSSetShader(NULL, NULL, 0);
+	mImmediateContext->VSSetShader(NULL, NULL, 0);
 
 	// swap
 	mSwapChain->Present(0, 0);

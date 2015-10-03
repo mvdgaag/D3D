@@ -10,7 +10,7 @@ class DrawableObject;
 class Camera;
 
 
-#define theFrameWork FrameWork::GetInstance()
+#define theFramework FrameWork::GetInstance()
 
 
 class FrameWork
@@ -29,6 +29,7 @@ public:
 	void CleanUpDevice();
 
 	ID3D11Device* GetDevice() { return mD3DDevice; }
+	ID3D11DeviceContext* GetContext() { return mImmediateContext; }
 	Camera* GetCamera() { return mCamera; }
 	int GetScreenWidth() { return mWidth; }
 	int GetScreenHeight() { return mHeight; }

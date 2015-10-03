@@ -11,7 +11,7 @@ void ConstantBuffer::Init(int inByteWidth)
 	mDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	mDesc.CPUAccessFlags = 0;
 
-	D3DCall(theFrameWork.GetDevice()->CreateBuffer(&mDesc, nullptr, &mBuffer));
+	D3DCall(theFramework.GetDevice()->CreateBuffer(&mDesc, nullptr, &mBuffer));
 }
 
 

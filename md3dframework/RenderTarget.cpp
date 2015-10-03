@@ -10,49 +10,66 @@ void RenderTarget::Init(int inWidth, int inHeight, int inMipLevels, DXGI_FORMAT 
 {
 	CleanUp();
 
-	D3D11_TEXTURE2D_DESC texDesc;
-	ZeroMemory(&mTextureDesc, sizeof(mTextureDesc));
-	mTextureDesc.Width = inWidth;
-	mTextureDesc.Height = inHeight;
-	mTextureDesc.MipLevels = mTextureDesc.ArraySize = inMipLevels;
-	mTextureDesc.Format = inFormat;
-	mTextureDesc.SampleDesc.Count = 1;
-	mTextureDesc.Usage = D3D11_USAGE_DEFAULT;
-	mTextureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-	mTextureDesc.CPUAccessFlags = 0;
-	mTextureDesc.MiscFlags = 0;
+	unsigned int bind_flags = (D3D11_BIND_RENDER_TARGET | D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE);
+	mTexture = new Texture(mName + "Texture");
+	mTexture->Init(inWidth, inHeight, inMipLevels, inFormat, bind_flags);
 
-	D3DCall(theFrameWork.GetDevice()->CreateTexture2D(&mTextureDesc, NULL, &mTexture));
-	assert(mTexture != nullptr);
+	mRenderTargetViews = new ID3D11RenderTargetView*[mTexture->GetMipLevels()];
+	D3D11_RENDER_TARGET_VIEW_DESC rtv_desc;
+	ZeroMemory(&rtv_desc, sizeof(rtv_desc));
+	rtv_desc.Format = mTexture->GetFormat();
+	rtv_desc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 
-	D3DCall(theFrameWork.GetDevice()->CreateShaderResourceView(mTexture, NULL, &mShaderResourceView));
-	assert(mShaderResourceView != nullptr);
+	mUnorderedAccessViews = new ID3D11UnorderedAccessView*[inMipLevels];
+	D3D11_UNORDERED_ACCESS_VIEW_DESC uav_desc;
+	ZeroMemory(&uav_desc, sizeof(uav_desc));
+	uav_desc.Format = mTexture->GetFormat();
+	uav_desc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
 
-	ZeroMemory(&mRenderTargetDesc, sizeof(mRenderTargetDesc));
-	mRenderTargetDesc.Format = mTextureDesc.Format;
-	mRenderTargetDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
-	mRenderTargetDesc.Texture2D.MipSlice = 0;
+	for (int i = 0; i < mTexture->GetMipLevels(); i++)
+	{
+		rtv_desc.Texture2D.MipSlice = i;
+		D3DCall(theFramework.GetDevice()->CreateRenderTargetView(mTexture->GetTexture(), &rtv_desc, &mRenderTargetViews[i]));
+		assert(mRenderTargetViews[i] != nullptr);
 
-	D3DCall(theFrameWork.GetDevice()->CreateRenderTargetView(mTexture, &mRenderTargetDesc, &mRenderTargetView));
-	assert(mRenderTargetView != nullptr);
+		uav_desc.Texture2D.MipSlice = i;
+		D3DCall(theFramework.GetDevice()->CreateUnorderedAccessView(mTexture->GetTexture(), &uav_desc, &mUnorderedAccessViews[i]));
+		assert(mUnorderedAccessViews[i] != nullptr);
+	}
 }
 
 
 void RenderTarget::CleanUp()
 {
-	if (mTexture != nullptr)
+	if (mUnorderedAccessViews != nullptr)
 	{
-		mTexture->Release();
-		mTexture = nullptr;
+		for (int i = 0; i < mTexture->GetMipLevels(); i++)
+			mUnorderedAccessViews[i]->Release();
+		delete[] mUnorderedAccessViews;
+		mUnorderedAccessViews = nullptr;
 	}
-	if (mRenderTargetView != nullptr)
+	if (mRenderTargetViews != nullptr)
 	{
-		mRenderTargetView->Release();
-		mRenderTargetView = nullptr;
+		for (int i = 0; i < mTexture->GetMipLevels(); i++)
+			mRenderTargetViews[i]->Release();
+		delete[] mRenderTargetViews;
+		mRenderTargetViews = nullptr;
 	}
-	if (mShaderResourceView != nullptr)
-	{
-		mShaderResourceView->Release();
-		mShaderResourceView = nullptr;
-	}
+
+	if (mTexture)
+		delete mTexture;
+}
+
+
+ID3D11RenderTargetView* RenderTarget::GetRenderTargetView(int inMipLevel = 0)
+{
+	assert(inMipLevel < mTexture->GetMipLevels());
+	return mRenderTargetViews[inMipLevel];
+}
+
+
+ID3D11UnorderedAccessView* RenderTarget::GetUnorderedAccessView(int inMipLevel = 0)
+{
+	assert(inMipLevel < mTexture->GetMipLevels());
+	return mUnorderedAccessViews[inMipLevel];
 }

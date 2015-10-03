@@ -26,10 +26,13 @@ public:
 
 	void Init(int inWidth, int inHeight);
 	void CleanUp();
-	bool IsInitialized() { return mInitialized; }
+	bool IsInitialized()								{ return mInitialized; }
+	int GetWidth()										{ return mWidth; }
+	int GetHeight()										{ return mHeight; }
 	RenderTarget* GetRenderTarget(GBufferType inType)	{ return mRenderTargets[inType]; }
+	ID3D11DepthStencilView* GetDepthStencilView()		{ return mDepthStencilView; }
+	Texture* GetTexture(GBufferType inType);
 	std::vector<ID3D11RenderTargetView*> GetRenderTargetViewArray();
-	ID3D11DepthStencilView* GetDepthStencilView() { return mDepthStencilView; }
 
 private:
 	RenderTarget**			mRenderTargets = nullptr;

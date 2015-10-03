@@ -2,7 +2,7 @@
 #include "ComputeShader.h"
 
 
-void PostProcessRenderer::Render(ID3D11DeviceContext* inDeviceContext)
+void PostProcessRenderer::Render()
 {
 }
 

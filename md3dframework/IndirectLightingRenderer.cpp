@@ -2,7 +2,7 @@
 #include "ComputeShader.h"
 
 
-void IndirectLightingRenderer::Render(ID3D11DeviceContext* inDeviceContext)
+void IndirectLightingRenderer::Render()
 {
 }
 

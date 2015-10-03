@@ -14,7 +14,7 @@ public:
 
 	void Init();
 	void CleanUp();
-	void Render(ID3D11DeviceContext* inDeviceContext);
+	void Render();
 	
 private:
 	ComputeShader* mShader = nullptr;

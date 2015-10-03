@@ -31,7 +31,7 @@ DirectX::XMMATRIX Camera::GetViewMatrix()
 
 void Camera::SetProjectionMatrix(float inNear, float inFar, float inFovY)
 {
-	float aspect = float(theFrameWork.GetScreenWidth()) / theFrameWork.GetScreenHeight();
+	float aspect = float(theFramework.GetScreenWidth()) / theFramework.GetScreenHeight();
 	mProjection = DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(inFovY, aspect, inNear, inFar));
 }
 

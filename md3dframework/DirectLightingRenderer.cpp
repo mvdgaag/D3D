@@ -1,8 +1,10 @@
 #include "DirectLightingRenderer.h"
 #include "ComputeShader.h"
+#include "GBuffer.h"
+#include "RenderTarget.h"
 
 
-void DirectLightingRenderer::Render(ID3D11DeviceContext* inDeviceContext)
+void DirectLightingRenderer::Render(GBuffer* inSource, RenderTarget* inTarget)
 {
 }
 

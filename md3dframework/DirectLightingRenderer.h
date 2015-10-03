@@ -4,6 +4,9 @@
 
 // predeclarations
 class ComputeShader;
+class RenderTarget;
+class GBuffer;
+
 
 class DirectLightingRenderer
 {
@@ -13,7 +16,7 @@ public:
 
 	void Init();
 	void CleanUp();
-	void Render(ID3D11DeviceContext* inDeviceContext);
+	void Render(GBuffer* inSource, RenderTarget* inTarget);
 
 private:
 	ComputeShader* mShader = nullptr;

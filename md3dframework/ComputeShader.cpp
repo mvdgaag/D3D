@@ -29,7 +29,7 @@ void ComputeShader::InitFromFile(std::string inFileName)
 		OutputDebugStringA(reinterpret_cast<const char*>(pErrorBlob->GetBufferPointer()));
 		pErrorBlob->Release();
 	}
-	D3DCall(theFrameWork.GetDevice()->CreateComputeShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), nullptr, &mHandle));
+	D3DCall(theFramework.GetDevice()->CreateComputeShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), nullptr, &mHandle));
 	pPSBlob->Release();
 }
 

@@ -12,7 +12,8 @@ class IndirectLightingRenderer;
 class ReflectionRenderer;
 class PostProcessRenderer;
 class DrawableObject;
-
+class RenderTarget;
+class Texture;
 
 class DeferredRenderer
 {
@@ -22,12 +23,13 @@ public:
 
 	void Init(int inWidth, int inHeight);
 	void CleanUp();
-	void Render(ID3D11DeviceContext* inDeviceContext, std::vector<DrawableObject*> inDrawList);
+	void Render(std::vector<DrawableObject*> inDrawList);
 	GBuffer* GetGBuffer() { return mGBuffer; }
+	RenderTarget* GetDepthPyramid() { return mDepthPyramid; }
 
 private:
-	void GeometryPass(ID3D11DeviceContext* inDeviceContext, std::vector<DrawableObject*> inDrawList);
-	void LightingPass(ID3D11DeviceContext* inDeviceContext);
+	void GeometryPass(std::vector<DrawableObject*> inDrawList);
+	void LightingPass();
 
 	ShadowRenderer*				mShadowRenderer = nullptr;
 	DirectLightingRenderer*		mDirectLightingRenderer = nullptr;
@@ -37,6 +39,8 @@ private:
 	PostProcessRenderer*		mPostProcessRenderer = nullptr;
 	
 	GBuffer* mGBuffer = nullptr;
+	RenderTarget* mDepthPyramid = nullptr;
+	RenderTarget* mDirectLighting = nullptr;
 
 	ID3D11Device* mDevice = nullptr;
 

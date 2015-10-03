@@ -9,7 +9,8 @@ public:
 	Texture(std::string inName) : BaseResource(inName) {};
 	~Texture() { CleanUp(); }
 
-	void Init(int inWidth, int inHeight, int inMipLevels, DXGI_FORMAT inFormat);
+	void Init(int inWidth, int inHeight, int inMipLevels, 
+		DXGI_FORMAT inFormat, unsigned int inBindFlags = D3D11_BIND_SHADER_RESOURCE);
 	void InitFromFile(std::string inFileName);
 
 	ID3D11Texture2D*			GetTexture()			{ return mTexture; }

@@ -23,7 +23,7 @@ public:
 		Texture* inDiffuseTexture, Sampler* inDiffuseSampler,
 		Texture* inNormalTexture, Sampler* inNormalSampler,
 		Texture* inMaterialTexture, Sampler* inMaterialSampler);
-	void Draw(ID3D11DeviceContext* inDeviceContext);
+	void Draw();
 
 	PixelShader*	GetPixelShader()		{ return mPixelShader; }
 	VertexShader*	GetVertexShader()		{ return mVertexShader; }

@@ -2,7 +2,7 @@
 #include "ComputeShader.h"
 
 
-void ReflectionRenderer::Render(ID3D11DeviceContext* inDeviceContext)
+void ReflectionRenderer::Render()
 {
 }
 
