@@ -65,27 +65,13 @@ void DrawableObject::Draw()
 	theFramework.GetDevice()->GetImmediateContext(&context);
 
 	// set shaders
-	context->VSSetShader(mVertexShader->GetHandle(), NULL, 0);
-	context->PSSetShader(mPixelShader->GetHandle(), NULL, 0);
+	theFramework.SetVertexShader(mVertexShader);
+	theFramework.SetPixelShader(mPixelShader);
 	
 	// set textures
-	ID3D11ShaderResourceView* diffuse_tex = mDiffuseTexture->GetShaderResourceView();
-	ID3D11SamplerState* diffuse_samp = mDiffuseSampler->GetSamplerState();
-	context->PSSetShaderResources(0, 1, &diffuse_tex);
-	context->PSSetSamplers(0, 1, &diffuse_samp);
-
-	ID3D11ShaderResourceView* normal_tex = mNormalTexture->GetShaderResourceView();
-	ID3D11SamplerState* normal_samp = mNormalSampler->GetSamplerState();
-	context->PSSetShaderResources(1, 1, &normal_tex);
-	context->PSSetSamplers(1, 1, &normal_samp);
-	
-	ID3D11ShaderResourceView* material_tex = mMaterialTexture->GetShaderResourceView();
-	ID3D11SamplerState* material_samp = mMaterialSampler->GetSamplerState();
-	context->PSSetShaderResources(2, 1, &material_tex);
-	context->PSSetSamplers(2, 1, &material_samp);
-
-	// set constant buffers
-	ID3D11Buffer* cbuf = mConstantBuffer->GetBuffer();
+	theFramework.SetTextureAndSampler(mDiffuseTexture, mDiffuseSampler, 0);
+	theFramework.SetTextureAndSampler(mNormalTexture, mNormalSampler, 1);
+	theFramework.SetTextureAndSampler(mMaterialTexture, mMaterialSampler, 2);
 
 	// todo: check if this leads to proper motion vectors
 	mConstantBufferData.View = theFramework.GetCamera()->GetViewMatrix();
@@ -95,27 +81,20 @@ void DrawableObject::Draw()
 	mConstantBufferData.MV = DirectX::XMMatrixInverse(&det, WVP) * mConstantBufferData.WVP;
 	mConstantBufferData.WVP = WVP;
 
+	// set constant buffers
+	ID3D11Buffer* cbuf = mConstantBuffer->GetBuffer();
 	context->UpdateSubresource(cbuf, 0, nullptr, &mConstantBufferData, 0, 0);
-	context->VSSetConstantBuffers(0, 1, &cbuf);
 	
-	// set vertex data
-	ID3D11Buffer* mesh_verts = mMesh->GetVertexBuffer();
-	UINT stride = mMesh->GetStride();
-	UINT offset = mMesh->GetOffset();
-	context->IASetVertexBuffers( 0, 1, &mesh_verts, &stride, &offset);
-	context->IASetInputLayout(mVertexShader->GetLayout());
+	//TODO: this seems to break, but should do the same as the two lines above
+	//mConstantBuffer->SetData(&mConstantBufferData);
 
-	ID3D11Buffer* mesh_indices = mMesh->GetIndexBuffer();
-	context->IASetIndexBuffer(mesh_indices, DXGI_FORMAT_R16_UINT, 0);
-	
-	context->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	// draw
-	context->DrawIndexed(mMesh->GetNumIndices(), 0, 0);
+	theFramework.SetConstantBuffer(mConstantBuffer);
+	theFramework.DrawMesh(mMesh);
 
 	// reset state
-	ID3D11ShaderResourceView* none[] = { NULL, NULL, NULL };
-	context->PSSetShaderResources(0, 3, none);
-	context->PSSetShader(NULL, NULL, 0);
-	context->VSSetShader(NULL, NULL, 0);
+	theFramework.SetTextureAndSampler(NULL, NULL, 0);
+	theFramework.SetTextureAndSampler(NULL, NULL, 1);
+	theFramework.SetTextureAndSampler(NULL, NULL, 2);
+	theFramework.SetPixelShader(NULL);
+	theFramework.SetVertexShader(NULL);
 }

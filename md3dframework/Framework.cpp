@@ -9,6 +9,9 @@
 #include "PixelShader.h"
 #include "VertexShader.h"
 #include "Texture.h"
+#include "Sampler.h"
+#include "ConstantBuffer.h"
+#include "Mesh.h"
 
 
 //--------------------------------------------------------------------------------------
@@ -264,12 +267,8 @@ void Framework::Render()
 	mImmediateContext->IASetIndexBuffer(mFullScreenQuadIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
 	mImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	// set shaders and vertex latout
-	ID3D11VertexShader* vs = mFullScreenQuadVertexShader->GetHandle();
-	mImmediateContext->VSSetShader(vs, NULL, 0);
-	mImmediateContext->IASetInputLayout(mFullScreenQuadVertexShader->GetLayout());
-	ID3D11PixelShader* ps = mFullScreenQuadPixelShader->GetHandle();
-	mImmediateContext->PSSetShader(ps, NULL, 0);
+	SetVertexShader(mFullScreenQuadVertexShader);
+	SetPixelShader(mFullScreenQuadPixelShader);
 
 	// bind shader resources
 	ID3D11ShaderResourceView* output_texture = mDeferredRenderer->GetGBuffer()->GetTexture(GBuffer::NORMAL)->GetShaderResourceView();
@@ -314,5 +313,67 @@ void Framework::CleanUpDevice()
 
 void Framework::SetVertexShader(VertexShader* inVertexShader)
 {
+	ID3D11VertexShader* vs = NULL;
+	if (inVertexShader)
+	{
+		vs = inVertexShader->GetHandle();
+		mImmediateContext->IASetInputLayout(inVertexShader->GetLayout());
+	}
+	mImmediateContext->VSSetShader(vs, NULL, 0);
+}
 
+
+void Framework::SetPixelShader(PixelShader* inPixelShader)
+{
+	ID3D11PixelShader* ps = NULL;
+	if (inPixelShader)
+		ps = inPixelShader->GetHandle();
+	mImmediateContext->PSSetShader(ps, NULL, 0);
+}
+
+
+void Framework::SetTexture(Texture* inTexture, int idx)
+{
+	ID3D11ShaderResourceView* tex = NULL;
+	if (inTexture)
+		tex = inTexture->GetShaderResourceView();
+	mImmediateContext->PSSetShaderResources(idx, 1, &tex);
+}
+
+
+void Framework::SetSampler(Sampler* inSampler, int idx)
+{
+	ID3D11SamplerState* smp = NULL;
+	if (inSampler)
+		smp = inSampler->GetSamplerState();
+	mImmediateContext->PSSetSamplers(idx, 1, &smp);
+}
+
+
+void Framework::SetTextureAndSampler(Texture* inTexture, Sampler* inSampler, int idx)
+{
+	SetTexture(inTexture, idx);
+	SetSampler(inSampler, idx);
+}
+
+
+void Framework::SetConstantBuffer(ConstantBuffer* inConstantBuffer)
+{
+	ID3D11Buffer* cbuf = inConstantBuffer->GetBuffer();
+	mImmediateContext->VSSetConstantBuffers(0, 1, &cbuf);
+}
+
+void Framework::DrawMesh(Mesh* inMesh)
+{
+	ID3D11Buffer* mesh_verts = inMesh->GetVertexBuffer();
+	UINT stride = inMesh->GetStride();
+	UINT offset = inMesh->GetOffset();
+	mImmediateContext->IASetVertexBuffers(0, 1, &mesh_verts, &stride, &offset);
+
+	ID3D11Buffer* mesh_indices = inMesh->GetIndexBuffer();
+	mImmediateContext->IASetIndexBuffer(mesh_indices, DXGI_FORMAT_R16_UINT, 0);
+
+	mImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+	mImmediateContext->DrawIndexed(inMesh->GetNumIndices(), 0, 0);
 }

@@ -6,6 +6,10 @@
 class DeferredRenderer;
 class PixelShader;
 class VertexShader;
+class Texture;
+class Sampler;
+class Mesh;
+class ConstantBuffer;
 class DrawableObject;
 class Camera;
 
@@ -34,6 +38,12 @@ public:
 	int GetScreenHeight() { return mHeight; }
 
 	void SetVertexShader(VertexShader* inVertexShader);
+	void SetPixelShader(PixelShader* inPixelShader);
+	void SetTexture(Texture* inTexture, int idx);
+	void SetSampler(Sampler* inSampler, int idx);
+	void SetTextureAndSampler(Texture* inTexture, Sampler* inSampler, int idx);
+	void SetConstantBuffer(ConstantBuffer* inConstantBuffer);
+	void DrawMesh(Mesh* inMesh);
 
 private:
 	Framework() {}

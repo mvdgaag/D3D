@@ -15,6 +15,14 @@ void ConstantBuffer::Init(int inByteWidth)
 }
 
 
+void ConstantBuffer::SetData(const void* inData)
+{
+	ID3D11DeviceContext* context;
+	theFramework.GetDevice()->GetImmediateContext(&context);
+	context->UpdateSubresource(mBuffer, 0, nullptr, &inData, 0, 0);
+}
+
+
 void ConstantBuffer::CleanUp()
 {
 	if (mBuffer != nullptr)

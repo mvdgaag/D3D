@@ -12,6 +12,7 @@ public:
 
 	ID3D11Buffer* GetBuffer() { return mBuffer; }
 	D3D11_BUFFER_DESC GetDescriptor() { return mDesc; }
+	void SetData(const void* inData);
 
 	void CleanUp();
 	ResourceType GetResourceType() const { return ResourceType::CONSTANT_BUFFER; };
