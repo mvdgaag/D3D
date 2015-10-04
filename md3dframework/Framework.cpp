@@ -1,4 +1,4 @@
-#include "FrameWork.h"
+#include "Framework.h"
 #include <d3d11_1.h>
 #include <directxcolors.h>
 
@@ -14,7 +14,7 @@
 //--------------------------------------------------------------------------------------
 // Create Direct3D device and swap chain
 //--------------------------------------------------------------------------------------
-HRESULT FrameWork::InitDevice(HWND hWnd)
+HRESULT Framework::InitDevice(HWND hWnd)
 {
 	HRESULT hr = S_OK;
 
@@ -191,7 +191,7 @@ HRESULT FrameWork::InitDevice(HWND hWnd)
 }
 
 
-HRESULT FrameWork::InitFullScreenQuad()
+HRESULT Framework::InitFullScreenQuad()
 {
 	HRESULT hr = S_OK;
 
@@ -242,7 +242,7 @@ HRESULT FrameWork::InitFullScreenQuad()
 
 
 float a = 0.666;
-void FrameWork::Render()
+void Framework::Render()
 {
 	// setup camera
 	mCamera->SetPosition(10.0 * sin(a), -5.0, 10.0 * cos(a));
@@ -293,7 +293,7 @@ void FrameWork::Render()
 }
 
 
-void FrameWork::CleanUpDevice()
+void Framework::CleanUpDevice()
 {
 	mDeferredRenderer->CleanUp();
 	delete mDeferredRenderer;

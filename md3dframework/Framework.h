@@ -10,15 +10,15 @@ class DrawableObject;
 class Camera;
 
 
-#define theFramework FrameWork::GetInstance()
+#define theFramework Framework::GetInstance()
 
 
-class FrameWork
+class Framework
 {
 public:
-	static FrameWork& GetInstance()
+	static Framework& GetInstance()
 	{
-		static FrameWork instance;
+		static Framework instance;
 		return instance;
 	}
 
@@ -36,9 +36,9 @@ public:
 	void SetVertexShader(VertexShader* inVertexShader);
 
 private:
-	FrameWork() {}
-	FrameWork(FrameWork const&) = delete;
-	void operator=(FrameWork const&) = delete;
+	Framework() {}
+	Framework(Framework const&) = delete;
+	void operator=(Framework const&) = delete;
 
 	// for d3d interface
 	D3D_DRIVER_TYPE					mDriverType = D3D_DRIVER_TYPE_NULL;
