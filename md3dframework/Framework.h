@@ -69,6 +69,7 @@ private:
 	VertexShader*					mFullScreenQuadVertexShader = nullptr;
 	PixelShader*					mFullScreenQuadPixelShader = nullptr;
 	ID3D11InputLayout*				mVertexLayout = nullptr;
+	Sampler*						mFullScreenQuadPixelSampler = nullptr;
 
 	// other globals
 	int								mWidth, mHeight;

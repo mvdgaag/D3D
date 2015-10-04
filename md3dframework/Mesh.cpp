@@ -144,7 +144,9 @@ void Mesh::InitTriangle()
 
 
 void InitFromFile(std::string inFileName)
-{}
+{
+	// TODO: implement 
+}
 
 
 void Mesh::CleanUp()

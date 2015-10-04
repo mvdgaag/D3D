@@ -239,6 +239,9 @@ HRESULT Framework::InitFullScreenQuad()
 	InitData.pSysMem = quad_indices;
 	hr = mD3DDevice->CreateBuffer(&bd, &InitData, &mFullScreenQuadIndexBuffer);
 
+	mFullScreenQuadPixelSampler = new Sampler("FullScreenQuadPointSampler");
+	mFullScreenQuadPixelSampler->Init(D3D11_FILTER_MIN_MAG_MIP_POINT);
+
 	return hr;
 }
 
@@ -269,12 +272,7 @@ void Framework::Render()
 
 	SetVertexShader(mFullScreenQuadVertexShader);
 	SetPixelShader(mFullScreenQuadPixelShader);
-
-	// bind shader resources
-	ID3D11ShaderResourceView* output_texture = mDeferredRenderer->GetGBuffer()->GetTexture(GBuffer::NORMAL)->GetShaderResourceView();
-	output_texture = mDeferredRenderer->GetDirectLighting()->GetTexture()->GetShaderResourceView();
-	
-	mImmediateContext->PSSetShaderResources(0, 1, &output_texture);
+	SetTextureAndSampler(mDeferredRenderer->GetGBuffer()->GetTexture(GBuffer::DIFFUSE), mFullScreenQuadPixelSampler, 0);
 	
 	// draw
 	mImmediateContext->DrawIndexed(6, 0, 0);
@@ -362,6 +360,7 @@ void Framework::SetConstantBuffer(ConstantBuffer* inConstantBuffer)
 	ID3D11Buffer* cbuf = inConstantBuffer->GetBuffer();
 	mImmediateContext->VSSetConstantBuffers(0, 1, &cbuf);
 }
+
 
 void Framework::DrawMesh(Mesh* inMesh)
 {
