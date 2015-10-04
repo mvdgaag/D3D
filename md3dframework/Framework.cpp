@@ -8,6 +8,7 @@
 #include "GBuffer.h"
 #include "PixelShader.h"
 #include "VertexShader.h"
+#include "ComputeShader.h"
 #include "Texture.h"
 #include "Sampler.h"
 #include "ConstantBuffer.h"
@@ -190,6 +191,8 @@ HRESULT Framework::InitDevice(HWND hWnd)
 	vp.TopLeftY = 0;
 	mImmediateContext->RSSetViewports(1, &vp);
 
+	mFrameID = 0;
+
 	return S_OK;
 }
 
@@ -272,7 +275,8 @@ void Framework::Render()
 
 	SetVertexShader(mFullScreenQuadVertexShader);
 	SetPixelShader(mFullScreenQuadPixelShader);
-	SetTextureAndSampler(mDeferredRenderer->GetGBuffer()->GetTexture(GBuffer::DIFFUSE), mFullScreenQuadPixelSampler, 0);
+	//SetTextureAndSampler(mDeferredRenderer->GetGBuffer()->GetTexture(GBuffer::NORMAL), mFullScreenQuadPixelSampler, 0);
+	SetTextureAndSampler(mDeferredRenderer->GetAntiAliased()->GetTexture(), mFullScreenQuadPixelSampler, 0);
 	
 	// draw
 	mImmediateContext->DrawIndexed(6, 0, 0);
@@ -287,6 +291,8 @@ void Framework::Render()
 
 	// swap
 	mSwapChain->Present(0, 0);
+
+	mFrameID++;
 }
 
 
@@ -330,6 +336,15 @@ void Framework::SetPixelShader(PixelShader* inPixelShader)
 }
 
 
+void Framework::SetComputeShader(ComputeShader* inComputeShader)
+{
+	ID3D11ComputeShader* cs = NULL;
+	if (inComputeShader)
+		cs = inComputeShader->GetHandle();
+	mImmediateContext->CSSetShader(cs, NULL, 0);
+}
+
+
 void Framework::SetTexture(Texture* inTexture, int idx)
 {
 	ID3D11ShaderResourceView* tex = NULL;
@@ -359,6 +374,25 @@ void Framework::SetConstantBuffer(ConstantBuffer* inConstantBuffer)
 {
 	ID3D11Buffer* cbuf = inConstantBuffer->GetBuffer();
 	mImmediateContext->VSSetConstantBuffers(0, 1, &cbuf);
+}
+
+
+void Framework::ComputeSetTexture(Texture* inTexture, int idx)
+{
+	ID3D11ShaderResourceView* tex = NULL;
+	if (inTexture)
+		tex = inTexture->GetShaderResourceView();
+	mImmediateContext->CSSetShaderResources(idx, 1, &tex);
+}
+
+
+void Framework::ComputeSetRWTexture(RenderTarget* inRenderTarget, int idx)
+{
+	ID3D11UnorderedAccessView* target = NULL;
+	if (inRenderTarget)
+		target = inRenderTarget->GetUnorderedAccessView();
+	unsigned int initial_counts[] = { -1 };
+	mImmediateContext->CSSetUnorderedAccessViews(idx, 1, &target, initial_counts);
 }
 
 

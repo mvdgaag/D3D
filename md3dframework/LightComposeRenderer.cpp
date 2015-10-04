@@ -1,19 +1,22 @@
-#include "ReflectionRenderer.h"
-#include "Framework.h"
+#include "LightComposeRenderer.h"
 #include "ComputeShader.h"
+#include "Framework.h"
 #include "Texture.h"
 #include "RenderTarget.h"
 
-
-void ReflectionRenderer::Render(Texture* inSource, RenderTarget* inTarget)
+void LightComposeRenderer::Render(Texture* inDirect, Texture* inIndirect, Texture* inReflections, RenderTarget* inTarget)
 {
 	assert(mInitialized == true);
 
-	assert(inSource != nullptr);
+	assert(inDirect != nullptr);
+	assert(inIndirect != nullptr);
+	assert(inReflections != nullptr);
 	assert(inTarget != nullptr);
 
 	theFramework.SetComputeShader(mShader);
-	theFramework.ComputeSetTexture(inSource, 0);
+	theFramework.ComputeSetTexture(inDirect, 0);
+	theFramework.ComputeSetTexture(inIndirect, 1);
+	theFramework.ComputeSetTexture(inReflections, 2);
 	theFramework.ComputeSetRWTexture(inTarget, 0);
 
 	int groups_x = 1 + (inTarget->GetTexture()->GetWidth() - 1) / 8;
@@ -26,20 +29,22 @@ void ReflectionRenderer::Render(Texture* inSource, RenderTarget* inTarget)
 	// clear state
 	theFramework.SetComputeShader(NULL);
 	theFramework.ComputeSetTexture(NULL, 0);
+	theFramework.ComputeSetTexture(NULL, 1);
+	theFramework.ComputeSetTexture(NULL, 2);
 	theFramework.ComputeSetRWTexture(NULL, 0);
 }
 
 
-void ReflectionRenderer::Init()
+void LightComposeRenderer::Init()
 {
 	CleanUp();
-	mShader = new ComputeShader("ReflectionRendererCompute");
-	mShader->InitFromFile("Shaders/ReflectionCompute.hlsl");
+	mShader = new ComputeShader("LightComposeCompute");
+	mShader->InitFromFile("Shaders/LightComposeCompute.hlsl");
 	mInitialized = true;
 }
 
 
-void ReflectionRenderer::CleanUp()
+void LightComposeRenderer::CleanUp()
 {
 	if (mShader)
 	{
@@ -48,4 +53,3 @@ void ReflectionRenderer::CleanUp()
 	}
 	mInitialized = false;
 }
-

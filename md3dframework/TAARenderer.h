@@ -8,11 +8,11 @@ class RenderTarget;
 class Texture;
 
 
-class PostProcessRenderer
+class TAARenderer
 {
 public:
-	PostProcessRenderer() { mInitialized = false; }
-	~PostProcessRenderer() { CleanUp(); }
+	TAARenderer() { mInitialized = false; }
+	~TAARenderer() { CleanUp(); }
 
 	void Init();
 	void CleanUp();

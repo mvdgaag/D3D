@@ -8,6 +8,8 @@
 #include "DepthPyramidRenderer.h"
 #include "IndirectLightingRenderer.h"
 #include "ReflectionRenderer.h"
+#include "LightComposeRenderer.h"
+#include "TAARenderer.h"
 #include "PostProcessRenderer.h"
 #include "DrawableObject.h"
 #include <assert.h>
@@ -29,6 +31,21 @@ void DeferredRenderer::Init(int inWidth, int inHeight)
 	mDirectLighting = new RenderTarget("DirectLightingRenderTarget");
 	mDirectLighting->Init(inWidth, inHeight, 1, DXGI_FORMAT_R8G8B8A8_UNORM);
 
+	mIndirectLighting = new RenderTarget("IndirectLightingRenderTarget");
+	mIndirectLighting->Init(inWidth, inHeight, 1, DXGI_FORMAT_R8G8B8A8_UNORM);
+
+	mReflections = new RenderTarget("ReflectionsRenderTarget");
+	mReflections->Init(inWidth, inHeight, 1, DXGI_FORMAT_R8G8B8A8_UNORM);
+
+	mLightComposed = new RenderTarget("LightComposedRenderTarget");
+	mLightComposed->Init(inWidth, inHeight, 1, DXGI_FORMAT_R8G8B8A8_UNORM);
+
+	mAntiAliased = new RenderTarget("AntiAliasedRenderTarget");
+	mAntiAliased->Init(inWidth, inHeight, 1, DXGI_FORMAT_R8G8B8A8_UNORM);
+
+	mPostProcessed = new RenderTarget("PostProcessedRenderTarget");
+	mPostProcessed->Init(inWidth, inHeight, 1, DXGI_FORMAT_R8G8B8A8_UNORM);
+
 	mShadowRenderer = new ShadowRenderer();
 	mShadowRenderer->Init();
 
@@ -44,6 +61,12 @@ void DeferredRenderer::Init(int inWidth, int inHeight)
 	mReflectionRenderer = new ReflectionRenderer();
 	mReflectionRenderer->Init();
 
+	mLightComposeRenderer = new LightComposeRenderer();
+	mLightComposeRenderer->Init();
+
+	mTAARenderer = new TAARenderer();
+	mTAARenderer->Init();
+
 	mPostProcessRenderer = new PostProcessRenderer();
 	mPostProcessRenderer->Init();
 
@@ -55,6 +78,22 @@ void DeferredRenderer::CleanUp()
 {
 	delete mGBuffer;
 	mGBuffer = NULL;
+
+	delete mDepthPyramid;
+	mDepthPyramid = NULL;
+	delete mDirectLighting;
+	mDirectLighting = NULL;
+	delete mIndirectLighting;
+	mIndirectLighting = NULL;
+	delete mReflections;
+	mReflections = NULL;
+	delete mLightComposed;
+	mLightComposed = NULL;
+	delete mAntiAliased;
+	mAntiAliased = NULL;
+	delete mPostProcessed;
+	mPostProcessed = NULL;
+
 	delete mShadowRenderer;
 	mShadowRenderer = NULL;
 	delete mDirectLightingRenderer;
@@ -65,6 +104,10 @@ void DeferredRenderer::CleanUp()
 	mIndirectLightingRenderer = NULL;
 	delete mReflectionRenderer;
 	mReflectionRenderer = NULL;
+	delete mLightComposeRenderer;
+	mLightComposeRenderer = NULL;
+	delete mTAARenderer;
+	mTAARenderer = NULL;
 	delete mPostProcessRenderer;
 	mPostProcessRenderer = NULL;
 }
@@ -75,6 +118,7 @@ void DeferredRenderer::Render(std::vector<DrawableObject*> inDrawList)
 	assert(mInitialized == true);
 	GeometryPass(inDrawList);
 	LightingPass();
+	PostProcessPass();
 }
 
 
@@ -103,12 +147,20 @@ void DeferredRenderer::GeometryPass(std::vector<DrawableObject*> inDrawList)
 
 void DeferredRenderer::LightingPass()
 {
-	//mShadowRenderer->Render(inDeviceContext);
+	//mShadowRenderer->Render();
 	mDirectLightingRenderer->Render(mGBuffer, mDirectLighting);
 	mDepthPyramidRenderer->Render(mGBuffer->GetRenderTarget(GBuffer::LINEAR_DEPTH)->GetTexture(), mDepthPyramid);
-	//mIndirectLightingRenderer->Render(inDeviceContext);
-	//mReflectionRenderer->Render(inDeviceContext);
-	// volumetrics and particles
-	// exposure
-	//mPostProcessRenderer->Render(inDeviceContext);
+	mIndirectLightingRenderer->Render(mDirectLighting->GetTexture(), mIndirectLighting);
+	mReflectionRenderer->Render(mIndirectLighting->GetTexture(), mReflections);
+	mLightComposeRenderer->Render(	mDirectLighting->GetTexture(),
+									mIndirectLighting->GetTexture(),
+									mReflections->GetTexture(),
+									mLightComposed);
+}
+
+
+void DeferredRenderer::PostProcessPass()
+{
+	mTAARenderer->Render(mLightComposed->GetTexture(), mAntiAliased);
+	mPostProcessRenderer->Render(mAntiAliased->GetTexture(), mPostProcessed);
 }

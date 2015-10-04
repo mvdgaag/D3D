@@ -108,6 +108,7 @@
     <ClInclude Include="float4x4.h" />
     <ClInclude Include="Framework.h" />
     <ClInclude Include="GBuffer.h" />
+    <ClInclude Include="LightComposeRenderer.h" />
     <ClInclude Include="LinearAlgebra.h" />
     <ClInclude Include="IndirectLightingRenderer.h" />
     <ClInclude Include="main.h" />
@@ -119,6 +120,7 @@
     <ClInclude Include="PixelShader.h" />
     <ClInclude Include="Sampler.h" />
     <ClInclude Include="ShadowRenderer.h" />
+    <ClInclude Include="TAARenderer.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="VertexShader.h" />
@@ -136,6 +138,7 @@
     <ClCompile Include="Framework.cpp" />
     <ClCompile Include="GBuffer.cpp" />
     <ClCompile Include="IndirectLightingRenderer.cpp" />
+    <ClCompile Include="LightComposeRenderer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="PixelShader.cpp" />
@@ -144,6 +147,7 @@
     <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="Sampler.cpp" />
     <ClCompile Include="ShadowRenderer.cpp" />
+    <ClCompile Include="TAARenderer.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="VertexShader.cpp" />
   </ItemGroup>
@@ -188,11 +192,19 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </FxCompile>
+    <FxCompile Include="Shaders\LightComposeCompute.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="Shaders\PostProcessCompute.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Shaders\ReflectionCompute.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Shaders\TemporalAACompute.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </FxCompile>

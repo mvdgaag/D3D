@@ -41,8 +41,5 @@ PS_INPUT VS(VS_INPUT input)
 	output.TexCoord = input.TexCoord.xy;
 	output.MotionVectors = mul(float4(input.Position, 1.0), MotionVectorMatrix).xy;
 	
-	float2 taa_jitter = float2(0, 0);
-	output.Position += float4(taa_jitter, 0, 0);
-
 	return output;
 }

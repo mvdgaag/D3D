@@ -1,6 +1,6 @@
 
-RWTexture2D<float> dst : register(t0);
-Texture2D<float> source : register(t1);
+RWTexture2D<float4> dst : register(u0);
+Texture2D<float4> source : register(t0);
 
 
 SamplerState LinearSampler
@@ -15,6 +15,5 @@ SamplerState LinearSampler
 void CS(uint3 DTid : SV_DispatchThreadID)
 {
 	float2 coord = float2(DTid.x, DTid.y);
-		float val = source.SampleLevel(LinearSampler, coord, 0);
-	dst[coord] = val;
+	dst[coord] = source[coord];
 }

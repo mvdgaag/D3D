@@ -6,8 +6,10 @@
 class DeferredRenderer;
 class PixelShader;
 class VertexShader;
+class ComputeShader;
 class Texture;
 class Sampler;
+class RenderTarget;
 class Mesh;
 class ConstantBuffer;
 class DrawableObject;
@@ -36,13 +38,22 @@ public:
 	Camera* GetCamera() { return mCamera; }
 	int GetScreenWidth() { return mWidth; }
 	int GetScreenHeight() { return mHeight; }
+	int GetFrameID() { return mFrameID; }
 
 	void SetVertexShader(VertexShader* inVertexShader);
 	void SetPixelShader(PixelShader* inPixelShader);
+	void SetComputeShader(ComputeShader* inComputeShader);
+
 	void SetTexture(Texture* inTexture, int idx);
 	void SetSampler(Sampler* inSampler, int idx);
 	void SetTextureAndSampler(Texture* inTexture, Sampler* inSampler, int idx);
 	void SetConstantBuffer(ConstantBuffer* inConstantBuffer);
+
+	void ComputeSetTexture(Texture* inTexture, int idx);
+	void ComputeSetRWTexture(RenderTarget* inRenderTarget, int idx);
+	void ComputeDispatch(unsigned int inX, unsigned int inY, unsigned int inZ) { mImmediateContext->Dispatch(inX, inY, inZ); }
+	void Flush() { mImmediateContext->Flush(); }
+
 	void DrawMesh(Mesh* inMesh);
 
 private:
@@ -72,7 +83,7 @@ private:
 	Sampler*						mFullScreenQuadPixelSampler = nullptr;
 
 	// other globals
-	int								mWidth, mHeight;
+	int								mWidth, mHeight, mFrameID;
 	Camera*							mCamera = nullptr;
 	DeferredRenderer*				mDeferredRenderer = nullptr;
 	std::vector<DrawableObject*>	mObjectList;

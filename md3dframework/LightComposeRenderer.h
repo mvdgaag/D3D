@@ -8,15 +8,15 @@ class RenderTarget;
 class Texture;
 
 
-class PostProcessRenderer
+class LightComposeRenderer
 {
 public:
-	PostProcessRenderer() { mInitialized = false; }
-	~PostProcessRenderer() { CleanUp(); }
+	LightComposeRenderer() { mInitialized = false; }
+	~LightComposeRenderer() { CleanUp(); }
 
 	void Init();
 	void CleanUp();
-	void Render(Texture* inSource, RenderTarget* inTarget);
+	void Render(Texture* inDirect, Texture* inIndirect, Texture* inReflections, RenderTarget* inTarget);
 
 private:
 	ComputeShader* mShader = nullptr;
