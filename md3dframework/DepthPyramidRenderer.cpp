@@ -1,5 +1,5 @@
 #include "DepthPyramidRenderer.h"
-#include "FrameWork.h"
+#include "Framework.h"
 #include "ComputeShader.h"
 #include "Texture.h"
 #include "RenderTarget.h"

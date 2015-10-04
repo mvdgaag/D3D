@@ -1,18 +1,18 @@
 //{{NO_DEPENDENCIES}}
 // Microsoft Visual C++ generated include file.
-// Used by md3dframework.rc
+// Used by md3dFramework.rc
 //
 
 #define IDS_APP_TITLE			103
 
 #define IDR_MAINFRAME			128
-#define IDD_MD3DFRAMEWORK_DIALOG	102
+#define IDD_MD3DFramework_DIALOG	102
 #define IDD_ABOUTBOX			103
 #define IDM_ABOUT				104
 #define IDM_EXIT				105
-#define IDI_MD3DFRAMEWORK			107
+#define IDI_MD3DFramework			107
 #define IDI_SMALL				108
-#define IDC_MD3DFRAMEWORK			109
+#define IDC_MD3DFramework			109
 #define IDC_MYICON				2
 #ifndef IDC_STATIC
 #define IDC_STATIC				-1

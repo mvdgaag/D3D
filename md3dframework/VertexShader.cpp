@@ -1,7 +1,7 @@
 #include "VertexShader.h"
 #include <d3dcompiler.h>
 #include "main.h"
-#include "FrameWork.h"
+#include "Framework.h"
 
 
 void VertexShader::InitFromFile(std::string inFileName)

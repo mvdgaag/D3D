@@ -106,7 +106,7 @@
     <ClInclude Include="float3.h" />
     <ClInclude Include="float4.h" />
     <ClInclude Include="float4x4.h" />
-    <ClInclude Include="FrameWork.h" />
+    <ClInclude Include="Framework.h" />
     <ClInclude Include="GBuffer.h" />
     <ClInclude Include="LinearAlgebra.h" />
     <ClInclude Include="IndirectLightingRenderer.h" />
@@ -133,7 +133,7 @@
     <ClCompile Include="DepthPyramidRenderer.cpp" />
     <ClCompile Include="DirectLightingRenderer.cpp" />
     <ClCompile Include="DrawableObject.cpp" />
-    <ClCompile Include="FrameWork.cpp" />
+    <ClCompile Include="Framework.cpp" />
     <ClCompile Include="GBuffer.cpp" />
     <ClCompile Include="IndirectLightingRenderer.cpp" />
     <ClCompile Include="main.cpp" />

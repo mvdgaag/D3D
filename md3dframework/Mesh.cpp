@@ -2,7 +2,7 @@
 #include <assert.h>
 #include "LinearAlgebra.h"
 #include "main.h"
-#include "FrameWork.h"
+#include "Framework.h"
 
 
 struct SimpleVertex

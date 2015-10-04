@@ -1,6 +1,6 @@
 #include "ConstantBuffer.h"
 #include "main.h"
-#include "FrameWork.h"
+#include "Framework.h"
 
 
 void ConstantBuffer::Init(int inByteWidth)

@@ -1,6 +1,6 @@
 #include "Camera.h"
 #include "main.h"
-#include "FrameWork.h"
+#include "Framework.h"
 
 
 Camera::Camera()

@@ -311,3 +311,8 @@ void FrameWork::CleanUpDevice()
 	if (mD3DDevice) mD3DDevice->Release();
 }
 
+
+void Framework::SetVertexShader(VertexShader* inVertexShader)
+{
+
+}

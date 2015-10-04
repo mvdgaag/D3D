@@ -1,5 +1,5 @@
 #include "DirectLightingRenderer.h"
-#include "FrameWork.h"
+#include "Framework.h"
 #include "ComputeShader.h"
 #include "GBuffer.h"
 #include "RenderTarget.h"

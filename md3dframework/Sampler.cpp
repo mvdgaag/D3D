@@ -1,6 +1,6 @@
 #include "Sampler.h"
 #include "main.h"
-#include "FrameWork.h"
+#include "Framework.h"
 #include <assert.h>
 
 

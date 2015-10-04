@@ -17,7 +17,7 @@
 #include "resource.h"
 
 #include "main.h"
-#include "FrameWork.h"
+#include "Framework.h"
 
 // for content
 #include "DrawableObject.h"
@@ -107,7 +107,7 @@ HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow)
 	wcex.cbClsExtra = 0;
 	wcex.cbWndExtra = 0;
 	wcex.hInstance = hInstance;
-	wcex.hIcon = LoadIcon(hInstance, (LPCTSTR)IDI_MD3DFRAMEWORK);
+	wcex.hIcon = LoadIcon(hInstance, (LPCTSTR)IDI_MD3DFramework);
 	wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
 	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	wcex.lpszMenuName = nullptr;

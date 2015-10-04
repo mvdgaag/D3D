@@ -1,7 +1,7 @@
 #include "PixelShader.h"
 #include <d3dcompiler.h>
 #include "main.h"
-#include "FrameWork.h"
+#include "Framework.h"
 
 
 void PixelShader::InitFromFile(std::string inFileName)

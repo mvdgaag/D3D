@@ -1,5 +1,5 @@
 #include "main.h"
-#include "FrameWork.h"
+#include "Framework.h"
 #include "DrawableObject.h"
 #include "Mesh.h"
 #include "Texture.h"

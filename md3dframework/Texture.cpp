@@ -1,7 +1,7 @@
 #include "Texture.h"
 #include "DDSTextureLoader.h"
 #include "main.h"
-#include "FrameWork.h"
+#include "Framework.h"
 #include <string>
 #include <assert.h>
 

@@ -33,6 +33,8 @@ public:
 	int GetScreenWidth() { return mWidth; }
 	int GetScreenHeight() { return mHeight; }
 
+	void SetVertexShader(VertexShader* inVertexShader);
+
 private:
 	FrameWork() {}
 	FrameWork(FrameWork const&) = delete;
