@@ -17,21 +17,9 @@ Camera::~Camera()
 }
 
 
-float halton23x[8] = {	1.0f/2.0f, 1.0f/4.0f, 3.0f/4.0f, 1.0f/8.0f, 
-						5.0f/8.0f, 3.0f/8.0f, 7.0f/8.0f, 1.0f/16.0f };
-float halton23y[8] = {	1.0f/3.0f, 2.0f/3.0f, 1.0f/9.0f, 4.0f/9.0f,
-						7.0f/9.0f, 2.0f/9.0f, 5.0f/9.0f, 8.0f/9.0f };
-
-
 DirectX::XMMATRIX Camera::GetProjectionMatrix()
 {
-	//return mProjection;
-	static DirectX::XMMATRIX jittered_matrix;
-	jittered_matrix = mProjection;
-	int idx = theFramework.GetFrameID() % 8;
-	jittered_matrix(0, 2) += (halton23x[idx] / 800.0f);
-	jittered_matrix(1, 2) += (halton23y[idx] / 600.0f);
-	return jittered_matrix;
+	return mProjection;
 }
 
 

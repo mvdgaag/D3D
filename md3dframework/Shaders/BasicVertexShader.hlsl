@@ -1,9 +1,8 @@
 cbuffer cMatrices : register(b0)
 {
-	matrix View;
-	matrix Projection;
-	matrix WorldViewProjection;
-	matrix MotionVectorMatrix;
+	matrix MVP;
+	matrix prevMVP;
+	float4 offsets;
 };
 
 
@@ -33,13 +32,18 @@ PS_INPUT VS(VS_INPUT input)
 {
 	PS_INPUT output =		(PS_INPUT)0;
 
-	float4x4 VP = mul(View, Projection);
-
-	output.Position = mul(float4(input.Position, 1.0), VP);
-	output.Normal = mul(float4(input.Normal, 1.0), VP).xyz;
-	output.Tangent = mul(float4(input.Tangent, 1.0), VP).xyz;
+	output.Position = mul(float4(input.Position, 1.0), MVP);
+	output.Normal = mul(float4(input.Normal, 1.0), MVP).xyz;
+	output.Tangent = mul(float4(input.Tangent, 1.0), MVP).xyz;
 	output.TexCoord = input.TexCoord.xy;
-	output.MotionVectors = mul(float4(input.Position, 1.0), MotionVectorMatrix).xy;
+
+	// motion vectors
+	float4 prevPos = mul(float4(input.Position, 1.0), prevMVP);
+	output.MotionVectors = (prevPos .xy / prevPos.w) * 0.5 + 0.5;
+	output.MotionVectors -= (output.Position.xy / output.Position.w) * 0.5 + 0.5;
 	
+	// jitter for TAA
+	output.Position.xy += offsets.xy;
+
 	return output;
 }

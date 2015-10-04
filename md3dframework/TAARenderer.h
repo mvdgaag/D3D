@@ -16,7 +16,7 @@ public:
 
 	void Init();
 	void CleanUp();
-	void Render(Texture* inSource, RenderTarget* inTarget);
+	void Render(Texture* inSource, RenderTarget* inHistory, Texture* inMotionVectors, RenderTarget* inTarget);
 
 private:
 	ComputeShader* mShader = nullptr;

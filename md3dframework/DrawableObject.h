@@ -42,12 +42,13 @@ private:
 
 	struct ConstantBufferData
 	{
-		DirectX::XMMATRIX View;
-		DirectX::XMMATRIX Projection;
-		DirectX::XMMATRIX WVP;
-		DirectX::XMMATRIX MV;
+		DirectX::XMMATRIX MVP;
+		DirectX::XMMATRIX prevMVP;
+		DirectX::XMFLOAT4 offsets;
 	};
 	ConstantBufferData mConstantBufferData;
+	DirectX::XMMATRIX mPrevViewMatrix;
+	DirectX::XMMATRIX mPrevProjectionMatrix;
 	
 	Mesh* mMesh = nullptr;
 

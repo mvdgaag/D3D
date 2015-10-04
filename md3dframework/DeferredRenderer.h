@@ -59,6 +59,7 @@ private:
 	RenderTarget* mReflections = nullptr;
 	RenderTarget* mLightComposed = nullptr;
 	RenderTarget* mAntiAliased = nullptr;
+	RenderTarget* mAAHistoryFrame = nullptr;
 	RenderTarget* mPostProcessed = nullptr;
 
 	ID3D11Device* mDevice = nullptr;

@@ -30,6 +30,7 @@ public:
 
 	HRESULT InitDevice(HWND hWnd);
 	HRESULT InitFullScreenQuad();
+	void InitHelpers();
 	void Render();
 	void RegisterObject(DrawableObject* obj) { mObjectList.push_back(obj); }
 	void CleanUpDevice();
@@ -56,8 +57,11 @@ public:
 
 	void DrawMesh(Mesh* inMesh);
 
+	void CopyToRenderTarget(RenderTarget* inTarget, Texture* inSource);
+
 private:
 	Framework() {}
+	~Framework();
 	Framework(Framework const&) = delete;
 	void operator=(Framework const&) = delete;
 
@@ -81,6 +85,9 @@ private:
 	PixelShader*					mFullScreenQuadPixelShader = nullptr;
 	ID3D11InputLayout*				mVertexLayout = nullptr;
 	Sampler*						mFullScreenQuadPixelSampler = nullptr;
+
+	// helpers
+	ComputeShader*					mCopyShader = nullptr;
 
 	// other globals
 	int								mWidth, mHeight, mFrameID;

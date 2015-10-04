@@ -43,6 +43,9 @@ void DeferredRenderer::Init(int inWidth, int inHeight)
 	mAntiAliased = new RenderTarget("AntiAliasedRenderTarget");
 	mAntiAliased->Init(inWidth, inHeight, 1, DXGI_FORMAT_R8G8B8A8_UNORM);
 
+	mAAHistoryFrame = new RenderTarget("AntiAliasHistoryRenderTarget");
+	mAAHistoryFrame->Init(inWidth, inHeight, 1, DXGI_FORMAT_R8G8B8A8_UNORM);
+
 	mPostProcessed = new RenderTarget("PostProcessedRenderTarget");
 	mPostProcessed->Init(inWidth, inHeight, 1, DXGI_FORMAT_R8G8B8A8_UNORM);
 
@@ -149,7 +152,7 @@ void DeferredRenderer::LightingPass()
 {
 	//mShadowRenderer->Render();
 	mDirectLightingRenderer->Render(mGBuffer, mDirectLighting);
-	mDepthPyramidRenderer->Render(mGBuffer->GetRenderTarget(GBuffer::LINEAR_DEPTH)->GetTexture(), mDepthPyramid);
+	mDepthPyramidRenderer->Render(mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), mDepthPyramid);
 	mIndirectLightingRenderer->Render(mDirectLighting->GetTexture(), mIndirectLighting);
 	mReflectionRenderer->Render(mIndirectLighting->GetTexture(), mReflections);
 	mLightComposeRenderer->Render(	mDirectLighting->GetTexture(),
@@ -161,6 +164,6 @@ void DeferredRenderer::LightingPass()
 
 void DeferredRenderer::PostProcessPass()
 {
-	mTAARenderer->Render(mLightComposed->GetTexture(), mAntiAliased);
+	mTAARenderer->Render(mLightComposed->GetTexture(), mAAHistoryFrame, mGBuffer->GetTexture(GBuffer::MOTION_VECTORS), mAntiAliased);
 	mPostProcessRenderer->Render(mAntiAliased->GetTexture(), mPostProcessed);
 }

@@ -15,6 +15,25 @@
 #include "Mesh.h"
 
 
+
+Framework::~Framework()
+{
+	mDeferredRenderer->CleanUp();
+	delete mDeferredRenderer;
+	delete mCamera;
+	delete mCopyShader;
+	if (mFullScreenQuadVertexBuffer) 
+		mFullScreenQuadVertexBuffer->Release();
+	if (mFullScreenQuadIndexBuffer)
+		mFullScreenQuadIndexBuffer->Release();
+	if (mVertexLayout)
+		mVertexLayout->Release();
+	delete mFullScreenQuadVertexShader;
+	delete mFullScreenQuadPixelShader;
+	delete mFullScreenQuadPixelSampler;
+	CleanUpDevice();
+}
+
 //--------------------------------------------------------------------------------------
 // Create Direct3D device and swap chain
 //--------------------------------------------------------------------------------------
@@ -249,6 +268,13 @@ HRESULT Framework::InitFullScreenQuad()
 }
 
 
+void Framework::InitHelpers()
+{
+	mCopyShader = new ComputeShader("CopyShader");
+	mCopyShader->InitFromFile("Shaders/CopyCompute.hlsl");
+}
+
+
 
 float a = 0.666;
 void Framework::Render()
@@ -257,7 +283,7 @@ void Framework::Render()
 	mCamera->SetPosition(5 * sin(a), -3.0, 5.0 * cos(a));
 	mCamera->SetTarget(0.0, 0.0, 0.0);
 	mCamera->SetUp(0.0, 1.0, 0.0);
-	a += 0.001;
+	a += 0.01;
 
 	// render to gbuffer
 	mDeferredRenderer->Render(mObjectList);
@@ -275,7 +301,9 @@ void Framework::Render()
 
 	SetVertexShader(mFullScreenQuadVertexShader);
 	SetPixelShader(mFullScreenQuadPixelShader);
-	//SetTextureAndSampler(mDeferredRenderer->GetGBuffer()->GetTexture(GBuffer::NORMAL), mFullScreenQuadPixelSampler, 0);
+
+	// TODO: fix motionvectors
+	//SetTextureAndSampler(mDeferredRenderer->GetGBuffer()->GetTexture(GBuffer::MOTION_VECTORS), mFullScreenQuadPixelSampler, 0);
 	SetTextureAndSampler(mDeferredRenderer->GetAntiAliased()->GetTexture(), mFullScreenQuadPixelSampler, 0);
 	
 	// draw
@@ -298,10 +326,6 @@ void Framework::Render()
 
 void Framework::CleanUpDevice()
 {
-	mDeferredRenderer->CleanUp();
-	delete mDeferredRenderer;
-	delete mCamera;
-
 	if (mImmediateContext) mImmediateContext->ClearState();
 	if (mRenderTargetView) mRenderTargetView->Release();
 	if (mSwapChain1) mSwapChain1->Release();
@@ -409,4 +433,27 @@ void Framework::DrawMesh(Mesh* inMesh)
 	mImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
 	mImmediateContext->DrawIndexed(inMesh->GetNumIndices(), 0, 0);
+}
+
+
+void Framework::CopyToRenderTarget(RenderTarget* inTarget, Texture* inSource)
+{
+	assert(inSource != nullptr);
+	assert(inTarget != nullptr);
+
+	SetComputeShader(mCopyShader);
+	ComputeSetTexture(inSource, 0);
+	ComputeSetRWTexture(inTarget, 0);
+
+	int groups_x = 1 + (inTarget->GetTexture()->GetWidth() - 1) / 8;
+	int groups_y = 1 + (inTarget->GetTexture()->GetHeight() - 1) / 8;
+	ComputeDispatch(groups_x, groups_y, 1);
+
+	// TODO: required?
+	Flush();
+
+	// clear state
+	theFramework.SetComputeShader(NULL);
+	theFramework.ComputeSetTexture(NULL, 0);
+	theFramework.ComputeSetRWTexture(NULL, 0);
 }
