@@ -61,14 +61,14 @@ void RenderTarget::CleanUp()
 }
 
 
-ID3D11RenderTargetView* RenderTarget::GetRenderTargetView(int inMipLevel = 0)
+ID3D11RenderTargetView* RenderTarget::GetRenderTargetView(int inMipLevel)
 {
 	assert(inMipLevel < mTexture->GetMipLevels());
 	return mRenderTargetViews[inMipLevel];
 }
 
 
-ID3D11UnorderedAccessView* RenderTarget::GetUnorderedAccessView(int inMipLevel = 0)
+ID3D11UnorderedAccessView* RenderTarget::GetUnorderedAccessView(int inMipLevel)
 {
 	assert(inMipLevel < mTexture->GetMipLevels());
 	return mUnorderedAccessViews[inMipLevel];

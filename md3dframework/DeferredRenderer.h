@@ -26,6 +26,7 @@ public:
 	void Render(std::vector<DrawableObject*> inDrawList);
 	GBuffer* GetGBuffer() { return mGBuffer; }
 	RenderTarget* GetDepthPyramid() { return mDepthPyramid; }
+	RenderTarget* GetDirectLighting() { return mDirectLighting; }
 
 private:
 	void GeometryPass(std::vector<DrawableObject*> inDrawList);

@@ -273,6 +273,7 @@ void FrameWork::Render()
 
 	// bind shader resources
 	ID3D11ShaderResourceView* output_texture = mDeferredRenderer->GetGBuffer()->GetTexture(GBuffer::NORMAL)->GetShaderResourceView();
+	output_texture = mDeferredRenderer->GetDirectLighting()->GetTexture()->GetShaderResourceView();
 	
 	mImmediateContext->PSSetShaderResources(0, 1, &output_texture);
 	

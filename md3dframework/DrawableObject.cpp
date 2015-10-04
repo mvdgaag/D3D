@@ -61,7 +61,8 @@ void DrawableObject::Draw()
 	assert(mMesh != NULL);
 	assert(mConstantBuffer != NULL);
 
-	ID3D11DeviceContext* context = theFramework.GetContext();
+	ID3D11DeviceContext* context;
+	theFramework.GetDevice()->GetImmediateContext(&context);
 
 	// set shaders
 	context->VSSetShader(mVertexShader->GetHandle(), NULL, 0);

@@ -11,7 +11,7 @@ class GBuffer;
 class DirectLightingRenderer
 {
 public:
-	DirectLightingRenderer() {}
+	DirectLightingRenderer() { mInitialized = false; }
 	~DirectLightingRenderer() { CleanUp(); }
 
 	void Init();
@@ -20,5 +20,6 @@ public:
 
 private:
 	ComputeShader* mShader = nullptr;
+	bool mInitialized = false;
 };
 

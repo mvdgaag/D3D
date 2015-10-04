@@ -15,8 +15,8 @@ public:
 	~RenderTarget() { CleanUp(); }
 
 	void						Init(int inWidth, int inHeight, int inMipLevels, DXGI_FORMAT inFormat);
-	ID3D11RenderTargetView*		GetRenderTargetView(int inMipLevel);
-	ID3D11UnorderedAccessView*	GetUnorderedAccessView(int inMipLevel);
+	ID3D11RenderTargetView*		GetRenderTargetView(int inMipLevel = 0);
+	ID3D11UnorderedAccessView*	GetUnorderedAccessView(int inMipLevel = 0);
 	Texture*					GetTexture() { return mTexture; }
 	void						CleanUp();
 	ResourceType				GetResourceType() const { return ResourceType::RENDER_TARGET; };

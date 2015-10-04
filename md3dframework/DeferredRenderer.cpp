@@ -81,7 +81,9 @@ void DeferredRenderer::Render(std::vector<DrawableObject*> inDrawList)
 void DeferredRenderer::GeometryPass(std::vector<DrawableObject*> inDrawList)
 {
 	std::vector<ID3D11RenderTargetView*> gbuffer_targets = mGBuffer->GetRenderTargetViewArray();
-	ID3D11DeviceContext* context = theFramework.GetContext();
+	
+	ID3D11DeviceContext* context;
+	theFramework.GetDevice()->GetImmediateContext(&context);
 
 	for (int i = 0; i < GBuffer::NUM_RENDER_TARGETS; i++)
 	context->ClearRenderTargetView(gbuffer_targets[i], DirectX::Colors::Red);

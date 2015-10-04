@@ -24,13 +24,14 @@ void DepthPyramidRenderer::Render(Texture* inSource, RenderTarget* inTarget)
 	ID3D11UnorderedAccessView* targets[] = {	inTarget->GetUnorderedAccessView(0),
 												inTarget->GetUnorderedAccessView(1),
 												inTarget->GetUnorderedAccessView(2) };
-	context->CSSetUnorderedAccessViews(0, 3, targets, NULL);
+	unsigned int initial_counts[] = { -1 };
+	context->CSSetUnorderedAccessViews(0, 3, targets, initial_counts);
 
 	int groups_x = 1 + (inTarget->GetTexture()->GetWidth() - 1) / 8;
 	int groups_y = 1 + (inTarget->GetTexture()->GetHeight() - 1) / 8;
 	context->Dispatch(groups_x, groups_y, 1);
 	
-	// required?
+	// TODO: required?
 	context->Flush();
 
 	// clear state
