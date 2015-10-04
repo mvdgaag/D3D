@@ -19,6 +19,9 @@
     <Filter Include="Shaders">
       <UniqueIdentifier>{68315d72-dfc3-4bab-afb0-e2c2f0d47ba1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Textures">
+      <UniqueIdentifier>{a42eb6e4-fde0-4f80-ba2e-e3e131ae23c4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -191,6 +194,21 @@
     </Image>
     <Image Include="md3dframework.ico">
       <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Textures\photosculpt-squarebricks-ambientocclusion.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="Textures\photosculpt-squarebricks-depth.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="Textures\photosculpt-squarebricks-diffuse.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="Textures\photosculpt-squarebricks-normal.dds">
+      <Filter>Textures</Filter>
+    </Image>
+    <Image Include="Textures\photosculpt-squarebricks-specular.dds">
+      <Filter>Textures</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>

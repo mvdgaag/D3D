@@ -189,20 +189,17 @@ void InitContent()
 	g_vertex_shader->InitFromFile("Shaders/BasicVertexShader.hlsl");
 
 	g_diffuse_texture = new Texture("DiffuseTexture");
-	g_diffuse_texture->InitFromFile("seafloor.dds");
-
+	g_diffuse_texture->InitFromFile("Textures/photosculpt-squarebricks-diffuse.dds");
 	g_diffuse_sampler = new Sampler("DiffuseSampler");
 	g_diffuse_sampler->Init();
 
 	g_normal_texture = new Texture("NormalTexture");
-	g_normal_texture->Init(512, 512, 1, DXGI_FORMAT_R8G8B8A8_UNORM);
-
+	g_normal_texture->InitFromFile("Textures/photosculpt-squarebricks-normal.dds");
 	g_normal_sampler = new Sampler("NormalSampler");
 	g_normal_sampler->Init();
 
 	g_material_texture = new Texture("MaterialTexture");
-	g_material_texture->Init(512, 512, 1, DXGI_FORMAT_R8G8B8A8_UNORM);
-
+	g_material_texture->InitFromFile("Textures/photosculpt-squarebricks-specular.dds");
 	g_material_sampler = new Sampler("MaterialSampler");
 	g_material_sampler->Init();
 

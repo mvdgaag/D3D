@@ -248,7 +248,7 @@ float a = 0.666;
 void Framework::Render()
 {
 	// setup camera
-	mCamera->SetPosition(10.0 * sin(a), -5.0, 10.0 * cos(a));
+	mCamera->SetPosition(5 * sin(a), -3.0, 5.0 * cos(a));
 	mCamera->SetTarget(0.0, 0.0, 0.0);
 	mCamera->SetUp(0.0, 1.0, 0.0);
 	a += 0.001;

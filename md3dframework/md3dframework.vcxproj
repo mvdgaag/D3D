@@ -153,6 +153,11 @@
   <ItemGroup>
     <Image Include="md3dframework.ico" />
     <Image Include="small.ico" />
+    <Image Include="Textures\photosculpt-squarebricks-ambientocclusion.dds" />
+    <Image Include="Textures\photosculpt-squarebricks-depth.dds" />
+    <Image Include="Textures\photosculpt-squarebricks-diffuse.dds" />
+    <Image Include="Textures\photosculpt-squarebricks-normal.dds" />
+    <Image Include="Textures\photosculpt-squarebricks-specular.dds" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\BasicFragmentShader.hlsl">
