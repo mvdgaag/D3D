@@ -280,8 +280,8 @@ float a = 0.666;
 void Framework::Render()
 {
 	// setup camera
-	mCamera->SetPosition(5 * sin(a), -3.0, 5.0 * cos(a));
-	mCamera->SetTarget(0.0, 0.0, 0.0);
+	mCamera->SetPosition(2 * sin(a), -3.0, -3.0);// 5.0 * cos(a));
+	mCamera->SetTarget(2 * sin(a), 0.0, 0.0);
 	mCamera->SetUp(0.0, 1.0, 0.0);
 	a += 0.01;
 
@@ -303,7 +303,7 @@ void Framework::Render()
 	SetPixelShader(mFullScreenQuadPixelShader);
 
 	// TODO: fix motionvectors
-	//SetTextureAndSampler(mDeferredRenderer->GetGBuffer()->GetTexture(GBuffer::MOTION_VECTORS), mFullScreenQuadPixelSampler, 0);
+	SetTextureAndSampler(mDeferredRenderer->GetGBuffer()->GetTexture(GBuffer::MOTION_VECTORS), mFullScreenQuadPixelSampler, 0);
 	SetTextureAndSampler(mDeferredRenderer->GetAntiAliased()->GetTexture(), mFullScreenQuadPixelSampler, 0);
 	
 	// draw
