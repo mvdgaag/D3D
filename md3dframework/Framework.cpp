@@ -306,7 +306,6 @@ void Framework::Render()
 	SetVertexShader(mFullScreenQuadVertexShader);
 	SetPixelShader(mFullScreenQuadPixelShader);
 
-	SetTextureAndSampler(mDeferredRenderer->GetGBuffer()->GetTexture(GBuffer::MOTION_VECTORS), mDefaultPointSampler, 0);
 	SetTextureAndSampler(mDeferredRenderer->GetAntiAliased()->GetTexture(), mDefaultPointSampler, 0);
 	
 	// draw

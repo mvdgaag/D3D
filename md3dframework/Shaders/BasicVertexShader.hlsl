@@ -33,8 +33,8 @@ PS_INPUT VS(VS_INPUT input)
 	PS_INPUT output =		(PS_INPUT)0;
 
 	output.Position = mul(float4(input.Position, 1.0), MVP);
-	output.Normal = mul(float4(input.Normal, 1.0), MVP).xyz;
-	output.Tangent = mul(float4(input.Tangent, 1.0), MVP).xyz;
+	output.Normal = mul(float4(input.Normal, 0.0), MVP).xyz;
+	output.Tangent = mul(float4(input.Tangent, 0.0), MVP).xyz;
 	output.TexCoord = input.TexCoord.xy;
 
 	// motion vectors

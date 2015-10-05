@@ -31,9 +31,12 @@ struct PS_OUTPUT
 
 float3 NormalMap(float3 inGeometryNormal, float3 inTangent, float2 inTexCoord)
 {
-	float3 result = inGeometryNormal;
-	result += 0.0001 * cNormalTexture.Sample(cNormalSampler, inTexCoord).xyz;
-	return result;
+	float3 normal = normalize(inGeometryNormal);
+	float3 tangent = normalize(inTangent);
+	float3 bi_tangent = cross(tangent, normal);
+	float3 tex_normal = cNormalTexture.Sample(cNormalSampler, inTexCoord).xyz * 2.0 - 1.0;
+	float3x3 TBN = float3x3(tangent, bi_tangent, normal);
+	return normalize(mul(tex_normal, TBN));	
 }
 
 
