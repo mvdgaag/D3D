@@ -2,14 +2,10 @@ RWTexture2D<float4> dst : register(u0);
 Texture2D<float4> source : register(t0);
 Texture2D<float4> history : register(t1);
 Texture2D<float2> motionVectors : register(t2);
+SamplerState sourceSampler : register(s0);
+SamplerState historySamper : register(s1);
+SamplerState motionVectorSamper : register(s2);
 
-
-SamplerState LinearSampler
-{
-	Filter = MIN_MAG_MIP_LINEAR;
-	AddressU = Clamp;
-	AddressV = Clamp;
-};
 
 
 [numthreads(8, 8, 1)]
@@ -23,7 +19,7 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	float2 mv = motionVectors[coord];
 	float2 history_coord = coord;
 	float2 history_uv = (coord / float2(800, 600) -mv);
-	float4 history_val = history.SampleLevel(LinearSampler, history_uv, 0);
+	float4 history_val = history.SampleLevel(historySamper, history_uv, 0);
 	
 	// neighborhood clamp
 	float4 valn = source[coord + int2(0, 1)];

@@ -15,10 +15,10 @@ void DirectLightingRenderer::Render(GBuffer* inSource, RenderTarget* inTarget)
 	assert(inTarget != nullptr);
 
 	theFramework.SetComputeShader(mShader);
-	theFramework.ComputeSetTexture(inSource->GetTexture(GBuffer::LINEAR_DEPTH), 0);
-	theFramework.ComputeSetTexture(inSource->GetTexture(GBuffer::NORMAL), 1);
-	theFramework.ComputeSetTexture(inSource->GetTexture(GBuffer::DIFFUSE), 2);
-	theFramework.ComputeSetTexture(inSource->GetTexture(GBuffer::MATERIAL), 3);
+	theFramework.ComputeSetTextureAndSampler(inSource->GetTexture(GBuffer::LINEAR_DEPTH), theFramework.GetPointSampler(), 0);
+	theFramework.ComputeSetTextureAndSampler(inSource->GetTexture(GBuffer::NORMAL), theFramework.GetPointSampler(), 1);
+	theFramework.ComputeSetTextureAndSampler(inSource->GetTexture(GBuffer::DIFFUSE), theFramework.GetPointSampler(), 2);
+	theFramework.ComputeSetTextureAndSampler(inSource->GetTexture(GBuffer::MATERIAL), theFramework.GetPointSampler(), 3);
 	theFramework.ComputeSetRWTexture(inTarget, 0);
 
 	int groups_x = 1 + (inTarget->GetTexture()->GetWidth() - 1) / 8;
@@ -30,10 +30,10 @@ void DirectLightingRenderer::Render(GBuffer* inSource, RenderTarget* inTarget)
 
 	// clear state
 	theFramework.SetComputeShader(NULL);
-	theFramework.ComputeSetTexture(NULL, 0);
-	theFramework.ComputeSetTexture(NULL, 1);
-	theFramework.ComputeSetTexture(NULL, 2);
-	theFramework.ComputeSetTexture(NULL, 3);
+	theFramework.ComputeSetTextureAndSampler(NULL, NULL, 0);
+	theFramework.ComputeSetTextureAndSampler(NULL, NULL, 1);
+	theFramework.ComputeSetTextureAndSampler(NULL, NULL, 2);
+	theFramework.ComputeSetTextureAndSampler(NULL, NULL, 3);
 	theFramework.ComputeSetRWTexture(NULL, 0);
 }
 

@@ -13,7 +13,7 @@ void ReflectionRenderer::Render(Texture* inSource, RenderTarget* inTarget)
 	assert(inTarget != nullptr);
 
 	theFramework.SetComputeShader(mShader);
-	theFramework.ComputeSetTexture(inSource, 0);
+	theFramework.ComputeSetTextureAndSampler(inSource, theFramework.GetPointSampler(), 0);
 	theFramework.ComputeSetRWTexture(inTarget, 0);
 
 	int groups_x = 1 + (inTarget->GetTexture()->GetWidth() - 1) / 8;
@@ -25,7 +25,7 @@ void ReflectionRenderer::Render(Texture* inSource, RenderTarget* inTarget)
 
 	// clear state
 	theFramework.SetComputeShader(NULL);
-	theFramework.ComputeSetTexture(NULL, 0);
+	theFramework.ComputeSetTextureAndSampler(NULL, NULL, 0);
 	theFramework.ComputeSetRWTexture(NULL, 0);
 }
 

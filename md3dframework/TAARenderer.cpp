@@ -15,9 +15,9 @@ void TAARenderer::Render(Texture* inSource, RenderTarget* inHistory, Texture* in
 	assert(inTarget != nullptr);
 
 	theFramework.SetComputeShader(mShader);
-	theFramework.ComputeSetTexture(inSource, 0);
-	theFramework.ComputeSetTexture(inHistory->GetTexture(), 1);
-	theFramework.ComputeSetTexture(inMotionVectors, 2);
+	theFramework.ComputeSetTextureAndSampler(inSource, theFramework.GetPointSampler(), 0);
+	theFramework.ComputeSetTextureAndSampler(inHistory->GetTexture(), theFramework.GetLinearSampler(), 1);
+	theFramework.ComputeSetTextureAndSampler(inMotionVectors, theFramework.GetPointSampler(), 2);
 	theFramework.ComputeSetRWTexture(inTarget, 0);
 
 	int groups_x = 1 + (inTarget->GetTexture()->GetWidth() - 1) / 8;
@@ -29,9 +29,9 @@ void TAARenderer::Render(Texture* inSource, RenderTarget* inHistory, Texture* in
 
 	// clear state
 	theFramework.SetComputeShader(NULL);
-	theFramework.ComputeSetTexture(NULL, 0);
-	theFramework.ComputeSetTexture(NULL, 1);
-	theFramework.ComputeSetTexture(NULL, 2);
+	theFramework.ComputeSetTextureAndSampler(NULL, NULL, 0);
+	theFramework.ComputeSetTextureAndSampler(NULL, NULL, 1);
+	theFramework.ComputeSetTextureAndSampler(NULL, NULL, 2);
 	theFramework.ComputeSetRWTexture(NULL, 0);
 
 	// make history copy;

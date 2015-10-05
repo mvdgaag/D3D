@@ -14,9 +14,9 @@ void LightComposeRenderer::Render(Texture* inDirect, Texture* inIndirect, Textur
 	assert(inTarget != nullptr);
 
 	theFramework.SetComputeShader(mShader);
-	theFramework.ComputeSetTexture(inDirect, 0);
-	theFramework.ComputeSetTexture(inIndirect, 1);
-	theFramework.ComputeSetTexture(inReflections, 2);
+	theFramework.ComputeSetTextureAndSampler(inDirect, theFramework.GetPointSampler(), 0);
+	theFramework.ComputeSetTextureAndSampler(inIndirect, theFramework.GetPointSampler(), 1);
+	theFramework.ComputeSetTextureAndSampler(inReflections, theFramework.GetPointSampler(), 2);
 	theFramework.ComputeSetRWTexture(inTarget, 0);
 
 	int groups_x = 1 + (inTarget->GetTexture()->GetWidth() - 1) / 8;
@@ -28,9 +28,9 @@ void LightComposeRenderer::Render(Texture* inDirect, Texture* inIndirect, Textur
 
 	// clear state
 	theFramework.SetComputeShader(NULL);
-	theFramework.ComputeSetTexture(NULL, 0);
-	theFramework.ComputeSetTexture(NULL, 1);
-	theFramework.ComputeSetTexture(NULL, 2);
+	theFramework.ComputeSetTextureAndSampler(NULL, NULL, 0);
+	theFramework.ComputeSetTextureAndSampler(NULL, NULL, 1);
+	theFramework.ComputeSetTextureAndSampler(NULL, NULL, 2);
 	theFramework.ComputeSetRWTexture(NULL, 0);
 }
 

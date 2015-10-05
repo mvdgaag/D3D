@@ -153,7 +153,7 @@ void DeferredRenderer::LightingPass()
 {
 	//mShadowRenderer->Render();
 	mDirectLightingRenderer->Render(mGBuffer, mDirectLighting);
-	mDepthPyramidRenderer->Render(mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), mDepthPyramid);
+	//mDepthPyramidRenderer->Render(mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), mDepthPyramid);
 	mIndirectLightingRenderer->Render(mDirectLighting->GetTexture(), mIndirectLighting);
 	mReflectionRenderer->Render(mIndirectLighting->GetTexture(), mReflections);
 	mLightComposeRenderer->Render(	mDirectLighting->GetTexture(),

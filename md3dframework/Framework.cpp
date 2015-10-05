@@ -30,7 +30,8 @@ Framework::~Framework()
 		mVertexLayout->Release();
 	delete mFullScreenQuadVertexShader;
 	delete mFullScreenQuadPixelShader;
-	delete mFullScreenQuadPixelSampler;
+	delete mDefaultLinearSampler;
+	delete mDefaultPointSampler;
 	CleanUpDevice();
 }
 
@@ -261,8 +262,11 @@ HRESULT Framework::InitFullScreenQuad()
 	InitData.pSysMem = quad_indices;
 	hr = mD3DDevice->CreateBuffer(&bd, &InitData, &mFullScreenQuadIndexBuffer);
 
-	mFullScreenQuadPixelSampler = new Sampler("FullScreenQuadPointSampler");
-	mFullScreenQuadPixelSampler->Init(D3D11_FILTER_MIN_MAG_MIP_POINT);
+	mDefaultPointSampler = new Sampler("DefaultPointSampler");
+	mDefaultPointSampler->Init(D3D11_FILTER_MIN_MAG_MIP_POINT);
+
+	mDefaultLinearSampler = new Sampler("DefaultLinearSampler");
+	mDefaultLinearSampler->Init(D3D11_FILTER_MIN_MAG_MIP_LINEAR);
 
 	return hr;
 }
@@ -302,9 +306,8 @@ void Framework::Render()
 	SetVertexShader(mFullScreenQuadVertexShader);
 	SetPixelShader(mFullScreenQuadPixelShader);
 
-	// TODO: fix motionvectors
-	SetTextureAndSampler(mDeferredRenderer->GetGBuffer()->GetTexture(GBuffer::MOTION_VECTORS), mFullScreenQuadPixelSampler, 0);
-	SetTextureAndSampler(mDeferredRenderer->GetAntiAliased()->GetTexture(), mFullScreenQuadPixelSampler, 0);
+	SetTextureAndSampler(mDeferredRenderer->GetGBuffer()->GetTexture(GBuffer::MOTION_VECTORS), mDefaultPointSampler, 0);
+	SetTextureAndSampler(mDeferredRenderer->GetAntiAliased()->GetTexture(), mDefaultPointSampler, 0);
 	
 	// draw
 	mImmediateContext->DrawIndexed(6, 0, 0);
@@ -407,6 +410,22 @@ void Framework::ComputeSetTexture(Texture* inTexture, int idx)
 	if (inTexture)
 		tex = inTexture->GetShaderResourceView();
 	mImmediateContext->CSSetShaderResources(idx, 1, &tex);
+}
+
+
+void Framework::ComputeSetSampler(Sampler* inSampler, int idx)
+{
+	ID3D11SamplerState* smp = NULL;
+	if (inSampler)
+		smp = inSampler->GetSamplerState();
+	mImmediateContext->CSGetSamplers(idx, 1, &smp);
+}
+
+
+void Framework::ComputeSetTextureAndSampler(Texture* inTexture, Sampler* inSampler, int idx)
+{
+	ComputeSetTexture(inTexture, idx);
+	ComputeSetSampler(inSampler, idx);
 }
 
 

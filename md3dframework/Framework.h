@@ -50,7 +50,13 @@ public:
 	void SetTextureAndSampler(Texture* inTexture, Sampler* inSampler, int idx);
 	void SetConstantBuffer(ConstantBuffer* inConstantBuffer);
 
+	Sampler* GetPointSampler() { return mDefaultPointSampler; }
+	Sampler* GetLinearSampler() { return mDefaultLinearSampler; }
+
 	void ComputeSetTexture(Texture* inTexture, int idx);
+	void ComputeSetSampler(Sampler* inSampler, int idx);
+	void ComputeSetTextureAndSampler(Texture* inTexture, Sampler* inSampler, int idx);
+
 	void ComputeSetRWTexture(RenderTarget* inRenderTarget, int idx);
 	void ComputeDispatch(unsigned int inX, unsigned int inY, unsigned int inZ) { mImmediateContext->Dispatch(inX, inY, inZ); }
 	void Flush() { mImmediateContext->Flush(); }
@@ -84,10 +90,11 @@ private:
 	VertexShader*					mFullScreenQuadVertexShader = nullptr;
 	PixelShader*					mFullScreenQuadPixelShader = nullptr;
 	ID3D11InputLayout*				mVertexLayout = nullptr;
-	Sampler*						mFullScreenQuadPixelSampler = nullptr;
 
 	// helpers
 	ComputeShader*					mCopyShader = nullptr;
+	Sampler*						mDefaultPointSampler = nullptr;
+	Sampler*						mDefaultLinearSampler = nullptr;
 
 	// other globals
 	int								mWidth, mHeight, mFrameID;
