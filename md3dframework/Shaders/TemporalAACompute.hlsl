@@ -1,8 +1,8 @@
-
 RWTexture2D<float4> dst : register(u0);
 Texture2D<float4> source : register(t0);
 Texture2D<float4> history : register(t1);
 Texture2D<float2> motionVectors : register(t2);
+
 
 SamplerState LinearSampler
 {
@@ -12,18 +12,28 @@ SamplerState LinearSampler
 };
 
 
-
 [numthreads(8, 8, 1)]
 void CS(uint3 DTid : SV_DispatchThreadID)
 {
+	// current value
 	float2 coord = float2(DTid.x, DTid.y);
 	float4 val = source[coord];
 
+	// history value
 	float2 mv = motionVectors[coord];
-
-	// try filtered
-	float2 history_coord = (coord - mv) / float2(800, 600);
-	float4 history_val = history.SampleLevel(LinearSampler, history_coord, 0);
+	float2 history_coord = coord;
+	float2 history_uv = (coord / float2(800, 600) -mv);
+	float4 history_val = history.SampleLevel(LinearSampler, history_uv, 0);
 	
+	// neighborhood clamp
+	float4 valn = source[coord + int2(0, 1)];
+	float4 vals = source[coord + int2(1, 0)];
+	float4 vale = source[coord - int2(0, 1)];
+	float4 valw = source[coord - int2(1, 0)];
+	float4 max_val = max(max(valn, vals), max(vale, valw));
+	float4 min_val = min(min(valn, vals), min(vale, valw));
+	history_val = clamp(history_val, min_val, max_val);
+
+	// blend
 	dst[coord] = lerp(val, history_val, 0.9);
 }

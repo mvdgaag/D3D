@@ -132,8 +132,9 @@ void DeferredRenderer::GeometryPass(std::vector<DrawableObject*> inDrawList)
 	ID3D11DeviceContext* context;
 	theFramework.GetDevice()->GetImmediateContext(&context);
 
+	// TODO: remove clear
 	for (int i = 0; i < GBuffer::NUM_RENDER_TARGETS; i++)
-	context->ClearRenderTargetView(gbuffer_targets[i], DirectX::Colors::Red);
+	context->ClearRenderTargetView(gbuffer_targets[i], DirectX::Colors::Black);
 
 	ID3D11DepthStencilView* gbuffer_depth_stencil = mGBuffer->GetDepthStencilView();
 	context->OMSetRenderTargets(GBuffer::NUM_RENDER_TARGETS, gbuffer_targets.data(), gbuffer_depth_stencil);

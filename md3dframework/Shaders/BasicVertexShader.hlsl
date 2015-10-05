@@ -44,7 +44,7 @@ PS_INPUT VS(VS_INPUT input)
 	output.MotionVectors *= 0.5; // NDC to UV range conversion
 
 	// jitter for TAA
-	//output.Position.xy += offsets.xy;
+	output.Position.xy += offsets.xy * output.Position.w;
 
 	return output;
 }
