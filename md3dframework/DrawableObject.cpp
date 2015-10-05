@@ -61,9 +61,6 @@ void DrawableObject::Draw()
 	assert(mMesh != NULL);
 	assert(mConstantBuffer != NULL);
 
-	ID3D11DeviceContext* context;
-	theFramework.GetDevice()->GetImmediateContext(&context);
-
 	// set shaders
 	theFramework.SetVertexShader(mVertexShader);
 	theFramework.SetPixelShader(mPixelShader);
@@ -87,10 +84,12 @@ void DrawableObject::Draw()
 	mConstantBufferData.MVP = theFramework.GetCamera()->GetProjectionMatrix() * theFramework.GetCamera()->GetViewMatrix();
 
 	// set constant buffers
+	ID3D11DeviceContext* context;
+	theFramework.GetDevice()->GetImmediateContext(&context);
 	ID3D11Buffer* cbuf = mConstantBuffer->GetBuffer();
 	context->UpdateSubresource(cbuf, 0, nullptr, &mConstantBufferData, 0, 0);
 	
-	//TODO: this seems to break, but should do the same as the two lines above
+	//TODO: this seems to break, but should do the same as the 4 lines above
 	//mConstantBuffer->SetData(&mConstantBufferData);
 
 	theFramework.SetConstantBuffer(mConstantBuffer);
