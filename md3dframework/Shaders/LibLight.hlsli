@@ -58,7 +58,7 @@ float3 CalculateLight(myMaterial inMaterial, float3 inPosition, float3 inNormal,
 	if (falloff < 0.0) 
 		return float3(0.0, 0.0, 0.0);
 
-	float3 view_vec = normalize(-inPosition);
+	float3 view_vec = normalize(inPosition);
 	float3 half_vec = normalize(view_vec + light_vec);
 
 	float ndv = dot(inNormal, view_vec);
@@ -76,7 +76,7 @@ float3 CalculateLight(myMaterial inMaterial, float3 inPosition, float3 inNormal,
 	float spec = (F * G * D) / (4.0 * ndl * ndv);
 
 	// cheap approximation of energy conservation between diff and spec
-	float diff = falloff * OrenNayarDiffuse(light_vec, inNormal, view_vec, roughness_sqr) * (1.0 - inMaterial.Reflectivity);
+	float diff = inMaterial.Diffuse * falloff * OrenNayarDiffuse(light_vec, inNormal, view_vec, roughness_sqr) * (1.0 - inMaterial.Reflectivity);
 
-	return inLight.Color * inMaterial.Diffuse * (spec + diff);
+	return inLight.Color * (spec + diff);
 }

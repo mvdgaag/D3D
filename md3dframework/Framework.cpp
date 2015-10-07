@@ -307,6 +307,9 @@ void Framework::Render()
 	SetPixelShader(mFullScreenQuadPixelShader);
 
 	SetTextureAndSampler(mDeferredRenderer->GetAntiAliased()->GetTexture(), mDefaultPointSampler, 0);
+
+	// DEVHACK
+	SetTextureAndSampler(mDeferredRenderer->GetDirectLighting()->GetTexture(), mDefaultPointSampler, 0);
 	
 	// draw
 	mImmediateContext->DrawIndexed(6, 0, 0);

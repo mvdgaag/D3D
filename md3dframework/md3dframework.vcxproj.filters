@@ -22,9 +22,15 @@
     <Filter Include="Textures">
       <UniqueIdentifier>{a42eb6e4-fde0-4f80-ba2e-e3e131ae23c4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Models">
+      <UniqueIdentifier>{fbb94a09-c2b6-4188-b686-6fe39d33cce2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
+    <Text Include="Models\sphere.obj">
+      <Filter>Models</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="targetver.h">

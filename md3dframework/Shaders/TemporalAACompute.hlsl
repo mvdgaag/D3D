@@ -31,5 +31,5 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	history_val = clamp(history_val, min_val, max_val);
 
 	// blend
-	dst[coord] = lerp(val, history_val, 0.9);
+	dst[coord] = lerp(val, history_val, 0.85);
 }

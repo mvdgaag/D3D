@@ -39,6 +39,16 @@ public:
 		return *this;
 	}
 
+	inline bool float2::operator ==(const float2& vec) const
+	{
+		return ((x == vec.x) && (y == vec.y));
+	}
+
+	inline bool float2::operator !=(const float2& vec) const
+	{
+		return ((x != vec.x) || (y != vec.y));
+	}
+
 	inline float & float2::operator [](int idx)
 	{
 		return *(&x + idx);

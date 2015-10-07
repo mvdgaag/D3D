@@ -182,7 +182,7 @@ void InitContent()
 	g_obj = new DrawableObject("MyObject");
 	
 	g_mesh = new Mesh("MyMesh");
-	g_mesh->Init();
+	g_mesh->InitFromFile("C:/Users/Maarten/Documents/Visual Studio 2013/Projects/D3D/C++/md3dframework/Models/sphere.obj");
 
 	g_pixel_shader = new PixelShader("MyPixelShader");
 	g_pixel_shader->InitFromFile("Shaders/BasicFragmentShader.hlsl");

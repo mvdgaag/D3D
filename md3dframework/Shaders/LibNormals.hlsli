@@ -1,15 +1,15 @@
-half2 AzimuthalEncodeNormal(float3 inNormal)
+half2 EncodeNormal(float3 inNormal)
 {
-	half f = sqrt(8.0 * inNormal.z + 8.0);
-	return inNormal.xy / f + 0.5;
+	half2 enc = normalize(inNormal.xy) * (sqrt(-inNormal.z*0.5 + 0.5));
+	return enc * 0.5 + 0.5;
 }
 
 
-half3 AzimuthalDecodeNormal(half2 inEncodedNormal)
+float3 DecodeNormal(half2 inEncodedNormal)
 {
-	half2 fenc = inEncodedNormal * 4.0 - 2.0;
-	half f = dot(fenc, fenc);
-	half g = sqrt(1.0 - f / 4.0);
-	half3 normal = half3(fenc * g, 1.0 - f / 2.0);
+	float3 normal;
+	float2 fenc = inEncodedNormal * 2 - 1;
+	normal.z = (dot(fenc, fenc) * 2 - 1);
+	normal.xy = normalize(fenc) * sqrt(1 - normal.z * normal.z);
 	return normal;
 }
