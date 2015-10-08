@@ -15,38 +15,36 @@ struct myLight
 };
 
 
-float FresnelFactor(float inNormalDotView, float inReflectivity)
+// Schlick
+float FresnelFactor(float inNdV, float inReflectivity)
 {
-	return inReflectivity + (1.0 - inReflectivity) * pow(1.0 - inNormalDotView, 5.0);
+	return inReflectivity + (1.0 - inReflectivity) * pow(1.0 - inNdV, 5.0);
+}
+
+// Smith matching Walter GGX
+float GeometryFactor(float inNdV, float inNdL, float inAlpha2)
+{
+	float GV = inNdV + sqrt(inAlpha2 + (1.0 - inAlpha2) * inNdV * inNdV);
+	float GL = inNdL + sqrt(inAlpha2 + (1.0 - inAlpha2) * inNdL * inNdL);
+	return 1.0 / (GV * GL);
+}
+
+// Walter GGX
+float DistributionFactor(float inNdH, float inAlpha2)
+{
+	return inAlpha2 / (3.1415 * pow(inNdH * inNdH * (inAlpha2 - 1.0) + 1.0, 2));
 }
 
 
-float GeometryFactor(float inNormalDotHalf, float inNormalDotView, float inNormalDotLight, float inHalfDotView)
+float OrenNayarDiffuse(float inNdL, float inNdV, float3 inNormal, float inViewVec, float inAlpha)
 {
-	return min(1.0, min(	(2.0 * inNormalDotHalf * inNormalDotView) / inHalfDotView,
-							(2.0 * inNormalDotHalf * inNormalDotLight) / inHalfDotView));
-}
+	float a = 1.0 - 0.5 * (inAlpha / (inAlpha + 0.57));
+	float b = 0.45 * (inAlpha / (inAlpha + 0.09));
 
+	float ga = dot(inViewVec - inNormal * inNdV, inNormal - inNormal * inNdL);
 
-float DistributionFactor(float inNormalDotHalf, float inSquareRoughness)
-{
-	float ndh2 = inNormalDotHalf * inNormalDotHalf;
-	return exp((ndh2 - 1.0) / (inSquareRoughness * ndh2)) / (3.1415 * inSquareRoughness * ndh2 * ndh2);
-}
-
-
-float OrenNayarDiffuse(float3 inLightVec, float3 inNormal, float3 inViewVec, float inSquareRoughness)
-{
-	float a = 1.0 - 0.5 * (inSquareRoughness / (inSquareRoughness + 0.57));
-	float b = 0.45 * (inSquareRoughness / (inSquareRoughness + 0.09));
-
-	float ndl = dot(inNormal, inLightVec);
-	float ndv = dot(inNormal, inViewVec);
-
-	float ga = dot(inViewVec - inNormal*ndv, inNormal - inNormal*ndl);
-
-	return max(0.0, ndl) * (a + b * max(0.0, ga) * 
-		sqrt((1.0 - ndv*ndv)*(1.0 - ndl*ndl)) / max(ndl, ndv));
+	return inNdL * (a + b * max(0.0, ga) * 
+		sqrt((1.0 - inNdV*inNdV)*(1.0 - inNdL*inNdL)) / max(inNdL, inNdV));
 }
 
 
@@ -58,25 +56,28 @@ float3 CalculateLight(myMaterial inMaterial, float3 inPosition, float3 inNormal,
 	if (falloff < 0.0) 
 		return float3(0.0, 0.0, 0.0);
 
-	float3 view_vec = normalize(inPosition);
+	float3 normal = inNormal;
+	float3 view_vec = normalize(-inPosition);
 	float3 half_vec = normalize(view_vec + light_vec);
 
-	float ndv = dot(inNormal, view_vec);
-	float ndl = dot(inNormal, light_vec);
-	float ndh = dot(inNormal, half_vec);
-	float ldh = dot(light_vec, half_vec);
-	float vdh = dot(view_vec, half_vec);
+	float ndl = saturate(dot(normal, light_vec));
+	float ndv = saturate(dot(normal, view_vec));
+	float ndh = saturate(dot(normal, half_vec));
+	float ldh = saturate(dot(light_vec, half_vec));
+	float vdh = saturate(dot(view_vec, half_vec));
 
-	float roughness_sqr = inMaterial.Roughness * inMaterial.Roughness;
+	float alpha = inMaterial.Roughness * inMaterial.Roughness;
+	float alpha2 = alpha * alpha;
 
 	float F = FresnelFactor(ndv, inMaterial.Reflectivity);
-	float G = GeometryFactor(ndh, ndv, ndl, vdh);
-	float D = DistributionFactor(ndh, roughness_sqr);
+	float G = GeometryFactor(ndv, ndl, alpha2);
+	float D = DistributionFactor(ndh, alpha2);
 
-	float spec = (F * G * D) / (4.0 * ndl * ndv);
+	float spec = F * G * D;
 
-	// cheap approximation of energy conservation between diff and spec
-	float diff = inMaterial.Diffuse * falloff * OrenNayarDiffuse(light_vec, inNormal, view_vec, roughness_sqr) * (1.0 - inMaterial.Reflectivity);
-
-	return inLight.Color * (spec + diff);
+	float3 diff = inMaterial.Diffuse * falloff * OrenNayarDiffuse(ndl, ndv, normal, view_vec, alpha);
+	float3 result = inLight.Color * spec;
+	result += inLight.Color * diff * (1.0 - inMaterial.Reflectivity);
+	
+	return result;
 }

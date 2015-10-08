@@ -78,8 +78,8 @@ void DrawableObject::Draw()
 	int idx = theFramework.GetFrameID() % 8;
 	mConstantBufferData.offsets.z = mConstantBufferData.offsets.x; // previous x
 	mConstantBufferData.offsets.w = mConstantBufferData.offsets.y; // previous y
-	mConstantBufferData.offsets.x = ((halton23x[idx] * 2.0 - 1.0) / theFramework.GetScreenWidth());
-	mConstantBufferData.offsets.y = ((halton23y[idx] * 2.0 - 1.0) / theFramework.GetScreenHeight());
+	mConstantBufferData.offsets.x = ((halton23x[idx] * 2.0f - 1.0f) / theFramework.GetScreenWidth());
+	mConstantBufferData.offsets.y = ((halton23y[idx] * 2.0f - 1.0f) / theFramework.GetScreenHeight());
 	mConstantBufferData.prevMVP = mConstantBufferData.MVP;
 	mConstantBufferData.MVP = theFramework.GetCamera()->GetProjectionMatrix() * theFramework.GetCamera()->GetViewMatrix();
 

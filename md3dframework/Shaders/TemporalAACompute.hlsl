@@ -30,6 +30,11 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	float4 min_val = min(min(valn, vals), min(vale, valw));
 	history_val = clamp(history_val, min_val, max_val);
 
+	// sharpen
+	const float unsharp_strength = 4.0;
+	val = (unsharp_strength + 1.0) * val - (unsharp_strength / 4.0) * (valn + vals + vale + valw);
+
 	// blend
-	dst[coord] = lerp(val, history_val, 0.85);
+	const float blend_strength = 0.85;
+	dst[coord] = lerp(val, history_val, blend_strength);
 }

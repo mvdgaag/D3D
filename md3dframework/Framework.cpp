@@ -284,10 +284,10 @@ float a = 0.666;
 void Framework::Render()
 {
 	// setup camera
-	mCamera->SetPosition(5.0 * sin(a), -3.0, 5.0 * cos(a));
+	mCamera->SetPosition(3.0 * sin(a), -2.0, 3.0 * cos(a));
 	mCamera->SetTarget(0.0, 0.0, 0.0);
 	mCamera->SetUp(0.0, 1.0, 0.0);
-	a += 0.01;
+	a -= 0.005;
 
 	// render to gbuffer
 	mDeferredRenderer->Render(mObjectList);
@@ -307,9 +307,7 @@ void Framework::Render()
 	SetPixelShader(mFullScreenQuadPixelShader);
 
 	SetTextureAndSampler(mDeferredRenderer->GetAntiAliased()->GetTexture(), mDefaultPointSampler, 0);
-
-	// DEVHACK
-	SetTextureAndSampler(mDeferredRenderer->GetDirectLighting()->GetTexture(), mDefaultPointSampler, 0);
+	//SetTextureAndSampler(mDeferredRenderer->GetDirectLighting()->GetTexture(), mDefaultPointSampler, 0);
 	
 	// draw
 	mImmediateContext->DrawIndexed(6, 0, 0);
@@ -428,6 +426,13 @@ void Framework::ComputeSetTextureAndSampler(Texture* inTexture, Sampler* inSampl
 {
 	ComputeSetTexture(inTexture, idx);
 	ComputeSetSampler(inSampler, idx);
+}
+
+
+void Framework::ComputeSetConstantBuffer(ConstantBuffer* inConstantBuffer)
+{
+	ID3D11Buffer* cbuf = inConstantBuffer->GetBuffer();
+	mImmediateContext->CSSetConstantBuffers(0, 1, &cbuf);
 }
 
 

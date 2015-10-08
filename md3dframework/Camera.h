@@ -12,6 +12,13 @@ public:
 	DirectX::XMMATRIX	GetProjectionMatrix();
 	DirectX::XMMATRIX	GetViewProjectionMatrix();
 
+	float		GetFovX() { return mFovY * mAspect; }
+	float		GetFovY() { return mFovY; }
+	float		GetAspect() { return mAspect; }
+	float		GetNear() { return mNear; }
+	float		GetFar() { return mFar; }
+
+
 	void		SetPosition(DirectX::XMVECTOR inPosition) { mPosition = inPosition; }
 	void		SetPosition(float x, float y, float z) { mPosition = DirectX::XMVectorSet(x, y, z, 0.0f); }
 	void		SetTarget(DirectX::XMVECTOR inTarget) { mTarget = inTarget; }
@@ -27,5 +34,10 @@ private:
 	DirectX::XMVECTOR mPosition;
 	DirectX::XMVECTOR mTarget;
 	DirectX::XMVECTOR mUp;
+
+	float mFovY;
+	float mNear;
+	float mAspect;
+	float mFar;
 };
 

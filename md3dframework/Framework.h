@@ -56,6 +56,7 @@ public:
 	void ComputeSetTexture(Texture* inTexture, int idx);
 	void ComputeSetSampler(Sampler* inSampler, int idx);
 	void ComputeSetTextureAndSampler(Texture* inTexture, Sampler* inSampler, int idx);
+	void ComputeSetConstantBuffer(ConstantBuffer* inConstantBuffer);
 
 	void ComputeSetRWTexture(RenderTarget* inRenderTarget, int idx);
 	void ComputeDispatch(unsigned int inX, unsigned int inY, unsigned int inZ) { mImmediateContext->Dispatch(inX, inY, inZ); }

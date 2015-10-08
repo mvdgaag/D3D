@@ -240,6 +240,7 @@ void Mesh::InitFromFile(std::string inFileName)
 				vert.Normal = normals[idx];
 
 				// search backwards (likely to be near the end for faces sharing verts)
+				// could be optimized by using a hash table
 				for (int j = vertices.size()-1; j >= -1; j--)
 				{
 					// nothing found means new unique vertex

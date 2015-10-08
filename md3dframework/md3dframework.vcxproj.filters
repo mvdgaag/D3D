@@ -268,13 +268,10 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\LibDepth.hlsli">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="Shaders\LibLight.hlsli">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="Shaders\LibNormals.hlsli">
+    <None Include="Shaders\LibHelper.hlsli">
       <Filter>Shaders</Filter>
     </None>
   </ItemGroup>

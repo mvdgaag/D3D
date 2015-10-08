@@ -5,6 +5,7 @@
 
 void ConstantBuffer::Init(int inByteWidth)
 {
+	assert(inByteWidth % 16 == 0);
 	ZeroMemory(&mDesc, sizeof(mDesc));
 	mDesc.Usage = D3D11_USAGE_DEFAULT;
 	mDesc.ByteWidth = inByteWidth;

@@ -1,11 +1,20 @@
-#include "LibNormals.hlsli"
+#include "LibHelper.hlsli"
 #include "LibLight.hlsli"
+
 
 RWTexture2D<float4> dst : register(u0);
 Texture2D<float> LinearDepth : register(t0);
 Texture2D<half2> Normal : register(t1);
 Texture2D<float4> Diffuse : register(t2);
 Texture2D<float4> Material : register(t3);
+
+
+cbuffer cLightingShaderConstants : register(b0)
+{
+	float2	cViewReconstructionVector; // tan(fovx)/near, tan(fovy)/near
+	float2	cTargetSize;
+	float4	cFrameData;
+};
 
 
 SamplerState LinearSampler
@@ -20,23 +29,24 @@ SamplerState LinearSampler
 void CS(uint3 DTid : SV_DispatchThreadID)
 {
 	float2 coord = float2(DTid.x, DTid.y);
-	float linear_depth = LinearDepth[coord] / 5.0;
+	float linear_depth = LinearDepth[coord];
 	half3 normal = DecodeNormal(Normal[coord].xy);
 	half3 diffuse = Diffuse[coord].xyz;
 	half4 material = Material[coord];
 
 	myMaterial m;
-	m.Roughness = 1.0 - pow(material.x, 5);
-	m.Reflectivity = 0.2;
+	m.Roughness = 0.5;
+	m.Reflectivity = 0.4;
 	m.Diffuse = diffuse;
 
 	myLight l;
-	l.Position = float3(10.0, 5.0, 10.0);
+	float a = cFrameData.x / 100.0;
+	l.Position = float3(sin(a), -0.0, cos(a)) * 10.0;
 	l.Color = float3(0.6, 0.6, 0.7);
 	l.Range = 30.0;
 
-	float3 p = float3(0, 0, 1);
-	float3 val = CalculateLight(m, p, normal, l);
+	float3 p = ReconstructCSPosition(coord / cTargetSize, linear_depth, cViewReconstructionVector);
 
+	float3 val = CalculateLight(m, p, normal, l);
 	dst[coord] = float4(val, 1);
 }
