@@ -4,6 +4,7 @@
 #include "Texture.h"
 #include "RenderTarget.h"
 
+
 void LightComposeRenderer::Render(Texture* inDirect, Texture* inIndirect, Texture* inReflections, RenderTarget* inTarget)
 {
 	assert(mInitialized == true);

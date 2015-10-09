@@ -93,6 +93,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BaseDrawable.h" />
     <ClInclude Include="BaseResource.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ComputeShader.h" />
@@ -122,11 +123,12 @@
     <ClInclude Include="ShadowRenderer.h" />
     <ClInclude Include="TAARenderer.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="Terrain.h" />
+    <ClInclude Include="TerrainTile.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="VertexShader.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BaseResource.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ComputeShader.cpp" />
     <ClCompile Include="ConstantBuffer.cpp" />
@@ -148,6 +150,8 @@
     <ClCompile Include="Sampler.cpp" />
     <ClCompile Include="ShadowRenderer.cpp" />
     <ClCompile Include="TAARenderer.cpp" />
+    <ClCompile Include="Terrain.cpp" />
+    <ClCompile Include="TerrainTile.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="VertexShader.cpp" />
   </ItemGroup>

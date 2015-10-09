@@ -1,6 +1,6 @@
 #pragma once
+#include "BaseDrawable.h"
 #include "LinearAlgebra.h"
-#include <unordered_map>
 #include <d3d11_1.h>
 
 
@@ -13,11 +13,11 @@ class VertexShader;
 class ConstantBuffer;
 
 
-class DrawableObject
+class DrawableObject : public BaseDrawable
 {
 public:
-	DrawableObject(std::string inName);
-	~DrawableObject();
+	DrawableObject(std::string inName) : BaseDrawable(inName) {}
+	~DrawableObject() {};
 
 	void Init(Mesh* inMesh, PixelShader* inPixelShader, VertexShader* inVertexShader,
 		Texture* inDiffuseTexture, Sampler* inDiffuseSampler,
@@ -37,9 +37,6 @@ public:
 	Sampler*		GetMaterialSampler()	{ return mMaterialSampler; }
 
 private:
-	std::string mName;
-	DirectX::XMMATRIX mTransform;
-
 	struct ConstantBufferData
 	{
 		DirectX::XMMATRIX MVP;
@@ -63,7 +60,5 @@ private:
 	VertexShader* mVertexShader = nullptr;
 
 	ConstantBuffer* mConstantBuffer = nullptr;
-
-	static std::unordered_map<std::string, DrawableObject*> sDrawableObjectMap;
 };
 

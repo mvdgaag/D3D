@@ -11,24 +11,6 @@
 #include <assert.h>
 
 
-std::unordered_map<std::string, DrawableObject*> DrawableObject::sDrawableObjectMap;
-
-
-DrawableObject::DrawableObject(std::string inName)
-{
-	mName = inName;
-	assert(sDrawableObjectMap.find(inName) == sDrawableObjectMap.end());
-	sDrawableObjectMap[inName] = this;
-}
-
-
-DrawableObject::~DrawableObject()
-{
-	assert(sDrawableObjectMap.find(mName) != sDrawableObjectMap.end());
-	sDrawableObjectMap.erase(mName);
-}
-
-
 void DrawableObject::Init(Mesh* inMesh, PixelShader* inPixelShader, VertexShader* inVertexShader,
 	Texture* inDiffuseTexture, Sampler* inDiffuseSampler,
 	Texture* inNormalTexture, Sampler* inNormalSampler,
@@ -44,6 +26,7 @@ void DrawableObject::Init(Mesh* inMesh, PixelShader* inPixelShader, VertexShader
 	mMaterialTexture = inMaterialTexture;
 	mMaterialSampler = inMaterialSampler;
 
+	// TODO: wtf?
 	mConstantBuffer = new ConstantBuffer(mName + "ConstantBuffer");
 	mConstantBuffer->Init(sizeof(ConstantBufferData));
 	mTransform = DirectX::XMMatrixIdentity();

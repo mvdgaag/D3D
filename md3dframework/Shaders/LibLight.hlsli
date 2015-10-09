@@ -38,13 +38,16 @@ float DistributionFactor(float inNdH, float inAlpha2)
 
 float OrenNayarDiffuse(float inNdL, float inNdV, float3 inNormal, float inViewVec, float inAlpha)
 {
+	if (inNdL <= 0)
+		return 0;
+
 	float a = 1.0 - 0.5 * (inAlpha / (inAlpha + 0.57));
 	float b = 0.45 * (inAlpha / (inAlpha + 0.09));
 
 	float ga = dot(inViewVec - inNormal * inNdV, inNormal - inNormal * inNdL);
 
 	return inNdL * (a + b * max(0.0, ga) * 
-		sqrt((1.0 - inNdV*inNdV)*(1.0 - inNdL*inNdL)) / max(inNdL, inNdV));
+		sqrt((1.0 - inNdV * inNdV) * (1.0 - inNdL * inNdL)) / max(inNdL, inNdV));
 }
 
 
@@ -75,9 +78,12 @@ float3 CalculateLight(myMaterial inMaterial, float3 inPosition, float3 inNormal,
 
 	float spec = F * G * D;
 
+	// HACK
+	spec *= ndh > 0;
+
 	float3 diff = inMaterial.Diffuse * falloff * OrenNayarDiffuse(ndl, ndv, normal, view_vec, alpha);
 	float3 result = inLight.Color * spec;
-	result += inLight.Color * diff * (1.0 - inMaterial.Reflectivity);
+	result += inLight.Color * diff * (1.0 - inMaterial.Reflectivity);// / 3.1415;
 	
 	return result;
 }

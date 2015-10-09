@@ -35,14 +35,14 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	half4 material = Material[coord];
 
 	myMaterial m;
-	m.Roughness = 0.5;
+	m.Roughness = 0.4;
 	m.Reflectivity = 0.4;
 	m.Diffuse = diffuse;
 
 	myLight l;
 	float a = cFrameData.x / 100.0;
 	l.Position = float3(sin(a), -0.0, cos(a)) * 10.0;
-	l.Color = float3(0.6, 0.6, 0.7);
+	l.Color = float3(0.9, 0.9, 0.9);
 	l.Range = 30.0;
 
 	float3 p = ReconstructCSPosition(coord / cTargetSize, linear_depth, cViewReconstructionVector);
