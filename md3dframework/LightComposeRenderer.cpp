@@ -39,7 +39,7 @@ void LightComposeRenderer::Render(Texture* inDirect, Texture* inIndirect, Textur
 void LightComposeRenderer::Init()
 {
 	CleanUp();
-	mShader = new ComputeShader("LightComposeCompute");
+	mShader = new ComputeShader();
 	mShader->InitFromFile("Shaders/LightComposeCompute.hlsl");
 	mInitialized = true;
 }

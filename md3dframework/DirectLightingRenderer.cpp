@@ -58,9 +58,9 @@ void DirectLightingRenderer::Render(GBuffer* inSource, RenderTarget* inTarget)
 void DirectLightingRenderer::Init()
 {
 	CleanUp();
-	mShader = new ComputeShader("DirectLightingCompute");
+	mShader = new ComputeShader();
 	mShader->InitFromFile("Shaders/DirectLightingCompute.hlsl");
-	mConstantBuffer = new ConstantBuffer("DirectLightingConstantBuffer");
+	mConstantBuffer = new ConstantBuffer();
 	mConstantBuffer->Init(sizeof(ConstantBufferData));
 	mInitialized = true;
 }

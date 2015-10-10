@@ -6,7 +6,7 @@
 class Texture : public BaseResource
 {
 public:
-	Texture(std::string inName) : BaseResource(inName) {};
+	Texture() : BaseResource() {};
 	~Texture() { CleanUp(); }
 
 	void Init(int inWidth, int inHeight, int inMipLevels, 

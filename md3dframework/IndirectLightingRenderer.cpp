@@ -33,7 +33,7 @@ void IndirectLightingRenderer::Render(Texture* inSource, RenderTarget* inTarget)
 void IndirectLightingRenderer::Init()
 {
 	CleanUp();
-	mShader = new ComputeShader("IndirectLightingCompute");
+	mShader = new ComputeShader();
 	mShader->InitFromFile("Shaders/IndirectLightingCompute.hlsl");
 	mInitialized = true;
 }

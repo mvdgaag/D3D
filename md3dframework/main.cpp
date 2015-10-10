@@ -179,30 +179,30 @@ Sampler* g_material_sampler;
 
 void InitContent()
 {
-	g_obj = new DrawableObject("MyObject");
+	g_obj = new DrawableObject();
 	
-	g_mesh = new Mesh("MyMesh");
+	g_mesh = new Mesh();
 	g_mesh->InitFromFile("C:/Users/Maarten/Documents/Visual Studio 2013/Projects/D3D/C++/md3dframework/Models/sphere.obj");
 
-	g_pixel_shader = new PixelShader("MyPixelShader");
+	g_pixel_shader = new PixelShader();
 	g_pixel_shader->InitFromFile("Shaders/BasicFragmentShader.hlsl");
 	
-	g_vertex_shader = new VertexShader("MyVertexShader");
+	g_vertex_shader = new VertexShader();
 	g_vertex_shader->InitFromFile("Shaders/BasicVertexShader.hlsl");
 
-	g_diffuse_texture = new Texture("DiffuseTexture");
+	g_diffuse_texture = new Texture();
 	g_diffuse_texture->InitFromFile("Textures/photosculpt-squarebricks-diffuse.dds");
-	g_diffuse_sampler = new Sampler("DiffuseSampler");
+	g_diffuse_sampler = new Sampler();
 	g_diffuse_sampler->Init();
 
-	g_normal_texture = new Texture("NormalTexture");
+	g_normal_texture = new Texture();
 	g_normal_texture->InitFromFile("Textures/photosculpt-squarebricks-normal.dds");
-	g_normal_sampler = new Sampler("NormalSampler");
+	g_normal_sampler = new Sampler();
 	g_normal_sampler->Init();
 
-	g_material_texture = new Texture("MaterialTexture");
+	g_material_texture = new Texture();
 	g_material_texture->InitFromFile("Textures/photosculpt-squarebricks-specular.dds");
-	g_material_sampler = new Sampler("MaterialSampler");
+	g_material_sampler = new Sampler();
 	g_material_sampler->Init();
 
 	g_obj->Init(g_mesh, g_pixel_shader, g_vertex_shader,

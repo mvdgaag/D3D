@@ -33,7 +33,7 @@ void PostProcessRenderer::Render(Texture* inSource, RenderTarget* inTarget)
 void PostProcessRenderer::Init()
 {
 	CleanUp();
-	mShader = new ComputeShader("PostProcessCompute");
+	mShader = new ComputeShader();
 	mShader->InitFromFile("Shaders/PostProcessCompute.hlsl");
 	mInitialized = true;
 }

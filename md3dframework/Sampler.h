@@ -5,7 +5,7 @@
 class Sampler : public BaseResource
 {
 public:
-	Sampler(std::string inName) : BaseResource(inName) {};
+	Sampler() : BaseResource() {};
 	~Sampler() {};
 
 	void Init(D3D11_FILTER inFilter = D3D11_FILTER_MIN_MAG_MIP_LINEAR,

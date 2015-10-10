@@ -6,7 +6,7 @@
 class PixelShader : public BaseResource
 {
 public:
-	PixelShader(std::string inName) : BaseResource(inName) {}
+	PixelShader() : BaseResource() {}
 	~PixelShader() { CleanUp(); }
 
 	void InitFromFile(std::string inFileName);

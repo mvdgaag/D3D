@@ -5,7 +5,7 @@
 class ConstantBuffer : public BaseResource
 {
 public:
-	ConstantBuffer(std::string inName) : BaseResource(inName) {}
+	ConstantBuffer() : BaseResource() {}
 	~ConstantBuffer() { CleanUp(); }
 
 	void Init(int inByteWidth);

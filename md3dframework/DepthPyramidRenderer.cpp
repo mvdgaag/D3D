@@ -45,7 +45,7 @@ void DepthPyramidRenderer::Render(Texture* inSource, RenderTarget* inTarget)
 
 void DepthPyramidRenderer::Init(int inSourceWidth, int inSourceHeight)
 {
-	mShader = new ComputeShader("DepthPyramidShader");
+	mShader = new ComputeShader();
 	mShader->InitFromFile("Shaders/DepthPyramidCompute.hlsl");
 	assert(mShader != nullptr);
 	mInitialized = true;

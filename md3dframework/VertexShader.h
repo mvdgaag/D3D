@@ -6,7 +6,7 @@
 class VertexShader : public BaseResource
 {
 public:
-	VertexShader(std::string inName) : BaseResource(inName) {}
+	VertexShader() : BaseResource() {}
 	~VertexShader() { CleanUp(); }
 
 	void InitFromFile(std::string inFileName);

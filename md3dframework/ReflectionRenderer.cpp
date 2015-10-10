@@ -33,7 +33,7 @@ void ReflectionRenderer::Render(Texture* inSource, RenderTarget* inTarget)
 void ReflectionRenderer::Init()
 {
 	CleanUp();
-	mShader = new ComputeShader("ReflectionRendererCompute");
+	mShader = new ComputeShader();
 	mShader->InitFromFile("Shaders/ReflectionCompute.hlsl");
 	mInitialized = true;
 }

@@ -16,7 +16,7 @@ class ConstantBuffer;
 class DrawableObject : public BaseDrawable
 {
 public:
-	DrawableObject(std::string inName) : BaseDrawable(inName) {}
+	DrawableObject() : BaseDrawable() {}
 	~DrawableObject() {};
 
 	void Init(Mesh* inMesh, PixelShader* inPixelShader, VertexShader* inVertexShader,

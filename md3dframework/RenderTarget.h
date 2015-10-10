@@ -11,7 +11,7 @@ class Texture;
 class RenderTarget : public BaseResource
 {
 public:
-	RenderTarget(std::string inName) : BaseResource(inName) {};
+	RenderTarget() : BaseResource() {};
 	~RenderTarget() { CleanUp(); }
 
 	void						Init(int inWidth, int inHeight, int inMipLevels, DXGI_FORMAT inFormat);

@@ -6,16 +6,17 @@
 #include "VertexShader.h"
 
 
-void TerrainTile::Init(float3 inScale, Texture* inHeightMap, 
-	Mesh* inMesh, PixelShader* inPixelShader, VertexShader* inVertexShader,
+void TerrainTile::Init(float3 inScale, Texture* inHeightMap, int inWidth, int inHeight,
+	PixelShader* inPixelShader, VertexShader* inVertexShader,
 	Texture* inDiffuseTexture, Sampler* inDiffuseSampler,
 	Texture* inNormalTexture, Sampler* inNormalSampler,
 	Texture* inMaterialTexture, Sampler* inMaterialSampler)
 {
-
-
 	// TODO
 	mScale = inScale;
 	mHeightMap = inHeightMap;
+	
+	mMesh = new Mesh();
+
 	mInitialized = true;
 }

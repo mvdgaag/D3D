@@ -26,8 +26,7 @@ void DrawableObject::Init(Mesh* inMesh, PixelShader* inPixelShader, VertexShader
 	mMaterialTexture = inMaterialTexture;
 	mMaterialSampler = inMaterialSampler;
 
-	// TODO: wtf?
-	mConstantBuffer = new ConstantBuffer(mName + "ConstantBuffer");
+	mConstantBuffer = new ConstantBuffer();
 	mConstantBuffer->Init(sizeof(ConstantBufferData));
 	mTransform = DirectX::XMMatrixIdentity();
 }

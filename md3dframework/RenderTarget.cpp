@@ -11,7 +11,7 @@ void RenderTarget::Init(int inWidth, int inHeight, int inMipLevels, DXGI_FORMAT 
 	CleanUp();
 
 	unsigned int bind_flags = (D3D11_BIND_RENDER_TARGET | D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE);
-	mTexture = new Texture(mName + "Texture");
+	mTexture = new Texture();
 	mTexture->Init(inWidth, inHeight, inMipLevels, inFormat, bind_flags);
 
 	mRenderTargetViews = new ID3D11RenderTargetView*[mTexture->GetMipLevels()];

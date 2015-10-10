@@ -19,14 +19,10 @@ enum ResourceType
 class BaseResource
 {
 public:
-	explicit BaseResource(std::string inName) : mName(inName) {};
+	explicit BaseResource() {};
 	virtual ~BaseResource() {};
 
 	virtual void			CleanUp()					= 0;
 	virtual ResourceType	GetResourceType() const		= 0;
-	std::string				GetName() const				{ return mName; }
-
-protected:
-	std::string mName;
 };
 

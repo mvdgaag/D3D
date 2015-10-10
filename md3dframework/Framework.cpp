@@ -221,10 +221,10 @@ HRESULT Framework::InitFullScreenQuad()
 {
 	HRESULT hr = S_OK;
 
-	mFullScreenQuadPixelShader = new PixelShader("FullScreenQuadPixelShader");
+	mFullScreenQuadPixelShader = new PixelShader();
 	mFullScreenQuadPixelShader->InitFromFile("Shaders/FullScreenQuadPixelShader.hlsl");
 
-	mFullScreenQuadVertexShader = new VertexShader("FullScreenQuadVertexShader");
+	mFullScreenQuadVertexShader = new VertexShader();
 	mFullScreenQuadVertexShader->InitFromFile("Shaders/FullScreenQuadVertexShader.hlsl");
 
 	float quad_vertices[] =
@@ -262,10 +262,10 @@ HRESULT Framework::InitFullScreenQuad()
 	InitData.pSysMem = quad_indices;
 	hr = mD3DDevice->CreateBuffer(&bd, &InitData, &mFullScreenQuadIndexBuffer);
 
-	mDefaultPointSampler = new Sampler("DefaultPointSampler");
+	mDefaultPointSampler = new Sampler();
 	mDefaultPointSampler->Init(D3D11_FILTER_MIN_MAG_MIP_POINT);
 
-	mDefaultLinearSampler = new Sampler("DefaultLinearSampler");
+	mDefaultLinearSampler = new Sampler();
 	mDefaultLinearSampler->Init(D3D11_FILTER_MIN_MAG_MIP_LINEAR);
 
 	return hr;
@@ -274,7 +274,7 @@ HRESULT Framework::InitFullScreenQuad()
 
 void Framework::InitHelpers()
 {
-	mCopyShader = new ComputeShader("CopyShader");
+	mCopyShader = new ComputeShader();
 	mCopyShader->InitFromFile("Shaders/CopyCompute.hlsl");
 }
 

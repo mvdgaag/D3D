@@ -8,14 +8,12 @@
 class BaseDrawable
 {
 public:
-	explicit BaseDrawable(std::string inName) : mName(inName) {}
+	explicit BaseDrawable() {}
 	virtual ~BaseDrawable() {}
 	
 	virtual void Draw() = 0;
-	std::string	GetName() const { return mName; }
 
 protected:
-	std::string mName;
 	DirectX::XMMATRIX mTransform;
 };
 

@@ -22,19 +22,19 @@ void GBuffer::Init(int inWidth, int inHeight)
 	mWidth = inWidth;
 	mHeight = inHeight;
 
-	mRenderTargets[LINEAR_DEPTH] = new RenderTarget("GBuffer_Linear_Depth_Target");
+	mRenderTargets[LINEAR_DEPTH] = new RenderTarget();
 	mRenderTargets[LINEAR_DEPTH]->Init(mWidth, mHeight, 1, DXGI_FORMAT_R32_FLOAT);
 
-	mRenderTargets[NORMAL] = new RenderTarget("GBuffer_Normal_Target");
+	mRenderTargets[NORMAL] = new RenderTarget();
 	mRenderTargets[NORMAL]->Init(mWidth, mHeight, 1, DXGI_FORMAT_R16G16_FLOAT);
 
-	mRenderTargets[DIFFUSE] = new RenderTarget("GBuffer_Diffuse_Target");
+	mRenderTargets[DIFFUSE] = new RenderTarget();
 	mRenderTargets[DIFFUSE]->Init(mWidth, mHeight, 1, DXGI_FORMAT_R8G8B8A8_UNORM);
 
-	mRenderTargets[MATERIAL] = new RenderTarget("GBuffer_Material_Target");
+	mRenderTargets[MATERIAL] = new RenderTarget();
 	mRenderTargets[MATERIAL]->Init(mWidth, mHeight, 1, DXGI_FORMAT_R8G8B8A8_UNORM);
 
-	mRenderTargets[MOTION_VECTORS] = new RenderTarget("GBuffer_Motion_Vector_Target");
+	mRenderTargets[MOTION_VECTORS] = new RenderTarget();
 	mRenderTargets[MOTION_VECTORS]->Init(mWidth, mHeight, 1, DXGI_FORMAT_R16G16_FLOAT);
 
 	// Create depth stencil texture

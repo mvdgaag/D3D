@@ -25,28 +25,28 @@ void DeferredRenderer::Init(int inWidth, int inHeight)
 	mGBuffer = new GBuffer();
 	mGBuffer->Init(inWidth, inHeight);
 
-	mDepthPyramid = new RenderTarget("DepthPyramidRenderTarget");
+	mDepthPyramid = new RenderTarget();
 	mDepthPyramid->Init(inWidth / 2, inHeight / 2, 3, DXGI_FORMAT_R16G16_FLOAT);
 	
-	mDirectLighting = new RenderTarget("DirectLightingRenderTarget");
+	mDirectLighting = new RenderTarget();
 	mDirectLighting->Init(inWidth, inHeight, 1, DXGI_FORMAT_R8G8B8A8_UNORM);
 
-	mIndirectLighting = new RenderTarget("IndirectLightingRenderTarget");
+	mIndirectLighting = new RenderTarget();
 	mIndirectLighting->Init(inWidth, inHeight, 1, DXGI_FORMAT_R8G8B8A8_UNORM);
 
-	mReflections = new RenderTarget("ReflectionsRenderTarget");
+	mReflections = new RenderTarget();
 	mReflections->Init(inWidth, inHeight, 1, DXGI_FORMAT_R8G8B8A8_UNORM);
 
-	mLightComposed = new RenderTarget("LightComposedRenderTarget");
+	mLightComposed = new RenderTarget();
 	mLightComposed->Init(inWidth, inHeight, 1, DXGI_FORMAT_R8G8B8A8_UNORM);
 
-	mAntiAliased = new RenderTarget("AntiAliasedRenderTarget");
+	mAntiAliased = new RenderTarget();
 	mAntiAliased->Init(inWidth, inHeight, 1, DXGI_FORMAT_R8G8B8A8_UNORM);
 
-	mAAHistoryFrame = new RenderTarget("AntiAliasHistoryRenderTarget");
+	mAAHistoryFrame = new RenderTarget();
 	mAAHistoryFrame->Init(inWidth, inHeight, 1, DXGI_FORMAT_R8G8B8A8_UNORM);
 
-	mPostProcessed = new RenderTarget("PostProcessedRenderTarget");
+	mPostProcessed = new RenderTarget();
 	mPostProcessed->Init(inWidth, inHeight, 1, DXGI_FORMAT_R8G8B8A8_UNORM);
 
 	mShadowRenderer = new ShadowRenderer();

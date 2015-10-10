@@ -6,7 +6,7 @@
 class ComputeShader : public BaseResource
 {
 public:
-	ComputeShader(std::string inName) : BaseResource(inName) {}
+	ComputeShader() : BaseResource() {}
 	~ComputeShader() { CleanUp(); }
 
 	void InitFromFile(std::string inFileName);

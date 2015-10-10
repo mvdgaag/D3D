@@ -6,7 +6,7 @@
 class Mesh : public BaseResource
 {
 public:
-	Mesh(std::string inName) : BaseResource(inName) {}
+	Mesh() : BaseResource() {}
 	~Mesh() { CleanUp(); }
 
 	void Init() { InitCube(); }

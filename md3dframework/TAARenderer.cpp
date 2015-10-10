@@ -42,7 +42,7 @@ void TAARenderer::Render(Texture* inSource, RenderTarget* inHistory, Texture* in
 void TAARenderer::Init()
 {
 	CleanUp();
-	mShader = new ComputeShader("TemporalAACompute");
+	mShader = new ComputeShader();
 	mShader->InitFromFile("Shaders/TemporalAACompute.hlsl");
 	mInitialized = true;
 }
