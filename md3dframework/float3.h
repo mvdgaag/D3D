@@ -1,5 +1,6 @@
 #pragma once
 #include <math.h>
+#include "float2.h"
 
 // predeclarations
 class float3;
