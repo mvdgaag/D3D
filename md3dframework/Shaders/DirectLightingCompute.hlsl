@@ -41,7 +41,7 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 
 	myLight l;
 	float a = cFrameData.x / 100.0;
-	l.Position = float3(sin(a), -0.0, cos(a)) * 10.0;
+	l.Position = float3(1.0, 2.0, 1.0) * 10.0;
 	l.Color = float3(0.9, 0.9, 0.9);
 	l.Range = 30.0;
 

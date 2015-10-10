@@ -42,6 +42,8 @@ public:
 		return *this;
 	}
 
+	inline float2 float3::XY() const { return float2(x, y); }
+
 	inline bool float3::operator ==(const float3& vec) const
 	{
 		return ((x == vec.x) && (y == vec.y) && (z == vec.z));

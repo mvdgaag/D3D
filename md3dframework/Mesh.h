@@ -1,6 +1,17 @@
 #pragma once
 #include "BaseResource.h"
+#include "float2.h"
+#include "float3.h"
 #include <d3d11_1.h>
+
+
+struct SimpleVertex
+{
+	float3 Position;
+	float3 Normal;
+	float3 Tangent;
+	float2 TexCoord;
+};
 
 
 class Mesh : public BaseResource
@@ -9,9 +20,9 @@ public:
 	Mesh() : BaseResource() {}
 	~Mesh() { CleanUp(); }
 
-	void Init() { InitCube(); }
-	void InitCube();
-	void InitTriangle();
+	void InitFromData(SimpleVertex* inVertexData, int inNumVerts, WORD* inIndexData, int inNumIndices);
+	void InitCube(float3 inScale = { 1, 1, 1 });
+	void InitPlane(int inSubX, int inSubY, float2 inScale = { 1, 1 });
 	void InitFromFile(std::string inFileName);
 
 	ID3D11Buffer* GetVertexBuffer() { return mVertexBuffer; }
@@ -25,6 +36,7 @@ public:
 	ResourceType GetResourceType() const { return ResourceType::MESH; };
 
 private:
+
 	ID3D11Buffer* mVertexBuffer = nullptr;
 	ID3D11Buffer* mIndexBuffer = nullptr;
 	UINT mStride = 0;

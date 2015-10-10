@@ -8,78 +8,48 @@
 #include <sstream>
 
 
-struct SimpleVertex
+
+void Mesh::InitCube(float3 inScale)
 {
-	float3 Position;
-	float3 Normal;
-	float3 Tangent;
-	float2 TexCoord;
-};
-
-
-
-void Mesh::InitCube()
-{
-	CleanUp();
-
-	// Create vertex buffer
-	mNumVerts = 24;
 	SimpleVertex vertices[] =
 	{
 		// +Y
-		{ float3(-1.0f, 1.0f, -1.0f), float3(0.0f, 1.0f, 0.0f),  float3(1.0f, 0.0f, 0.0f),  float2(1.0f, 0.0f) },
-		{ float3( 1.0f, 1.0f, -1.0f), float3(0.0f, 1.0f, 0.0f),  float3(1.0f, 0.0f, 0.0f),  float2(0.0f, 0.0f) },
-		{ float3( 1.0f, 1.0f,  1.0f), float3(0.0f, 1.0f, 0.0f),  float3(1.0f, 0.0f, 0.0f),  float2(0.0f, 1.0f) },
-		{ float3(-1.0f, 1.0f,  1.0f), float3(0.0f, 1.0f, 0.0f),  float3(1.0f, 0.0f, 0.0f),  float2(1.0f, 1.0f) },
+		{ inScale * float3(-1.0f, 1.0f, -1.0f), float3(0.0f, 1.0f, 0.0f),  float3(1.0f, 0.0f, 0.0f),  float2(1.0f, 0.0f) },
+		{ inScale * float3( 1.0f, 1.0f, -1.0f), float3(0.0f, 1.0f, 0.0f),  float3(1.0f, 0.0f, 0.0f),  float2(0.0f, 0.0f) },
+		{ inScale * float3( 1.0f, 1.0f,  1.0f), float3(0.0f, 1.0f, 0.0f),  float3(1.0f, 0.0f, 0.0f),  float2(0.0f, 1.0f) },
+		{ inScale * float3(-1.0f, 1.0f,  1.0f), float3(0.0f, 1.0f, 0.0f),  float3(1.0f, 0.0f, 0.0f),  float2(1.0f, 1.0f) },
 
 		// -Y
-		{ float3(-1.0f, -1.0f, -1.0f), float3(0.0f, -1.0f, 0.0f), float3(1.0f, 0.0f, 0.0f),  float2(0.0f, 0.0f) },
-		{ float3( 1.0f, -1.0f, -1.0f), float3(0.0f, -1.0f, 0.0f), float3(1.0f, 0.0f, 0.0f),  float2(1.0f, 0.0f) },
-		{ float3( 1.0f, -1.0f,  1.0f), float3(0.0f, -1.0f, 0.0f), float3(1.0f, 0.0f, 0.0f),  float2(1.0f, 1.0f) },
-		{ float3(-1.0f, -1.0f,  1.0f), float3(0.0f, -1.0f, 0.0f), float3(1.0f, 0.0f, 0.0f),  float2(0.0f, 1.0f) },
+		{ inScale * float3(-1.0f, -1.0f, -1.0f), float3(0.0f, -1.0f, 0.0f), float3(1.0f, 0.0f, 0.0f),  float2(0.0f, 0.0f) },
+		{ inScale * float3( 1.0f, -1.0f, -1.0f), float3(0.0f, -1.0f, 0.0f), float3(1.0f, 0.0f, 0.0f),  float2(1.0f, 0.0f) },
+		{ inScale * float3( 1.0f, -1.0f,  1.0f), float3(0.0f, -1.0f, 0.0f), float3(1.0f, 0.0f, 0.0f),  float2(1.0f, 1.0f) },
+		{ inScale * float3(-1.0f, -1.0f,  1.0f), float3(0.0f, -1.0f, 0.0f), float3(1.0f, 0.0f, 0.0f),  float2(0.0f, 1.0f) },
 
 		// -X
-		{ float3(-1.0f, -1.0f,  1.0f), float3(-1.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 1.0f),  float2(0.0f, 1.0f) },
-		{ float3(-1.0f, -1.0f, -1.0f), float3(-1.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 1.0f),  float2(1.0f, 1.0f) },
-		{ float3(-1.0f,  1.0f, -1.0f), float3(-1.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 1.0f),  float2(1.0f, 0.0f) },
-		{ float3(-1.0f,  1.0f,  1.0f), float3(-1.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 1.0f),  float2(0.0f, 0.0f) },
+		{ inScale * float3(-1.0f, -1.0f,  1.0f), float3(-1.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 1.0f),  float2(0.0f, 1.0f) },
+		{ inScale * float3(-1.0f, -1.0f, -1.0f), float3(-1.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 1.0f),  float2(1.0f, 1.0f) },
+		{ inScale * float3(-1.0f,  1.0f, -1.0f), float3(-1.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 1.0f),  float2(1.0f, 0.0f) },
+		{ inScale * float3(-1.0f,  1.0f,  1.0f), float3(-1.0f, 0.0f, 0.0f), float3(0.0f, 0.0f, 1.0f),  float2(0.0f, 0.0f) },
 
 		// +X
-		{ float3(1.0f, -1.0f,  1.0f),  float3(1.0f, 0.0f, 0.0f),  float3(0.0f, 0.0f, 1.0f),  float2(1.0f, 1.0f) },
-		{ float3(1.0f, -1.0f, -1.0f),  float3(1.0f, 0.0f, 0.0f),  float3(0.0f, 0.0f, 1.0f),  float2(0.0f, 1.0f) },
-		{ float3(1.0f,  1.0f, -1.0f),  float3(1.0f, 0.0f, 0.0f),  float3(0.0f, 0.0f, 1.0f),  float2(0.0f, 0.0f) },
-		{ float3(1.0f,  1.0f,  1.0f),  float3(1.0f, 0.0f, 0.0f),  float3(0.0f, 0.0f, 1.0f),  float2(1.0f, 0.0f) },
+		{ inScale * float3(1.0f, -1.0f,  1.0f),  float3(1.0f, 0.0f, 0.0f),  float3(0.0f, 0.0f, 1.0f),  float2(1.0f, 1.0f) },
+		{ inScale * float3(1.0f, -1.0f, -1.0f),  float3(1.0f, 0.0f, 0.0f),  float3(0.0f, 0.0f, 1.0f),  float2(0.0f, 1.0f) },
+		{ inScale * float3(1.0f,  1.0f, -1.0f),  float3(1.0f, 0.0f, 0.0f),  float3(0.0f, 0.0f, 1.0f),  float2(0.0f, 0.0f) },
+		{ inScale * float3(1.0f,  1.0f,  1.0f),  float3(1.0f, 0.0f, 0.0f),  float3(0.0f, 0.0f, 1.0f),  float2(1.0f, 0.0f) },
 
 		// -Z
-		{ float3(-1.0f, -1.0f, -1.0f), float3(0.0f, 0.0f, -1.0f), float3(-1.0f, 0.0f, 0.0f), float2(0.0f, 1.0f) },
-		{ float3( 1.0f, -1.0f, -1.0f), float3(0.0f, 0.0f, -1.0f), float3(-1.0f, 0.0f, 0.0f), float2(1.0f, 1.0f) },
-		{ float3( 1.0f,  1.0f, -1.0f), float3(0.0f, 0.0f, -1.0f), float3(-1.0f, 0.0f, 0.0f), float2(1.0f, 0.0f) },
-		{ float3(-1.0f,  1.0f, -1.0f), float3(0.0f, 0.0f, -1.0f), float3(-1.0f, 0.0f, 0.0f), float2(0.0f, 0.0f) },
+		{ inScale * float3(-1.0f, -1.0f, -1.0f), float3(0.0f, 0.0f, -1.0f), float3(-1.0f, 0.0f, 0.0f), float2(0.0f, 1.0f) },
+		{ inScale * float3( 1.0f, -1.0f, -1.0f), float3(0.0f, 0.0f, -1.0f), float3(-1.0f, 0.0f, 0.0f), float2(1.0f, 1.0f) },
+		{ inScale * float3( 1.0f,  1.0f, -1.0f), float3(0.0f, 0.0f, -1.0f), float3(-1.0f, 0.0f, 0.0f), float2(1.0f, 0.0f) },
+		{ inScale * float3(-1.0f,  1.0f, -1.0f), float3(0.0f, 0.0f, -1.0f), float3(-1.0f, 0.0f, 0.0f), float2(0.0f, 0.0f) },
 
 		// +Z
-		{ float3(-1.0f, -1.0f, 1.0f), float3(0.0f, 0.0f, 1.0f),  float3(-1.0f, 0.0f, 0.0f), float2(1.0f, 1.0f) },
-		{ float3( 1.0f, -1.0f, 1.0f), float3(0.0f, 0.0f, 1.0f),  float3(-1.0f, 0.0f, 0.0f), float2(0.0f, 1.0f) },
-		{ float3( 1.0f,  1.0f, 1.0f), float3(0.0f, 0.0f, 1.0f),  float3(-1.0f, 0.0f, 0.0f), float2(0.0f, 0.0f) },
-		{ float3(-1.0f,  1.0f, 1.0f), float3(0.0f, 0.0f, 1.0f),  float3(-1.0f, 0.0f, 0.0f), float2(1.0f, 0.0f) }
+		{ inScale * float3(-1.0f, -1.0f, 1.0f), float3(0.0f, 0.0f, 1.0f),  float3(-1.0f, 0.0f, 0.0f), float2(1.0f, 1.0f) },
+		{ inScale * float3( 1.0f, -1.0f, 1.0f), float3(0.0f, 0.0f, 1.0f),  float3(-1.0f, 0.0f, 0.0f), float2(0.0f, 1.0f) },
+		{ inScale * float3( 1.0f,  1.0f, 1.0f), float3(0.0f, 0.0f, 1.0f),  float3(-1.0f, 0.0f, 0.0f), float2(0.0f, 0.0f) },
+		{ inScale * float3(-1.0f,  1.0f, 1.0f), float3(0.0f, 0.0f, 1.0f),  float3(-1.0f, 0.0f, 0.0f), float2(1.0f, 0.0f) }
 	};
 
-	D3D11_BUFFER_DESC bd;
-	ZeroMemory(&bd, sizeof(bd));
-	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(SimpleVertex) * mNumVerts;
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.CPUAccessFlags = 0;
-
-	D3D11_SUBRESOURCE_DATA InitData;
-	ZeroMemory(&InitData, sizeof(InitData));
-	InitData.pSysMem = vertices;
-	D3DCall(theFramework.GetDevice()->CreateBuffer(&bd, &InitData, &mVertexBuffer));
-	
-	mStride = sizeof(SimpleVertex);
-	mOffset = 0;
-	
-	// Create index buffer
-	mNumIndices = 36;
 	WORD indices[] =
 	{
 		3, 1, 0, 		2, 1, 3,		
@@ -90,30 +60,56 @@ void Mesh::InitCube()
 		22, 20, 21,		23, 20, 22
 	};
 
-	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(WORD) * mNumIndices;
-	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	bd.CPUAccessFlags = 0;
-	InitData.pSysMem = indices;
-	D3DCall(theFramework.GetDevice()->CreateBuffer(&bd, &InitData, &mIndexBuffer));
-
-	assert(mVertexBuffer != nullptr);
-	assert(mIndexBuffer != nullptr);
+	InitFromData(vertices, 24, indices, 36);
 }
 
 
-void Mesh::InitTriangle()
+void Mesh::InitPlane(int inSubX, int inSubY, float2 inScale)
+{
+	std::vector<SimpleVertex> vertices;
+	std::vector<WORD> indices;
+
+	SimpleVertex vert;
+	vert.Normal = float3(0, 1, 0);
+	vert.Tangent = float3(1, 0, 0);
+
+	for (int x = 0; x <= inSubX; x++)
+	{
+		float u = float(x) / inSubX;
+		for (int y = 0; y <= inSubY; y++)
+		{
+			float v = float(y) / inSubY;
+			vert.TexCoord = float2(u, v);
+			vert.Position = float3((u - 0.5) * inScale.x, 0, (v - 0.5) * inScale.y);
+			vertices.push_back(vert);
+		}
+	}
+
+	for (int x = 0; x < inSubX; x++)
+	{
+		for (int y = 0; y < inSubY; y++)
+		{
+			int row_offset = inSubY + 1;
+			int idx = x * row_offset + y;
+			indices.push_back(idx);
+			indices.push_back(idx + 1);
+			indices.push_back(idx + row_offset);
+			indices.push_back(idx + 1);
+			indices.push_back(idx + 1 + row_offset);
+			indices.push_back(idx + row_offset);
+		}
+	}
+
+	InitFromData(vertices.data(), vertices.size(), indices.data(), indices.size());
+}
+
+
+
+void Mesh::InitFromData(SimpleVertex* inVertexData, int inNumVerts, WORD* inIndexData, int inNumIndices)
 {
 	CleanUp();
 
-	// Create vertex buffer
-	mNumVerts = 3;
-	SimpleVertex vertices[] =
-	{
-		{ float3(0.0f, 1.0f, 0.0f),  float3(0.0f, 0.0f, 1.0f), float3(1.0f, 0.0f, 0.0f), float2(0.5f, 1.0f) },
-		{ float3(-0.5f, 0.0f, 0.0f), float3(0.0f, 0.0f, 1.0f), float3(1.0f, 0.0f, 0.0f), float2(0.0f, 0.0f) },
-		{ float3(0.5f, 0.0f, 0.0f),	 float3(0.0f, 0.0f, 1.0f), float3(1.0f, 0.0f, 0.0f), float2(1.0f, 0.0f) },
-	};
+	mNumVerts = inNumVerts;
 
 	D3D11_BUFFER_DESC bd;
 	ZeroMemory(&bd, sizeof(bd));
@@ -124,22 +120,19 @@ void Mesh::InitTriangle()
 
 	D3D11_SUBRESOURCE_DATA InitData;
 	ZeroMemory(&InitData, sizeof(InitData));
-	InitData.pSysMem = vertices;
+	InitData.pSysMem = inVertexData;
 	D3DCall(theFramework.GetDevice()->CreateBuffer(&bd, &InitData, &mVertexBuffer));
 
-	// Set vertex buffer
 	mStride = sizeof(SimpleVertex);
 	mOffset = 0;
 
-	// Create index buffer
-	mNumIndices = 3;
-	WORD indices[] = { 0, 1, 2 };
+	mNumIndices = inNumIndices;
 
 	bd.Usage = D3D11_USAGE_DEFAULT;
 	bd.ByteWidth = sizeof(WORD) * mNumIndices;
 	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	bd.CPUAccessFlags = 0;
-	InitData.pSysMem = indices;
+	InitData.pSysMem = inIndexData;
 	D3DCall(theFramework.GetDevice()->CreateBuffer(&bd, &InitData, &mIndexBuffer));
 
 	assert(mVertexBuffer != nullptr);
@@ -323,34 +316,7 @@ void Mesh::InitFromFile(std::string inFileName)
 		vertices[i].Tangent[i] *= (dot(cross(n, t), tan2[i]) < 0.0) ? -1.0 : 1.0;
 	}
 
-	mNumVerts = vertices.size();
-	mNumIndices = indices.size();
-
-	D3D11_BUFFER_DESC bd;
-	ZeroMemory(&bd, sizeof(bd));
-	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(SimpleVertex) * mNumVerts;
-	bd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	bd.CPUAccessFlags = 0;
-
-	D3D11_SUBRESOURCE_DATA InitData;
-	ZeroMemory(&InitData, sizeof(InitData));
-	InitData.pSysMem = vertices.data();
-	D3DCall(theFramework.GetDevice()->CreateBuffer(&bd, &InitData, &mVertexBuffer));
-
-	mStride = sizeof(SimpleVertex);
-	mOffset = 0;
-
-	// Create index buffer
-	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(WORD) * mNumIndices;
-	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	bd.CPUAccessFlags = 0;
-	InitData.pSysMem = indices.data();
-	D3DCall(theFramework.GetDevice()->CreateBuffer(&bd, &InitData, &mIndexBuffer));
-
-	assert(mVertexBuffer != nullptr);
-	assert(mIndexBuffer != nullptr);
+	InitFromData(vertices.data(), vertices.size(), indices.data(), indices.size());
 }
 
 

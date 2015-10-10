@@ -12,11 +12,22 @@ void TerrainTile::Init(float3 inScale, Texture* inHeightMap, int inWidth, int in
 	Texture* inNormalTexture, Sampler* inNormalSampler,
 	Texture* inMaterialTexture, Sampler* inMaterialSampler)
 {
-	// TODO
 	mScale = inScale;
+	mWidth = inWidth;
+	mHeight = inHeight;
 	mHeightMap = inHeightMap;
 	
 	mMesh = new Mesh();
+	mMesh->InitPlane(inWidth, mHeight, mScale.XY());
+	
+	mPixelShader = inPixelShader;
 
-	mInitialized = true;
+	mDiffuseTexture = inDiffuseTexture;
+	mDiffuseSampler = inDiffuseSampler;
+	mNormalTexture = inNormalTexture;
+	mNormalSampler = inNormalSampler;
+	mMaterialTexture = inMaterialTexture;
+	mMaterialSampler = inMaterialSampler;
+
+	mInitialized = true; 
 }
