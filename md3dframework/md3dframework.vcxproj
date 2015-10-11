@@ -113,6 +113,7 @@
     <ClInclude Include="LinearAlgebra.h" />
     <ClInclude Include="IndirectLightingRenderer.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="PostProcessRenderer.h" />
     <ClInclude Include="ReflectionRenderer.h" />
@@ -142,6 +143,7 @@
     <ClCompile Include="IndirectLightingRenderer.cpp" />
     <ClCompile Include="LightComposeRenderer.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="PixelShader.cpp" />
     <ClCompile Include="PostProcessRenderer.cpp" />

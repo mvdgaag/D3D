@@ -19,6 +19,9 @@ public:
 		Texture* inDiffuseTexture, Sampler* inDiffuseSampler,
 		Texture* inNormalTexture, Sampler* inNormalSampler,
 		Texture* inMaterialTexture, Sampler* inMaterialSampler);
+	void CleanUp();
+	void Draw() {}
+
 private:
 	PixelShader* mPixelShader;
 	VertexShader* mVertexShader;

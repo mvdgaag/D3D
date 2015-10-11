@@ -11,6 +11,7 @@ class Sampler;
 class PixelShader;
 class VertexShader;
 class ConstantBuffer;
+class Material;
 
 
 class DrawableObject : public BaseDrawable
@@ -23,6 +24,7 @@ public:
 		Texture* inDiffuseTexture, Sampler* inDiffuseSampler,
 		Texture* inNormalTexture, Sampler* inNormalSampler,
 		Texture* inMaterialTexture, Sampler* inMaterialSampler);
+	void Init(Mesh* inMesh, Material* inMaterial);
 	void Draw();
 
 	PixelShader*	GetPixelShader()		{ return mPixelShader; }
@@ -48,6 +50,8 @@ private:
 	DirectX::XMMATRIX mPrevProjectionMatrix;
 	
 	Mesh* mMesh = nullptr;
+
+	Material* mMaterial;
 
 	Texture* mDiffuseTexture = nullptr;
 	Sampler* mDiffuseSampler = nullptr;

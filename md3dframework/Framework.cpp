@@ -13,6 +13,7 @@
 #include "Sampler.h"
 #include "ConstantBuffer.h"
 #include "Mesh.h"
+#include "Material.h"
 
 
 
@@ -306,8 +307,8 @@ void Framework::Render()
 	SetVertexShader(mFullScreenQuadVertexShader);
 	SetPixelShader(mFullScreenQuadPixelShader);
 
-	SetTextureAndSampler(mDeferredRenderer->GetAntiAliased()->GetTexture(), mDefaultPointSampler, 0);
-	//SetTextureAndSampler(mDeferredRenderer->GetDirectLighting()->GetTexture(), mDefaultPointSampler, 0);
+	//SetTextureAndSampler(mDeferredRenderer->GetAntiAliased()->GetTexture(), mDefaultPointSampler, 0);
+	SetTextureAndSampler(mDeferredRenderer->GetDirectLighting()->GetTexture(), mDefaultPointSampler, 0);
 	
 	// draw
 	mImmediateContext->DrawIndexed(6, 0, 0);
@@ -339,6 +340,26 @@ void Framework::CleanUpDevice()
 	if (mImmediateContext) mImmediateContext->Release();
 	if (mD3DDevice1) mD3DDevice1->Release();
 	if (mD3DDevice) mD3DDevice->Release();
+}
+
+
+void Framework::SetMaterial(Material* inMaterial)
+{
+	SetPixelShader(inMaterial->GetPixelShader());
+	SetVertexShader(inMaterial->GetVertexShader());
+
+	Texture* diffuse_texture = inMaterial->GetDiffuseTexture();
+	Texture* normal_texture = inMaterial->GetNormalTexture();
+	Texture* surface_texture = inMaterial->GetSurfaceTexture();
+
+	if (diffuse_texture != nullptr)
+		SetTextureAndSampler(diffuse_texture, mDefaultLinearSampler, 0);
+	if (normal_texture != nullptr)
+		SetTextureAndSampler(normal_texture, mDefaultLinearSampler, 1);
+	if (surface_texture != nullptr)
+		SetTextureAndSampler(surface_texture, mDefaultLinearSampler, 2);
+	
+	SetPixelConstantBuffer(inMaterial->GetConstantBuffer());	
 }
 
 
@@ -397,10 +418,17 @@ void Framework::SetTextureAndSampler(Texture* inTexture, Sampler* inSampler, int
 }
 
 
-void Framework::SetConstantBuffer(ConstantBuffer* inConstantBuffer)
+void Framework::SetVertexConstantBuffer(ConstantBuffer* inConstantBuffer)
 {
 	ID3D11Buffer* cbuf = inConstantBuffer->GetBuffer();
 	mImmediateContext->VSSetConstantBuffers(0, 1, &cbuf);
+}
+
+
+void Framework::SetPixelConstantBuffer(ConstantBuffer* inConstantBuffer)
+{
+	ID3D11Buffer* cbuf = inConstantBuffer->GetBuffer();
+	mImmediateContext->PSSetConstantBuffers(0, 1, &cbuf);
 }
 
 
@@ -429,7 +457,7 @@ void Framework::ComputeSetTextureAndSampler(Texture* inTexture, Sampler* inSampl
 }
 
 
-void Framework::ComputeSetConstantBuffer(ConstantBuffer* inConstantBuffer)
+void Framework::ComputeSetVertexConstantBuffer(ConstantBuffer* inConstantBuffer)
 {
 	ID3D11Buffer* cbuf = inConstantBuffer->GetBuffer();
 	mImmediateContext->CSSetConstantBuffers(0, 1, &cbuf);

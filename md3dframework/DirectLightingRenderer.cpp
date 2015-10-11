@@ -36,7 +36,7 @@ void DirectLightingRenderer::Render(GBuffer* inSource, RenderTarget* inTarget)
 	ID3D11DeviceContext* context;
 	theFramework.GetDevice()->GetImmediateContext(&context);
 	context->UpdateSubresource(cbuf, 0, NULL, &mConstantBufferData, 0, 0);
-	theFramework.ComputeSetConstantBuffer(mConstantBuffer);
+	theFramework.ComputeSetVertexConstantBuffer(mConstantBuffer);
 
 	int groups_x = 1 + (inTarget->GetTexture()->GetWidth() - 1) / 8;
 	int groups_y = 1 + (inTarget->GetTexture()->GetHeight() - 1) / 8;

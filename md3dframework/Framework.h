@@ -14,6 +14,7 @@ class Mesh;
 class ConstantBuffer;
 class DrawableObject;
 class Camera;
+class Material;
 
 
 #define theFramework Framework::GetInstance()
@@ -41,6 +42,8 @@ public:
 	int GetScreenHeight() { return mHeight; }
 	int GetFrameID() { return mFrameID; }
 
+	void SetMaterial(Material* inMaterial);
+
 	void SetVertexShader(VertexShader* inVertexShader);
 	void SetPixelShader(PixelShader* inPixelShader);
 	void SetComputeShader(ComputeShader* inComputeShader);
@@ -48,7 +51,8 @@ public:
 	void SetTexture(Texture* inTexture, int idx);
 	void SetSampler(Sampler* inSampler, int idx);
 	void SetTextureAndSampler(Texture* inTexture, Sampler* inSampler, int idx);
-	void SetConstantBuffer(ConstantBuffer* inConstantBuffer);
+	void SetVertexConstantBuffer(ConstantBuffer* inConstantBuffer);
+	void SetPixelConstantBuffer(ConstantBuffer* inConstantBuffer);
 
 	Sampler* GetPointSampler() { return mDefaultPointSampler; }
 	Sampler* GetLinearSampler() { return mDefaultLinearSampler; }
@@ -56,7 +60,7 @@ public:
 	void ComputeSetTexture(Texture* inTexture, int idx);
 	void ComputeSetSampler(Sampler* inSampler, int idx);
 	void ComputeSetTextureAndSampler(Texture* inTexture, Sampler* inSampler, int idx);
-	void ComputeSetConstantBuffer(ConstantBuffer* inConstantBuffer);
+	void ComputeSetVertexConstantBuffer(ConstantBuffer* inConstantBuffer);
 
 	void ComputeSetRWTexture(RenderTarget* inRenderTarget, int idx);
 	void ComputeDispatch(unsigned int inX, unsigned int inY, unsigned int inZ) { mImmediateContext->Dispatch(inX, inY, inZ); }

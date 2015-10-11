@@ -32,25 +32,19 @@ void DrawableObject::Init(Mesh* inMesh, PixelShader* inPixelShader, VertexShader
 }
 
 
+void DrawableObject::Init(Mesh* inMesh, Material* inMaterial)
+{
+	mMesh = inMesh;
+	mMaterial = inMaterial;
+	mConstantBuffer = new ConstantBuffer();
+	mConstantBuffer->Init(sizeof(ConstantBufferData));
+	mTransform = DirectX::XMMatrixIdentity();
+}
+
+
 void DrawableObject::Draw()
 {
-	// check if everything is in place
-	assert(mVertexShader != NULL);
-	assert(mPixelShader != NULL);
-	assert(mDiffuseTexture != NULL);
-	assert(mNormalTexture != NULL);
-	assert(mMaterialTexture != NULL);
-	assert(mMesh != NULL);
-	assert(mConstantBuffer != NULL);
-
-	// set shaders
-	theFramework.SetVertexShader(mVertexShader);
-	theFramework.SetPixelShader(mPixelShader);
-	
-	// set textures
-	theFramework.SetTextureAndSampler(mDiffuseTexture, mDiffuseSampler, 0);
-	theFramework.SetTextureAndSampler(mNormalTexture, mNormalSampler, 1);
-	theFramework.SetTextureAndSampler(mMaterialTexture, mMaterialSampler, 2);
+	theFramework.SetMaterial(mMaterial);
 
 	// todo: check if this leads to proper motion vectors
 	const float halton23x[8] = {	1.0f/2.0f, 1.0f/4.0f, 3.0f/4.0f, 1.0f/8.0f,
@@ -74,7 +68,7 @@ void DrawableObject::Draw()
 	//TODO: this seems to break, but should do the same as the 4 lines above
 	//mConstantBuffer->SetData(&mConstantBufferData);
 
-	theFramework.SetConstantBuffer(mConstantBuffer);
+	theFramework.SetVertexConstantBuffer(mConstantBuffer);
 	theFramework.DrawMesh(mMesh);
 
 	// reset state

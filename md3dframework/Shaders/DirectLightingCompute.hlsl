@@ -11,7 +11,7 @@ Texture2D<float4> Material : register(t3);
 
 cbuffer cLightingShaderConstants : register(b0)
 {
-	float2	cViewReconstructionVector; // tan(fovx)/near, tan(fovy)/near
+	float2	cViewReconstructionVector;
 	float2	cTargetSize;
 	float4	cFrameData;
 };

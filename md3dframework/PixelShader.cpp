@@ -29,6 +29,21 @@ void PixelShader::InitFromFile(std::string inFileName)
 		OutputDebugStringA(reinterpret_cast<const char*>(pErrorBlob->GetBufferPointer()));
 		pErrorBlob->Release();
 	}
+
+	ID3D11ShaderReflection* pPixelShaderReflection = NULL;
+	D3DCall(D3DReflect(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), IID_ID3D11ShaderReflection, (void**)&pPixelShaderReflection));
+
+	D3D11_SHADER_DESC shader_desc;
+	pPixelShaderReflection->GetDesc(&shader_desc);
+
+	for (int i = 0; i < shader_desc.BoundResources; i++)
+	{
+		D3D11_SHADER_INPUT_BIND_DESC resource_desc;
+		pPixelShaderReflection->GetResourceBindingDesc(i, &resource_desc);
+
+		// FETCH RESOURCES
+	}
+
 	D3DCall(theFramework.GetDevice()->CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), nullptr, &mHandle));
 	pPSBlob->Release();
 }

@@ -21,12 +21,13 @@
 
 // for content
 #include "DrawableObject.h"
+#include "TerrainTile.h"
 #include "Mesh.h"
 #include "PixelShader.h"
 #include "VertexShader.h"
 #include "Texture.h"
 #include "Sampler.h"
-
+#include "Material.h"
 
 
 //--------------------------------------------------------------------------------------
@@ -170,12 +171,10 @@ Mesh* g_mesh;
 PixelShader* g_pixel_shader;
 VertexShader* g_vertex_shader;
 Texture* g_diffuse_texture;
-Sampler* g_diffuse_sampler;
 Texture* g_normal_texture;
-Sampler* g_normal_sampler;
-Texture* g_material_texture;
-Sampler* g_material_sampler;
-
+Texture* g_surface_texture;
+TerrainTile* g_terrainTile;
+Material* g_material;
 
 void InitContent()
 {
@@ -183,7 +182,13 @@ void InitContent()
 	
 	g_mesh = new Mesh();
 	g_mesh->InitFromFile("C:/Users/Maarten/Documents/Visual Studio 2013/Projects/D3D/C++/md3dframework/Models/sphere.obj");
+
+	/*
+	g_terrainTile = new TerrainTile();
+	g_terrainTile->Init(float3(1, 1, 1), g_heightMap, 256, 256, g_pixel_shader, g_vertex_shader,
+		g_diffuse_texture, g_diffuse_sampler, g_normal_texture, g_normal_sampler, g_surface_texture, g_surface_sampler);
 	//g_mesh->InitPlane(4, 4, float2(4, 4));
+	*/
 
 	g_pixel_shader = new PixelShader();
 	g_pixel_shader->InitFromFile("Shaders/BasicFragmentShader.hlsl");
@@ -193,24 +198,23 @@ void InitContent()
 
 	g_diffuse_texture = new Texture();
 	g_diffuse_texture->InitFromFile("Textures/photosculpt-squarebricks-diffuse.dds");
-	g_diffuse_sampler = new Sampler();
-	g_diffuse_sampler->Init();
 
 	g_normal_texture = new Texture();
 	g_normal_texture->InitFromFile("Textures/photosculpt-squarebricks-normal.dds");
-	g_normal_sampler = new Sampler();
-	g_normal_sampler->Init();
 
-	g_material_texture = new Texture();
-	g_material_texture->InitFromFile("Textures/photosculpt-squarebricks-specular.dds");
-	g_material_sampler = new Sampler();
-	g_material_sampler->Init();
+	g_surface_texture = new Texture();
+	g_surface_texture->InitFromFile("Textures/photosculpt-squarebricks-specular.dds");
 
-	g_obj->Init(g_mesh, g_pixel_shader, g_vertex_shader,
-		g_diffuse_texture, g_diffuse_sampler,
-		g_normal_texture, g_normal_sampler,
-		g_material_texture, g_material_sampler);
-
+	g_material = new Material();
+	g_material->Init();
+	g_material->SetDiffuseTexture(g_diffuse_texture);
+	g_material->SetNormalTexture(g_normal_texture);
+	g_material->SetSurfaceTexture(g_surface_texture);
+	g_material->SetDiffuseValue(float3(0.7, 0.4, 0));
+	g_material->SetPixelShader(g_pixel_shader);
+	g_material->SetVertexShader(g_vertex_shader);
+	g_obj->Init(g_mesh, g_material);
+	
 	theFramework.RegisterObject(g_obj);
 }
 
@@ -222,9 +226,6 @@ void CleanUpContent()
 	delete g_pixel_shader;
 	delete g_vertex_shader;
 	delete g_diffuse_texture;
-	delete g_diffuse_sampler;
 	delete g_normal_texture;
-	delete g_normal_sampler;
-	delete g_material_texture;
-	delete g_material_sampler;
+	delete g_surface_texture;
 }

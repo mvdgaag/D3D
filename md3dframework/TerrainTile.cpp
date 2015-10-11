@@ -12,6 +12,8 @@ void TerrainTile::Init(float3 inScale, Texture* inHeightMap, int inWidth, int in
 	Texture* inNormalTexture, Sampler* inNormalSampler,
 	Texture* inMaterialTexture, Sampler* inMaterialSampler)
 {
+	CleanUp();
+
 	mScale = inScale;
 	mWidth = inWidth;
 	mHeight = inHeight;
@@ -21,6 +23,7 @@ void TerrainTile::Init(float3 inScale, Texture* inHeightMap, int inWidth, int in
 	mMesh->InitPlane(inWidth, mHeight, mScale.XY());
 	
 	mPixelShader = inPixelShader;
+	mVertexShader = inVertexShader;
 
 	mDiffuseTexture = inDiffuseTexture;
 	mDiffuseSampler = inDiffuseSampler;
@@ -30,4 +33,20 @@ void TerrainTile::Init(float3 inScale, Texture* inHeightMap, int inWidth, int in
 	mMaterialSampler = inMaterialSampler;
 
 	mInitialized = true; 
+}
+
+
+void TerrainTile::CleanUp()
+{
+	delete mMesh;
+	delete mPixelShader;
+	delete mVertexShader;
+	delete mHeightMap;
+	delete mDiffuseTexture;
+	delete mDiffuseSampler;
+	delete mNormalTexture;
+	delete mNormalSampler;
+	delete mMaterialTexture;
+	delete mMaterialSampler;
+	mInitialized = false;
 }

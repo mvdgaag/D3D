@@ -2,11 +2,25 @@
 
 Texture2D cDiffuseTexture : register(t0);
 Texture2D cNormalTexture : register(t1);
-Texture2D cMaterialTexture : register(t2);
+Texture2D cSurfaceTexture : register(t2);
 
 SamplerState cDiffuseSampler : register(s0);
 SamplerState cNormalSampler : register(s1);
-SamplerState cMaterialSampler : register(s2);
+SamplerState cSurfaceSampler : register(s2);
+
+
+#define HAS_DIFFUSE_MAP_FLAG	(1 << 0)
+#define HAS_NORMAL_MAP_FLAG		(1 << 1)
+#define HAS_SURFACE_MAP_FLAG	(1 << 2)
+#define IS_EMISSIVE_FLAG		(1 << 3)
+
+
+cbuffer cConstantData : register(b0)
+{
+	float3 cDiffuse;
+	float4 cSurface;
+	uint cFlags;
+}
 
 
 struct PS_INPUT
@@ -24,7 +38,7 @@ struct PS_OUTPUT
 	float LinearDepth		: SV_Target0;
 	half2 Normal			: SV_Target1;
 	float4 Diffuse			: SV_Target2;
-	float4 Material			: SV_Target3;
+	float4 Surface			: SV_Target3;
 	half2 MotionVectors		: SV_Target4;
 };
 
@@ -48,12 +62,26 @@ PS_OUTPUT PS(PS_INPUT input)
 {
 	PS_OUTPUT output = (PS_OUTPUT)0;
 	output.LinearDepth = input.Position.z;
-	output.Diffuse = cDiffuseTexture.Sample(cDiffuseSampler, input.TexCoord);
-	output.Normal = EncodeNormal(NormalMap(input.Normal, input.Tangent, input.TexCoord));
+	
+	// TODO: flags seem to be 0
+	uint flags = 7;// cFlags;
 
-	//output.Normal = EncodeNormal(input.Normal);
+	if ((flags & HAS_DIFFUSE_MAP_FLAG) == 0)
+		output.Diffuse = float4(cDiffuse, 0.0);
+	else
+		output.Diffuse = cDiffuseTexture.Sample(cDiffuseSampler, input.TexCoord);
 
-	output.Material = cMaterialTexture.Sample(cMaterialSampler, input.TexCoord);
+	if ((flags & HAS_NORMAL_MAP_FLAG) == 0)
+		output.Normal = EncodeNormal(input.Normal);
+	else
+		output.Normal = EncodeNormal(NormalMap(input.Normal, input.Tangent, input.TexCoord));
+
+	if ((flags & HAS_SURFACE_MAP_FLAG) == 0)
+		output.Surface = cSurface;
+	else
+		output.Surface = cSurfaceTexture.Sample(cSurfaceSampler, input.TexCoord);
+	
 	output.MotionVectors = input.MotionVectors;
+
 	return output;
 }
