@@ -9,10 +9,9 @@ SamplerState cNormalSampler : register(s1);
 SamplerState cSurfaceSampler : register(s2);
 
 
-#define HAS_DIFFUSE_MAP_FLAG	(1 << 0)
-#define HAS_NORMAL_MAP_FLAG		(1 << 1)
-#define HAS_SURFACE_MAP_FLAG	(1 << 2)
-#define IS_EMISSIVE_FLAG		(1 << 3)
+#define HAS_DIFFUSE_MAP	(1 << 0)
+#define HAS_NORMAL_MAP	(1 << 1)
+#define HAS_SURFACE_MAP	(1 << 2)
 
 
 cbuffer cConstantData : register(b0)
@@ -64,19 +63,19 @@ PS_OUTPUT PS(PS_INPUT input)
 	output.LinearDepth = input.Position.z;
 	
 	// TODO: flags seem to be 0
-	uint flags = 7;// cFlags;
+	uint flags = HAS_DIFFUSE_MAP | HAS_NORMAL_MAP | HAS_SURFACE_MAP;// cFlags;
 
-	if ((flags & HAS_DIFFUSE_MAP_FLAG) == 0)
+	if ((flags & HAS_DIFFUSE_MAP) == 0)
 		output.Diffuse = float4(cDiffuse, 0.0);
 	else
 		output.Diffuse = cDiffuseTexture.Sample(cDiffuseSampler, input.TexCoord);
 
-	if ((flags & HAS_NORMAL_MAP_FLAG) == 0)
+	if ((flags & HAS_NORMAL_MAP) == 0)
 		output.Normal = EncodeNormal(input.Normal);
 	else
 		output.Normal = EncodeNormal(NormalMap(input.Normal, input.Tangent, input.TexCoord));
 
-	if ((flags & HAS_SURFACE_MAP_FLAG) == 0)
+	if ((flags & HAS_SURFACE_MAP) == 0)
 		output.Surface = cSurface;
 	else
 		output.Surface = cSurfaceTexture.Sample(cSurfaceSampler, input.TexCoord);

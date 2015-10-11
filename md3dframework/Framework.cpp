@@ -307,8 +307,8 @@ void Framework::Render()
 	SetVertexShader(mFullScreenQuadVertexShader);
 	SetPixelShader(mFullScreenQuadPixelShader);
 
-	//SetTextureAndSampler(mDeferredRenderer->GetAntiAliased()->GetTexture(), mDefaultPointSampler, 0);
-	SetTextureAndSampler(mDeferredRenderer->GetDirectLighting()->GetTexture(), mDefaultPointSampler, 0);
+	SetTextureAndSampler(mDeferredRenderer->GetAntiAliased()->GetTexture(), mDefaultPointSampler, 0);
+	//SetTextureAndSampler(mDeferredRenderer->GetDirectLighting()->GetTexture(), mDefaultPointSampler, 0);
 	
 	// draw
 	mImmediateContext->DrawIndexed(6, 0, 0);
