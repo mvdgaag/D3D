@@ -1,5 +1,5 @@
 #include "DepthPyramidRenderer.h"
-#include "Framework.h"
+#include "RenderContext.h"
 #include "ComputeShader.h"
 #include "Texture.h"
 #include "RenderTarget.h"
@@ -15,7 +15,7 @@ void DepthPyramidRenderer::Render(Texture* inSource, RenderTarget* inTarget)
 	assert(inTarget->GetTexture()->GetMipLevels() == kNumMipLevels);
 
 	ID3D11DeviceContext* context;
-	theFramework.GetDevice()->GetImmediateContext(&context);
+	theRenderContext.GetDevice()->GetImmediateContext(&context);
 
 	// We now set up the shader and run it
 	context->CSSetShader(mShader->GetHandle(), NULL, 0);

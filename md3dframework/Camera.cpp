@@ -1,6 +1,5 @@
 #include "Camera.h"
-#include "main.h"
-#include "Framework.h"
+#include "RenderContext.h"
 
 
 Camera::Camera()
@@ -31,7 +30,7 @@ DirectX::XMMATRIX Camera::GetViewMatrix()
 
 void Camera::SetProjectionMatrix(float inNear, float inFar, float inFovY)
 {
-	mAspect = float(theFramework.GetScreenWidth()) / theFramework.GetScreenHeight();
+	mAspect = float(theRenderContext.GetWidth()) / theRenderContext.GetHeight();
 	mFovY = inFovY;
 	mNear = inNear;
 	mFar = inFar;

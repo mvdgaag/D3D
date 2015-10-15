@@ -1,10 +1,9 @@
 #pragma once
 #include "BaseResource.h"
-#include <d3d11_1.h>
 #include <assert.h>
+#include <d3d11_1.h>
 
 
-//predeclarations
 class Texture;
 
 
@@ -15,11 +14,12 @@ public:
 	~RenderTarget() { CleanUp(); }
 
 	void						Init(int inWidth, int inHeight, int inMipLevels, DXGI_FORMAT inFormat);
+	void						Init(Texture* inTexture);
 	ID3D11RenderTargetView*		GetRenderTargetView(int inMipLevel = 0);
 	ID3D11UnorderedAccessView*	GetUnorderedAccessView(int inMipLevel = 0);
 	Texture*					GetTexture() { return mTexture; }
 	void						CleanUp();
-	ResourceType				GetResourceType() const { return ResourceType::RENDER_TARGET; };
+	ResourceType				GetResourceType() const { return ResourceType::RENDER_TARGET; }
 
 private:
 	Texture* mTexture = nullptr;

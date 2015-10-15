@@ -1,8 +1,8 @@
 #include "GBuffer.h"
 #include "Texture.h"
 #include "RenderTarget.h"
-#include "main.h"
-#include "Framework.h"
+#include "DepthStencilTarget.h"
+#include "RenderContext.h"
 #include <assert.h>
 
 
@@ -37,29 +37,8 @@ void GBuffer::Init(int inWidth, int inHeight)
 	mRenderTargets[MOTION_VECTORS] = new RenderTarget();
 	mRenderTargets[MOTION_VECTORS]->Init(mWidth, mHeight, 1, DXGI_FORMAT_R16G16_FLOAT);
 
-	// Create depth stencil texture
-	D3D11_TEXTURE2D_DESC descDepth;
-	ZeroMemory(&descDepth, sizeof(descDepth));
-	descDepth.Width = mWidth;
-	descDepth.Height = mHeight;
-	descDepth.MipLevels = 1;
-	descDepth.ArraySize = 1;
-	descDepth.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	descDepth.SampleDesc.Count = 1;
-	descDepth.SampleDesc.Quality = 0;
-	descDepth.Usage = D3D11_USAGE_DEFAULT;
-	descDepth.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	descDepth.CPUAccessFlags = 0;
-	descDepth.MiscFlags = 0;
-	D3DCall(theFramework.GetDevice()->CreateTexture2D(&descDepth, nullptr, &mDepthStencil));
-
-	// Create the depth stencil view
-	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
-	ZeroMemory(&descDSV, sizeof(descDSV));
-	descDSV.Format = descDepth.Format;
-	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-	descDSV.Texture2D.MipSlice = 0;
-	D3DCall(theFramework.GetDevice()->CreateDepthStencilView(mDepthStencil, &descDSV, &mDepthStencilView));
+	mDepthStencilTarget = new DepthStencilTarget();
+	mDepthStencilTarget->Init(mWidth, mHeight);
 
 	mInitialized = true;
 }
@@ -86,25 +65,6 @@ void GBuffer::CleanUp()
 		delete[] mRenderTargets;
 		mRenderTargets = nullptr;
 	}
-	if (mDepthStencil != nullptr)
-	{
-		mDepthStencil->Release();
-		mDepthStencil = nullptr;
-	}
-	if (mDepthStencilView != nullptr)
-	{
-		mDepthStencilView->Release();
-		mDepthStencilView = nullptr;
-	}
+	delete mDepthStencilTarget;
 	mInitialized = false;
-}
-
-
-std::vector<ID3D11RenderTargetView*>GBuffer::GetRenderTargetViewArray()
-{
-	assert(mInitialized == true);
-	std::vector<ID3D11RenderTargetView*> targets;
-	for (int i = 0; i < NUM_RENDER_TARGETS; i++)
-		targets.push_back(mRenderTargets[i]->GetRenderTargetView(0));
-	return targets;
 }

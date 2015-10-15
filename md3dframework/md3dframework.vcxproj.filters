@@ -37,6 +37,18 @@
     <Filter Include="Source Files\Terrain">
       <UniqueIdentifier>{818081d8-01ba-456a-86fa-f0fc28e9f163}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Rendering\D3D">
+      <UniqueIdentifier>{d4a01008-b3d8-420f-9d7b-d4658dcd8772}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Rendering\Renderer Systems">
+      <UniqueIdentifier>{28e9b89c-5f48-441d-bbaa-839066fef9a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Rendering\Render Systems">
+      <UniqueIdentifier>{55900c6f-289d-45b5-8510-78a8e9dcc28b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Rendering\D3D">
+      <UniqueIdentifier>{3df6d9eb-2e9b-4e14-9e67-1599610f31c5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -45,9 +57,6 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="LinearAlgebra.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="main.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -69,24 +78,6 @@
     <ClInclude Include="Camera.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="ComputeShader.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="ConstantBuffer.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="DDSTextureLoader.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="DeferredRenderer.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="DepthPyramidRenderer.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="DirectLightingRenderer.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="DrawableObject.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
@@ -96,46 +87,7 @@
     <ClInclude Include="GBuffer.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="IndirectLightingRenderer.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="LightComposeRenderer.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Mesh.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="PixelShader.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="PostProcessRenderer.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="ReflectionRenderer.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderTarget.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Sampler.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="ShadowRenderer.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="TAARenderer.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="targetver.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="VertexShader.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="Terrain.h">
@@ -148,33 +100,78 @@
       <Filter>Header Files\Terrain</Filter>
     </ClInclude>
     <ClInclude Include="Material.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="LinearAlgebra.h">
+      <Filter>Header Files\mVectorMath</Filter>
+    </ClInclude>
+    <ClInclude Include="Mesh.h">
+      <Filter>Header Files\Rendering\D3D</Filter>
+    </ClInclude>
+    <ClInclude Include="PixelShader.h">
+      <Filter>Header Files\Rendering\D3D</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderContext.h">
+      <Filter>Header Files\Rendering\D3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Sampler.h">
+      <Filter>Header Files\Rendering\D3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Header Files\Rendering\D3D</Filter>
+    </ClInclude>
+    <ClInclude Include="VertexShader.h">
+      <Filter>Header Files\Rendering\D3D</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderTarget.h">
+      <Filter>Header Files\Rendering\D3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ConstantBuffer.h">
+      <Filter>Header Files\Rendering\D3D</Filter>
+    </ClInclude>
+    <ClInclude Include="ComputeShader.h">
+      <Filter>Header Files\Rendering\D3D</Filter>
+    </ClInclude>
+    <ClInclude Include="DeferredRenderer.h">
+      <Filter>Header Files\Rendering\Renderer Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="DepthPyramidRenderer.h">
+      <Filter>Header Files\Rendering\Renderer Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectLightingRenderer.h">
+      <Filter>Header Files\Rendering\Renderer Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="IndirectLightingRenderer.h">
+      <Filter>Header Files\Rendering\Renderer Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="LightComposeRenderer.h">
+      <Filter>Header Files\Rendering\Renderer Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="ReflectionRenderer.h">
+      <Filter>Header Files\Rendering\Renderer Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="PostProcessRenderer.h">
+      <Filter>Header Files\Rendering\Renderer Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="ShadowRenderer.h">
+      <Filter>Header Files\Rendering\Renderer Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="TAARenderer.h">
+      <Filter>Header Files\Rendering\Renderer Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="DDSTextureLoader.h">
+      <Filter>Header Files\Rendering\D3D</Filter>
+    </ClInclude>
+    <ClInclude Include="DepthStencilTarget.h">
+      <Filter>Header Files\Rendering\D3D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="ComputeShader.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="ConstantBuffer.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="DDSTextureLoader.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="DeferredRenderer.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="DepthPyramidRenderer.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="DirectLightingRenderer.cpp">
-      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="DrawableObject.cpp">
       <Filter>Source Files\Rendering</Filter>
@@ -185,42 +182,6 @@
     <ClCompile Include="GBuffer.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="IndirectLightingRenderer.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="LightComposeRenderer.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Mesh.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="PixelShader.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="PostProcessRenderer.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="ReflectionRenderer.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderTarget.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Sampler.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="ShadowRenderer.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="TAARenderer.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="VertexShader.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="Terrain.cpp">
       <Filter>Source Files\Terrain</Filter>
     </ClCompile>
@@ -228,7 +189,70 @@
       <Filter>Source Files\Terrain</Filter>
     </ClCompile>
     <ClCompile Include="Material.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="DeferredRenderer.cpp">
+      <Filter>Source Files\Rendering\Render Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="DepthPyramidRenderer.cpp">
+      <Filter>Source Files\Rendering\Render Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectLightingRenderer.cpp">
+      <Filter>Source Files\Rendering\Render Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="IndirectLightingRenderer.cpp">
+      <Filter>Source Files\Rendering\Render Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="LightComposeRenderer.cpp">
+      <Filter>Source Files\Rendering\Render Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="PostProcessRenderer.cpp">
+      <Filter>Source Files\Rendering\Render Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="ReflectionRenderer.cpp">
+      <Filter>Source Files\Rendering\Render Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="ShadowRenderer.cpp">
+      <Filter>Source Files\Rendering\Render Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="TAARenderer.cpp">
+      <Filter>Source Files\Rendering\Render Systems</Filter>
+    </ClCompile>
+    <ClCompile Include="ComputeShader.cpp">
+      <Filter>Source Files\Rendering\D3D</Filter>
+    </ClCompile>
+    <ClCompile Include="ConstantBuffer.cpp">
+      <Filter>Source Files\Rendering\D3D</Filter>
+    </ClCompile>
+    <ClCompile Include="DDSTextureLoader.cpp">
+      <Filter>Source Files\Rendering\D3D</Filter>
+    </ClCompile>
+    <ClCompile Include="VertexShader.cpp">
+      <Filter>Source Files\Rendering\D3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Mesh.cpp">
+      <Filter>Source Files\Rendering\D3D</Filter>
+    </ClCompile>
+    <ClCompile Include="PixelShader.cpp">
+      <Filter>Source Files\Rendering\D3D</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderContext.cpp">
+      <Filter>Source Files\Rendering\D3D</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderTarget.cpp">
+      <Filter>Source Files\Rendering\D3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Sampler.cpp">
+      <Filter>Source Files\Rendering\D3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Source Files\Rendering\D3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="DepthStencilTarget.cpp">
+      <Filter>Source Files\Rendering\D3D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

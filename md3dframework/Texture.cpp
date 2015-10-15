@@ -1,7 +1,6 @@
 #include "Texture.h"
 #include "DDSTextureLoader.h"
-#include "main.h"
-#include "Framework.h"
+#include "RenderContext.h"
 #include <string>
 #include <assert.h>
 
@@ -21,9 +20,23 @@ void Texture::Init(int inWidth, int inHeight, int inMipLevels, DXGI_FORMAT inFor
 	mDesc.CPUAccessFlags = 0;
 	mDesc.MiscFlags = 0;
 
-	D3DCall(theFramework.GetDevice()->CreateTexture2D(&mDesc, NULL, &mTexture));
-	D3DCall(theFramework.GetDevice()->CreateShaderResourceView(mTexture, NULL, &mShaderResourceView));
+	D3DCall(theRenderContext.GetDevice()->CreateTexture2D(&mDesc, NULL, &mTexture));
+	D3DCall(theRenderContext.GetDevice()->CreateShaderResourceView(mTexture, NULL, &mShaderResourceView));
 
+	assert(mTexture != nullptr);
+	assert(mShaderResourceView != nullptr);
+}
+
+
+void Texture::Init(ID3D11Texture2D* inTexture)
+{
+	assert(inTexture);
+	
+	mTexture = inTexture;
+	mTexture->GetDesc(&mDesc);
+	
+	D3DCall(theRenderContext.GetDevice()->CreateShaderResourceView(mTexture, NULL, &mShaderResourceView));
+	
 	assert(mTexture != nullptr);
 	assert(mShaderResourceView != nullptr);
 }
@@ -34,10 +47,12 @@ void Texture::InitFromFile(std::string inFileName)
 	std::wstring filename = std::wstring(inFileName.begin(), inFileName.end());
 
 	// TODO: set descriptor for this class (mDesc)
-	D3DCall(DirectX::CreateDDSTextureFromFile(theFramework.GetDevice(), filename.c_str(), nullptr, &mShaderResourceView));
+	D3DCall(DirectX::CreateDDSTextureFromFile(theRenderContext.GetDevice(), filename.c_str(), nullptr, &mShaderResourceView));
 
-	// TODO fetch texture as well
-//	assert(mTexture != nullptr);
+	mShaderResourceView->GetResource(reinterpret_cast<ID3D11Resource**>(&mTexture));
+	mTexture->GetDesc(&mDesc);
+
+	assert(mTexture != nullptr);
 	assert(mShaderResourceView != nullptr);
 }
 

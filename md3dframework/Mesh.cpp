@@ -1,8 +1,7 @@
 #include "Mesh.h"
-#include <assert.h>
+#include "RenderContext.h"
 #include "LinearAlgebra.h"
-#include "main.h"
-#include "Framework.h"
+#include <assert.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -104,6 +103,37 @@ void Mesh::InitPlane(int inSubX, int inSubY, float2 inScale)
 }
 
 
+void Mesh::InitFullscreenTriangle()
+{
+	CleanUp();
+
+	std::vector<SimpleVertex> vertices;
+	std::vector<WORD> indices;
+
+	SimpleVertex vert;
+	vert.Normal = float3(0, 0, 1);
+	vert.Tangent = float3(1, 0, 0);
+
+	vert.TexCoord = float2(0, 0);
+	vert.Position = float3(-1, -1, 1);
+	vertices.push_back(vert);
+
+	vert.TexCoord = float2(2, 0);
+	vert.Position = float3(3, -1, 1);
+	vertices.push_back(vert);
+
+	vert.TexCoord = float2(0, 2);
+	vert.Position = float3(-1, 3, 1);
+	vertices.push_back(vert);
+
+	indices.push_back(0);
+	indices.push_back(1);
+	indices.push_back(2);
+
+	InitFromData(vertices.data(), vertices.size(), indices.data(), indices.size());
+}
+
+
 
 void Mesh::InitFromData(SimpleVertex* inVertexData, int inNumVerts, WORD* inIndexData, int inNumIndices)
 {
@@ -121,7 +151,7 @@ void Mesh::InitFromData(SimpleVertex* inVertexData, int inNumVerts, WORD* inInde
 	D3D11_SUBRESOURCE_DATA InitData;
 	ZeroMemory(&InitData, sizeof(InitData));
 	InitData.pSysMem = inVertexData;
-	D3DCall(theFramework.GetDevice()->CreateBuffer(&bd, &InitData, &mVertexBuffer));
+	D3DCall(theRenderContext.GetDevice()->CreateBuffer(&bd, &InitData, &mVertexBuffer));
 
 	mStride = sizeof(SimpleVertex);
 	mOffset = 0;
@@ -133,7 +163,7 @@ void Mesh::InitFromData(SimpleVertex* inVertexData, int inNumVerts, WORD* inInde
 	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	bd.CPUAccessFlags = 0;
 	InitData.pSysMem = inIndexData;
-	D3DCall(theFramework.GetDevice()->CreateBuffer(&bd, &InitData, &mIndexBuffer));
+	D3DCall(theRenderContext.GetDevice()->CreateBuffer(&bd, &InitData, &mIndexBuffer));
 
 	assert(mVertexBuffer != nullptr);
 	assert(mIndexBuffer != nullptr);

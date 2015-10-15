@@ -101,6 +101,7 @@
     <ClInclude Include="DDSTextureLoader.h" />
     <ClInclude Include="DeferredRenderer.h" />
     <ClInclude Include="DepthPyramidRenderer.h" />
+    <ClInclude Include="DepthStencilTarget.h" />
     <ClInclude Include="DirectLightingRenderer.h" />
     <ClInclude Include="DrawableObject.h" />
     <ClInclude Include="float2.h" />
@@ -117,6 +118,7 @@
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="PostProcessRenderer.h" />
     <ClInclude Include="ReflectionRenderer.h" />
+    <ClInclude Include="RenderContext.h" />
     <ClInclude Include="RenderTarget.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="PixelShader.h" />
@@ -136,6 +138,7 @@
     <ClCompile Include="DDSTextureLoader.cpp" />
     <ClCompile Include="DeferredRenderer.cpp" />
     <ClCompile Include="DepthPyramidRenderer.cpp" />
+    <ClCompile Include="DepthStencilTarget.cpp" />
     <ClCompile Include="DirectLightingRenderer.cpp" />
     <ClCompile Include="DrawableObject.cpp" />
     <ClCompile Include="Framework.cpp" />
@@ -148,6 +151,7 @@
     <ClCompile Include="PixelShader.cpp" />
     <ClCompile Include="PostProcessRenderer.cpp" />
     <ClCompile Include="ReflectionRenderer.cpp" />
+    <ClCompile Include="RenderContext.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
     <ClCompile Include="Sampler.cpp" />
     <ClCompile Include="ShadowRenderer.cpp" />

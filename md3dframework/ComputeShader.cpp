@@ -1,7 +1,6 @@
 #include "ComputeShader.h"
+#include "RenderContext.h"
 #include <d3dcompiler.h>
-#include "main.h"
-#include "Framework.h"
 
 
 void ComputeShader::InitFromFile(std::string inFileName)
@@ -29,7 +28,7 @@ void ComputeShader::InitFromFile(std::string inFileName)
 		OutputDebugStringA(reinterpret_cast<const char*>(pErrorBlob->GetBufferPointer()));
 		pErrorBlob->Release();
 	}
-	D3DCall(theFramework.GetDevice()->CreateComputeShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), nullptr, &mHandle));
+	D3DCall(theRenderContext.GetDevice()->CreateComputeShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), nullptr, &mHandle));
 	pPSBlob->Release();
 }
 

@@ -1,6 +1,5 @@
 #include "Sampler.h"
-#include "main.h"
-#include "Framework.h"
+#include "RenderContext.h"
 #include <assert.h>
 
 
@@ -17,7 +16,7 @@ void Sampler::Init(D3D11_FILTER inFilter, D3D11_TEXTURE_ADDRESS_MODE inAddressU,
 	mSampDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 	mSampDesc.MinLOD = inMinLod;
 	mSampDesc.MaxLOD = inMaxLod;
-	D3DCall(theFramework.GetDevice()->CreateSamplerState(&mSampDesc, &mSamplerState));
+	D3DCall(theRenderContext.GetDevice()->CreateSamplerState(&mSampDesc, &mSamplerState));
 
 	assert(mSamplerState != nullptr);
 }

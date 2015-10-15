@@ -1,5 +1,4 @@
 #pragma once
-#include <d3d11_1.h>
 #include "float4.h"
 
 // predeclarations

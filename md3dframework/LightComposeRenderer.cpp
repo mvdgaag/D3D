@@ -1,6 +1,7 @@
 #include "LightComposeRenderer.h"
-#include "ComputeShader.h"
 #include "Framework.h"
+#include "ComputeShader.h"
+#include "RenderContext.h"
 #include "Texture.h"
 #include "RenderTarget.h"
 
@@ -14,25 +15,25 @@ void LightComposeRenderer::Render(Texture* inDirect, Texture* inIndirect, Textur
 	assert(inReflections != nullptr);
 	assert(inTarget != nullptr);
 
-	theFramework.SetComputeShader(mShader);
-	theFramework.ComputeSetTextureAndSampler(inDirect, theFramework.GetPointSampler(), 0);
-	theFramework.ComputeSetTextureAndSampler(inIndirect, theFramework.GetPointSampler(), 1);
-	theFramework.ComputeSetTextureAndSampler(inReflections, theFramework.GetPointSampler(), 2);
-	theFramework.ComputeSetRWTexture(inTarget, 0);
+	theRenderContext.CSSetShader(mShader);
+	theRenderContext.CSSetTextureAndSampler(inDirect, theFramework.GetPointSampler(), 0);
+	theRenderContext.CSSetTextureAndSampler(inIndirect, theFramework.GetPointSampler(), 1);
+	theRenderContext.CSSetTextureAndSampler(inReflections, theFramework.GetPointSampler(), 2);
+	theRenderContext.CSSetRWTexture(inTarget, 0);
 
 	int groups_x = 1 + (inTarget->GetTexture()->GetWidth() - 1) / 8;
 	int groups_y = 1 + (inTarget->GetTexture()->GetHeight() - 1) / 8;
-	theFramework.ComputeDispatch(groups_x, groups_y, 1);
+	theRenderContext.Dispatch(groups_x, groups_y, 1);
 
 	// TODO: required?
-	theFramework.Flush();
+	theRenderContext.Flush();
 
 	// clear state
-	theFramework.SetComputeShader(NULL);
-	theFramework.ComputeSetTextureAndSampler(NULL, NULL, 0);
-	theFramework.ComputeSetTextureAndSampler(NULL, NULL, 1);
-	theFramework.ComputeSetTextureAndSampler(NULL, NULL, 2);
-	theFramework.ComputeSetRWTexture(NULL, 0);
+	theRenderContext.CSSetShader(NULL);
+	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 0);
+	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 1);
+	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 2);
+	theRenderContext.CSSetRWTexture(NULL, 0);
 }
 
 

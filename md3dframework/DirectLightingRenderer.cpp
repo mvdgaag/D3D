@@ -1,4 +1,5 @@
 #include "DirectLightingRenderer.h"
+#include "RenderContext.h"
 #include "Framework.h"
 #include "ComputeShader.h"
 #include "GBuffer.h"
@@ -16,42 +17,41 @@ void DirectLightingRenderer::Render(GBuffer* inSource, RenderTarget* inTarget)
 	assert(inSource != nullptr);
 	assert(inTarget != nullptr);
 
-	theFramework.SetComputeShader(mShader);
-	theFramework.ComputeSetTextureAndSampler(inSource->GetTexture(GBuffer::LINEAR_DEPTH), theFramework.GetPointSampler(), 0);
-	theFramework.ComputeSetTextureAndSampler(inSource->GetTexture(GBuffer::NORMAL), theFramework.GetPointSampler(), 1);
-	theFramework.ComputeSetTextureAndSampler(inSource->GetTexture(GBuffer::DIFFUSE), theFramework.GetPointSampler(), 2);
-	theFramework.ComputeSetTextureAndSampler(inSource->GetTexture(GBuffer::MATERIAL), theFramework.GetPointSampler(), 3);
-	theFramework.ComputeSetRWTexture(inTarget, 0);
+	theRenderContext.CSSetShader(mShader);
+	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::LINEAR_DEPTH), theFramework.GetPointSampler(), 0);
+	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::NORMAL), theFramework.GetPointSampler(), 1);
+	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::DIFFUSE), theFramework.GetPointSampler(), 2);
+	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::MATERIAL), theFramework.GetPointSampler(), 3);
+	theRenderContext.CSSetRWTexture(inTarget, 0);
 
-	// TODO: test:
 	Camera* cam = theFramework.GetCamera();
 	mConstantBufferData.viewspaceReconstructionVector.x = cam->GetNear() / tan(0.5 * cam->GetFovX());
 	mConstantBufferData.viewspaceReconstructionVector.y = cam->GetNear() / tan(0.5 * cam->GetFovY());
-	mConstantBufferData.targetSize.x = theFramework.GetScreenWidth();
-	mConstantBufferData.targetSize.y = theFramework.GetScreenHeight();
+	mConstantBufferData.targetSize.x = theRenderContext.GetWidth();
+	mConstantBufferData.targetSize.y = theRenderContext.GetHeight();
 	mConstantBufferData.frameData.x = theFramework.GetFrameID();
 
 	//mConstantBuffer->SetData(&mConstantBufferData);
 	ID3D11Buffer* cbuf = mConstantBuffer->GetBuffer();
 	ID3D11DeviceContext* context;
-	theFramework.GetDevice()->GetImmediateContext(&context);
+	theRenderContext.GetDevice()->GetImmediateContext(&context);
 	context->UpdateSubresource(cbuf, 0, NULL, &mConstantBufferData, 0, 0);
-	theFramework.ComputeSetVertexConstantBuffer(mConstantBuffer);
+	theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);
 
 	int groups_x = 1 + (inTarget->GetTexture()->GetWidth() - 1) / 8;
 	int groups_y = 1 + (inTarget->GetTexture()->GetHeight() - 1) / 8;
-	theFramework.ComputeDispatch(groups_x, groups_y, 1);
+	theRenderContext.Dispatch(groups_x, groups_y, 1);
 
 	// TODO: required?
-	theFramework.Flush();
+	theRenderContext.Flush();
 
 	// clear state
-	theFramework.SetComputeShader(NULL);
-	theFramework.ComputeSetTextureAndSampler(NULL, NULL, 0);
-	theFramework.ComputeSetTextureAndSampler(NULL, NULL, 1);
-	theFramework.ComputeSetTextureAndSampler(NULL, NULL, 2);
-	theFramework.ComputeSetTextureAndSampler(NULL, NULL, 3);
-	theFramework.ComputeSetRWTexture(NULL, 0);
+	theRenderContext.CSSetShader(NULL);
+	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 0);
+	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 1);
+	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 2);
+	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 3);
+	theRenderContext.CSSetRWTexture(NULL, 0);
 }
 
 

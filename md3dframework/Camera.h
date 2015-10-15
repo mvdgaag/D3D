@@ -18,7 +18,6 @@ public:
 	float		GetNear() { return mNear; }
 	float		GetFar() { return mFar; }
 
-
 	void		SetPosition(DirectX::XMVECTOR inPosition) { mPosition = inPosition; }
 	void		SetPosition(float x, float y, float z) { mPosition = DirectX::XMVectorSet(x, y, z, 0.0f); }
 	void		SetTarget(DirectX::XMVECTOR inTarget) { mTarget = inTarget; }

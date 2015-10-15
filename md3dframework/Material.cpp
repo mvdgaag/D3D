@@ -1,5 +1,5 @@
 #include "Material.h"
-#include "Framework.h"
+#include "RenderContext.h"
 #include "ConstantBuffer.h"
 
 
@@ -63,7 +63,7 @@ void Material::SetSurfaceValues(float4 inValues)
 }
 
 
-void Material::SetRougnessValue(float inValue) 
+void Material::SetRoughnessValue(float inValue) 
 {
 	mConstantData.surfaceValue.x = inValue; 
 	UpdateConstantBuffer(); 
@@ -94,7 +94,7 @@ void Material::SetFlags(MaterialFlags inFlags)
 void Material::UpdateConstantBuffer()
 {
 	ID3D11DeviceContext* context;
-	theFramework.GetDevice()->GetImmediateContext(&context);
+	theRenderContext.GetDevice()->GetImmediateContext(&context);
 	ID3D11Buffer* cbuf = mConstantBuffer->GetBuffer();
 	context->UpdateSubresource(cbuf, 0, nullptr, &mConstantData, 0, 0);
 }

@@ -2,6 +2,7 @@
 #include "BaseResource.h"
 #include <d3d11_1.h>
 
+
 class ConstantBuffer : public BaseResource
 {
 public:

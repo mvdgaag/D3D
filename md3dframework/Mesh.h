@@ -23,6 +23,7 @@ public:
 	void InitFromData(SimpleVertex* inVertexData, int inNumVerts, WORD* inIndexData, int inNumIndices);
 	void InitCube(float3 inScale = { 1, 1, 1 });
 	void InitPlane(int inSubX, int inSubY, float2 inScale = { 1, 1 });
+	void InitFullscreenTriangle();
 	void InitFromFile(std::string inFileName);
 
 	ID3D11Buffer* GetVertexBuffer() { return mVertexBuffer; }

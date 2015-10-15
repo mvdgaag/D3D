@@ -17,6 +17,7 @@
 #include "resource.h"
 
 #include "main.h"
+#include "RenderContext.h"
 #include "Framework.h"
 
 // for content
@@ -58,20 +59,13 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	if (FAILED(InitWindow(hInstance, nCmdShow)))
 		return 0;
 
-	if (FAILED(theFramework.InitDevice(g_hWnd)))
+	if (FAILED(theRenderContext.Init(g_hWnd)))
 	{
-		theFramework.CleanUpDevice();
+		theRenderContext.CleanUp();
 		return 0;
 	}
 
-	if (FAILED(theFramework.InitFullScreenQuad()))
-	{
-		theFramework.CleanUpDevice();
-		return 0;
-	}
-
-	theFramework.InitHelpers();
-
+	theFramework.Init(g_hWnd);
 	InitContent();
 
 	// Main message loop
@@ -90,8 +84,8 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	}
 
 	CleanUpContent();
-
-	theFramework.CleanUpDevice();
+	theFramework.CleanUp();
+	theRenderContext.CleanUp();
 
 	return (int)msg.wParam;
 }
@@ -211,6 +205,9 @@ void InitContent()
 	g_material->SetNormalTexture(g_normal_texture);
 	g_material->SetSurfaceTexture(g_surface_texture);
 	g_material->SetDiffuseValue(float3(0.7, 0.4, 0));
+	g_material->SetReflectivityValue(0.5);
+	g_material->SetRoughnessValue(0.5);
+	g_material->SetMetalicityValue(0.0);
 	g_material->SetPixelShader(g_pixel_shader);
 	g_material->SetVertexShader(g_vertex_shader);
 	g_obj->Init(g_mesh, g_material);
@@ -221,11 +218,11 @@ void InitContent()
 
 void CleanUpContent()
 {
-	delete g_obj;
-	delete g_mesh;
-	delete g_pixel_shader;
-	delete g_vertex_shader;
-	delete g_diffuse_texture;
-	delete g_normal_texture;
-	delete g_surface_texture;
+//	delete g_obj;
+//	delete g_mesh;
+//	delete g_pixel_shader;
+//	delete g_vertex_shader;
+//	delete g_diffuse_texture;
+//	delete g_normal_texture;
+//	delete g_surface_texture;
 }

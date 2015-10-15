@@ -1,7 +1,7 @@
 #include "PixelShader.h"
+#include "RenderContext.h"
+#include <string>
 #include <d3dcompiler.h>
-#include "main.h"
-#include "Framework.h"
 
 
 void PixelShader::InitFromFile(std::string inFileName)
@@ -44,7 +44,7 @@ void PixelShader::InitFromFile(std::string inFileName)
 		// FETCH RESOURCES
 	}
 
-	D3DCall(theFramework.GetDevice()->CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), nullptr, &mHandle));
+	D3DCall(theRenderContext.GetDevice()->CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), nullptr, &mHandle));
 	pPSBlob->Release();
 }
 

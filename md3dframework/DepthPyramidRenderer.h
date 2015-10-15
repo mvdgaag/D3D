@@ -1,5 +1,4 @@
 #pragma once
-#include <d3d11_1.h>
 
 
 // predeclarations
@@ -7,7 +6,6 @@ class ComputeShader;
 class Texture;
 class RenderTarget;
 class ShaderResourceBinding;
-#include <d3d11_1.h>
 
 
 class DepthPyramidRenderer

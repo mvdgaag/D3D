@@ -45,7 +45,7 @@ public:
 	void SetSurfaceValues(float4 inValues);
 	float4 GetSurfaceValues() { return mConstantData.surfaceValue; }
 
-	void SetRougnessValue(float inValue);
+	void SetRoughnessValue(float inValue);
 	float GetRoughnessValue() { return mConstantData.surfaceValue.x; }
 	
 	void SetReflectivityValue(float inValue);

@@ -1,25 +1,26 @@
 #include "ConstantBuffer.h"
-#include "main.h"
-#include "Framework.h"
+#include "RenderContext.h"
 
 
 void ConstantBuffer::Init(int inByteWidth)
 {
 	assert(inByteWidth % 16 == 0);
 	ZeroMemory(&mDesc, sizeof(mDesc));
+	//mDesc.Usage = D3D11_USAGE_DYNAMIC;
 	mDesc.Usage = D3D11_USAGE_DEFAULT;
 	mDesc.ByteWidth = inByteWidth;
 	mDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	//mDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	mDesc.CPUAccessFlags = 0;
 
-	D3DCall(theFramework.GetDevice()->CreateBuffer(&mDesc, nullptr, &mBuffer));
+	D3DCall(theRenderContext.GetDevice()->CreateBuffer(&mDesc, nullptr, &mBuffer));
 }
 
 
 void ConstantBuffer::SetData(const void* inData)
 {
 	ID3D11DeviceContext* context;
-	theFramework.GetDevice()->GetImmediateContext(&context);
+	theRenderContext.GetDevice()->GetImmediateContext(&context);
 	context->UpdateSubresource(mBuffer, 0, nullptr, &inData, 0, 0);
 }
 

@@ -1,11 +1,9 @@
 #pragma once
-#include <d3d11_1.h>
 #include <vector>
 
 
 // predefinitions
 class GBuffer;
-
 class ShadowRenderer;
 class DirectLightingRenderer;
 class DepthPyramidRenderer;
@@ -15,10 +13,10 @@ class PostProcessRenderer;
 class LightComposeRenderer;
 class TAARenderer;
 class PostProcessRenderer;
-
 class DrawableObject;
 class RenderTarget;
 class Texture;
+
 
 class DeferredRenderer
 {
@@ -61,8 +59,6 @@ private:
 	RenderTarget* mAntiAliased = nullptr;
 	RenderTarget* mAAHistoryFrame = nullptr;
 	RenderTarget* mPostProcessed = nullptr;
-
-	ID3D11Device* mDevice = nullptr;
 
 	bool mInitialized = false;
 };

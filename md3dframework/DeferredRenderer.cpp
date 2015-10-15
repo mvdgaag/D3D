@@ -1,5 +1,5 @@
 #include "DeferredRenderer.h"
-#include "Framework.h"
+#include "RenderContext.h"
 #include "GBuffer.h"
 #include "RenderTarget.h"
 #include "Texture.h"
@@ -13,7 +13,6 @@
 #include "PostProcessRenderer.h"
 #include "DrawableObject.h"
 #include <assert.h>
-#include <directxcolors.h>
 
 
 void DeferredRenderer::Init(int inWidth, int inHeight)
@@ -118,7 +117,7 @@ void DeferredRenderer::CleanUp()
 
 void DeferredRenderer::Render(std::vector<DrawableObject*> inDrawList)
 {
-	assert(mInitialized == true);
+	assert(mInitialized);
 	GeometryPass(inDrawList);
 	LightingPass();
 	PostProcessPass();
@@ -127,44 +126,57 @@ void DeferredRenderer::Render(std::vector<DrawableObject*> inDrawList)
 
 void DeferredRenderer::GeometryPass(std::vector<DrawableObject*> inDrawList)
 {
-	std::vector<ID3D11RenderTargetView*> gbuffer_targets = mGBuffer->GetRenderTargetViewArray();
-	
-	ID3D11DeviceContext* context;
-	theFramework.GetDevice()->GetImmediateContext(&context);
-
-	// TODO: remove clear
+	theRenderContext.BeginEvent("Geometry Pass");
 	for (int i = 0; i < GBuffer::NUM_RENDER_TARGETS; i++)
-	context->ClearRenderTargetView(gbuffer_targets[i], DirectX::Colors::Black);
-
-	ID3D11DepthStencilView* gbuffer_depth_stencil = mGBuffer->GetDepthStencilView();
-	context->OMSetRenderTargets(GBuffer::NUM_RENDER_TARGETS, gbuffer_targets.data(), gbuffer_depth_stencil);
-	context->ClearDepthStencilView(gbuffer_depth_stencil, D3D11_CLEAR_DEPTH, 1.0f, 0);
+		theRenderContext.ClearRenderTarget(mGBuffer->GetRenderTarget(GBuffer::GBufferType(i)), float4(0, 0, 0, 0));
+	theRenderContext.ClearDepthStencil(mGBuffer->GetDepthStencilTarget(), 1.0, 0);
+	theRenderContext.SetRenderTargets(GBuffer::NUM_RENDER_TARGETS, mGBuffer->GetRenderTargets(), mGBuffer->GetDepthStencilTarget());
 
 	for each (DrawableObject* obj in inDrawList)
+	{
+		theRenderContext.SetMarker("Drawing Object");
 		obj->Draw();
+	}
 
 	// clear render targets
-	ID3D11RenderTargetView* render_targets[] = { NULL, NULL, NULL, NULL, NULL };
-	context->OMSetRenderTargets(5, render_targets, NULL);
+	RenderTarget* null_targets[] = { NULL, NULL, NULL, NULL, NULL };
+	theRenderContext.SetRenderTargets(5, null_targets, NULL);
+	theRenderContext.EndEvent();
 }
 
 
 void DeferredRenderer::LightingPass()
 {
+	theRenderContext.BeginEvent("Lighting Pass");
+	
+	theRenderContext.SetMarker("Shadow Renderer");
 	//mShadowRenderer->Render();
+	
+	theRenderContext.SetMarker("Direct Lighting Renderer");
 	mDirectLightingRenderer->Render(mGBuffer, mDirectLighting);
+	
+	theRenderContext.SetMarker("Depth Pyramid Renderer");
 	//mDepthPyramidRenderer->Render(mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), mDepthPyramid);
+	
+	theRenderContext.SetMarker("Indirect Lighting Renderer");
 	mIndirectLightingRenderer->Render(mDirectLighting->GetTexture(), mIndirectLighting);
+	
+	theRenderContext.SetMarker("Reflection Renderer");
 	mReflectionRenderer->Render(mIndirectLighting->GetTexture(), mReflections);
+
+	theRenderContext.SetMarker("Light Compose Renderer");
 	mLightComposeRenderer->Render(	mDirectLighting->GetTexture(),
 									mIndirectLighting->GetTexture(),
 									mReflections->GetTexture(),
 									mLightComposed);
+	theRenderContext.EndEvent();
 }
 
 
 void DeferredRenderer::PostProcessPass()
 {
+	theRenderContext.BeginEvent("Post Process Pass");
 	mTAARenderer->Render(mLightComposed->GetTexture(), mAAHistoryFrame, mGBuffer->GetTexture(GBuffer::MOTION_VECTORS), mAntiAliased);
 	mPostProcessRenderer->Render(mAntiAliased->GetTexture(), mPostProcessed);
+	theRenderContext.EndEvent();
 }

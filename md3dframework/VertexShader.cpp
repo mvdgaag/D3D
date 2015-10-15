@@ -1,7 +1,6 @@
 #include "VertexShader.h"
 #include <d3dcompiler.h>
-#include "main.h"
-#include "Framework.h"
+#include "RenderContext.h"
 
 
 void VertexShader::InitFromFile(std::string inFileName)
@@ -30,7 +29,7 @@ void VertexShader::InitFromFile(std::string inFileName)
 		pErrorBlob->Release();
 	}
 	
-	D3DCall(theFramework.GetDevice()->CreateVertexShader(pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), nullptr, &mHandle));
+	D3DCall(theRenderContext.GetDevice()->CreateVertexShader(pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), nullptr, &mHandle));
 
 	// Reflect shader info
 	ID3D11ShaderReflection* pVertexShaderReflection = NULL;
@@ -90,7 +89,7 @@ void VertexShader::InitFromFile(std::string inFileName)
 	}
 
 	// Try to create Input Layout
-	D3DCall(theFramework.GetDevice()->CreateInputLayout(&inputLayoutDesc[0], inputLayoutDesc.size(), pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), &mVertexLayout));
+	D3DCall(theRenderContext.GetDevice()->CreateInputLayout(&inputLayoutDesc[0], inputLayoutDesc.size(), pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), &mVertexLayout));
 
 	//Free allocation shader reflection memory
 	pVertexShaderReflection->Release();
