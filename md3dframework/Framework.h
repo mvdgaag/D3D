@@ -3,7 +3,6 @@
 #include "LinearAlgebra.h"
 #include <vector>
 
-class RenderContext;
 class DeferredRenderer;
 class PixelShader;
 class VertexShader;
@@ -40,6 +39,8 @@ public:
 	Camera*		GetCamera()														{ return mCamera; }
 	int			GetFrameID()													{ return mFrameID; }
 	void		SetMaterial(Material* inMaterial);
+
+	// helper functions
 	Sampler*	GetPointSampler()												{ return mDefaultPointSampler; }
 	Sampler*	GetLinearSampler()												{ return mDefaultLinearSampler; }
 	void		CopyToRenderTarget(RenderTarget* inTarget, Texture* inSource);
