@@ -37,12 +37,12 @@ public:
 	void Render();
 	void RegisterObject(DrawableObject* obj) { mObjectList.push_back(obj); }
 
-	Camera* GetCamera() { return mCamera; }
-	int GetFrameID() { return mFrameID; }
-	void SetMaterial(Material* inMaterial);
-	Sampler* GetPointSampler() { return mDefaultPointSampler; }
-	Sampler* GetLinearSampler() { return mDefaultLinearSampler; }
-	void CopyToRenderTarget(RenderTarget* inTarget, Texture* inSource);
+	Camera*		GetCamera()														{ return mCamera; }
+	int			GetFrameID()													{ return mFrameID; }
+	void		SetMaterial(Material* inMaterial);
+	Sampler*	GetPointSampler()												{ return mDefaultPointSampler; }
+	Sampler*	GetLinearSampler()												{ return mDefaultLinearSampler; }
+	void		CopyToRenderTarget(RenderTarget* inTarget, Texture* inSource);
 
 private:
 	Framework() { mInitialized = false; }

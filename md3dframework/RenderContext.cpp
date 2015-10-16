@@ -9,6 +9,8 @@
 #include "RenderTarget.h"
 #include "DepthStencilTarget.h"
 #include "Mesh.h"
+#include <d3d11_1.h>
+
 
 
 RenderContext::~RenderContext()
@@ -20,6 +22,10 @@ RenderContext::~RenderContext()
 
 HRESULT RenderContext::Init(HWND hWnd)
 {
+	CleanUp();
+
+	D3D_DRIVER_TYPE driver_type = D3D_DRIVER_TYPE_NULL;
+	D3D_FEATURE_LEVEL feature_level = D3D_FEATURE_LEVEL_11_0;
 	HRESULT hr = S_OK;
 
 	RECT rc;
@@ -51,13 +57,13 @@ HRESULT RenderContext::Init(HWND hWnd)
 
 	for (UINT driverTypeIndex = 0; driverTypeIndex < numDriverTypes; driverTypeIndex++)
 	{
-		mDriverType = driverTypes[driverTypeIndex];
-		hr = D3D11CreateDevice(nullptr, mDriverType, nullptr, createDeviceFlags, featureLevels, numFeatureLevels,
-			D3D11_SDK_VERSION, &mD3DDevice, &mFeatureLevel, &mImmediateContext);
+		driver_type = driverTypes[driverTypeIndex];
+		hr = D3D11CreateDevice(nullptr, driver_type, nullptr, createDeviceFlags, featureLevels, numFeatureLevels,
+			D3D11_SDK_VERSION, &mD3DDevice, &feature_level, &mImmediateContext);
 		if (hr == E_INVALIDARG)
 		{
-			hr = D3D11CreateDevice(nullptr, mDriverType, nullptr, createDeviceFlags, &featureLevels[1], numFeatureLevels - 1,
-				D3D11_SDK_VERSION, &mD3DDevice, &mFeatureLevel, &mImmediateContext);
+			hr = D3D11CreateDevice(nullptr, driver_type, nullptr, createDeviceFlags, &featureLevels[1], numFeatureLevels - 1,
+				D3D11_SDK_VERSION, &mD3DDevice, &feature_level, &mImmediateContext);
 		}
 		if (SUCCEEDED(hr))
 			break;
@@ -211,17 +217,38 @@ void RenderContext::CleanUp()
 }
 
 
+void RenderContext::BeginEvent(std::string inEventString)
+{
+	mAnnotation->BeginEvent(std::wstring(inEventString.begin(), inEventString.end()).c_str()); 
+}
+
+
+void RenderContext::EndEvent()
+{
+	mAnnotation->EndEvent(); 
+}
+
+
+void RenderContext::SetMarker(std::string inMarker)
+{
+	mAnnotation->SetMarker(std::wstring(inMarker.begin(), inMarker.end()).c_str()); 
+}
+
+
 void RenderContext::ClearDepthStencil(DepthStencilTarget* inDepthStencilTarget, float inClearDepth, unsigned char inClearStencil)
 {
-	ID3D11DepthStencilView* dsv = inDepthStencilTarget->GetDepthStencilView();
+	ID3D11DepthStencilView* dsv = inDepthStencilTarget->mDepthStencilView;
 	mImmediateContext->ClearDepthStencilView(dsv, 1, inClearDepth, inClearStencil); // TODO: now just depth (low bit)
 }
 
 
 void RenderContext::ClearRenderTarget(RenderTarget* inRenderTarget, float4 inColor)
 {
-	ID3D11RenderTargetView* rtv = inRenderTarget->GetRenderTargetView();
-	mImmediateContext->ClearRenderTargetView(rtv, &inColor[0]);
+	for (int i = 0; i < inRenderTarget->mTexture->GetMipLevels(); i++)
+	{
+		ID3D11RenderTargetView* rtv = inRenderTarget->mRenderTargetViews[i];
+		mImmediateContext->ClearRenderTargetView(rtv, &inColor[0]);
+	}
 }
 
 
@@ -233,10 +260,10 @@ void RenderContext::SetRenderTargets(unsigned int inNumTargets, RenderTarget** i
 	{
 		targets[i] = NULL;
 		if (inTargets[i] != nullptr)
-			targets[i] = inTargets[i]->GetRenderTargetView();
+			targets[i] = inTargets[i]->mRenderTargetViews[0];
 	}
 	if (inDepthStencilTarget != nullptr)
-		mImmediateContext->OMSetRenderTargets(inNumTargets, targets, inDepthStencilTarget->GetDepthStencilView());
+		mImmediateContext->OMSetRenderTargets(inNumTargets, targets, inDepthStencilTarget->mDepthStencilView);
 	else
 		mImmediateContext->OMSetRenderTargets(inNumTargets, targets, NULL);
 }
@@ -244,20 +271,20 @@ void RenderContext::SetRenderTargets(unsigned int inNumTargets, RenderTarget** i
 
 void RenderContext::UpdateSubResource(ConstantBuffer* inConstantBuffer, const void* inData)
 {
-	mImmediateContext->UpdateSubresource(inConstantBuffer->GetBuffer(), 0, nullptr, &inData, 0, 0);
+	mImmediateContext->UpdateSubresource(inConstantBuffer->mBuffer, 0, nullptr, inData, 0, 0);
 }
 
 
 void RenderContext::DrawMesh(Mesh* inMesh)
 {
-	ID3D11Buffer* mesh_verts = inMesh->GetVertexBuffer();
-	ID3D11Buffer* mesh_indices = inMesh->GetIndexBuffer();
-	UINT stride = inMesh->GetStride();
-	UINT offset = inMesh->GetOffset();
+	ID3D11Buffer* mesh_verts = inMesh->mVertexBuffer;
+	ID3D11Buffer* mesh_indices = inMesh->mIndexBuffer;
+	UINT stride = inMesh->mStride;
+	UINT offset = inMesh->mOffset;
 	mImmediateContext->IASetVertexBuffers(0, 1, &mesh_verts, &stride, &offset);
 	mImmediateContext->IASetIndexBuffer(mesh_indices, DXGI_FORMAT_R16_UINT, 0);
 	mImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	mImmediateContext->DrawIndexed(inMesh->GetNumIndices(), 0, 0);
+	mImmediateContext->DrawIndexed(inMesh->mNumIndices, 0, 0);
 }
 
 
@@ -276,7 +303,7 @@ void RenderContext::SwapBuffers()
 void RenderContext::CSSetShader(ComputeShader* inComputeShader)
 {
 	if (inComputeShader != nullptr)
-		mImmediateContext->CSSetShader(inComputeShader->GetHandle(), NULL, 0);
+		mImmediateContext->CSSetShader(inComputeShader->mHandle, NULL, 0);
 	else
 		mImmediateContext->CSSetShader(NULL, NULL, 0);
 }
@@ -290,7 +317,7 @@ void RenderContext::CSSetTexture(Texture* inTexture, int idx)
 	{
 		ID3D11ShaderResourceView* srv = NULL;
 		if (inTexture != nullptr)
-			srv = inTexture->GetShaderResourceView();
+			srv = inTexture->mShaderResourceView;
 		mImmediateContext->CSSetShaderResources(idx, 1, &srv);
 		mCSBoundTextures[idx] = inTexture;
 	}
@@ -305,7 +332,7 @@ void RenderContext::CSSetSampler(Sampler* inSampler, int idx)
 	{
 		ID3D11SamplerState* samp = NULL;
 		if (inSampler != nullptr)
-			samp = inSampler->GetSamplerState();
+			samp = inSampler->mSamplerState;
 		mImmediateContext->CSSetSamplers(idx, 1, &samp);
 		mCSBoundSamplers[idx] = inSampler;
 	}
@@ -327,7 +354,7 @@ void RenderContext::CSSetConstantBuffer(ConstantBuffer* inConstantBuffer, int id
 	{
 		ID3D11Buffer* buffer = NULL;
 		if (inConstantBuffer != nullptr)
-			buffer = inConstantBuffer->GetBuffer();
+			buffer = inConstantBuffer->mBuffer;
 		mImmediateContext->CSSetConstantBuffers(idx, 1, &buffer);
 		mCSBoundConstantBuffers[idx] = inConstantBuffer;
 	}
@@ -342,8 +369,9 @@ void RenderContext::CSSetRWTexture(RenderTarget* inRenderTarget, int idx)
 	{
 		ID3D11UnorderedAccessView* uav = NULL;
 		if (inRenderTarget != nullptr)
-			uav = inRenderTarget->GetUnorderedAccessView();
-		mImmediateContext->CSSetUnorderedAccessViews(idx, 1, &uav, NULL);
+			uav = inRenderTarget->mUnorderedAccessViews[0];
+		const unsigned int initial_count = -1;
+		mImmediateContext->CSSetUnorderedAccessViews(idx, 1, &uav, &initial_count);
 		mCSBoundRenderTargets[idx] = inRenderTarget;
 	}
 }
@@ -358,7 +386,7 @@ void RenderContext::Dispatch(unsigned int inX, unsigned int inY, unsigned int in
 void RenderContext::PSSetShader(PixelShader* inPixelShader)
 {
 	if (inPixelShader != nullptr)
-		mImmediateContext->PSSetShader(inPixelShader->GetHandle(), NULL, 0);
+		mImmediateContext->PSSetShader(inPixelShader->mHandle, NULL, 0);
 	else
 		mImmediateContext->PSSetShader(NULL, NULL, 0);
 }
@@ -372,7 +400,7 @@ void RenderContext::PSSetTexture(Texture* inTexture, int idx)
 	{
 		ID3D11ShaderResourceView* srv = NULL;
 		if (inTexture != nullptr)
-			srv = inTexture->GetShaderResourceView();
+			srv = inTexture->mShaderResourceView;
 		mImmediateContext->PSSetShaderResources(idx, 1, &srv);
 		mPSBoundTextures[idx] = inTexture;
 	}
@@ -387,7 +415,7 @@ void RenderContext::PSSetSampler(Sampler* inSampler, int idx)
 	{
 		ID3D11SamplerState* samp = NULL;
 		if (inSampler != nullptr)
-			samp = inSampler->GetSamplerState();
+			samp = inSampler->mSamplerState;
 		mImmediateContext->PSSetSamplers(idx, 1, &samp);
 		mPSBoundSamplers[idx] = inSampler;
 	}
@@ -409,7 +437,7 @@ void RenderContext::PSSetConstantBuffer(ConstantBuffer* inConstantBuffer, int id
 	{
 		ID3D11Buffer* buffer = NULL;
 		if (inConstantBuffer != nullptr)
-			buffer = inConstantBuffer->GetBuffer();
+			buffer = inConstantBuffer->mBuffer;
 		mImmediateContext->PSSetConstantBuffers(idx, 1, &buffer);
 		mPSBoundConstantBuffers[idx] = inConstantBuffer;
 	}
@@ -420,8 +448,8 @@ void RenderContext::VSSetShader(VertexShader* inVertexShader)
 {
 	if (inVertexShader != nullptr)
 	{
-		mImmediateContext->IASetInputLayout(inVertexShader->GetLayout());
-		mImmediateContext->VSSetShader(inVertexShader->GetHandle(), NULL, 0);
+		mImmediateContext->IASetInputLayout(inVertexShader->mVertexLayout);
+		mImmediateContext->VSSetShader(inVertexShader->mHandle, NULL, 0);
 	}
 	else
 		mImmediateContext->VSSetShader(NULL, NULL, 0);
@@ -436,7 +464,7 @@ void RenderContext::VSSetTexture(Texture* inTexture, int idx)
 	{
 		ID3D11ShaderResourceView* srv = NULL;
 		if (inTexture != nullptr)
-			srv = inTexture->GetShaderResourceView();
+			srv = inTexture->mShaderResourceView;
 		mImmediateContext->VSSetShaderResources(idx, 1, &srv);
 		mVSBoundTextures[idx] = inTexture;
 	}
@@ -451,7 +479,7 @@ void RenderContext::VSSetSampler(Sampler* inSampler, int idx)
 	{
 		ID3D11SamplerState* samp = NULL;
 		if (inSampler != nullptr)
-			samp = inSampler->GetSamplerState();
+			samp = inSampler->mSamplerState;
 		mImmediateContext->VSSetSamplers(idx, 1, &samp);
 		mVSBoundSamplers[idx] = inSampler;
 	}
@@ -473,7 +501,7 @@ void RenderContext::VSSetConstantBuffer(ConstantBuffer* inConstantBuffer, int id
 	{
 		ID3D11Buffer* buffer = NULL;
 		if (inConstantBuffer != nullptr)
-			buffer = inConstantBuffer->GetBuffer();
+			buffer = inConstantBuffer->mBuffer;
 		mImmediateContext->VSSetConstantBuffers(idx, 1, &buffer);
 		mVSBoundConstantBuffers[idx] = inConstantBuffer;
 	}

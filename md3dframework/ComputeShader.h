@@ -1,17 +1,17 @@
 #pragma once
 #include "BaseResource.h"
-#include <d3d11_1.h>
 
+struct ID3D11ComputeShader;
 
 class ComputeShader : public BaseResource
 {
+	friend class RenderContext;
+
 public:
 	ComputeShader() : BaseResource() {}
 	~ComputeShader() { CleanUp(); }
 
 	void InitFromFile(std::string inFileName);
-	ID3D11ComputeShader* GetHandle() { return mHandle; }
-
 	void CleanUp();
 	ResourceType GetResourceType() const { return ResourceType::COMPUTE_SHADER; };
 

@@ -1,18 +1,18 @@
 #pragma once
 #include "BaseResource.h"
-#include <d3d11_1.h>
 
+struct ID3D11VertexShader;
+struct ID3D11InputLayout;
 
 class VertexShader : public BaseResource
 {
+	friend class RenderContext;
+
 public:
 	VertexShader() : BaseResource() {}
 	~VertexShader() { CleanUp(); }
 
 	void InitFromFile(std::string inFileName);
-	ID3D11VertexShader* GetHandle() { return mHandle; }
-	ID3D11InputLayout* GetLayout() { return mVertexLayout; }
-
 	void CleanUp();
 	ResourceType GetResourceType() const { return ResourceType::VERTEX_SHADER; };
 

@@ -1,10 +1,12 @@
 #include "DepthStencilTarget.h"
 #include "RenderContext.h"
+#include <d3d11_1.h>
 
 
 void DepthStencilTarget::Init(unsigned int inWidth, unsigned int inHeight)
 {
 	CleanUp();
+
 	mWidth = inWidth;
 	mHeight = inHeight;
 

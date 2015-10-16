@@ -1,9 +1,18 @@
 #pragma once
-#include <d3d11_1.h>
 #include <vector>
-#include <atlbase.h>
-
 #include "LinearAlgebra.h"
+#include <Windows.h>
+
+
+struct ID3D11Device;
+struct ID3D11Device1;
+struct ID3D11DeviceContext;
+struct ID3D11DeviceContext1;
+struct IDXGISwapChain;
+struct IDXGISwapChain1;
+struct ID3D11RasterizerState;
+struct ID3D11RasterizerState1;
+struct ID3DUserDefinedAnnotation;
 
 
 #ifndef D3DCall
@@ -46,7 +55,9 @@ public:
 		return instance;
 	}
 
+	// TODO: add create functions for shaders, buffers, etc, so no d3d link to this header is required anymore..
 	ID3D11Device* GetDevice() { return mD3DDevice; }
+
 	Texture* GetBackBuffer() { return mBackBuffer; }
 	RenderTarget* GetOutputRenderTarget() { return mOutputRenderTarget; }
 
@@ -54,9 +65,9 @@ public:
 	bool IsInitialized() { return mInitialized; }
 	void CleanUp();
 
-	void BeginEvent(std::string inEventString) { mAnnotation->BeginEvent( std::wstring(inEventString.begin(), inEventString.end()).c_str() ); }
-	void EndEvent() { mAnnotation->EndEvent(); }
-	void SetMarker(std::string inMarker) { mAnnotation->SetMarker( std::wstring(inMarker.begin(), inMarker.end()).c_str() ); }
+	void BeginEvent(std::string inEventString);
+	void EndEvent();
+	void SetMarker(std::string inMarker);
 
 	void ClearDepthStencil(DepthStencilTarget* inDepthStencilTarget, float inClearDepth, unsigned char inClearStencil);
 	void ClearRenderTarget(RenderTarget* inRenderTarget, float4 inColor);
@@ -96,8 +107,6 @@ private:
 	void operator=(RenderContext const&) = delete;
 
 	// for d3d interface
-	D3D_DRIVER_TYPE						mDriverType = D3D_DRIVER_TYPE_NULL;
-	D3D_FEATURE_LEVEL					mFeatureLevel = D3D_FEATURE_LEVEL_11_0;
 	ID3D11Device*						mD3DDevice = nullptr;
 	ID3D11Device1*						mD3DDevice1 = nullptr;
 	ID3D11DeviceContext*				mImmediateContext = nullptr;

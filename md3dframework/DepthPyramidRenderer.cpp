@@ -14,32 +14,27 @@ void DepthPyramidRenderer::Render(Texture* inSource, RenderTarget* inTarget)
 	assert(inTarget != nullptr);
 	assert(inTarget->GetTexture()->GetMipLevels() == kNumMipLevels);
 
-	ID3D11DeviceContext* context;
-	theRenderContext.GetDevice()->GetImmediateContext(&context);
-
 	// We now set up the shader and run it
-	context->CSSetShader(mShader->GetHandle(), NULL, 0);
-	ID3D11ShaderResourceView* source_view = inSource->GetShaderResourceView();
-	context->CSSetShaderResources(0, 1, &source_view);
-	ID3D11UnorderedAccessView* targets[] = {	inTarget->GetUnorderedAccessView(0),
-												inTarget->GetUnorderedAccessView(1),
-												inTarget->GetUnorderedAccessView(2) };
-	unsigned int initial_counts[] = { -1 };
-	context->CSSetUnorderedAccessViews(0, 3, targets, initial_counts);
+	theRenderContext.CSSetShader(mShader);
+	theRenderContext.CSSetTexture(inSource, 0);
 
-	int groups_x = 1 + (inTarget->GetTexture()->GetWidth() - 1) / 8;
-	int groups_y = 1 + (inTarget->GetTexture()->GetHeight() - 1) / 8;
-	context->Dispatch(groups_x, groups_y, 1);
+	theRenderContext.CSSetRWTexture(inTarget, 0);
+	theRenderContext.CSSetRWTexture(inTarget, 1); // TODO mip
+	theRenderContext.CSSetRWTexture(inTarget, 2); // TODO mip
+
+	int groups_x = (inTarget->GetTexture()->GetWidth() + 7) / 8;
+	int groups_y = (inTarget->GetTexture()->GetHeight() + 7) / 8;
+	theRenderContext.Dispatch(groups_x, groups_y, 1);
 	
 	// TODO: required?
-	context->Flush();
+	theRenderContext.Flush();
 
 	// clear state
-	ID3D11UnorderedAccessView* uav_null[] = { NULL, NULL, NULL };
-	ID3D11ShaderResourceView* srv_null = NULL;
-	context->CSSetShaderResources(0, 1, &srv_null);
-	context->CSSetUnorderedAccessViews(0, 3, uav_null, NULL);
-	context->CSSetShader(NULL, NULL, 0);
+	theRenderContext.CSSetTexture(NULL, 0);
+	theRenderContext.CSSetRWTexture(NULL, 0);
+	theRenderContext.CSSetRWTexture(NULL, 1);
+	theRenderContext.CSSetRWTexture(NULL, 2);
+	theRenderContext.CSSetShader(NULL);
 }
 
 

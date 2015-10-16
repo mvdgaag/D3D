@@ -2,10 +2,13 @@
 #include "RenderContext.h"
 #include <string>
 #include <d3dcompiler.h>
+#include <d3d11_1.h>
 
 
 void PixelShader::InitFromFile(std::string inFileName)
 {
+	CleanUp();
+
 	DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
 	std::wstring filename = std::wstring(inFileName.begin(), inFileName.end());
 

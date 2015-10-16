@@ -1,10 +1,13 @@
 #include "VertexShader.h"
 #include <d3dcompiler.h>
 #include "RenderContext.h"
+#include <d3d11_1.h>
 
 
 void VertexShader::InitFromFile(std::string inFileName)
 {
+	CleanUp();
+
 	DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;
 	std::wstring filename = std::wstring(inFileName.begin(), inFileName.end());
 

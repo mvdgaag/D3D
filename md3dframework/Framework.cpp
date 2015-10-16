@@ -36,10 +36,10 @@ HRESULT Framework::Init(HWND hWnd)
 	mCopyShader->InitFromFile("Shaders/CopyCompute.hlsl");
 
 	mDefaultPointSampler = new Sampler();
-	mDefaultPointSampler->Init(D3D11_FILTER_MIN_MAG_MIP_POINT);
+	mDefaultPointSampler->Init(0); // D3D11_FILTER_MIN_MAG_MIP_POINT
 
 	mDefaultLinearSampler = new Sampler();
-	mDefaultLinearSampler->Init(D3D11_FILTER_MIN_MAG_MIP_LINEAR);
+	mDefaultLinearSampler->Init(21); // D3D11_FILTER_MIN_MAG_MIP_LINEAR
 
 	mCamera = new Camera();
 	mFrameID = 0;

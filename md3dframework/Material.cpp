@@ -93,8 +93,5 @@ void Material::SetFlags(MaterialFlags inFlags)
 
 void Material::UpdateConstantBuffer()
 {
-	ID3D11DeviceContext* context;
-	theRenderContext.GetDevice()->GetImmediateContext(&context);
-	ID3D11Buffer* cbuf = mConstantBuffer->GetBuffer();
-	context->UpdateSubresource(cbuf, 0, nullptr, &mConstantData, 0, 0);
+	theRenderContext.UpdateSubResource(mConstantBuffer, &mConstantData);
 }

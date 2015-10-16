@@ -4,6 +4,7 @@
 #include "DepthStencilTarget.h"
 #include "RenderContext.h"
 #include <assert.h>
+#include <d3d11_1.h>
 
 
 GBuffer::GBuffer()

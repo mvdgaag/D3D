@@ -1,17 +1,20 @@
 #pragma once
 #include "BaseResource.h"
-#include <d3d11_1.h>
 
+struct ID3D11Texture2D;
+struct ID3D11DepthStencilView;
 
 class DepthStencilTarget : public BaseResource
 {
+	friend class RenderContext;
+
 public:
 	DepthStencilTarget() : BaseResource() {};
 	~DepthStencilTarget() { CleanUp(); }
 
 	void Init(unsigned int inWidth, unsigned int inHeight);
 	void CleanUp();
-	ID3D11DepthStencilView* GetDepthStencilView() { return mDepthStencilView; }
+	
 	ResourceType GetResourceType() const { return ResourceType::DEPTH_STENCIL_TARGET; }
 
 private:

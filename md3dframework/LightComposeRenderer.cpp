@@ -21,8 +21,8 @@ void LightComposeRenderer::Render(Texture* inDirect, Texture* inIndirect, Textur
 	theRenderContext.CSSetTextureAndSampler(inReflections, theFramework.GetPointSampler(), 2);
 	theRenderContext.CSSetRWTexture(inTarget, 0);
 
-	int groups_x = 1 + (inTarget->GetTexture()->GetWidth() - 1) / 8;
-	int groups_y = 1 + (inTarget->GetTexture()->GetHeight() - 1) / 8;
+	int groups_x = (inTarget->GetTexture()->GetWidth() + 7) / 8;
+	int groups_y = (inTarget->GetTexture()->GetHeight() + 7) / 8;
 	theRenderContext.Dispatch(groups_x, groups_y, 1);
 
 	// TODO: required?

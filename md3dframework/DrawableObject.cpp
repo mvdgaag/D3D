@@ -23,7 +23,6 @@ void DrawableObject::Draw()
 	val = val < 0.99 ? val + 0.01 : 0.0;
 	mMaterial->SetRoughnessValue(val);
 
-
 	theFramework.SetMaterial(mMaterial);
 
 	const float halton23x[8] = {	1.0f/2.0f, 1.0f/4.0f, 3.0f/4.0f, 1.0f/8.0f,
@@ -39,14 +38,7 @@ void DrawableObject::Draw()
 	mConstantBufferData.MVP = theFramework.GetCamera()->GetProjectionMatrix() * theFramework.GetCamera()->GetViewMatrix();
 
 	// set constant buffers
-	ID3D11DeviceContext* context;
-	theRenderContext.GetDevice()->GetImmediateContext(&context);
-	ID3D11Buffer* cbuf = mConstantBuffer->GetBuffer();
-	context->UpdateSubresource(cbuf, 0, nullptr, &mConstantBufferData, 0, 0);
-	
-	//TODO: this seems to break, but should do the same as the 4 lines above
-	//mConstantBuffer->SetData(&mConstantBufferData);
-
+	theRenderContext.UpdateSubResource(mConstantBuffer, &mConstantBufferData);
 	theRenderContext.VSSetConstantBuffer(mConstantBuffer, 0);
 	theRenderContext.DrawMesh(mMesh);
 

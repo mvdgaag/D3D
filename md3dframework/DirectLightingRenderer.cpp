@@ -31,15 +31,11 @@ void DirectLightingRenderer::Render(GBuffer* inSource, RenderTarget* inTarget)
 	mConstantBufferData.targetSize.y = theRenderContext.GetHeight();
 	mConstantBufferData.frameData.x = theFramework.GetFrameID();
 
-	//mConstantBuffer->SetData(&mConstantBufferData);
-	ID3D11Buffer* cbuf = mConstantBuffer->GetBuffer();
-	ID3D11DeviceContext* context;
-	theRenderContext.GetDevice()->GetImmediateContext(&context);
-	context->UpdateSubresource(cbuf, 0, NULL, &mConstantBufferData, 0, 0);
+	theRenderContext.UpdateSubResource(mConstantBuffer, &mConstantBufferData);
 	theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);
 
-	int groups_x = 1 + (inTarget->GetTexture()->GetWidth() - 1) / 8;
-	int groups_y = 1 + (inTarget->GetTexture()->GetHeight() - 1) / 8;
+	int groups_x = (inTarget->GetTexture()->GetWidth() + 7) / 8;
+	int groups_y = (inTarget->GetTexture()->GetHeight() + 7) / 8;
 	theRenderContext.Dispatch(groups_x, groups_y, 1);
 
 	// TODO: required?

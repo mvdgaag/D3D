@@ -13,6 +13,7 @@
 #include "PostProcessRenderer.h"
 #include "DrawableObject.h"
 #include <assert.h>
+#include <d3d11_1.h>
 
 
 void DeferredRenderer::Init(int inWidth, int inHeight)

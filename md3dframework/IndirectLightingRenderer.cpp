@@ -17,8 +17,8 @@ void IndirectLightingRenderer::Render(Texture* inSource, RenderTarget* inTarget)
 	theRenderContext.CSSetTextureAndSampler(inSource, theFramework.GetPointSampler(), 0);
 	theRenderContext.CSSetRWTexture(inTarget, 0);
 
-	int groups_x = 1 + (inTarget->GetTexture()->GetWidth() - 1) / 8;
-	int groups_y = 1 + (inTarget->GetTexture()->GetHeight() - 1) / 8;
+	int groups_x = (inTarget->GetTexture()->GetWidth() + 7) / 8;
+	int groups_y = (inTarget->GetTexture()->GetHeight() + 7) / 8;
 	theRenderContext.Dispatch(groups_x, groups_y, 1);
 
 	// TODO: required?

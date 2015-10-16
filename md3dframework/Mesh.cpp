@@ -5,7 +5,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
-
+#include <d3d11_1.h>
 
 
 void Mesh::InitCube(float3 inScale)
@@ -135,7 +135,7 @@ void Mesh::InitFullscreenTriangle()
 
 
 
-void Mesh::InitFromData(SimpleVertex* inVertexData, int inNumVerts, WORD* inIndexData, int inNumIndices)
+void Mesh::InitFromData(SimpleVertex* inVertexData, int inNumVerts, unsigned short* inIndexData, int inNumIndices)
 {
 	CleanUp();
 
@@ -159,7 +159,7 @@ void Mesh::InitFromData(SimpleVertex* inVertexData, int inNumVerts, WORD* inInde
 	mNumIndices = inNumIndices;
 
 	bd.Usage = D3D11_USAGE_DEFAULT;
-	bd.ByteWidth = sizeof(WORD) * mNumIndices;
+	bd.ByteWidth = sizeof(unsigned short) * mNumIndices;
 	bd.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	bd.CPUAccessFlags = 0;
 	InitData.pSysMem = inIndexData;
