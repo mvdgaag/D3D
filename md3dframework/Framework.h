@@ -1,6 +1,6 @@
 #pragma once
-#include "RenderContext.h"
 #include "LinearAlgebra.h"
+#include <Windows.h>
 #include <vector>
 
 class DeferredRenderer;
