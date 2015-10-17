@@ -170,6 +170,7 @@ Texture* g_surface_texture;
 TerrainTile* g_terrainTile;
 Material* g_material;
 
+
 void InitContent()
 {
 	g_obj = new DrawableObject();
