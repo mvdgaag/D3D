@@ -33,6 +33,9 @@ void DrawableObject::Draw()
 	mConstantBufferData.prevMVP = mConstantBufferData.MVP;
 	mConstantBufferData.MVP = theFramework.GetCamera()->GetProjectionMatrix() * theFramework.GetCamera()->GetViewMatrix();
 
+	//mConstantBufferData.MVP *= DirectX::XMMatrixScaling(0.5,0.5,0.5);
+	//mConstantBufferData.MVP *= DirectX::XMMatrixTranslation(2,0,0);
+
 	// set constant buffers
 	theRenderContext.UpdateSubResource(mConstantBuffer, &mConstantBufferData);
 	theRenderContext.VSSetConstantBuffer(mConstantBuffer, 0);

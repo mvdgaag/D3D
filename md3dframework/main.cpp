@@ -205,7 +205,7 @@ void InitContent()
 	g_material->SetDiffuseTexture(g_diffuse_texture);
 	g_material->SetNormalTexture(g_normal_texture);
 	g_material->SetSurfaceTexture(g_surface_texture);
-	g_material->SetDiffuseValue(float4(0.666, 0.4, 0, 0));
+	g_material->SetDiffuseValue(float4(0.6, 0.4, 0.0, 0.0));
 	g_material->SetReflectivityValue(0.5);
 	g_material->SetRoughnessValue(0.5);
 	g_material->SetMetalicityValue(0.0);
@@ -220,11 +220,32 @@ void InitContent()
 
 void CleanUpContent()
 {
-//	delete g_obj;
-//	delete g_mesh;
-//	delete g_pixel_shader;
-//	delete g_vertex_shader;
-//	delete g_diffuse_texture;
-//	delete g_normal_texture;
-//	delete g_surface_texture;
+	/* TODO: 
+	delete g_obj;
+	g_obj = nullptr;
+
+	delete g_mesh;
+	g_mesh = nullptr;
+
+	delete g_pixel_shader;
+	g_pixel_shader = nullptr;
+
+	delete g_vertex_shader;
+	g_vertex_shader = nullptr;
+
+	delete g_diffuse_texture;
+	g_diffuse_texture = nullptr;
+
+	delete g_normal_texture;
+	g_normal_texture = nullptr;
+
+	delete g_surface_texture;
+	g_surface_texture = nullptr;
+
+	delete g_terrainTile;
+	g_terrainTile = nullptr;
+
+	delete g_material;
+	g_material = nullptr;
+	*/
 }

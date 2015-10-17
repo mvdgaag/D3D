@@ -81,11 +81,10 @@ void Framework::Render()
 	mCamera->SetPosition(3.0 * sin(a), -2.0, 3.0 * cos(a));
 	mCamera->SetTarget(0.0, 0.0, 0.0);
 	mCamera->SetUp(0.0, 1.0, 0.0);
-	a -= 0.005;
+	//a -= 0.005;
 
 	mDeferredRenderer->Render(mObjectList);
-	//CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetAntiAliased()->GetTexture());
-	CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetDirectLighting()->GetTexture());
+	CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetAntiAliased()->GetTexture());
 	theRenderContext.SwapBuffers();
 
 	mFrameID++;
