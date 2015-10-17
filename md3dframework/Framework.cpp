@@ -52,11 +52,23 @@ HRESULT Framework::Init(HWND hWnd)
 void Framework::CleanUp()
 {
 	delete mCamera;
+	mCamera = nullptr;
+
 	delete mDeferredRenderer;
+	mDeferredRenderer = nullptr;
+	
 	delete mFullScreenTriangle;
+	mFullScreenTriangle = nullptr;
+	
 	delete mCopyShader;
+	mCopyShader = nullptr;
+	
 	delete mDefaultPointSampler;
+	mDefaultPointSampler = nullptr;
+	
 	delete mDefaultLinearSampler;
+	mDefaultLinearSampler = nullptr;
+	
 	mInitialized = false;
 }
 
@@ -72,7 +84,8 @@ void Framework::Render()
 	a -= 0.005;
 
 	mDeferredRenderer->Render(mObjectList);
-	CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetAntiAliased()->GetTexture());
+	//CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetAntiAliased()->GetTexture());
+	CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetDirectLighting()->GetTexture());
 	theRenderContext.SwapBuffers();
 
 	mFrameID++;

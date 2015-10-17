@@ -199,6 +199,10 @@ HRESULT RenderContext::Init(HWND hWnd)
 
 void RenderContext::CleanUp()
 {
+	delete mOutputRenderTarget;
+	mOutputRenderTarget = nullptr;
+//	delete mBackBuffer; Already deleted by mOutputRenderTarget
+
 	if (mImmediateContext) mImmediateContext->ClearState();
 	
 	if (mSwapChain1) mSwapChain1->Release();
@@ -209,9 +213,6 @@ void RenderContext::CleanUp()
 	if (mImmediateContext) mImmediateContext->Release();
 	if (mD3DDevice1) mD3DDevice1->Release();
 	if (mD3DDevice) mD3DDevice->Release();
-
-	delete mOutputRenderTarget;
-	delete mBackBuffer;
 
 	mInitialized = false;
 }

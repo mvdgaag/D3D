@@ -67,6 +67,7 @@ private:
 		float3 diffuseValue;
 		float4 surfaceValue;
 		unsigned int flags;
+		float4 padding;
 	};
 	ConstantData mConstantData;
 

@@ -19,6 +19,7 @@ cbuffer cConstantData : register(b0)
 	float3 cDiffuse;
 	float4 cSurface;
 	uint cFlags;
+	float4 cPadding;
 }
 
 
@@ -63,7 +64,7 @@ PS_OUTPUT PS(PS_INPUT input)
 	output.LinearDepth = input.Position.z;
 	
 	// TODO: flags seem to be 0
-	uint flags = HAS_DIFFUSE_MAP | HAS_NORMAL_MAP | HAS_SURFACE_MAP;// cFlags;
+	uint flags = cFlags;// HAS_DIFFUSE_MAP | HAS_NORMAL_MAP | HAS_SURFACE_MAP;// cFlags;
 
 	if ((flags & HAS_DIFFUSE_MAP) == 0)
 		output.Diffuse = float4(cDiffuse, 0.0);

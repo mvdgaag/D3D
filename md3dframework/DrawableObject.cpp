@@ -43,6 +43,9 @@ void DrawableObject::Draw()
 	theRenderContext.DrawMesh(mMesh);
 
 	// reset state
+	// TODO: move to material and mesh classes?
+	theRenderContext.VSSetConstantBuffer(NULL, 0);
+	theRenderContext.PSSetConstantBuffer(NULL, 0);
 	theRenderContext.PSSetTextureAndSampler(NULL, NULL, 0);
 	theRenderContext.PSSetTextureAndSampler(NULL, NULL, 1);
 	theRenderContext.PSSetTextureAndSampler(NULL, NULL, 2);
