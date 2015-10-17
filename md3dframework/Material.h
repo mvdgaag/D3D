@@ -1,5 +1,5 @@
 #pragma once
-#include "float4.h"
+#include "LinearAlgebra.h"
 
 class Texture;
 class Sampler;
@@ -39,8 +39,8 @@ public:
 	void SetSurfaceTexture(Texture* inTexture);
 	Texture* GetSurfaceTexture() { return mSurfaceTexture; }
 
-	void SetDiffuseValue(float3 inValue);
-	float3 GetDiffuseValue() { return mConstantData.diffuseValue; }
+	void SetDiffuseValue(float4 inValue);
+	float4 GetDiffuseValue() { return mConstantData.diffuseValue; }
 
 	void SetSurfaceValues(float4 inValues);
 	float4 GetSurfaceValues() { return mConstantData.surfaceValue; }
@@ -54,6 +54,9 @@ public:
 	void SetMetalicityValue(float inValue);
 	float GetMetalicityValue() { return mConstantData.surfaceValue.z; }
 
+	void SetEmissivenessValue(float inValue);
+	float GetEmissivenessValue() { return mConstantData.surfaceValue.w; }
+
 	void SetFlags(MaterialFlags inFlags);
 	MaterialFlags GetFlags() { return (MaterialFlags)mConstantData.flags; }
 
@@ -64,10 +67,12 @@ private:
 
 	struct ConstantData
 	{
-		float3 diffuseValue;
+		float4 diffuseValue;
 		float4 surfaceValue;
 		unsigned int flags;
-		float4 padding;
+		unsigned int padding1;
+		unsigned int padding2;
+		unsigned int padding3;
 	};
 	ConstantData mConstantData;
 

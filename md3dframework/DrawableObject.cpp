@@ -19,10 +19,6 @@ void DrawableObject::Init(Mesh* inMesh, Material* inMaterial)
 
 void DrawableObject::Draw()
 {
-	float val = mMaterial->GetRoughnessValue();
-	val = val < 0.99 ? val + 0.01 : 0.0;
-	mMaterial->SetRoughnessValue(val);
-
 	theFramework.SetMaterial(mMaterial);
 
 	const float halton23x[8] = {	1.0f/2.0f, 1.0f/4.0f, 3.0f/4.0f, 1.0f/8.0f,

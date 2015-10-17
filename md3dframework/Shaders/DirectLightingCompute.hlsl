@@ -6,7 +6,7 @@ RWTexture2D<float4> dst : register(u0);
 Texture2D<float> LinearDepth : register(t0);
 Texture2D<half2> Normal : register(t1);
 Texture2D<float4> Diffuse : register(t2);
-Texture2D<float4> Material : register(t3);
+Texture2D<float4> Surface : register(t3);
 
 
 cbuffer cLightingShaderConstants : register(b0)
@@ -32,11 +32,11 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	float linear_depth = LinearDepth[coord];
 	half3 normal = DecodeNormal(Normal[coord].xy);
 	half3 diffuse = Diffuse[coord].xyz;
-	half4 material = Material[coord];
+	half4 surface = Surface[coord];
 
 	myMaterial m;
-	m.Roughness = 0.4;
-	m.Reflectivity = 0.4;
+	m.Roughness = surface.x;
+	m.Reflectivity = surface.y;
 	m.Diffuse = diffuse;
 
 	myLight l;

@@ -49,7 +49,7 @@ void Material::SetSurfaceTexture(Texture* inTexture)
 }
 
 
-void Material::SetDiffuseValue(float3 inValue) 
+void Material::SetDiffuseValue(float4 inValue) 
 { 
 	mConstantData.diffuseValue = inValue; 
 	UpdateConstantBuffer();
@@ -81,6 +81,13 @@ void Material::SetMetalicityValue(float inValue)
 {
 	mConstantData.surfaceValue.z = inValue; 
 	UpdateConstantBuffer(); 
+}
+
+
+void Material::SetEmissivenessValue(float inValue)
+{
+	mConstantData.surfaceValue.w = inValue;
+	UpdateConstantBuffer();
 }
 
 

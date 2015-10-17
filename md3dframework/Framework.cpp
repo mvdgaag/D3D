@@ -96,11 +96,11 @@ void Framework::SetMaterial(Material* inMaterial)
 {
 	theRenderContext.PSSetShader(inMaterial->GetPixelShader());
 	theRenderContext.VSSetShader(inMaterial->GetVertexShader());
-
+	
 	Texture* diffuse_texture = inMaterial->GetDiffuseTexture();
 	Texture* normal_texture = inMaterial->GetNormalTexture();
 	Texture* surface_texture = inMaterial->GetSurfaceTexture();
-
+	
 	if (diffuse_texture != nullptr)
 		theRenderContext.PSSetTextureAndSampler(diffuse_texture, mDefaultLinearSampler, 0);
 	if (normal_texture != nullptr)
