@@ -86,10 +86,7 @@ void Framework::Render()
 
 	mDeferredRenderer->Render(mObjectList);
 
-	if ((mFrameID / 100) % 2 == 0)
-		CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetAntiAliased()->GetTexture());
-	else
-		CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetDirectLighting()->GetTexture());
+	CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetAntiAliased()->GetTexture());
 	
 	theRenderContext.SwapBuffers();
 
