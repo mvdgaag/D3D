@@ -28,20 +28,26 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	float2 history_uv = (coord + 0.5) / cTargetSize - mv;
 	float4 history_val = history.SampleLevel(historySamper, history_uv, 0);
 	
-	// sharpen new value
+	// gather neighborhood
 	float4 valn = source[coord + int2(0, 1)];
-	float4 vals = source[coord + int2(1, 0)];
-	float4 vale = source[coord - int2(0, 1)];
+	float4 valne = source[coord + int2(-1, 1)];
+	float4 vale = source[coord + int2(1, 0)];
+	float4 valse = source[coord + int2(-1, -1)];
+	float4 vals = source[coord - int2(0, 1)];
+	float4 valsw = source[coord + int2(1, -1)];
 	float4 valw = source[coord - int2(1, 0)];
-	const float unsharp_strength = 4.0;
-	val = (unsharp_strength + 1.0) * val - (unsharp_strength * 0.25) * (valn + vals + vale + valw);
+	float4 valnw = source[coord + int2( 1, 1)];
+	
+	// sharpen new value
+	const float unsharp_strength = 2.0;
+	val = (unsharp_strength + 1.0) * val - (unsharp_strength * 0.125) * (valn + valne + vale + valse + vals + valsw + valw + valnw);
 
 	// neighborhood clamp
-	float4 max_val = max(max(valn, vals), max(vale, valw));
-	float4 min_val = min(min(valn, vals), min(vale, valw));
+	float4 max_val = max(max(max(valn, vals), max(vale, valw)), max(max(valne, valse), max(valnw, valsw)));
+	float4 min_val = min(min(min(valn, vals), min(vale, valw)), min(min(valne, valse), min(valnw, valsw)));
 	history_val = clamp(history_val, min_val, max_val);
 
 	// blend
-	const float blend_strength = 0.95;
+	const float blend_strength = 0.85;
 	dst[coord] = lerp(val, history_val, blend_strength);
 }
