@@ -128,9 +128,12 @@ void DeferredRenderer::Render(std::vector<DrawableObject*> inDrawList)
 void DeferredRenderer::GeometryPass(std::vector<DrawableObject*> inDrawList)
 {
 	theRenderContext.BeginEvent("Geometry Pass");
+	
 	for (int i = 0; i < GBuffer::NUM_RENDER_TARGETS; i++)
 		theRenderContext.ClearRenderTarget(mGBuffer->GetRenderTarget(GBuffer::GBufferType(i)), float4(0, 0, 0, 0));
+	
 	theRenderContext.ClearDepthStencil(mGBuffer->GetDepthStencilTarget(), 1.0, 0);
+	
 	theRenderContext.SetRenderTargets(GBuffer::NUM_RENDER_TARGETS, mGBuffer->GetRenderTargets(), mGBuffer->GetDepthStencilTarget());
 
 	for each (DrawableObject* obj in inDrawList)
@@ -178,6 +181,6 @@ void DeferredRenderer::PostProcessPass()
 {
 	theRenderContext.BeginEvent("Post Process Pass");
 	mTAARenderer->Render(mLightComposed->GetTexture(), mAAHistoryFrame, mGBuffer->GetTexture(GBuffer::MOTION_VECTORS), mAntiAliased);
-	mPostProcessRenderer->Render(mAntiAliased->GetTexture(), mPostProcessed);
+	mPostProcessRenderer->Render(mAntiAliased->GetTexture(), mGBuffer->GetRenderTarget(GBuffer::MOTION_VECTORS)->GetTexture(), mPostProcessed);
 	theRenderContext.EndEvent();
 }

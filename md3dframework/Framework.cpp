@@ -86,7 +86,7 @@ void Framework::Render()
 
 	mDeferredRenderer->Render(mObjectList);
 
-	CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetAntiAliased()->GetTexture());
+	CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetPostProcessed()->GetTexture());
 	
 	theRenderContext.SwapBuffers();
 
