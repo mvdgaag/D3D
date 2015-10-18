@@ -31,7 +31,7 @@ void DrawableObject::Draw()
 	mConstantBufferData.offsets.x = ((halton23x[idx] * 2.0f - 1.0f) / theRenderContext.GetWidth());
 	mConstantBufferData.offsets.y = ((halton23y[idx] * 2.0f - 1.0f) / theRenderContext.GetHeight());
 	mConstantBufferData.prevMVP = mConstantBufferData.MVP;
-	mConstantBufferData.MVP = theFramework.GetCamera()->GetProjectionMatrix() * theFramework.GetCamera()->GetViewMatrix();
+	mConstantBufferData.MVP = DirectX::XMMatrixTranspose(theFramework.GetCamera()->GetViewProjectionMatrix());
 
 	//mConstantBufferData.MVP *= DirectX::XMMatrixScaling(0.5,0.5,0.5);
 	//mConstantBufferData.MVP *= DirectX::XMMatrixTranslation(2,0,0);

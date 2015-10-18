@@ -24,7 +24,7 @@ DirectX::XMMATRIX Camera::GetProjectionMatrix()
 
 DirectX::XMMATRIX Camera::GetViewMatrix()
 {
-	return DirectX::XMMatrixTranspose(DirectX::XMMatrixLookAtLH(mPosition, mTarget, mUp));
+	return DirectX::XMMatrixLookAtLH(mPosition, mTarget, mUp);
 }
 
 
@@ -34,7 +34,7 @@ void Camera::SetProjectionMatrix(float inNear, float inFar, float inFovY)
 	mFovY = inFovY;
 	mNear = inNear;
 	mFar = inFar;
-	mProjection = DirectX::XMMatrixTranspose(DirectX::XMMatrixPerspectiveFovLH(mFovY, mAspect, mNear, mFar));
+	mProjection = DirectX::XMMatrixPerspectiveFovLH(mFovY, mAspect, mNear, mFar);
 }
 
 
