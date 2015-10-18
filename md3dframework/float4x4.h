@@ -281,7 +281,7 @@ inline const float4x4 makeLookAtMatrix(const float3& eyePos, const float3& lookA
 	float4x4 result;
 	float3 camX, camY, camZ;
 	camY = normalize(upVec);
-	camZ = normalize((eyePos - lookAtPos));
+	camZ = normalize((lookAtPos - eyePos));
 	camX = normalize(cross(camY, camZ));
 	camY = cross(camZ, camX);
 	result = float4x4(float4(camX, 0.0), float4(camY, 0.0), float4(camZ, 0.0), float4(eyePos, 0.0));
