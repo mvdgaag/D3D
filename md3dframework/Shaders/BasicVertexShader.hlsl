@@ -2,7 +2,7 @@ cbuffer cMatrices : register(b0)
 {
 	matrix MVP;
 	matrix prevMVP;
-	float4 offsets; // .xy = halton offset for this frame, .zw for the difference for the motion vectors
+	float4 jitter_offset; // .xy = halton offset for this frame, .zw for the difference for the motion vectors
 };
 
 
@@ -32,9 +32,13 @@ PS_INPUT VS(VS_INPUT input)
 {
 	PS_INPUT output =		(PS_INPUT)0;
 
-	output.Position = mul(float4(input.Position, 1.0), MVP);
-	output.Normal = mul(float4(input.Normal, 0.0), MVP).xyz;
-	output.Tangent = mul(float4(input.Tangent, 0.0), MVP).xyz;
+	// jitter for TAA
+	float4x4 mvp = MVP;
+	//mvp[2].xy += jitter_offset.xy;
+
+	output.Position = mul(float4(input.Position, 1.0), mvp);
+	output.Normal = mul(float4(input.Normal, 0.0), mvp).xyz;
+	output.Tangent = mul(float4(input.Tangent, 0.0), mvp).xyz;
 	output.TexCoord = input.TexCoord.xy;
 
 	// motion vectors
@@ -44,7 +48,7 @@ PS_INPUT VS(VS_INPUT input)
 	output.MotionVectors *= 0.5; // NDC to UV range conversion
 
 	// jitter for TAA
-	output.Position.xy += offsets.xy * output.Position.w;
+	output.Position.xy += jitter_offset.xy * output.Position.w;
 
 	return output;
 }
