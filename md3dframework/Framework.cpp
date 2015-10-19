@@ -73,16 +73,13 @@ void Framework::CleanUp()
 }
 
 
-float a = 0.666;
 void Framework::Render()
 {
 	assert(mInitialized);
 
-	mCamera->SetPosition(3.0 * sin(a), -0.0, -5.0);
-	mCamera->SetTarget(3.0 * sin(a), -0.0, 0.0);
-	//mCamera->SetTarget(0.0, 0.0, 0.0);
+	mCamera->SetPosition(0.0, 0.0, -3.0);
+	mCamera->SetTarget(0.0, 0.0, 0.0);
 	mCamera->SetUp(0.0, 1.0, 0.0);
-	a -= 0.01;
 
 	mDeferredRenderer->Render(mObjectList);
 
