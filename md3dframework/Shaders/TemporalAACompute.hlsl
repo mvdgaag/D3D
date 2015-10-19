@@ -23,9 +23,12 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	float2 current_uv = (coord + 0.5) / cTargetSize + counter_jitter;
 	float4 val = source.SampleLevel(sourceSampler, current_uv, 0);
 
-	// history value
+	// resample motion vector towards history (avoid no motion on leading edges of moving objects)
 	float2 mv = motionVectors.SampleLevel(motionVectorSamper, current_uv, 0);
-	float2 history_uv = (coord + 0.5) / cTargetSize - mv;
+	mv = motionVectors.SampleLevel(motionVectorSamper, current_uv - 0.5*normalize(mv), 0);
+
+	// history value (stupid dx11 doesn't allow float4 reads from RWTexture2D, so use history texture
+	float2 history_uv = saturate((coord + 0.5) / cTargetSize - mv);
 	float4 history_val = history.SampleLevel(historySamper, history_uv, 0);
 	
 	// gather neighborhood
@@ -39,18 +42,20 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	float4 valnw = source[coord + int2( 1, 1)];
 	
 	// sharpen new value
-	const float unsharp_strength = 1.0;
+	const float unsharp_strength = 2.0;
 	const float normalization_factor = 8.0 / (4.0 + 4.0 / sqrt(2));
 	val = (unsharp_strength + 1.0) * val - 
 		(unsharp_strength * normalization_factor * 0.125) * (valn + vale + vals + valw) -
 		(unsharp_strength * normalization_factor * (0.125 / sqrt(2.0))) * (valne + valse + valnw + valsw);
 
-	// neighborhood clamp
+	// 3*3 neighborhood clamp
 	float4 max_val = max(max(max(valn, vals), max(vale, valw)), max(max(valne, valse), max(valnw, valsw)));
 	float4 min_val = min(min(min(valn, vals), min(vale, valw)), min(min(valne, valse), min(valnw, valsw)));
 	history_val = clamp(history_val, min_val, max_val);
 
 	// blend
-	const float blend_strength = 0.85;
+	float blend_strength = 0.85;
+	float motion_limit = 5.0;
+	blend_strength *= saturate(1.0 - length(mv) / motion_limit); // blend less motion more than motion limit (linear falloff)
 	dst[coord] = lerp(val, history_val, blend_strength);
 }

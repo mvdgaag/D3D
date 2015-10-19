@@ -19,7 +19,7 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	float2 uv = (coord + 0.5) / cTargetSize;
 
 	float2 mv = motionVectors.SampleLevel(motionSampler, uv, 0);
-	float2 history_uv = uv - mv;
+	float2 history_uv = saturate(uv - mv);
 
 	float4 result;
 	for (int i = 0; i < 8; i++)
@@ -29,4 +29,5 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	}
 
 	dst[coord] = result / 8.0;
+	//dst[coord] = source[coord];
 }
