@@ -6,5 +6,5 @@
 #include "float4.h"
 //#include "float4x4.h"
 
-#define _XM_NO_INTRINSICS_
+//#define _XM_NO_INTRINSICS_
 #include <DirectXMath.h>

@@ -70,7 +70,7 @@ void Mesh::InitPlane(int inSubX, int inSubY, float2 inScale)
 
 	SimpleVertex vert;
 	vert.Normal = float3(0, 1, 0);
-	vert.Tangent = float3(1, 0, 0);
+	vert.Tangent = float3(0, 0, 1);
 
 	for (int x = 0; x <= inSubX; x++)
 	{

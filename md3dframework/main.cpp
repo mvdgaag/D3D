@@ -38,6 +38,24 @@ HINSTANCE						g_hInst = nullptr;
 HWND							g_hWnd = nullptr;
 
 
+
+DrawableObject* g_obj;
+DrawableObject* g_obj2;
+
+Mesh* g_mesh;
+Mesh* g_mesh2;
+
+Material* g_material;
+Material* g_material2;
+
+PixelShader* g_pixel_shader;
+VertexShader* g_vertex_shader;
+Texture* g_diffuse_texture;
+Texture* g_normal_texture;
+Texture* g_surface_texture;
+TerrainTile* g_terrainTile;
+
+
 //--------------------------------------------------------------------------------------
 // Forward declarations
 //--------------------------------------------------------------------------------------
@@ -79,6 +97,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 		}
 		else
 		{
+			g_obj->Rotate(float3(0, 1, 0), 0.01);
 			theFramework.Render();
 		}
 	}
@@ -160,23 +179,21 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 }
 
 
-DrawableObject* g_obj;
-Mesh* g_mesh;
-PixelShader* g_pixel_shader;
-VertexShader* g_vertex_shader;
-Texture* g_diffuse_texture;
-Texture* g_normal_texture;
-Texture* g_surface_texture;
-TerrainTile* g_terrainTile;
-Material* g_material;
+
+
+
 
 
 void InitContent()
 {
 	g_obj = new DrawableObject();
+	g_obj2 = new DrawableObject();
 	
 	g_mesh = new Mesh();
 	g_mesh->InitFromFile("C:/Users/Maarten/Documents/Visual Studio 2013/Projects/D3D/C++/md3dframework/Models/sphere.obj");
+
+	g_mesh2 = new Mesh();
+	g_mesh2->InitPlane(1, 1, float2(8,8));
 
 	/*
 	g_terrainTile = new TerrainTile();
@@ -213,8 +230,27 @@ void InitContent()
 	g_material->SetPixelShader(g_pixel_shader);
 	g_material->SetVertexShader(g_vertex_shader);
 	g_obj->Init(g_mesh, g_material);
+
+	g_material2 = new Material();
+	g_material2->Init();
+	g_material2->SetDiffuseTexture(g_diffuse_texture);
+	g_material2->SetNormalTexture(g_normal_texture);
+	g_material2->SetSurfaceTexture(g_surface_texture);
+	g_material2->SetDiffuseValue(float4(0.9, 0.4, 0.0, 0.0));
+	g_material2->SetReflectivityValue(0.1);
+	g_material2->SetRoughnessValue(0.9);
+	g_material2->SetMetalicityValue(0.0);
+	g_material2->SetEmissivenessValue(0.0);
+	g_material2->SetPixelShader(g_pixel_shader);
+	g_material2->SetVertexShader(g_vertex_shader);
+	g_material2->SetFlags((Material::MaterialFlags)0);
+	g_obj2->Init(g_mesh2, g_material2);
+
 	
 	theFramework.RegisterObject(g_obj);
+	g_obj2->Rotate(float3(1, 0, 0), -3.1415 / 2.0);
+	//g_obj2->Translate(float3(0, 0, 3));
+	theFramework.RegisterObject(g_obj2);
 }
 
 

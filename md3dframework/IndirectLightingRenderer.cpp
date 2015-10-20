@@ -4,9 +4,11 @@
 #include "ComputeShader.h"
 #include "RenderTarget.h"
 #include "Texture.h"
+#include "Camera.h"
+#include "ConstantBuffer.h"
 
 
-void IndirectLightingRenderer::Render(Texture* inSource, RenderTarget* inTarget)
+void IndirectLightingRenderer::Render(Texture* inSource, Texture* inNormal, Texture* inLinearDepth, RenderTarget* inTarget)
 {
 	assert(mInitialized == true);
 
@@ -15,7 +17,19 @@ void IndirectLightingRenderer::Render(Texture* inSource, RenderTarget* inTarget)
 
 	theRenderContext.CSSetShader(mShader);
 	theRenderContext.CSSetTextureAndSampler(inSource, theFramework.GetPointSampler(), 0);
+	theRenderContext.CSSetTextureAndSampler(inNormal, theFramework.GetPointSampler(), 1);
+	theRenderContext.CSSetTextureAndSampler(inLinearDepth, theFramework.GetPointSampler(), 2);
 	theRenderContext.CSSetRWTexture(inTarget, 0);
+
+	Camera* cam = theFramework.GetCamera();
+	mConstantBufferData.viewspaceReconstructionVector.x = cam->GetNear() / tan(0.5 * cam->GetFovX());
+	mConstantBufferData.viewspaceReconstructionVector.y = cam->GetNear() / tan(0.5 * cam->GetFovY());
+	mConstantBufferData.targetSize.x = theRenderContext.GetWidth();
+	mConstantBufferData.targetSize.y = theRenderContext.GetHeight();
+	mConstantBufferData.frameData.x = theFramework.GetFrameID();
+
+	theRenderContext.UpdateSubResource(mConstantBuffer, &mConstantBufferData);
+	theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);
 
 	int groups_x = (inTarget->GetTexture()->GetWidth() + 7) / 8;
 	int groups_y = (inTarget->GetTexture()->GetHeight() + 7) / 8;
@@ -27,6 +41,8 @@ void IndirectLightingRenderer::Render(Texture* inSource, RenderTarget* inTarget)
 	// clear state
 	theRenderContext.CSSetShader(NULL);
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 0);
+	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 1);
+	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 2);
 	theRenderContext.CSSetRWTexture(NULL, 0);
 }
 
@@ -36,16 +52,19 @@ void IndirectLightingRenderer::Init()
 	CleanUp();
 	mShader = new ComputeShader();
 	mShader->InitFromFile("Shaders/IndirectLightingCompute.hlsl");
+	mConstantBuffer = new ConstantBuffer();
+	mConstantBuffer->Init(sizeof(ConstantBufferData));
 	mInitialized = true;
 }
 
 
 void IndirectLightingRenderer::CleanUp()
 {
-	if (mShader)
-	{
-		delete mShader;
-		mShader = NULL;
-	}
+	delete mShader;
+	mShader = nullptr;
+	
+	delete mConstantBuffer;
+	mConstantBuffer = nullptr;
+
 	mInitialized = false;
 }

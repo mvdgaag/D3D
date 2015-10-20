@@ -6,6 +6,9 @@ SamplerState sourceSampler : register(s0);
 SamplerState motionSampler : register(s1);
 
 
+#define MOTION_BLUR_STRENGTH (1.0)
+
+
 cbuffer cPostProcessConstants : register(b0)
 {
 	float2	cTargetSize;
@@ -17,10 +20,8 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 {
 	float2 coord = float2(DTid.x, DTid.y);
 	float2 uv = (coord + 0.5) / cTargetSize;
-
 	float2 mv = motionVectors.SampleLevel(motionSampler, uv, 0);
-	// TODO: compensate for jitter? Do so in base fragment shader instead?
-	float2 history_uv = saturate(uv - mv);
+	float2 history_uv = saturate(uv - mv * MOTION_BLUR_STRENGTH);
 
 	float4 result;
 	for (int i = 0; i < 8; i++)

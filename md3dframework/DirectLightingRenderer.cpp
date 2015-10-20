@@ -64,14 +64,11 @@ void DirectLightingRenderer::Init()
 
 void DirectLightingRenderer::CleanUp()
 {
-	if (mShader)
-	{
-		delete mShader;
-		mShader = NULL;
-	}
-	if (mConstantBuffer)
-	{
-		delete mConstantBuffer;
-	}
+	delete mShader;
+	mShader = nullptr;
+	
+	delete mConstantBuffer;
+	mConstantBuffer = nullptr;
+	
 	mInitialized = false;
 }

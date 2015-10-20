@@ -39,11 +39,13 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	float4 valnw = source[coord + int2( 1, 1)];
 	
 	// sharpen new value
+	/*
 	const float unsharp_strength = 0.5;
 	const float normalization_factor = 8.0 / (4.0 + 4.0 / sqrt(2));
 	val = (unsharp_strength + 1.0) * val - 
 		(unsharp_strength * normalization_factor * 0.125) * (valn + vale + vals + valw) -
 		(unsharp_strength * normalization_factor * (0.125 / sqrt(2.0))) * (valne + valse + valnw + valsw);
+	*/
 
 	// 3*3 neighborhood clamp
 	float4 max_val = max(max(max(valn, vals), max(vale, valw)), max(max(valne, valse), max(valnw, valsw)));

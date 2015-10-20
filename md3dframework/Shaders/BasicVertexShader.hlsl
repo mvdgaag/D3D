@@ -49,6 +49,7 @@ PS_INPUT VS(VS_INPUT input)
 
 	// jitter for TAA
 	output.Position.xy += jitter_offset.xy * output.Position.w;
+	//output.MotionVectors += 0.5 * jitter_offset.xy * output.Position.w;
 
 	return output;
 }

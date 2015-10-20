@@ -29,9 +29,6 @@ void DrawableObject::Draw()
 	mConstantBufferData.offsets.y = jitter_offset.y;
 	mConstantBufferData.prevMVP = mConstantBufferData.MVP;
 	mConstantBufferData.MVP = DirectX::XMMatrixTranspose(theFramework.GetCamera()->GetViewProjectionMatrix());
-	
-	mTransform = DirectX::XMMatrixTranslation(sin(theFramework.GetFrameID() / 100.0f), 0.0, 0.0);
-	// TODO: this line keeps giving unhandled exceptions: solution: put a break point and step into: MAGIC?!?
 	mConstantBufferData.MVP *= DirectX::XMMatrixTranspose(mTransform);
 
 	// set constant buffers

@@ -163,7 +163,8 @@ void DeferredRenderer::LightingPass()
 	//mDepthPyramidRenderer->Render(mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), mDepthPyramid);
 	
 	theRenderContext.SetMarker("Indirect Lighting Renderer");
-	mIndirectLightingRenderer->Render(mDirectLighting->GetTexture(), mIndirectLighting);
+	mIndirectLightingRenderer->Render(mDirectLighting->GetTexture(), mGBuffer->GetTexture(GBuffer::NORMAL), 
+		mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), mIndirectLighting);
 	
 	theRenderContext.SetMarker("Reflection Renderer");
 	mReflectionRenderer->Render(mIndirectLighting->GetTexture(), mReflections);
