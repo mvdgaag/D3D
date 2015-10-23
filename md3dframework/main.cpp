@@ -229,6 +229,7 @@ void InitContent()
 	g_material->SetEmissivenessValue(0.0);
 	g_material->SetPixelShader(g_pixel_shader);
 	g_material->SetVertexShader(g_vertex_shader);
+//	g_material->SetFlags((Material::MaterialFlags)0);
 	g_obj->Init(g_mesh, g_material);
 
 	g_material2 = new Material();
@@ -243,13 +244,13 @@ void InitContent()
 	g_material2->SetEmissivenessValue(0.0);
 	g_material2->SetPixelShader(g_pixel_shader);
 	g_material2->SetVertexShader(g_vertex_shader);
-	g_material2->SetFlags((Material::MaterialFlags)0);
+	//g_material2->SetFlags((Material::MaterialFlags)0);
 	g_obj2->Init(g_mesh2, g_material2);
 
 	
 	theFramework.RegisterObject(g_obj);
 	g_obj2->Rotate(float3(1, 0, 0), -3.1415 / 2.0);
-	//g_obj2->Translate(float3(0, 0, 3));
+	g_obj2->Translate(float3(0, 0, 5));
 	theFramework.RegisterObject(g_obj2);
 }
 

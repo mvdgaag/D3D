@@ -12,10 +12,11 @@ public:
 	~ComputeShader() { CleanUp(); }
 
 	void InitFromFile(std::string inFileName);
-	void CleanUp();
-	ResourceType GetResourceType() const { return ResourceType::COMPUTE_SHADER; };
+	
+	void CleanUp() override;
+	ResourceType GetResourceType() const override { return ResourceType::COMPUTE_SHADER; };
 
-private:
+protected:
 	ID3D11ComputeShader* mHandle = nullptr;
 };
 

@@ -30,6 +30,7 @@ struct PS_INPUT
 	float3 Tangent			: TANGENT;
 	float2 TexCoord			: TEXCOORD0;
 	float2 MotionVectors	: TEXCOORD1;
+	float  LinearDepth		: TEXCOORD2;
 };
 
 
@@ -61,7 +62,7 @@ float3 NormalMap(float3 inGeometryNormal, float3 inTangent, float2 inTexCoord)
 PS_OUTPUT PS(PS_INPUT input)
 {
 	PS_OUTPUT output = (PS_OUTPUT)0;
-	output.LinearDepth = input.Position.z;
+	output.LinearDepth = input.LinearDepth;
 	
 	// TODO: flags seem to be 0
 	uint flags = cFlags;// HAS_DIFFUSE_MAP | HAS_NORMAL_MAP | HAS_SURFACE_MAP;// cFlags;

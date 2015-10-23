@@ -1,5 +1,8 @@
 #include "DeferredRenderer.h"
 #include "RenderContext.h"
+#include "Framework.h"
+#include "Camera.h"
+#include "ConstantBuffer.h"
 #include "GBuffer.h"
 #include "RenderTarget.h"
 #include "Texture.h"
@@ -73,6 +76,12 @@ void DeferredRenderer::Init(int inWidth, int inHeight)
 	mPostProcessRenderer = new PostProcessRenderer();
 	mPostProcessRenderer->Init();
 
+	mConstantBufferEveryFrame = new ConstantBuffer();
+	mConstantBufferEveryFrame->Init(sizeof(ConstantDataEveryFrame));
+
+	mConstantBufferOnDemand = new ConstantBuffer();
+	mConstantBufferOnDemand->Init(sizeof(ConstantDataOnDemand));
+
 	mInitialized = true;	
 }
 
@@ -113,14 +122,36 @@ void DeferredRenderer::CleanUp()
 	mTAARenderer = NULL;
 	delete mPostProcessRenderer;
 	mPostProcessRenderer = NULL;
+
+	delete mConstantBufferEveryFrame;
+	mConstantBufferEveryFrame = NULL;
+	delete mConstantBufferOnDemand;
+	mConstantBufferOnDemand = NULL;
 }
 
 
 void DeferredRenderer::Render(std::vector<DrawableObject*> inDrawList)
 {
 	assert(mInitialized);
+	
+	Camera& camera = *(theFramework.GetCamera());
+	int frame_id = theFramework.GetFrameID();
+	float2 jitter_offset = TAARenderer::GetJitterOffset(frame_id);
+
+	ConstantDataEveryFrame constantData;
+	constantData.frameData = float4(jitter_offset.x, jitter_offset.y, frame_id, 0);
+	constantData.viewMatrix = camera.GetViewMatrix();
+	constantData.projectionMatrix = camera.GetProjectionMatrix();
+	constantData.viewProjectionMatrix = camera.GetViewProjectionMatrix();
+	DirectX::XMVECTOR determinant = DirectX::XMMatrixDeterminant(constantData.projectionMatrix);
+	constantData.inverseProjectionMatrix = DirectX::XMMatrixInverse(&determinant, constantData.projectionMatrix);
+	
+	theRenderContext.UpdateSubResource(mConstantBufferEveryFrame, &constantData);
+
 	GeometryPass(inDrawList);
+	
 	LightingPass();
+	
 	PostProcessPass();
 }
 
@@ -139,7 +170,24 @@ void DeferredRenderer::GeometryPass(std::vector<DrawableObject*> inDrawList)
 	for each (DrawableObject* obj in inDrawList)
 	{
 		theRenderContext.SetMarker("Drawing Object");
-		obj->Draw();
+
+		theFramework.SetMaterial(obj->GetMaterial());
+
+		theRenderContext.VSSetConstantBuffer(mConstantBufferEveryFrame, 0);
+		theRenderContext.VSSetConstantBuffer(obj->GetConstantBuffer(), 1);
+
+		theRenderContext.DrawMesh(obj->GetMesh());
+
+		// reset state
+		theRenderContext.VSSetConstantBuffer(NULL, 0);
+		theRenderContext.PSSetConstantBuffer(NULL, 0);
+		theRenderContext.PSSetTextureAndSampler(NULL, NULL, 0);
+		theRenderContext.PSSetTextureAndSampler(NULL, NULL, 1);
+		theRenderContext.PSSetTextureAndSampler(NULL, NULL, 2);
+		theRenderContext.PSSetShader(NULL);
+		theRenderContext.VSSetShader(NULL);
+		
+		//obj->Draw();
 	}
 
 	// clear render targets

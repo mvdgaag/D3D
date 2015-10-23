@@ -18,31 +18,14 @@ void DrawableObject::Init(Mesh* inMesh, Material* inMaterial)
 }
 
 
-void DrawableObject::Draw()
+ConstantBuffer* DrawableObject::GetConstantBuffer()
 {
-	theFramework.SetMaterial(mMaterial);
-
-	mConstantBufferData.offsets.z = mConstantBufferData.offsets.x; // previous x
-	mConstantBufferData.offsets.w = mConstantBufferData.offsets.y; // previous y
-	float2 jitter_offset = TAARenderer::GetJitterOffset(theFramework.GetFrameID());
-	mConstantBufferData.offsets.x = jitter_offset.x;
-	mConstantBufferData.offsets.y = jitter_offset.y;
-	mConstantBufferData.prevMVP = mConstantBufferData.MVP;
-	mConstantBufferData.MVP = DirectX::XMMatrixTranspose(theFramework.GetCamera()->GetViewProjectionMatrix());
-	mConstantBufferData.MVP *= DirectX::XMMatrixTranspose(mTransform);
-
-	// set constant buffers
+	// TODO: check if already updated this frame?
+	mConstantBufferData.modelView = DirectX::XMMatrixTranspose(theFramework.GetCamera()->GetViewMatrix());
+	mConstantBufferData.modelView *= DirectX::XMMatrixTranspose(mTransform);
+	mConstantBufferData.prevModelViewProjection = mConstantBufferData.modelViewProjection;
+	mConstantBufferData.modelViewProjection = DirectX::XMMatrixTranspose(theFramework.GetCamera()->GetViewProjectionMatrix());
+	mConstantBufferData.modelViewProjection *= DirectX::XMMatrixTranspose(mTransform);
 	theRenderContext.UpdateSubResource(mConstantBuffer, &mConstantBufferData);
-	theRenderContext.VSSetConstantBuffer(mConstantBuffer, 0);
-	theRenderContext.DrawMesh(mMesh);
-
-	// reset state
-	// TODO: move to material and mesh classes?
-	theRenderContext.VSSetConstantBuffer(NULL, 0);
-	theRenderContext.PSSetConstantBuffer(NULL, 0);
-	theRenderContext.PSSetTextureAndSampler(NULL, NULL, 0);
-	theRenderContext.PSSetTextureAndSampler(NULL, NULL, 1);
-	theRenderContext.PSSetTextureAndSampler(NULL, NULL, 2);
-	theRenderContext.PSSetShader(NULL);
-	theRenderContext.VSSetShader(NULL);
+	return mConstantBuffer;
 }

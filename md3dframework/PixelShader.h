@@ -12,11 +12,11 @@ public:
 	~PixelShader() { CleanUp(); }
 
 	void InitFromFile(std::string inFileName);
-	void CleanUp();
+	void CleanUp() override;
 	
-	ResourceType GetResourceType() const { return ResourceType::PIXEL_SHADER; };
+	ResourceType GetResourceType() const override { return ResourceType::PIXEL_SHADER; };
 
-private:
+protected:
 	ID3D11PixelShader* mHandle = nullptr;
 };
 

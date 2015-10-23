@@ -16,11 +16,11 @@ public:
 	// D3D11_FILTER_MIN_MAG_MIP_LINEAR = 21
 	// D3D11_TEXTURE_ADDRESS_WRAP = 1
 
-	void CleanUp();
+	void CleanUp() override;
 	
-	ResourceType GetResourceType() const { return ResourceType::SAMPLER; };
+	ResourceType GetResourceType() const override { return ResourceType::SAMPLER; };
 
-private:
+protected:
 	ID3D11SamplerState* mSamplerState = nullptr;
 	D3D11_SAMPLER_DESC* mSampDesc;
 };

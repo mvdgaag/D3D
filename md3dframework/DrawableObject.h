@@ -16,17 +16,17 @@ public:
 	~DrawableObject() {};
 
 	void Init(Mesh* inMesh, Material* inMaterial);
-	void Draw();
 
 	Mesh* GetMesh() { return mMesh; }
 	Material* GetMaterial() { return mMaterial; }
+	ConstantBuffer* GetConstantBuffer();
 
 private:
 	struct ConstantBufferData
 	{
-		DirectX::XMMATRIX MVP;
-		DirectX::XMMATRIX prevMVP;
-		DirectX::XMFLOAT4 offsets;
+		DirectX::XMMATRIX modelView;
+		DirectX::XMMATRIX modelViewProjection;
+		DirectX::XMMATRIX prevModelViewProjection;
 	};
 	ConstantBufferData mConstantBufferData;
 	

@@ -19,14 +19,14 @@ public:
 	int GetHeight();		
 	int GetMipLevels();		
 
-	void Init(int inWidth, int inHeight, int inMipLevels, unsigned int inFormat, unsigned int inBindFlags = 8); // 8 = D3D11_BIND_SHADER_RESOURCE
-	void Init(ID3D11Texture2D* inTexture);
-	void InitFromFile(std::string inFileName);
-	void CleanUp();
+	virtual void Init(int inWidth, int inHeight, int inMipLevels, unsigned int inFormat, unsigned int inBindFlags = 8); // 8 = D3D11_BIND_SHADER_RESOURCE
+	virtual void Init(ID3D11Texture2D* inTexture);
+	virtual void InitFromFile(std::string inFileName);
+	
+	virtual void CleanUp() override;
+	virtual ResourceType GetResourceType() const override { return ResourceType::TEXTURE; };
 
-	ResourceType GetResourceType() const { return ResourceType::TEXTURE; };
-
-private:
+protected:
 	ID3D11Texture2D*			mTexture = nullptr;
 	ID3D11ShaderResourceView*	mShaderResourceView = nullptr;
 	D3D11_TEXTURE2D_DESC*		mDesc;

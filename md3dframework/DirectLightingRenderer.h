@@ -1,6 +1,7 @@
 #pragma once
 #include "float4.h"
 
+
 // predeclarations
 class ComputeShader;
 class RenderTarget;

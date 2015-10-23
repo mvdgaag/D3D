@@ -13,11 +13,11 @@ public:
 	~ConstantBuffer() { CleanUp(); }
 
 	void Init(int inByteWidth);
-	void CleanUp();
+	void CleanUp() override;
 
-	ResourceType GetResourceType() const { return ResourceType::CONSTANT_BUFFER; };
+	ResourceType GetResourceType() const override { return ResourceType::CONSTANT_BUFFER; };
 
-private:
+protected:
 	ID3D11Buffer* mBuffer;
 	D3D11_BUFFER_DESC* mDesc;
 };

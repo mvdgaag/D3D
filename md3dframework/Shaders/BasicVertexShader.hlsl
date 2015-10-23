@@ -1,8 +1,18 @@
-cbuffer cMatrices : register(b0)
+cbuffer cEveryFrame : register(b0)
 {
-	matrix MVP;
-	matrix prevMVP;
-	float4 jitter_offset; // .xy = halton offset for this frame, .zw for the difference for the motion vectors
+	matrix viewMatrix;
+	matrix projectionMatrix;
+	matrix viewProjectionMatrix;
+	matrix inverseProjectionMatrix;
+	float4 frameData;								// jitter_offset.xy, frameID, 0
+};
+
+
+cbuffer cObject : register(b1)
+{
+	matrix modelViewMatrix;
+	matrix modelViewProjectionMatrix;
+	matrix prevModelViewProjectionMatrix;
 };
 
 
@@ -22,6 +32,7 @@ struct PS_INPUT
 	float3 Tangent			: TANGENT;
 	float2 TexCoord			: TEXCOORD0;
 	float2 MotionVectors	: TEXCOORD1;
+	float  LinearDepth		: TEXCOORD2;
 };
 
 
@@ -33,16 +44,18 @@ PS_INPUT VS(VS_INPUT input)
 	PS_INPUT output =		(PS_INPUT)0;
 
 	// jitter for TAA
-	float4x4 mvp = MVP;
+	float4x4 mvp = modelViewProjectionMatrix;
+	float2 jitter_offset = frameData.xy;
 	//mvp[2].xy += jitter_offset.xy;
 
 	output.Position = mul(float4(input.Position, 1.0), mvp);
 	output.Normal = mul(float4(input.Normal, 0.0), mvp).xyz;
 	output.Tangent = mul(float4(input.Tangent, 0.0), mvp).xyz;
 	output.TexCoord = input.TexCoord.xy;
+	output.LinearDepth = mul(float4(input.Position, 1.0), (modelViewMatrix)).z;
 
 	// motion vectors
-	float4 prevPos = mul(float4(input.Position, 1.0), prevMVP);
+	float4 prevPos = mul(float4(input.Position, 1.0), prevModelViewProjectionMatrix);
 	output.MotionVectors = (output.Position.xy / output.Position.w); // currentNDC
 	output.MotionVectors -= (prevPos.xy / prevPos.w); // prevNDC
 	output.MotionVectors *= 0.5; // NDC to UV range conversion

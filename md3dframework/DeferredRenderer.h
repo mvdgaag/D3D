@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include "LinearAlgebra.h"
 
 
 // predefinitions
@@ -16,6 +17,10 @@ class PostProcessRenderer;
 class DrawableObject;
 class RenderTarget;
 class Texture;
+class ConstantBuffer;
+
+
+#define MAX_LIGHTS 64
 
 
 class DeferredRenderer
@@ -27,6 +32,7 @@ public:
 	void Init(int inWidth, int inHeight);
 	void CleanUp();
 	void Render(std::vector<DrawableObject*> inDrawList);
+
 	GBuffer* GetGBuffer() { return mGBuffer; }
 	RenderTarget* GetDepthPyramid() { return mDepthPyramid; }
 	RenderTarget* GetDirectLighting() { return mDirectLighting; }
@@ -35,6 +41,13 @@ public:
 	RenderTarget* GetLightComposed() { return mLightComposed; }
 	RenderTarget* GetAntiAliased() { return mAntiAliased; }
 	RenderTarget* GetPostProcessed() { return mPostProcessed; }
+
+	ConstantBuffer* GetConstantBufferEveryFrame() { return mConstantBufferEveryFrame; }
+	ConstantBuffer* GetConstantBufferOnDemand() { return mConstantBufferOnDemand; }
+
+	// TODO:
+	void AddLights() {}
+	void RemoveLights() {}
 
 private:
 	void GeometryPass(std::vector<DrawableObject*> inDrawList);
@@ -49,6 +62,21 @@ private:
 	LightComposeRenderer*		mLightComposeRenderer = nullptr;
 	TAARenderer*				mTAARenderer = nullptr;
 	PostProcessRenderer*		mPostProcessRenderer = nullptr;
+	ConstantBuffer*				mConstantBufferOnDemand = nullptr;
+	ConstantBuffer*				mConstantBufferEveryFrame = nullptr;
+	struct ConstantDataEveryFrame
+	{
+		DirectX::XMMATRIX viewMatrix;
+		DirectX::XMMATRIX projectionMatrix;
+		DirectX::XMMATRIX viewProjectionMatrix;
+		DirectX::XMMATRIX inverseProjectionMatrix;
+		float4 frameData;								// jitter_offset.xy, frameID, 0
+	};
+	struct ConstantDataOnDemand
+	{
+		float4 lightPositions[MAX_LIGHTS];
+		float4 lightColors[MAX_LIGHTS];
+	};
 	
 	GBuffer* mGBuffer = nullptr;
 	RenderTarget* mDepthPyramid = nullptr;

@@ -45,7 +45,7 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	l.Color = float3(0.9, 0.9, 0.9);
 	l.Range = 30.0;
 
-	float3 p = ReconstructCSPosition(coord / cTargetSize, linear_depth, cViewReconstructionVector);
+	float3 p = ReconstructCSPosition((coord + 0.5) / cTargetSize, linear_depth, cViewReconstructionVector);
 
 	float3 val = CalculateLight(m, p, normal, l);
 	dst[coord] = float4(val, 1);

@@ -35,13 +35,20 @@ void Texture::Init(int inWidth, int inHeight, int inMipLevels, unsigned int inFo
 	mDesc->MipLevels = mDesc->ArraySize = inMipLevels;
 	mDesc->Format = (DXGI_FORMAT)inFormat;
 	mDesc->SampleDesc.Count = 1;
+	mDesc->SampleDesc.Quality = 0;
 	mDesc->Usage = D3D11_USAGE_DEFAULT;
 	mDesc->BindFlags = inBindFlags;
 	mDesc->CPUAccessFlags = 0;
 	mDesc->MiscFlags = 0;
 
 	D3DCall(theRenderContext.GetDevice()->CreateTexture2D(mDesc, NULL, &mTexture));
-	D3DCall(theRenderContext.GetDevice()->CreateShaderResourceView(mTexture, NULL, &mShaderResourceView));
+	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
+	// HACK, needs to be different (not typeless) for depth-stencil
+	shaderResourceViewDesc.Format = (DXGI_FORMAT)inFormat == DXGI_FORMAT_R24G8_TYPELESS ? DXGI_FORMAT_R24_UNORM_X8_TYPELESS : (DXGI_FORMAT)inFormat;
+	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
+	shaderResourceViewDesc.Texture2D.MipLevels = 1;
+	D3DCall(theRenderContext.GetDevice()->CreateShaderResourceView(mTexture, &shaderResourceViewDesc, &mShaderResourceView));
 
 	assert(mTexture != nullptr);
 	assert(mShaderResourceView != nullptr);
@@ -95,6 +102,6 @@ void Texture::CleanUp()
 		mShaderResourceView->Release();
 		mShaderResourceView = nullptr;
 	}
-	if (mDesc != nullptr)
-		delete mDesc;
+	delete mDesc;
+	mDesc = nullptr;
 }

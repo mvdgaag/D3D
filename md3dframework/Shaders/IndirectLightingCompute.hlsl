@@ -113,4 +113,7 @@ void CS(uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID)
 
 	AccumulateSamples(uv, start_angle, threadIdx);
 	dst[coord] = float4(positions[threadIdx][0], 0);// float4(IntegrateLighting(GTid), 0);
+	
+	// SKIP
+	dst[coord] = lightTexture[coord];
 }

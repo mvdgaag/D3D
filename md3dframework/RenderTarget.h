@@ -18,11 +18,11 @@ public:
 
 	void						Init(int inWidth, int inHeight, int inMipLevels, unsigned int inFormat);
 	void						Init(Texture* inTexture);
-	void						CleanUp();
+	void						CleanUp() override;
 
-	ResourceType				GetResourceType() const { return ResourceType::RENDER_TARGET; }
+	ResourceType				GetResourceType() const override { return ResourceType::RENDER_TARGET; }
 
-private:
+protected:
 	Texture* mTexture = nullptr;
 	ID3D11RenderTargetView** mRenderTargetViews = nullptr;
 	ID3D11UnorderedAccessView** mUnorderedAccessViews = nullptr;

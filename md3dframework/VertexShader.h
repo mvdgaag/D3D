@@ -13,10 +13,10 @@ public:
 	~VertexShader() { CleanUp(); }
 
 	void InitFromFile(std::string inFileName);
-	void CleanUp();
-	ResourceType GetResourceType() const { return ResourceType::VERTEX_SHADER; };
+	void CleanUp() override;
+	ResourceType GetResourceType() const override { return ResourceType::VERTEX_SHADER; };
 
-private:
+protected:
 	ID3D11VertexShader* mHandle = nullptr;
 	ID3D11InputLayout*	mVertexLayout = nullptr;
 };

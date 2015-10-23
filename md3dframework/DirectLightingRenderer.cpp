@@ -25,8 +25,8 @@ void DirectLightingRenderer::Render(GBuffer* inSource, RenderTarget* inTarget)
 	theRenderContext.CSSetRWTexture(inTarget, 0);
 
 	Camera* cam = theFramework.GetCamera();
-	mConstantBufferData.viewspaceReconstructionVector.x = cam->GetNear() / tan(0.5 * cam->GetFovX());
-	mConstantBufferData.viewspaceReconstructionVector.y = cam->GetNear() / tan(0.5 * cam->GetFovY());
+	mConstantBufferData.viewspaceReconstructionVector.x = tan(0.5 * cam->GetFovX());
+	mConstantBufferData.viewspaceReconstructionVector.y = tan(0.5 * cam->GetFovY());
 	mConstantBufferData.targetSize.x = theRenderContext.GetWidth();
 	mConstantBufferData.targetSize.y = theRenderContext.GetHeight();
 	mConstantBufferData.frameData.x = theFramework.GetFrameID();

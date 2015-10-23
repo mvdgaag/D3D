@@ -29,11 +29,11 @@ public:
 	void InitFullscreenTriangle();
 	void InitFromFile(std::string inFileName);
 
-	void CleanUp();
+	void CleanUp() override;
 	
-	ResourceType GetResourceType() const { return ResourceType::MESH; };
+	ResourceType GetResourceType() const override { return ResourceType::MESH; };
 
-private:
+protected:
 
 	ID3D11Buffer* mVertexBuffer = nullptr;
 	ID3D11Buffer* mIndexBuffer = nullptr;

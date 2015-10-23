@@ -12,7 +12,6 @@
 #include <d3d11_1.h>
 
 
-
 RenderContext::~RenderContext()
 {
 	theFramework.CleanUp();
@@ -507,4 +506,5 @@ void RenderContext::VSSetConstantBuffer(ConstantBuffer* inConstantBuffer, int id
 		mVSBoundConstantBuffers[idx] = inConstantBuffer;
 	}
 }
+
 
