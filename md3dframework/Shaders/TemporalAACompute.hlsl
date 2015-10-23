@@ -39,22 +39,21 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	float4 valnw = source[coord + int2( 1, 1)];
 	
 	// sharpen new value
-	/*
-	const float unsharp_strength = 0.5;
+	const float unsharp_strength = 1.0;
 	const float normalization_factor = 8.0 / (4.0 + 4.0 / sqrt(2));
 	val = (unsharp_strength + 1.0) * val - 
 		(unsharp_strength * normalization_factor * 0.125) * (valn + vale + vals + valw) -
 		(unsharp_strength * normalization_factor * (0.125 / sqrt(2.0))) * (valne + valse + valnw + valsw);
-	*/
+	
 
 	// 3*3 neighborhood clamp
 	float4 max_val = max(max(max(valn, vals), max(vale, valw)), max(max(valne, valse), max(valnw, valsw)));
 	float4 min_val = min(min(min(valn, vals), min(vale, valw)), min(min(valne, valse), min(valnw, valsw)));
 	history_val = clamp(history_val, min_val, max_val);
-
+	
 	// blend
 	float blend_strength = 0.85;
-	float motion_limit = 2.0;
-	blend_strength *= saturate(1.0 - length(mv*cTargetSize) / motion_limit); // blend less motion more than motion limit (linear falloff)
+	//float motion_limit = 2.0;
+	//blend_strength *= saturate(1.0 - length(mv*cTargetSize) / motion_limit); // blend less motion more than motion limit (linear falloff)
 	dst[coord] = lerp(val, history_val, blend_strength);
 }
