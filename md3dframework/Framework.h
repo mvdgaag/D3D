@@ -34,10 +34,13 @@ public:
 	void CleanUp();
 
 	void Render();
+	void SetFrameCallback(void(*inCallBack)(void)) { mFrameCallback = inCallBack; }
 	void RegisterObject(DrawableObject* obj) { mObjectList.push_back(obj); }
 
 	Camera*		GetCamera()														{ return mCamera; }
 	int			GetFrameID()													{ return mFrameID; }
+	double		GetFrameTime()													{ return mFrameTime; }
+	double		GetFrameDeltaTime()												{ return mDeltaTime; }
 	void		SetMaterial(Material* inMaterial);
 
 	// helper functions
@@ -62,5 +65,6 @@ private:
 	DeferredRenderer*				mDeferredRenderer = nullptr;
 	std::vector<DrawableObject*>	mObjectList;
 	bool							mInitialized = false;
+	void							(*mFrameCallback)(void);
 };
 

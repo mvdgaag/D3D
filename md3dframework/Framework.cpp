@@ -88,6 +88,9 @@ void Framework::Render()
 	mFrameTime = now;
 	mFrameID++;
 
+	if (mFrameCallback != nullptr)
+		mFrameCallback();
+
 	mDeferredRenderer->Render(mObjectList);
 	CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetPostProcessed()->GetTexture());
 	theRenderContext.SwapBuffers();

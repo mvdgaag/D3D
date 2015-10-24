@@ -1,28 +1,10 @@
-//--------------------------------------------------------------------------------------
-// File: Tutorial01.cpp
-//
-// This application demonstrates creating a Direct3D 11 device
-//
-// http://msdn.microsoft.com/en-us/library/windows/apps/ff729718.aspx
-//
-// THIS CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY OF
-// ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
-// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A
-// PARTICULAR PURPOSE.
-//
-// Copyright (c) Microsoft Corporation. All rights reserved.
-//--------------------------------------------------------------------------------------
-
 #include <windows.h>
 #include <windowsx.h>
 #include "resource.h"
-
 #include "main.h"
 #include "RenderContext.h"
 #include "Framework.h"
 #include "Input.h"
-
-// for content
 #include "DrawableObject.h"
 #include "TerrainTile.h"
 #include "Mesh.h"
@@ -32,6 +14,7 @@
 #include "Sampler.h"
 #include "Material.h"
 #include "Window.h"
+#include "Time.h"
 
 
 Window* g_window = nullptr;
@@ -55,19 +38,19 @@ Texture* g_heightmap;
 TerrainTile* g_terrainTile;
 
 
-//--------------------------------------------------------------------------------------
-// Forward declarations
-//--------------------------------------------------------------------------------------
 HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);
 void InitContent();
 void CleanUpContent();
-LRESULT CALLBACK    WndProc(HWND, UINT, WPARAM, LPARAM);
+LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
 
-//--------------------------------------------------------------------------------------
-// Entry point to the program. Initializes everything and goes into a message processing 
-// loop. Idle time is used to render the scene.
-//--------------------------------------------------------------------------------------
+static void FrameFunc()
+{
+	double angle = 0.1 * 2.0 * 3.1415 * theFramework.GetFrameDeltaTime();
+	g_obj->Rotate(float3(0, 1, 0), angle);
+}
+
+
 int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, _In_ LPWSTR lpCmdLine, _In_ int nCmdShow)
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
@@ -76,7 +59,9 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	g_window = new Window();
 	
 	if (FAILED(g_window->Init(hInstance, nCmdShow)))
+	{
 		return 0;
+	}
 
 	if (FAILED(theRenderContext.Init(g_window)))
 	{
@@ -85,9 +70,10 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	}
 
 	theFramework.Init();
+	theFramework.SetFrameCallback(&FrameFunc);
+
 	InitContent();
 
-	// Main message loop
 	MSG msg = { 0 };
 	while (WM_QUIT != msg.message)
 	{
@@ -98,7 +84,6 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 		}
 		else
 		{
-			g_obj->Rotate(float3(0, 1, 0), 0.01);
 			theFramework.Render();
 		}
 	}
@@ -117,7 +102,7 @@ void InitContent()
 	g_obj2 = new DrawableObject();
 	
 	g_mesh = new Mesh();
-	g_mesh->InitFromFile("C:/Users/Maarten/Documents/Visual Studio 2013/Projects/D3D/C++/md3dframework/Models/sphere.obj");
+	g_mesh->InitFromFile("Models/sphere.obj");
 
 	g_mesh2 = new Mesh();
 	g_mesh2->InitPlane(1, 1, float2(8,8));
@@ -149,7 +134,7 @@ void InitContent()
 	g_material->SetEmissivenessValue(0.0);
 	g_material->SetPixelShader(g_pixel_shader);
 	g_material->SetVertexShader(g_vertex_shader);
-	//g_material->SetFlags(Material::MaterialFlags(3));
+	//g_material->SetFlags(Material::MaterialFlags(0));
 	g_obj->Init(g_mesh, g_material);
 
 	g_material2 = new Material();
