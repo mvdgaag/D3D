@@ -14,11 +14,13 @@
 //--------------------------------------------------------------------------------------
 
 #include <windows.h>
+#include <windowsx.h>
 #include "resource.h"
 
 #include "main.h"
 #include "RenderContext.h"
 #include "Framework.h"
+#include "Input.h"
 
 // for content
 #include "DrawableObject.h"
@@ -168,8 +170,41 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		PostQuitMessage(0);
 		break;
 
-		// Note that this tutorial does not handle resizing (WM_SIZE) requests,
-		// so we created the window without the resize border.
+	case WM_KEYDOWN:
+		theInput.OnKeyDown(wParam);
+		break;
+
+	case WM_KEYUP:
+		theInput.OnKeyUp(wParam);
+		break;
+
+	case WM_MOUSEMOVE:
+		theInput.OnMouseMove(float2(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)));
+		break;
+
+	case WM_LBUTTONDOWN:
+		theInput.OnMouseDown(0);
+		break;
+
+	case WM_LBUTTONUP:
+		theInput.OnMouseUp(0);
+		break;
+
+	case WM_RBUTTONDOWN:
+		theInput.OnMouseDown(1);
+		break;
+
+	case WM_RBUTTONUP:
+		theInput.OnMouseUp(1);
+		break;
+
+	case WM_MBUTTONDOWN:
+		theInput.OnMouseDown(2);
+		break;
+
+	case WM_MBUTTONUP:
+		theInput.OnMouseUp(2);
+		break;
 
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);

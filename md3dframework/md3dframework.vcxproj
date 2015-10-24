@@ -193,6 +193,8 @@
     <ClInclude Include="float4x4.h" />
     <ClInclude Include="Framework.h" />
     <ClInclude Include="GBuffer.h" />
+    <ClInclude Include="Input.h" />
+    <ClInclude Include="InputListener.h" />
     <ClInclude Include="LightComposeRenderer.h" />
     <ClInclude Include="LinearAlgebra.h" />
     <ClInclude Include="IndirectLightingRenderer.h" />
@@ -229,6 +231,8 @@
     <ClCompile Include="Framework.cpp" />
     <ClCompile Include="GBuffer.cpp" />
     <ClCompile Include="IndirectLightingRenderer.cpp" />
+    <ClCompile Include="Input.cpp" />
+    <ClCompile Include="InputListener.cpp" />
     <ClCompile Include="LightComposeRenderer.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Material.cpp" />
