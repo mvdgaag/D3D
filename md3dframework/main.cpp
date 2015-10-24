@@ -246,7 +246,6 @@ void InitContent()
 	g_material2->SetVertexShader(g_vertex_shader);
 	g_material2->SetFlags((Material::MaterialFlags)0);
 	g_obj2->Init(g_mesh2, g_material2);
-
 	
 	theFramework.RegisterObject(g_obj);
 	g_obj2->Rotate(float3(1, 0, 0), -3.1415 / 2.0);

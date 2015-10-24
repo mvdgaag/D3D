@@ -18,7 +18,7 @@ public:
 
 	void Init();
 	void CleanUp();
-	void Render(GBuffer* inSource, RenderTarget* inTarget);
+	void Render(GBuffer* inSource, RenderTarget* inTargetDiffuse, RenderTarget* inTargetSpecular);
 
 private:
 	struct ConstantBufferData

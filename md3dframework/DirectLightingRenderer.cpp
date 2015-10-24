@@ -10,19 +10,23 @@
 #include <assert.h>
 
 
-void DirectLightingRenderer::Render(GBuffer* inSource, RenderTarget* inTarget)
+void DirectLightingRenderer::Render(GBuffer* inSource, RenderTarget* inTargetDiffuse, RenderTarget* inTargetSpecular)
 {
 	assert(mInitialized == true);
 
 	assert(inSource != nullptr);
-	assert(inTarget != nullptr);
+	assert(inTargetDiffuse != nullptr);
+	assert(inTargetSpecular != nullptr);
+	assert(inTargetDiffuse->GetTexture()->GetWidth() == inTargetDiffuse->GetTexture()->GetWidth() &&
+		inTargetDiffuse->GetTexture()->GetHeight() == inTargetDiffuse->GetTexture()->GetHeight());
 
 	theRenderContext.CSSetShader(mShader);
 	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::LINEAR_DEPTH), theFramework.GetPointSampler(), 0);
 	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::NORMAL), theFramework.GetPointSampler(), 1);
 	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::DIFFUSE), theFramework.GetPointSampler(), 2);
 	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::MATERIAL), theFramework.GetPointSampler(), 3);
-	theRenderContext.CSSetRWTexture(inTarget, 0);
+	theRenderContext.CSSetRWTexture(inTargetDiffuse, 0);
+	theRenderContext.CSSetRWTexture(inTargetSpecular, 1);
 
 	Camera* cam = theFramework.GetCamera();
 	mConstantBufferData.viewspaceReconstructionVector.x = tan(0.5 * cam->GetFovX());
@@ -34,8 +38,8 @@ void DirectLightingRenderer::Render(GBuffer* inSource, RenderTarget* inTarget)
 	theRenderContext.UpdateSubResource(mConstantBuffer, &mConstantBufferData);
 	theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);
 
-	int groups_x = (inTarget->GetTexture()->GetWidth() + 7) / 8;
-	int groups_y = (inTarget->GetTexture()->GetHeight() + 7) / 8;
+	int groups_x = (inTargetDiffuse->GetTexture()->GetWidth() + 7) / 8;
+	int groups_y = (inTargetDiffuse->GetTexture()->GetHeight() + 7) / 8;
 	theRenderContext.Dispatch(groups_x, groups_y, 1);
 
 	// TODO: required?
@@ -48,6 +52,7 @@ void DirectLightingRenderer::Render(GBuffer* inSource, RenderTarget* inTarget)
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 2);
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 3);
 	theRenderContext.CSSetRWTexture(NULL, 0);
+	theRenderContext.CSSetRWTexture(NULL, 1);
 }
 
 

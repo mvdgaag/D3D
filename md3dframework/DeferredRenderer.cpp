@@ -31,8 +31,11 @@ void DeferredRenderer::Init(int inWidth, int inHeight)
 	mDepthPyramid = new RenderTarget();
 	mDepthPyramid->Init(inWidth / 2, inHeight / 2, 3, DXGI_FORMAT_R16G16_FLOAT);
 	
-	mDirectLighting = new RenderTarget();
-	mDirectLighting->Init(inWidth, inHeight, 1, DXGI_FORMAT_R32G32B32A32_FLOAT);
+	mDirectLightingDiffuse = new RenderTarget();
+	mDirectLightingDiffuse->Init(inWidth, inHeight, 1, DXGI_FORMAT_R32G32B32A32_FLOAT);
+
+	mDirectLightingSpecular = new RenderTarget();
+	mDirectLightingSpecular->Init(inWidth, inHeight, 1, DXGI_FORMAT_R32G32B32A32_FLOAT);
 
 	mIndirectLighting = new RenderTarget();
 	mIndirectLighting->Init(inWidth, inHeight, 1, DXGI_FORMAT_R32G32B32A32_FLOAT);
@@ -93,8 +96,10 @@ void DeferredRenderer::CleanUp()
 
 	delete mDepthPyramid;
 	mDepthPyramid = NULL;
-	delete mDirectLighting;
-	mDirectLighting = NULL;
+	delete mDirectLightingDiffuse;
+	mDirectLightingDiffuse = NULL;
+	delete mDirectLightingSpecular;
+	mDirectLightingSpecular = NULL;
 	delete mIndirectLighting;
 	mIndirectLighting = NULL;
 	delete mReflections;
@@ -205,20 +210,21 @@ void DeferredRenderer::LightingPass()
 	//mShadowRenderer->Render();
 	
 	theRenderContext.SetMarker("Direct Lighting Renderer");
-	mDirectLightingRenderer->Render(mGBuffer, mDirectLighting);
+	mDirectLightingRenderer->Render(mGBuffer, mDirectLightingDiffuse, mDirectLightingSpecular);
 	
 	theRenderContext.SetMarker("Depth Pyramid Renderer");
 	//mDepthPyramidRenderer->Render(mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), mDepthPyramid);
 	
 	theRenderContext.SetMarker("Indirect Lighting Renderer");
-	mIndirectLightingRenderer->Render(mDirectLighting->GetTexture(), mGBuffer->GetTexture(GBuffer::NORMAL), 
+	mIndirectLightingRenderer->Render(mDirectLightingDiffuse->GetTexture(), mGBuffer->GetTexture(GBuffer::NORMAL), 
 		mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), mIndirectLighting);
 	
 	theRenderContext.SetMarker("Reflection Renderer");
 	mReflectionRenderer->Render(mIndirectLighting->GetTexture(), mReflections);
 
 	theRenderContext.SetMarker("Light Compose Renderer");
-	mLightComposeRenderer->Render(	mDirectLighting->GetTexture(),
+	mLightComposeRenderer->Render(	mDirectLightingDiffuse->GetTexture(),
+									mDirectLightingSpecular->GetTexture(),
 									mIndirectLighting->GetTexture(),
 									mReflections->GetTexture(),
 									mLightComposed);

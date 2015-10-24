@@ -15,7 +15,7 @@ public:
 
 	void Init();
 	void CleanUp();
-	void Render(Texture* inDirect, Texture* inIndirect, Texture* inReflections, RenderTarget* inTarget);
+	void Render(Texture* inDirectDiffuse, Texture* inDirectSpecular, Texture* inIndirect, Texture* inReflections, RenderTarget* inTarget);
 
 private:
 	ComputeShader* mShader = nullptr;

@@ -35,7 +35,8 @@ public:
 
 	GBuffer* GetGBuffer() { return mGBuffer; }
 	RenderTarget* GetDepthPyramid() { return mDepthPyramid; }
-	RenderTarget* GetDirectLighting() { return mDirectLighting; }
+	RenderTarget* GetDirectLightingDiffuse() { return mDirectLightingDiffuse; }
+	RenderTarget* GetDirectLightingSpecular() { return mDirectLightingSpecular; }
 	RenderTarget* GetIndirectLighting() { return mIndirectLighting; }
 	RenderTarget* GetReflections() { return mReflections; }
 	RenderTarget* GetLightComposed() { return mLightComposed; }
@@ -80,7 +81,8 @@ private:
 	
 	GBuffer* mGBuffer = nullptr;
 	RenderTarget* mDepthPyramid = nullptr;
-	RenderTarget* mDirectLighting = nullptr;
+	RenderTarget* mDirectLightingDiffuse = nullptr;
+	RenderTarget* mDirectLightingSpecular = nullptr;
 	RenderTarget* mIndirectLighting = nullptr;
 	RenderTarget* mReflections = nullptr;
 	RenderTarget* mLightComposed = nullptr;

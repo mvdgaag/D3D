@@ -2,7 +2,8 @@
 #include "LibLight.hlsli"
 
 
-RWTexture2D<float4> dst : register(u0);
+RWTexture2D<float4> OutDiffuse : register(u0);
+RWTexture2D<float4> OutSpecular : register(u1);
 Texture2D<float> LinearDepth : register(t0);
 Texture2D<half2> Normal : register(t1);
 Texture2D<float4> Diffuse : register(t2);
@@ -47,6 +48,9 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 
 	float3 p = ReconstructCSPosition((coord + 0.5) / cTargetSize, linear_depth, cViewReconstructionVector);
 
-	float3 val = CalculateLight(m, p, normal, l);
-	dst[coord] = float4(val, 1);
+	float3 diffuseLight, specularLight;
+	CalculateLight(m, p, normal, l, diffuseLight, specularLight);
+	
+	OutDiffuse[coord] = float4(diffuseLight, 1);
+	OutSpecular[coord] = float4(specularLight, 1);
 }

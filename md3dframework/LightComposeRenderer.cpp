@@ -6,19 +6,21 @@
 #include "RenderTarget.h"
 
 
-void LightComposeRenderer::Render(Texture* inDirect, Texture* inIndirect, Texture* inReflections, RenderTarget* inTarget)
+void LightComposeRenderer::Render(Texture* inDirectDiffuse, Texture* inDirectSpecular, Texture* inIndirect, Texture* inReflections, RenderTarget* inTarget)
 {
 	assert(mInitialized == true);
 
-	assert(inDirect != nullptr);
+	assert(inDirectDiffuse != nullptr);
+	assert(inDirectSpecular != nullptr);
 	assert(inIndirect != nullptr);
 	assert(inReflections != nullptr);
 	assert(inTarget != nullptr);
 
 	theRenderContext.CSSetShader(mShader);
-	theRenderContext.CSSetTextureAndSampler(inDirect, theFramework.GetPointSampler(), 0);
-	theRenderContext.CSSetTextureAndSampler(inIndirect, theFramework.GetPointSampler(), 1);
-	theRenderContext.CSSetTextureAndSampler(inReflections, theFramework.GetPointSampler(), 2);
+	theRenderContext.CSSetTextureAndSampler(inDirectDiffuse, theFramework.GetPointSampler(), 0);
+	theRenderContext.CSSetTextureAndSampler(inDirectSpecular, theFramework.GetPointSampler(), 1);
+	theRenderContext.CSSetTextureAndSampler(inIndirect, theFramework.GetPointSampler(), 2);
+	theRenderContext.CSSetTextureAndSampler(inReflections, theFramework.GetPointSampler(), 3);
 	theRenderContext.CSSetRWTexture(inTarget, 0);
 
 	int groups_x = (inTarget->GetTexture()->GetWidth() + 7) / 8;

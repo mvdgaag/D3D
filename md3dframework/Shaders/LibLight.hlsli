@@ -51,13 +51,16 @@ float OrenNayarDiffuse(float inNdL, float inNdV, float3 inNormal, float inViewVe
 }
 
 
-float3 CalculateLight(myMaterial inMaterial, float3 inPosition, float3 inNormal, myLight inLight)
+void CalculateLight(myMaterial inMaterial, float3 inPosition, float3 inNormal, myLight inLight, out float3 outDiffuse, out float3 outSpecular)
 {
 	float3 light_vec = normalize(inLight.Position - inPosition);
 	float range_sqr = (inLight.Range * inLight.Range);
 	float falloff = 1.0 - (dot(light_vec, light_vec) - range_sqr) / range_sqr;
-	if (falloff < 0.0) 
-		return float3(0.0, 0.0, 0.0);
+	if (falloff < 0.0)
+	{
+		outSpecular = outDiffuse = 0;
+		return;
+	}
 
 	float3 normal = inNormal;
 	float3 view_vec = normalize(-inPosition);
@@ -82,8 +85,6 @@ float3 CalculateLight(myMaterial inMaterial, float3 inPosition, float3 inNormal,
 	spec *= ndh > 0;
 
 	float3 diff = inMaterial.Diffuse * falloff * OrenNayarDiffuse(ndl, ndv, normal, view_vec, alpha);
-	float3 result = inLight.Color * spec;
-	result += inLight.Color * diff * (1.0 - inMaterial.Reflectivity);// / 3.1415;
-	
-	return result;
+	outSpecular = inLight.Color * spec;
+	outDiffuse = inLight.Color * diff * (1.0 - inMaterial.Reflectivity);// / 3.1415;
 }

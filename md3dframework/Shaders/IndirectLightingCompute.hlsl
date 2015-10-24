@@ -19,8 +19,8 @@ cbuffer cIndirectLightingConstants : register(b0)
 
 #define NUM_THREADS 64
 #define SAMPLES_PER_THREAD 8
-#define DISTANCE_GROWTH (1.5f)
-#define START_DISTANCE (3.0)
+#define DISTANCE_GROWTH (2.0f)
+#define START_DISTANCE (1.0)
 #define GOLDEN_ANGLE (3.1415 * (3.0 - sqrt(5.0)))
 
 groupshared float3 colors[NUM_THREADS][SAMPLES_PER_THREAD];
@@ -30,20 +30,11 @@ groupshared float3 positions[NUM_THREADS][SAMPLES_PER_THREAD];
 
 void AccumulateSamples(float2 inUV, float inStartAngle, uint inThreadIdx)
 {
-	// center values
-	colors[inThreadIdx][0] = lightTexture.SampleLevel(lightSampler, inUV, 0);
-	
-	float2 encoded_normal = normalTexture.SampleLevel(normalSampler, inUV, 0);
-	normals[inThreadIdx][0] = DecodeNormal(encoded_normal);
-
-	float depth = linearDepthTexture.SampleLevel(linearDepthSampler, inUV, 0);
-	positions[inThreadIdx][0] = ReconstructCSPosition(inUV, depth, cViewReconstructionVector);
-
 	// neighborhood samples
 	float dist = START_DISTANCE;
 	float2 unit_vec = float2(cos(inStartAngle), sin(inStartAngle)) / cTargetSize;
 	float2x2 rot = { cos(GOLDEN_ANGLE), -sin(GOLDEN_ANGLE), cos(GOLDEN_ANGLE), sin(GOLDEN_ANGLE) };
-	for (int i = 1; i < SAMPLES_PER_THREAD; i++)
+	for (int i = 0; i < SAMPLES_PER_THREAD; i++)
 	{
 		float2 uv = saturate(inUV + unit_vec * dist);
 
@@ -115,5 +106,5 @@ void CS(uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID)
 	dst[coord] = float4(IntegrateLighting(GTid), 0);
 	
 	// SKIP
-	dst[coord] = lightTexture[coord];
+	//dst[coord] = lightTexture[coord];
 }
