@@ -20,8 +20,6 @@ void ReflectionRenderer::Render(Texture* inSource, RenderTarget* inTarget)
 	int groups_x = (inTarget->GetTexture()->GetWidth() + 7) / 8;
 	int groups_y = (inTarget->GetTexture()->GetHeight() + 7) / 8;
 	theRenderContext.Dispatch(groups_x, groups_y, 1);
-
-	// TODO: required?
 	theRenderContext.Flush();
 
 	// clear state

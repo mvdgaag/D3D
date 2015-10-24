@@ -1,7 +1,7 @@
 #pragma once
 #include <Windows.h>
 #include "LinearAlgebra.h"
-#include <vector>
+#include <hash_set>
 
 
 #define theInput Input::GetInstance()
@@ -19,6 +19,9 @@ public:
 		return instance;
 	}
 
+	void RegisterListener(InputListener* inListener) { mListeners.insert(inListener); }
+	void UnRegisterListener(InputListener* inListener) { mListeners.erase(inListener); }
+
 	bool GetKeyDown(unsigned int inKey) { return mKeys[inKey]; }
 	float2 GetMouseCoord() { return mMouseCoord; }
 	float2 GetPrevMouseCoord() { return mPrevMouseCoord; }
@@ -32,10 +35,10 @@ public:
 
 protected:
 	bool mMouseButtons[3];
-	bool mKeys[255];
+	bool mKeys[256];
 	float2 mPrevMouseCoord;
 	float2 mMouseCoord;
-	std::vector<InputListener*> mListeners;
+	std::hash_set<InputListener*> mListeners;
 
 private:
 	Input() {};

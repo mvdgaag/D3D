@@ -78,7 +78,6 @@ void Texture::InitFromFile(std::string inFileName)
 
 	std::wstring filename = std::wstring(inFileName.begin(), inFileName.end());
 
-	// TODO: set descriptor for this class (mDesc)
 	D3DCall(DirectX::CreateDDSTextureFromFile(theRenderContext.GetDevice(), filename.c_str(), nullptr, &mShaderResourceView));
 
 	mShaderResourceView->GetResource(reinterpret_cast<ID3D11Resource**>(&mTexture));

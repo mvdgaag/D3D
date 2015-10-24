@@ -191,9 +191,9 @@ void DeferredRenderer::GeometryPass(std::vector<DrawableObject*> inDrawList)
 		theRenderContext.PSSetTextureAndSampler(NULL, NULL, 2);
 		theRenderContext.PSSetShader(NULL);
 		theRenderContext.VSSetShader(NULL);
-		
-		//obj->Draw();
 	}
+	
+	theRenderContext.Flush();
 
 	// clear render targets
 	RenderTarget* null_targets[] = { NULL, NULL, NULL, NULL, NULL };

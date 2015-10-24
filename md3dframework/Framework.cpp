@@ -126,8 +126,6 @@ void Framework::CopyToRenderTarget(RenderTarget* inTarget, Texture* inSource)
 	int groups_x = 1 + (inTarget->GetTexture()->GetWidth() - 1) / 8;
 	int groups_y = 1 + (inTarget->GetTexture()->GetHeight() - 1) / 8;
 	theRenderContext.Dispatch(groups_x, groups_y, 1);
-
-	// TODO: required?
 	theRenderContext.Flush();
 
 	// clear state

@@ -41,8 +41,6 @@ void DirectLightingRenderer::Render(GBuffer* inSource, RenderTarget* inTargetDif
 	int groups_x = (inTargetDiffuse->GetTexture()->GetWidth() + 7) / 8;
 	int groups_y = (inTargetDiffuse->GetTexture()->GetHeight() + 7) / 8;
 	theRenderContext.Dispatch(groups_x, groups_y, 1);
-
-	// TODO: required?
 	theRenderContext.Flush();
 
 	// clear state
