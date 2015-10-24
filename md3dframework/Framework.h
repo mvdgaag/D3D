@@ -1,7 +1,7 @@
 #pragma once
 #include "LinearAlgebra.h"
-#include <Windows.h>
 #include <vector>
+#include <Windows.h>
 
 class DeferredRenderer;
 class PixelShader;
@@ -29,7 +29,7 @@ public:
 		return instance;
 	}
 
-	HRESULT Init(HWND hWnd);
+	HRESULT Init();
 	bool IsInitialized() { return mInitialized; }
 	void CleanUp();
 

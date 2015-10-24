@@ -18,6 +18,20 @@ void DrawableObject::Init(Mesh* inMesh, Material* inMaterial)
 }
 
 
+void DrawableObject::CleanUp()
+{
+	// TODO: does this object own the mesh, material and buffer?
+	delete mMesh;
+	mMesh = nullptr;
+
+	delete mMaterial;
+	mMaterial = nullptr;
+
+	delete mConstantBuffer;
+	mConstantBuffer = nullptr;
+}
+
+
 ConstantBuffer* DrawableObject::GetConstantBuffer()
 {
 	// TODO: check if already updated this frame?

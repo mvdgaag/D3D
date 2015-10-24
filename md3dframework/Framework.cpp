@@ -23,7 +23,7 @@ Framework::~Framework()
 //--------------------------------------------------------------------------------------
 // Create Direct3D device and swap chain
 //--------------------------------------------------------------------------------------
-HRESULT Framework::Init(HWND hWnd)
+HRESULT Framework::Init()
 {
 	assert(theRenderContext.IsInitialized());
 	
@@ -43,7 +43,7 @@ HRESULT Framework::Init(HWND hWnd)
 	mDefaultLinearSampler->Init(21); // D3D11_FILTER_MIN_MAG_MIP_LINEAR
 
 	mCamera = new Camera();
-	mCamera->SetPosition(0.0, 0.0, -3.0);
+	mCamera->SetPosition(0.0, 2.0, -3.0);
 	mCamera->SetTarget(0.0, 0.0, 0.0);
 	mCamera->SetUp(0.0, 1.0, 0.0);
 

@@ -7,10 +7,10 @@ class Texture;
 class ConstantBuffer;
 
 
-class TerrainTile : public BaseDrawable
+class TerrainTile : public DrawableObject
 {
 public:
-	TerrainTile() : BaseDrawable() { mInitialized = false; }
+	TerrainTile() : DrawableObject() { mInitialized = false; }
 	~TerrainTile() {};
 
 	void Init(float3 inPosition, float3 inScale, Texture* inHeightMap, int inWidth, int inHeight, Material* inMaterial);
@@ -27,8 +27,6 @@ private:
 
 	ConstantBufferData	mConstantBufferData;
 	ConstantBuffer*		mConstantBuffer		= nullptr;
-	Mesh*				mMesh				= nullptr;
-	Material*			mMaterial			= nullptr;
 	Texture*			mHeightMap			= nullptr;
 	bool				mInitialized		= false;
 };

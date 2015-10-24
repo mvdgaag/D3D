@@ -22,6 +22,7 @@
     <ProjectGuid>{DDF6E666-30AB-49B6-A623-11B17A1989A8}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>md3dframework</RootNamespace>
+    <ProjectName>GAAGEngine</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -217,6 +218,7 @@
     <ClInclude Include="Time.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="VertexShader.h" />
+    <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
@@ -251,6 +253,7 @@
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="Timer.cpp" />
     <ClCompile Include="VertexShader.cpp" />
+    <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="md3dframework.rc" />

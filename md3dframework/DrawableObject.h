@@ -16,6 +16,7 @@ public:
 	~DrawableObject() {};
 
 	void Init(Mesh* inMesh, Material* inMaterial);
+	void CleanUp();
 
 	Mesh* GetMesh() { return mMesh; }
 	Material* GetMaterial() { return mMaterial; }

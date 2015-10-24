@@ -195,6 +195,9 @@
     <ClInclude Include="InputListener.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -292,6 +295,9 @@
     </ClCompile>
     <ClCompile Include="InputListener.cpp">
       <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Window.cpp">
+      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

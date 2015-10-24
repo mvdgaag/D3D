@@ -9,6 +9,7 @@
 #include "RenderTarget.h"
 #include "DepthStencilTarget.h"
 #include "Mesh.h"
+#include "Window.h"
 #include <d3d11_1.h>
 
 
@@ -19,9 +20,11 @@ RenderContext::~RenderContext()
 }
 
 
-HRESULT RenderContext::Init(HWND hWnd)
+HRESULT RenderContext::Init(Window* inWindow)
 {
 	CleanUp();
+
+	HWND hWnd = inWindow->mHWnd;
 
 	D3D_DRIVER_TYPE driver_type = D3D_DRIVER_TYPE_NULL;
 	D3D_FEATURE_LEVEL feature_level = D3D_FEATURE_LEVEL_11_0;

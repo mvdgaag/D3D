@@ -21,6 +21,7 @@
 
 void DeferredRenderer::Init(int inWidth, int inHeight)
 {
+	assert(theRenderContext.IsInitialized());
 	assert(inWidth > 0 && inHeight > 0);
 
 	CleanUp();

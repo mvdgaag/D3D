@@ -12,21 +12,21 @@ void TerrainTile::Init(float3 inPosition, float3 inScale, Texture* inHeightMap, 
 {
 	CleanUp();
 
+	mHeightMap = inHeightMap;
+	
+	Mesh* mesh = new Mesh();
+	mesh->InitPlane(inWidth, inHeight);
+	
+	DrawableObject::Init(mesh, inMaterial);
+
+	mConstantBuffer = new ConstantBuffer();
+	mConstantBuffer->Init(sizeof(mConstantBufferData));
+	
 	mConstantBufferData.MVP = DirectX::XMMatrixScaling(inScale.x, inScale.y, inScale.z);
 	mConstantBufferData.MVP *= DirectX::XMMatrixTranslation(inPosition.x, inPosition.y, inPosition.z);
 	mConstantBufferData.width = inWidth;
 	mConstantBufferData.height = inHeight;
 	theRenderContext.UpdateSubResource(mConstantBuffer, &mConstantBufferData);
-
-	mHeightMap = inHeightMap;
-	
-	mMesh = new Mesh();
-	mMesh->InitPlane(inWidth, inHeight);
-	
-	mMaterial = inMaterial;
-
-	mConstantBuffer = new ConstantBuffer();
-	mConstantBuffer->Init(sizeof(mConstantBufferData));
 
 	mInitialized = true; 
 }
@@ -34,11 +34,7 @@ void TerrainTile::Init(float3 inPosition, float3 inScale, Texture* inHeightMap, 
 
 void TerrainTile::CleanUp()
 {
-	delete mMesh;
-	mMesh = nullptr;
-
-	delete mMaterial;
-	mMaterial = nullptr;
+	DrawableObject::CleanUp();
 
 	delete mHeightMap;
 	mHeightMap = nullptr;
@@ -47,15 +43,4 @@ void TerrainTile::CleanUp()
 	mConstantBuffer = nullptr;
 	
 	mInitialized = false;
-}
-
-
-void TerrainTile::Draw()
-{
-	assert(mInitialized);
-
-	theFramework.SetMaterial(mMaterial);
-	theRenderContext.VSSetTextureAndSampler(mHeightMap, theFramework.GetPointSampler(), 0);
-	theRenderContext.VSSetConstantBuffer(mConstantBuffer, 0);
-	theRenderContext.DrawMesh(mMesh);
 }

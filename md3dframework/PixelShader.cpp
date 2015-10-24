@@ -39,6 +39,20 @@ void PixelShader::InitFromFile(std::string inFileName)
 		pPixelShaderReflection->GetResourceBindingDesc(i, &resource_desc);
 
 		// FETCH RESOURCES
+		switch (resource_desc.Type)
+		{
+		case D3D_SHADER_INPUT_TYPE::D3D_SIT_TEXTURE:
+			mTextures[resource_desc.Name] = resource_desc.BindPoint;
+			break;
+		case D3D_SHADER_INPUT_TYPE::D3D_SIT_SAMPLER:
+			mSamplers[resource_desc.Name] = resource_desc.BindPoint;
+			break;
+		case D3D_SHADER_INPUT_TYPE::D3D_SIT_CBUFFER:
+			mConstantBuffers[resource_desc.Name] = resource_desc.BindPoint;
+			break;
+		default:
+			break;
+		}
 	}
 
 	D3DCall(theRenderContext.GetDevice()->CreatePixelShader(pPSBlob->GetBufferPointer(), pPSBlob->GetBufferSize(), nullptr, &mHandle));

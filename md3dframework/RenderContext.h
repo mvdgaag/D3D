@@ -41,6 +41,7 @@ class Mesh;
 class ConstantBuffer;
 class RenderTarget;
 class DepthStencilTarget;
+class Window;
 
 
 #define theRenderContext RenderContext::GetInstance()
@@ -63,7 +64,7 @@ public:
 	unsigned int	GetHeight() const					{ return mHeight; }
 	bool			IsInitialized() const				{ return mInitialized; }
 
-	HRESULT Init(HWND hWnd);
+	HRESULT Init(Window* inWindow);
 	void CleanUp();
 
 	void BeginEvent(std::string inEventString);
