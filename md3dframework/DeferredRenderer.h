@@ -63,8 +63,10 @@ private:
 	LightComposeRenderer*		mLightComposeRenderer = nullptr;
 	TAARenderer*				mTAARenderer = nullptr;
 	PostProcessRenderer*		mPostProcessRenderer = nullptr;
+
 	ConstantBuffer*				mConstantBufferOnDemand = nullptr;
 	ConstantBuffer*				mConstantBufferEveryFrame = nullptr;
+	
 	struct ConstantDataEveryFrame
 	{
 		DirectX::XMMATRIX viewMatrix;

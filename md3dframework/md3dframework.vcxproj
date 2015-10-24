@@ -212,6 +212,8 @@
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="TerrainTile.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="Time.h" />
+    <ClInclude Include="Timer.h" />
     <ClInclude Include="VertexShader.h" />
   </ItemGroup>
   <ItemGroup>
@@ -242,6 +244,8 @@
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TerrainTile.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="Time.cpp" />
+    <ClCompile Include="Timer.cpp" />
     <ClCompile Include="VertexShader.cpp" />
   </ItemGroup>
   <ItemGroup>

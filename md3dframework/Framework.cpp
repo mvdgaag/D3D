@@ -12,6 +12,7 @@
 #include "ConstantBuffer.h"
 #include "Mesh.h"
 #include "Material.h"
+#include "Time.h"
 
 
 Framework::~Framework()
@@ -42,7 +43,12 @@ HRESULT Framework::Init(HWND hWnd)
 	mDefaultLinearSampler->Init(21); // D3D11_FILTER_MIN_MAG_MIP_LINEAR
 
 	mCamera = new Camera();
+	mCamera->SetPosition(0.0, 0.0, -3.0);
+	mCamera->SetTarget(0.0, 0.0, 0.0);
+	mCamera->SetUp(0.0, 1.0, 0.0);
+
 	mFrameID = 0;
+	mFrameTime = theTime.GetTime();
 
 	mInitialized = true;
 	return S_OK;
@@ -76,20 +82,15 @@ void Framework::CleanUp()
 void Framework::Render()
 {
 	assert(mInitialized);
-
-	mCamera->SetPosition(0.0, 0.0, -3.0);
-	mCamera->SetTarget(0.0, 0.0, 0.0);
-	mCamera->SetUp(0.0, 1.0, 0.0);
+	
+	double now = theTime.GetTime();
+	mDeltaTime = now - mFrameTime;
+	mFrameTime = now;
+	mFrameID++;
 
 	mDeferredRenderer->Render(mObjectList);
-
-	//CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetIndirectLighting()->GetTexture());
 	CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetPostProcessed()->GetTexture());
-	//CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetGBuffer()->GetTexture(GBuffer::MOTION_VECTORS));
-	
 	theRenderContext.SwapBuffers();
-
-	mFrameID++;
 }
 
 

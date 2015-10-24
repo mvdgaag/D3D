@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Header Files\mVectorMath">
-      <UniqueIdentifier>{6fbd4fb8-407c-48df-b045-2406fd2c3477}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shaders">
       <UniqueIdentifier>{68315d72-dfc3-4bab-afb0-e2c2f0d47ba1}</UniqueIdentifier>
     </Filter>
@@ -49,6 +46,18 @@
     <Filter Include="Source Files\Rendering\D3D">
       <UniqueIdentifier>{3df6d9eb-2e9b-4e14-9e67-1599610f31c5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Math">
+      <UniqueIdentifier>{6fbd4fb8-407c-48df-b045-2406fd2c3477}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Math">
+      <UniqueIdentifier>{4e8ec7bd-4963-4191-9b3f-89de09e76bc2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Time">
+      <UniqueIdentifier>{e94e9983-5010-4471-9d46-3bc89afa8943}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Time">
+      <UniqueIdentifier>{d94ac8af-b78d-428b-9da9-7415dbcc0ce6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -61,16 +70,16 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="float3.h">
-      <Filter>Header Files\mVectorMath</Filter>
+      <Filter>Header Files\Math</Filter>
     </ClInclude>
     <ClInclude Include="float4.h">
-      <Filter>Header Files\mVectorMath</Filter>
+      <Filter>Header Files\Math</Filter>
     </ClInclude>
     <ClInclude Include="float2.h">
-      <Filter>Header Files\mVectorMath</Filter>
+      <Filter>Header Files\Math</Filter>
     </ClInclude>
     <ClInclude Include="float4x4.h">
-      <Filter>Header Files\mVectorMath</Filter>
+      <Filter>Header Files\Math</Filter>
     </ClInclude>
     <ClInclude Include="BaseResource.h">
       <Filter>Header Files\Rendering</Filter>
@@ -103,7 +112,7 @@
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="LinearAlgebra.h">
-      <Filter>Header Files\mVectorMath</Filter>
+      <Filter>Header Files\Math</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Header Files\Rendering\D3D</Filter>
@@ -167,6 +176,12 @@
     </ClInclude>
     <ClInclude Include="DepthStencilTarget.h">
       <Filter>Header Files\Rendering\D3D</Filter>
+    </ClInclude>
+    <ClInclude Include="Time.h">
+      <Filter>Header Files\Time</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>Header Files\Time</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -253,6 +268,12 @@
     </ClCompile>
     <ClCompile Include="DepthStencilTarget.cpp">
       <Filter>Source Files\Rendering\D3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Time.cpp">
+      <Filter>Source Files\Time</Filter>
+    </ClCompile>
+    <ClCompile Include="Timer.cpp">
+      <Filter>Source Files\Time</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

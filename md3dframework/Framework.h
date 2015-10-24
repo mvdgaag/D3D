@@ -56,6 +56,8 @@ private:
 	Sampler*						mDefaultPointSampler = nullptr;
 	Sampler*						mDefaultLinearSampler = nullptr;
 	int								mFrameID;
+	double							mFrameTime;
+	double							mDeltaTime;
 	Camera*							mCamera = nullptr;
 	DeferredRenderer*				mDeferredRenderer = nullptr;
 	std::vector<DrawableObject*>	mObjectList;
