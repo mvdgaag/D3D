@@ -13,15 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Shaders">
-      <UniqueIdentifier>{68315d72-dfc3-4bab-afb0-e2c2f0d47ba1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Textures">
-      <UniqueIdentifier>{a42eb6e4-fde0-4f80-ba2e-e3e131ae23c4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Models">
-      <UniqueIdentifier>{fbb94a09-c2b6-4188-b686-6fe39d33cce2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Rendering">
       <UniqueIdentifier>{4a681eed-8e7d-4431-9635-e5ea2f04d20d}</UniqueIdentifier>
     </Filter>
@@ -64,17 +55,26 @@
     <Filter Include="Source Files\Input">
       <UniqueIdentifier>{42d8c866-cf03-4577-8efa-4403694ac544}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Util">
-      <UniqueIdentifier>{a27dfe53-a260-44d6-bed5-6de03e8cd113}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Util">
       <UniqueIdentifier>{093b557c-a123-4cc3-8cd7-9fe014909148}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Textures">
+      <UniqueIdentifier>{a42eb6e4-fde0-4f80-ba2e-e3e131ae23c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Models">
+      <UniqueIdentifier>{fbb94a09-c2b6-4188-b686-6fe39d33cce2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Shaders">
+      <UniqueIdentifier>{68315d72-dfc3-4bab-afb0-e2c2f0d47ba1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Util">
+      <UniqueIdentifier>{a27dfe53-a260-44d6-bed5-6de03e8cd113}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
     <Text Include="Models\sphere.obj">
-      <Filter>Models</Filter>
+      <Filter>Resource Files\Models</Filter>
     </Text>
   </ItemGroup>
   <ItemGroup>
@@ -205,7 +205,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FileUtil.h">
-      <Filter>Util</Filter>
+      <Filter>Header Files\Util</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -325,65 +325,65 @@
       <Filter>Resource Files</Filter>
     </Image>
     <Image Include="Textures\photosculpt-squarebricks-ambientocclusion.dds">
-      <Filter>Textures</Filter>
+      <Filter>Resource Files\Textures</Filter>
     </Image>
     <Image Include="Textures\photosculpt-squarebricks-depth.dds">
-      <Filter>Textures</Filter>
+      <Filter>Resource Files\Textures</Filter>
     </Image>
     <Image Include="Textures\photosculpt-squarebricks-diffuse.dds">
-      <Filter>Textures</Filter>
+      <Filter>Resource Files\Textures</Filter>
     </Image>
     <Image Include="Textures\photosculpt-squarebricks-normal.dds">
-      <Filter>Textures</Filter>
+      <Filter>Resource Files\Textures</Filter>
     </Image>
     <Image Include="Textures\photosculpt-squarebricks-specular.dds">
-      <Filter>Textures</Filter>
+      <Filter>Resource Files\Textures</Filter>
     </Image>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\BasicFragmentShader.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Resource Files\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Shaders\BasicVertexShader.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Resource Files\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Shaders\DepthPyramidCompute.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Resource Files\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Shaders\DirectLightingCompute.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Resource Files\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Shaders\FullScreenQuadPixelShader.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Resource Files\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Shaders\FullScreenQuadVertexShader.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Resource Files\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Shaders\IndirectLightingCompute.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Resource Files\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Shaders\PostProcessCompute.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Resource Files\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Shaders\ReflectionCompute.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Resource Files\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Shaders\TemporalAACompute.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Resource Files\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Shaders\LightComposeCompute.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Resource Files\Shaders</Filter>
     </FxCompile>
     <FxCompile Include="Shaders\CopyCompute.hlsl">
-      <Filter>Shaders</Filter>
+      <Filter>Resource Files\Shaders</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\LibLight.hlsli">
-      <Filter>Shaders</Filter>
+      <Filter>Resource Files\Shaders</Filter>
     </None>
     <None Include="Shaders\LibHelper.hlsli">
-      <Filter>Shaders</Filter>
+      <Filter>Resource Files\Shaders</Filter>
     </None>
   </ItemGroup>
 </Project>
