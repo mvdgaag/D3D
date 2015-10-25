@@ -128,13 +128,13 @@ void InitContent()
 	g_material->SetNormalTexture(g_normal_texture);
 	g_material->SetSurfaceTexture(g_surface_texture);
 	g_material->SetDiffuseValue(float4(0.6, 0.4, 0.0, 0.0));
-	g_material->SetReflectivityValue(0.1);
-	g_material->SetRoughnessValue(0.9);
+	g_material->SetReflectivityValue(0.5);
+	g_material->SetRoughnessValue(0.5);
 	g_material->SetMetalicityValue(0.0);
 	g_material->SetEmissivenessValue(0.0);
 	g_material->SetPixelShader(g_pixel_shader);
 	g_material->SetVertexShader(g_vertex_shader);
-	//g_material->SetFlags(Material::MaterialFlags(0));
+	g_material->SetFlags(Material::MaterialFlags(0));
 	g_obj->Init(g_mesh, g_material);
 
 	g_material2 = new Material();

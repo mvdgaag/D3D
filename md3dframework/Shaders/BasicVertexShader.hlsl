@@ -44,16 +44,14 @@ PS_INPUT VS(VS_INPUT input)
 	PS_INPUT output =		(PS_INPUT)0;
 
 	// jitter for TAA
-	float4x4 mvp = modelViewProjectionMatrix;
-	float2 jitter_offset = frameData.xy;
-	//mvp[2].xy += jitter_offset.xy;
-
-	output.Position = mul(float4(input.Position, 1.0), mvp);
-	output.Normal = mul(float4(input.Normal, 0.0), mvp).xyz;
-	output.Tangent = mul(float4(input.Tangent, 0.0), mvp).xyz;
+	output.Position = mul(float4(input.Position, 1.0), modelViewProjectionMatrix);
+	output.Normal = mul(float4(input.Normal, 0.0), modelViewMatrix).xyz;
+	output.Tangent = mul(float4(input.Tangent, 0.0), modelViewMatrix).xyz;
 	output.TexCoord = input.TexCoord.xy;
-	output.LinearDepth = mul(float4(input.Position, 1.0), (modelViewMatrix)).z;
 
+	float4 cam_space_pos = mul(float4(input.Position, 1.0), (modelViewMatrix));
+	output.LinearDepth = cam_space_pos.z;
+	
 	// motion vectors
 	float4 prevPos = mul(float4(input.Position, 1.0), prevModelViewProjectionMatrix);
 	output.MotionVectors = (output.Position.xy / output.Position.w); // currentNDC
@@ -61,8 +59,8 @@ PS_INPUT VS(VS_INPUT input)
 	output.MotionVectors *= 0.5; // NDC to UV range conversion
 
 	// jitter for TAA
+	float2 jitter_offset = frameData.xy;
 	output.Position.xy += jitter_offset.xy * output.Position.w;
-	//output.MotionVectors += 0.5 * jitter_offset.xy * output.Position.w;
 
 	return output;
 }

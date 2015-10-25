@@ -44,9 +44,10 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	float a = cFrameData.x / 100.0;
 	l.Position = float3(5.0, 5.0, 5.0) * 10.0;
 	l.Color = float3(0.9, 0.9, 0.9);
-	l.Range = 30.0;
+	l.Range = 100.0;
 
-	float3 p = ReconstructCSPosition((coord + 0.5) / cTargetSize, linear_depth, cViewReconstructionVector);
+	float2 uv = (coord + 0.5) / cTargetSize;
+	float3 p = ReconstructCSPosition(uv, linear_depth, cViewReconstructionVector);
 
 	float3 diffuseLight, specularLight;
 	CalculateLight(m, p, normal, l, diffuseLight, specularLight);

@@ -82,7 +82,7 @@ void CalculateLight(myMaterial inMaterial, float3 inPosition, float3 inNormal, m
 	float spec = F * G * D;
 
 	// HACK
-	spec *= ndh > 0;
+	//spec *= ndh > 0;
 
 	float3 diff = inMaterial.Diffuse * falloff * OrenNayarDiffuse(ndl, ndv, normal, view_vec, alpha);
 	outSpecular = inLight.Color * spec;

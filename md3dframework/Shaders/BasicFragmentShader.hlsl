@@ -72,9 +72,9 @@ PS_OUTPUT PS(PS_INPUT input)
 		output.Diffuse = cDiffuseTexture.Sample(cDiffuseSampler, input.TexCoord);
 
 	if ((flags & HAS_NORMAL_MAP) == 0)
-		output.Normal = EncodeNormal(input.Normal);
+		output.Normal = EncodeNormal(normalize(input.Normal));
 	else
-		output.Normal = EncodeNormal(NormalMap(input.Normal, input.Tangent, input.TexCoord));
+		output.Normal = EncodeNormal(NormalMap(normalize(input.Normal), input.Tangent, input.TexCoord));
 
 	if ((flags & HAS_SURFACE_MAP) == 0)
 		output.Surface = cSurface;
