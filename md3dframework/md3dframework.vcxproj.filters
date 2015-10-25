@@ -64,6 +64,12 @@
     <Filter Include="Source Files\Input">
       <UniqueIdentifier>{42d8c866-cf03-4577-8efa-4403694ac544}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Util">
+      <UniqueIdentifier>{a27dfe53-a260-44d6-bed5-6de03e8cd113}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Util">
+      <UniqueIdentifier>{093b557c-a123-4cc3-8cd7-9fe014909148}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -72,9 +78,6 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="main.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="float3.h">
       <Filter>Header Files\Math</Filter>
     </ClInclude>
@@ -198,6 +201,12 @@
     <ClInclude Include="Window.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="GAAGEngine.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FileUtil.h">
+      <Filter>Util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -298,6 +307,9 @@
     </ClCompile>
     <ClCompile Include="Window.cpp">
       <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="FileUtil.cpp">
+      <Filter>Source Files\Util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

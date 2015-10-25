@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GAAGEngine", "md3dframework\md3dframework.vcxproj", "{DDF6E666-30AB-49B6-A623-11B17A1989A8}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GAAGTerrainEditor", "TerrainEditor\TerrainEditor.vcxproj", "{252214E5-D2CB-4BC1-91B0-190E308524B0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DDF6E666-30AB-49B6-A623-11B17A1989A8} = {DDF6E666-30AB-49B6-A623-11B17A1989A8}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

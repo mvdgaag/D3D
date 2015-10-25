@@ -8,24 +8,23 @@
 #include "ConstantBuffer.h"
 
 
-void TerrainTile::Init(float3 inPosition, float3 inScale, Texture* inHeightMap, int inWidth, int inHeight, Material* inMaterial)
+void TerrainTile::Init(float3 inPosition, float3 inScale, Texture* inHeightMap, int inWidthSegments, int inHeightSegments, Material* inMaterial)
 {
 	CleanUp();
 
 	mHeightMap = inHeightMap;
 	
 	Mesh* mesh = new Mesh();
-	mesh->InitPlane(inWidth, inHeight);
+	mesh->InitPlane(inWidthSegments, inHeightSegments, inScale.XY());
 	
 	DrawableObject::Init(mesh, inMaterial);
 
 	mConstantBuffer = new ConstantBuffer();
 	mConstantBuffer->Init(sizeof(mConstantBufferData));
 	
-	mConstantBufferData.MVP = DirectX::XMMatrixScaling(inScale.x, inScale.y, inScale.z);
-	mConstantBufferData.MVP *= DirectX::XMMatrixTranslation(inPosition.x, inPosition.y, inPosition.z);
-	mConstantBufferData.width = inWidth;
-	mConstantBufferData.height = inHeight;
+	mConstantBufferData.widthSegments = inWidthSegments;
+	mConstantBufferData.heightSegments = inHeightSegments;
+	mConstantBufferData.heightScale = inScale.z;
 	theRenderContext.UpdateSubResource(mConstantBuffer, &mConstantBufferData);
 
 	mInitialized = true; 

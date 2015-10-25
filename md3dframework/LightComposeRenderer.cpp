@@ -41,7 +41,7 @@ void LightComposeRenderer::Init()
 {
 	CleanUp();
 	mShader = new ComputeShader();
-	mShader->InitFromFile("Shaders/LightComposeCompute.hlsl");
+	mShader->InitFromFile("../md3dframework/Shaders/LightComposeCompute.hlsl");
 	mInitialized = true;
 }
 

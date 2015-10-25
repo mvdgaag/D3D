@@ -32,7 +32,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
@@ -45,7 +45,7 @@
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -72,12 +72,14 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <LibraryPath>$(WindowsSDK_LibraryPath_x64);$(VC_LibraryPath_x64);</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <LibraryPath>$(WindowsSDK_LibraryPath_x64);$(VC_LibraryPath_x64);</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -125,6 +127,9 @@
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
     </FxCompile>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -172,6 +177,9 @@
     <FxCompile>
       <ShaderModel>5.0</ShaderModel>
     </FxCompile>
+    <ProjectReference>
+      <LinkLibraryDependencies>true</LinkLibraryDependencies>
+    </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -188,18 +196,19 @@
     <ClInclude Include="DepthStencilTarget.h" />
     <ClInclude Include="DirectLightingRenderer.h" />
     <ClInclude Include="DrawableObject.h" />
+    <ClInclude Include="FileUtil.h" />
     <ClInclude Include="float2.h" />
     <ClInclude Include="float3.h" />
     <ClInclude Include="float4.h" />
     <ClInclude Include="float4x4.h" />
     <ClInclude Include="Framework.h" />
+    <ClInclude Include="GAAGEngine.h" />
     <ClInclude Include="GBuffer.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="InputListener.h" />
     <ClInclude Include="LightComposeRenderer.h" />
     <ClInclude Include="LinearAlgebra.h" />
     <ClInclude Include="IndirectLightingRenderer.h" />
-    <ClInclude Include="main.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="PostProcessRenderer.h" />
@@ -230,6 +239,7 @@
     <ClCompile Include="DepthStencilTarget.cpp" />
     <ClCompile Include="DirectLightingRenderer.cpp" />
     <ClCompile Include="DrawableObject.cpp" />
+    <ClCompile Include="FileUtil.cpp" />
     <ClCompile Include="Framework.cpp" />
     <ClCompile Include="GBuffer.cpp" />
     <ClCompile Include="IndirectLightingRenderer.cpp" />

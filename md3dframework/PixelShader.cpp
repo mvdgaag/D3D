@@ -3,10 +3,14 @@
 #include <string>
 #include <d3dcompiler.h>
 #include <d3d11_1.h>
+#include "FileUtil.h"
+#include <assert.h>
 
 
 void PixelShader::InitFromFile(std::string inFileName)
 {
+	assert(FileUtil::FileExists(inFileName.c_str()));
+
 	CleanUp();
 
 	DWORD dwShaderFlags = D3DCOMPILE_ENABLE_STRICTNESS;

@@ -33,7 +33,7 @@ void ReflectionRenderer::Init()
 {
 	CleanUp();
 	mShader = new ComputeShader();
-	mShader->InitFromFile("Shaders/ReflectionCompute.hlsl");
+	mShader->InitFromFile("../md3dframework/Shaders/ReflectionCompute.hlsl");
 	mInitialized = true;
 }
 

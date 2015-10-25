@@ -1,4 +1,5 @@
 #include "Window.h"
+#include "Resource.h"
 
 
 HRESULT Window::Init(HINSTANCE hInstance, int nCmdShow)

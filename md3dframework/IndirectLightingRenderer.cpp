@@ -49,7 +49,7 @@ void IndirectLightingRenderer::Init()
 {
 	CleanUp();
 	mShader = new ComputeShader();
-	mShader->InitFromFile("Shaders/IndirectLightingCompute.hlsl");
+	mShader->InitFromFile("../md3dframework/Shaders/IndirectLightingCompute.hlsl");
 	mConstantBuffer = new ConstantBuffer();
 	mConstantBuffer->Init(sizeof(ConstantBufferData));
 	mInitialized = true;

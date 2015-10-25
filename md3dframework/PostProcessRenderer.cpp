@@ -41,7 +41,7 @@ void PostProcessRenderer::Init()
 	CleanUp();
 	
 	mShader = new ComputeShader();
-	mShader->InitFromFile("Shaders/PostProcessCompute.hlsl");
+	mShader->InitFromFile("../md3dframework/Shaders/PostProcessCompute.hlsl");
 
 	mConstantBuffer = new ConstantBuffer();
 	mConstantBuffer->Init(sizeof(ConstantBufferData));

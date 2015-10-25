@@ -1,7 +1,7 @@
+/*
 #include <windows.h>
 #include <windowsx.h>
 #include "resource.h"
-#include "main.h"
 #include "RenderContext.h"
 #include "Framework.h"
 #include "Input.h"
@@ -102,25 +102,25 @@ void InitContent()
 	g_obj2 = new DrawableObject();
 	
 	g_mesh = new Mesh();
-	g_mesh->InitFromFile("Models/sphere.obj");
+	g_mesh->InitFromFile("../md3dframework/Models/sphere.obj");
 
 	g_mesh2 = new Mesh();
 	g_mesh2->InitPlane(1, 1, float2(8,8));
 
 	g_pixel_shader = new PixelShader();
-	g_pixel_shader->InitFromFile("Shaders/BasicFragmentShader.hlsl");
+	g_pixel_shader->InitFromFile("../md3dframework/Shaders/BasicFragmentShader.hlsl");
 	
 	g_vertex_shader = new VertexShader();
-	g_vertex_shader->InitFromFile("Shaders/BasicVertexShader.hlsl");
+	g_vertex_shader->InitFromFile("../md3dframework/Shaders/BasicVertexShader.hlsl");
 
 	g_diffuse_texture = new Texture();
-	g_diffuse_texture->InitFromFile("Textures/photosculpt-squarebricks-diffuse.dds");
+	g_diffuse_texture->InitFromFile("../md3dframework/Textures/photosculpt-squarebricks-diffuse.dds");
 
 	g_normal_texture = new Texture();
-	g_normal_texture->InitFromFile("Textures/photosculpt-squarebricks-normal.dds");
+	g_normal_texture->InitFromFile("../md3dframework/Textures/photosculpt-squarebricks-normal.dds");
 
 	g_surface_texture = new Texture();
-	g_surface_texture->InitFromFile("Textures/photosculpt-squarebricks-specular.dds");
+	g_surface_texture->InitFromFile("../md3dframework/Textures/photosculpt-squarebricks-specular.dds");
 
 	g_material = new Material();
 	g_material->Init();
@@ -134,7 +134,7 @@ void InitContent()
 	g_material->SetEmissivenessValue(0.0);
 	g_material->SetPixelShader(g_pixel_shader);
 	g_material->SetVertexShader(g_vertex_shader);
-	g_material->SetFlags(Material::MaterialFlags(0));
+	//g_material->SetFlags(Material::MaterialFlags(0));
 	g_obj->Init(g_mesh, g_material);
 
 	g_material2 = new Material();
@@ -152,22 +152,23 @@ void InitContent()
 	g_material2->SetFlags((Material::MaterialFlags)0);
 	g_obj2->Init(g_mesh2, g_material2);
 	
-	theFramework.RegisterObject(g_obj);
 	g_obj2->Rotate(float3(1, 0, 0), -3.1415 / 2.0);
 	g_obj2->Translate(float3(0, 0, 5));
-	theFramework.RegisterObject(g_obj2);
 
 	g_heightmap = new Texture();
-	g_heightmap->InitFromFile("Textures/photosculpt-squarebricks-diffuse.dds");
+	g_heightmap->InitFromFile("../md3dframework/Textures/photosculpt-squarebricks-diffuse.dds");
 	g_terrainTile = new TerrainTile();
-	g_terrainTile->Init(float3(0, 0, 0), float3(1, 1, 1), g_heightmap, 256, 256, g_material);
+	g_terrainTile->Init(float3(0, 0, 0), float3(4, 4, 4), g_heightmap, 256, 256, g_material);
+
+	//theFramework.RegisterObject(g_obj);
+	//theFramework.RegisterObject(g_obj2);
 	theFramework.RegisterObject(g_terrainTile);
 }
 
 
 void CleanUpContent()
 {
-	/* TODO: 
+	 TODO: 
 	delete g_obj;
 	g_obj = nullptr;
 
@@ -194,5 +195,6 @@ void CleanUpContent()
 
 	delete g_material;
 	g_material = nullptr;
-	*/
+	
 }
+*/

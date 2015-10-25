@@ -48,7 +48,7 @@ void TAARenderer::Init()
 {
 	CleanUp();
 	mShader = new ComputeShader();
-	mShader->InitFromFile("Shaders/TemporalAACompute.hlsl");
+	mShader->InitFromFile("../md3dframework/Shaders/TemporalAACompute.hlsl");
 	mConstantBuffer = new ConstantBuffer();
 	mConstantBuffer->Init(sizeof(ConstantBufferData));
 	mInitialized = true;

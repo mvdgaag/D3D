@@ -34,7 +34,7 @@ HRESULT Framework::Init()
 	mFullScreenTriangle->InitFullscreenTriangle();
 
 	mCopyShader = new ComputeShader();
-	mCopyShader->InitFromFile("Shaders/CopyCompute.hlsl");
+	mCopyShader->InitFromFile("../md3dframework/Shaders/CopyCompute.hlsl");
 
 	mDefaultPointSampler = new Sampler();
 	mDefaultPointSampler->Init(0); // D3D11_FILTER_MIN_MAG_MIP_POINT

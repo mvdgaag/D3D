@@ -4,6 +4,7 @@
 #include <string>
 #include <assert.h>
 #include <d3d11.h>
+#include "FileUtil.h"
 
 
 int Texture::GetWidth()				
@@ -74,6 +75,8 @@ void Texture::Init(ID3D11Texture2D* inTexture)
 
 void Texture::InitFromFile(std::string inFileName)
 {
+	assert(FileUtil::FileExists(inFileName.c_str()));
+
 	CleanUp();
 
 	std::wstring filename = std::wstring(inFileName.begin(), inFileName.end());

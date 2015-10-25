@@ -6,6 +6,7 @@
 #include <fstream>
 #include <sstream>
 #include <d3d11_1.h>
+#include "FileUtil.h"
 
 
 void Mesh::InitCube(float3 inScale)
@@ -184,6 +185,8 @@ std::vector<std::string> StringSplit(const std::string &s, char delim)
 
 void Mesh::InitFromFile(std::string inFileName)
 {
+	assert(FileUtil::FileExists(inFileName.c_str()));
+
 	CleanUp();
 
 	std::vector<float3> positions;
