@@ -100,7 +100,7 @@ void DeferredRenderer::CleanUp()
 }
 
 
-void DeferredRenderer::Render(std::vector<DrawableObject*> inDrawList)
+void DeferredRenderer::Render(std::vector<pDrawableObject> inDrawList)
 {
 	assert(mInitialized);
 	
@@ -126,7 +126,7 @@ void DeferredRenderer::Render(std::vector<DrawableObject*> inDrawList)
 }
 
 
-void DeferredRenderer::GeometryPass(std::vector<DrawableObject*> inDrawList)
+void DeferredRenderer::GeometryPass(std::vector<pDrawableObject> inDrawList)
 {
 	theRenderContext.BeginEvent("Geometry Pass");
 	
@@ -137,7 +137,7 @@ void DeferredRenderer::GeometryPass(std::vector<DrawableObject*> inDrawList)
 	
 	theRenderContext.SetRenderTargets(GBuffer::NUM_RENDER_TARGETS, mGBuffer->GetRenderTargets(), mGBuffer->GetDepthStencilTarget());
 
-	for each (DrawableObject* obj in inDrawList)
+	for each (pDrawableObject obj in inDrawList)
 	{
 		theRenderContext.SetMarker("Drawing Object");
 

@@ -11,7 +11,7 @@
 #include "TAARenderer.h"
 #include "PostProcessRenderer.h"
 
-class DrawableObject;
+PREDEFINE(DrawableObject, pDrawableObject);
 PREDEFINE(GBuffer, pGBuffer);
 PREDEFINE(DeferredRenderer, pDeferredRenderer);
 PREDEFINE(RenderTarget, pRenderTarget);
@@ -30,7 +30,7 @@ public:
 
 	void Init(int inWidth, int inHeight);
 	void CleanUp();
-	void Render(std::vector<DrawableObject*> inDrawList);
+	void Render(std::vector<pDrawableObject> inDrawList);
 
 	pGBuffer GetGBuffer() { return mGBuffer; }
 	pRenderTarget GetDepthPyramid() { return mDepthPyramid; }
@@ -50,7 +50,7 @@ public:
 	void RemoveLights() {}
 
 private:
-	void GeometryPass(std::vector<DrawableObject*> inDrawList);
+	void GeometryPass(std::vector<pDrawableObject> inDrawList);
 	void LightingPass();
 	void PostProcessPass();
 

@@ -28,7 +28,7 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 	theRenderContext.CSSetRWTexture(inTargetDiffuse, 0);
 	theRenderContext.CSSetRWTexture(inTargetSpecular, 1);
 
-	Camera* cam = theFramework.GetCamera();
+	pCamera cam = theFramework.GetCamera();
 	mConstantBufferData.viewspaceReconstructionVector.x = tan(0.5 * cam->GetFovX());
 	mConstantBufferData.viewspaceReconstructionVector.y = tan(0.5 * cam->GetFovY());
 	mConstantBufferData.targetSize.x = theRenderContext.GetWidth();

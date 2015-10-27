@@ -1,6 +1,7 @@
 #pragma once
 #include "DrawableObject.h"
 
+PREDEFINE(TerrainTile, pTerrainTile);
 PREDEFINE(Mesh, pMesh);
 PREDEFINE(Material, pMaterial);
 PREDEFINE(Texture, pTexture);

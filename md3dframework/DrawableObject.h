@@ -3,6 +3,7 @@
 #include "GAAGCommon.h"
 
 // predefinitions
+PREDEFINE(DrawableObject, pDrawableObject);
 PREDEFINE(Mesh, pMesh);
 PREDEFINE(Material, pMaterial);
 PREDEFINE(ConstantBuffer, pConstantBuffer);

@@ -5,8 +5,8 @@
 
 Window* g_window = nullptr;
 
-DrawableObject* g_obj;
-DrawableObject* g_obj2;
+pDrawableObject g_obj;
+pDrawableObject g_obj2;
 
 pMesh g_mesh;
 pMesh g_mesh2;
@@ -21,7 +21,7 @@ pTexture g_normal_texture;
 pTexture g_surface_texture;
 
 pTexture g_heightmap;
-TerrainTile* g_terrainTile;
+pTerrainTile g_terrainTile;
 
 
 HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);
@@ -84,8 +84,8 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
 void InitContent()
 {
-	g_obj = new DrawableObject();
-	g_obj2 = new DrawableObject();
+	g_obj = std::make_shared<DrawableObject>();
+	g_obj2 = std::make_shared<DrawableObject>();
 
 	g_mesh = std::make_shared<Mesh>();
 	g_mesh->InitFromFile("../md3dframework/Models/sphere.obj");
@@ -143,7 +143,7 @@ void InitContent()
 
 	g_heightmap = std::make_shared<Texture>();
 	g_heightmap->InitFromFile("../md3dframework/Textures/photosculpt-squarebricks-diffuse.dds");
-	g_terrainTile = new TerrainTile();
+	g_terrainTile = std::make_shared<TerrainTile>();
 	g_terrainTile->Init(float3(0.0f, 0.0f, 0.0f), float3(4.0f, 4.0f, 4.0f), g_heightmap, 256, 256, g_material);
 
 	theFramework.RegisterObject(g_obj);

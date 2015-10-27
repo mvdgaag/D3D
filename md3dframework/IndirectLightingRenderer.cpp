@@ -21,7 +21,7 @@ void IndirectLightingRenderer::Render(pTexture inSource, pTexture inNormal, pTex
 	theRenderContext.CSSetTextureAndSampler(inLinearDepth, theFramework.GetPointSampler(), 2);
 	theRenderContext.CSSetRWTexture(inTarget, 0);
 
-	Camera* cam = theFramework.GetCamera();
+	pCamera cam = theFramework.GetCamera();
 	mConstantBufferData.viewspaceReconstructionVector.x = tan(0.5 * cam->GetFovX());
 	mConstantBufferData.viewspaceReconstructionVector.y = tan(0.5 * cam->GetFovY());
 	mConstantBufferData.targetSize.x = theRenderContext.GetWidth();

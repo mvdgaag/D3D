@@ -204,11 +204,11 @@
     <ClInclude Include="Material.h">
       <Filter>Header Files\Rendering\D3D</Filter>
     </ClInclude>
-    <ClInclude Include="GBuffer.h">
-      <Filter>Header Files\Rendering\Renderer Systems</Filter>
-    </ClInclude>
     <ClInclude Include="GAAGCommon.h">
       <Filter>Header Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="GBuffer.h">
+      <Filter>Header Files\Rendering\D3D</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -218,17 +218,11 @@
     <ClCompile Include="Framework.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="GBuffer.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="Terrain.cpp">
       <Filter>Source Files\Terrain</Filter>
     </ClCompile>
     <ClCompile Include="TerrainTile.cpp">
       <Filter>Source Files\Terrain</Filter>
-    </ClCompile>
-    <ClCompile Include="Material.cpp">
-      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="DeferredRenderer.cpp">
       <Filter>Source Files\Rendering\Render Systems</Filter>
@@ -310,6 +304,12 @@
     </ClCompile>
     <ClCompile Include="FileUtil.cpp">
       <Filter>Source Files\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="GBuffer.cpp">
+      <Filter>Source Files\Rendering\D3D</Filter>
+    </ClCompile>
+    <ClCompile Include="Material.cpp">
+      <Filter>Source Files\Rendering\D3D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

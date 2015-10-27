@@ -42,7 +42,7 @@ HRESULT Framework::Init()
 	mDefaultLinearSampler = std::make_shared<Sampler>();
 	mDefaultLinearSampler->Init(21); // D3D11_FILTER_MIN_MAG_MIP_LINEAR
 
-	mCamera = new Camera();
+	mCamera = std::make_shared<Camera>();
 	mCamera->SetPosition(0.0, 2.0, -3.0);
 	mCamera->SetTarget(0.0, 0.0, 0.0);
 	mCamera->SetUp(0.0, 1.0, 0.0);
@@ -57,9 +57,7 @@ HRESULT Framework::Init()
 
 void Framework::CleanUp()
 {
-	delete mCamera;
 	mCamera = nullptr;
-	
 	mDeferredRenderer = nullptr;
 	mFullScreenTriangle = nullptr;
 	mCopyShader = nullptr;

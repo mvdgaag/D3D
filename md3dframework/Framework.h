@@ -12,10 +12,8 @@ PREDEFINE(Mesh, pMesh);
 PREDEFINE(ConstantBuffer, pConstantBuffer);
 PREDEFINE(Material, pMaterial);
 PREDEFINE(DeferredRenderer, pDeferredRenderer);
-
-class DrawableObject;
-class Camera;
-
+PREDEFINE(DrawableObject, pDrawableObject);
+PREDEFINE(Camera, pCamera);
 
 #define theFramework Framework::GetInstance()
 
@@ -35,9 +33,9 @@ public:
 
 	void Render();
 	void SetFrameCallback(void(*inCallBack)(void)) { mFrameCallback = inCallBack; }
-	void RegisterObject(DrawableObject* obj) { mObjectList.push_back(obj); }
+	void RegisterObject(pDrawableObject obj) { mObjectList.push_back(obj); }
 
-	Camera*		GetCamera()														{ return mCamera; }
+	pCamera		GetCamera()														{ return mCamera; }
 	int			GetFrameID()													{ return mFrameID; }
 	double		GetFrameTime()													{ return mFrameTime; }
 	double		GetFrameDeltaTime()												{ return mDeltaTime; }
@@ -61,9 +59,9 @@ private:
 	int								mFrameID;
 	double							mFrameTime;
 	double							mDeltaTime;
-	Camera*							mCamera = nullptr;
+	pCamera							mCamera = nullptr;
 	pDeferredRenderer				mDeferredRenderer = nullptr;
-	std::vector<DrawableObject*>	mObjectList;
+	std::vector<pDrawableObject>	mObjectList;
 	bool							mInitialized = false;
 	void							(*mFrameCallback)(void);
 };
