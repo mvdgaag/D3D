@@ -1,8 +1,6 @@
 #pragma once
-#include <vector>
-#include "LinearAlgebra.h"
+#include "GAAGCommon.h"
 #include <Windows.h>
-
 
 struct ID3D11Device;
 struct ID3D11Device1;
@@ -14,33 +12,16 @@ struct ID3D11RasterizerState;
 struct ID3D11RasterizerState1;
 struct ID3DUserDefinedAnnotation;
 
+PREDEFINE(PixelShader, pPixelShader);
+PREDEFINE(VertexShader, pVertexShader);
+PREDEFINE(ComputeShader, pComputeShader);
+PREDEFINE(Texture, pTexture);
+PREDEFINE(Sampler, pSampler);
+PREDEFINE(Mesh, pMesh);
+PREDEFINE(ConstantBuffer, pConstantBuffer);
+PREDEFINE(RenderTarget, pRenderTarget);
+PREDEFINE(DepthStencilTarget, pDepthStencilTarget);
 
-#ifndef D3DCall
-#ifdef _DEBUG
-#define D3DCall(x) \
-{ \
-	HRESULT hr = x; \
-	if (FAILED(hr)) \
-		{ \
-		OutputDebugStringA(#x); \
-		__debugbreak; \
-		} \
-}
-#else
-#define D3DCall(x) x
-#endif
-#endif
-
-
-class PixelShader;
-class VertexShader;
-class ComputeShader;
-class Texture;
-class Sampler;
-class Mesh;
-class ConstantBuffer;
-class RenderTarget;
-class DepthStencilTarget;
 class Window;
 
 

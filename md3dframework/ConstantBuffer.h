@@ -1,8 +1,11 @@
 #pragma once
 #include "BaseResource.h"
+#include "GAAGCommon.h"
 
 struct ID3D11Buffer;
 struct D3D11_BUFFER_DESC;
+
+PREDEFINE(ConstantBuffer, pConstantBuffer);
 
 class ConstantBuffer : public BaseResource
 {

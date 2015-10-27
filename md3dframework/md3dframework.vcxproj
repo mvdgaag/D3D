@@ -203,6 +203,7 @@
     <ClInclude Include="float4x4.h" />
     <ClInclude Include="Framework.h" />
     <ClInclude Include="GAAGEngine.h" />
+    <ClInclude Include="GAAGCommon.h" />
     <ClInclude Include="GBuffer.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="InputListener.h" />

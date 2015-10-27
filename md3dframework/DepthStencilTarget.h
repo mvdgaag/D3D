@@ -1,30 +1,27 @@
 #pragma once
 #include "BaseResource.h"
-#include "Texture.h"
+#include "GAAGCommon.h"
+
 struct ID3D11DepthStencilView;
 
-class DepthStencilTarget : public Texture
+PREDEFINE(Texture, pTexture);
+PREDEFINE(DepthStencilTarget, pDepthStencilTarget);
+
+class DepthStencilTarget : public BaseResource
 {
 	friend class RenderContext;
 
 public:
-	DepthStencilTarget() : Texture() {};
+	DepthStencilTarget() : BaseResource() {};
 	~DepthStencilTarget() { CleanUp(); }
 
-	// depricate functions, should throw exception or go for factory class model?
-	void Init(int inWidth, int inHeight, int inMipLevels, unsigned int inFormat, unsigned int inBindFlags = 8) override
-	{}
-	void Init(ID3D11Texture2D* inTexture) override
-	{}
-	void InitFromFile(std::string inFileName) override
-	{}
-	
 	void Init(int inWidth, int inHeight);
 	void CleanUp() override;
 	
 	ResourceType GetResourceType() const { return ResourceType::DEPTH_STENCIL_TARGET; }
 
 protected:
+	pTexture				mTexture;
 	ID3D11DepthStencilView*	mDepthStencilView = nullptr;
 };
 

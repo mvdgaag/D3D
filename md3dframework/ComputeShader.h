@@ -1,7 +1,10 @@
 #pragma once
 #include "BaseResource.h"
+#include "GAAGCommon.h"
 
 struct ID3D11ComputeShader;
+
+PREDEFINE(ComputeShader, pComputeShader);
 
 class ComputeShader : public BaseResource
 {

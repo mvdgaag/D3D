@@ -104,6 +104,7 @@ void Texture::CleanUp()
 		mShaderResourceView->Release();
 		mShaderResourceView = nullptr;
 	}
+	
 	delete mDesc;
 	mDesc = nullptr;
 }

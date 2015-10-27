@@ -1,9 +1,10 @@
 #pragma once
 #include "BaseResource.h"
-#include "LinearAlgebra.h"
-
+#include "GAAGCommon.h"
 
 struct ID3D11Buffer;
+
+PREDEFINE(Mesh, pMesh);
 
 
 struct SimpleVertex
@@ -42,4 +43,3 @@ protected:
 	unsigned int mNumVerts = 0;
 	unsigned int mNumIndices = 0;
 };
-

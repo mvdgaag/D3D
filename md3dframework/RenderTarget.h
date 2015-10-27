@@ -1,10 +1,12 @@
 #pragma once
 #include "BaseResource.h"
-#include <assert.h>
+#include "GAAGCommon.h"
 
 struct ID3D11RenderTargetView;
 struct ID3D11UnorderedAccessView;
-class Texture;
+
+PREDEFINE(Texture, pTexture);
+PREDEFINE(RenderTarget, pRenderTarget);
 
 class RenderTarget : public BaseResource
 {
@@ -27,5 +29,3 @@ protected:
 	ID3D11RenderTargetView** mRenderTargetViews = nullptr;
 	ID3D11UnorderedAccessView** mUnorderedAccessViews = nullptr;
 };
-
-

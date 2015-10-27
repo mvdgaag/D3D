@@ -1,8 +1,11 @@
 #pragma once
 #include "BaseResource.h"
 #include <hash_map>
+#include "GAAGCommon.h"
 
 struct ID3D11PixelShader;
+
+PREDEFINE(PixelShader, pPixelShader);
 
 class PixelShader : public BaseResource
 {
@@ -23,4 +26,3 @@ protected:
 	std::hash_map<std::string, unsigned int> mSamplers;
 	std::hash_map<std::string, unsigned int> mConstantBuffers;
 };
-

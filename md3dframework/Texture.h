@@ -1,15 +1,18 @@
 #pragma once
 #include "BaseResource.h"
+#include "GAAGCommon.h"
 
 struct ID3D11Texture2D;
 struct ID3D11ShaderResourceView;
 struct D3D11_TEXTURE2D_DESC;
 
+PREDEFINE(Texture, pTexture);
 
 class Texture : public BaseResource
 {
 	friend class RenderContext;
 	friend class RenderTarget;
+	friend class DepthStencilTarget;
 
 public:
 	Texture() : BaseResource() {};
@@ -29,6 +32,5 @@ public:
 protected:
 	ID3D11Texture2D*			mTexture = nullptr;
 	ID3D11ShaderResourceView*	mShaderResourceView = nullptr;
-	D3D11_TEXTURE2D_DESC*		mDesc;
+	D3D11_TEXTURE2D_DESC*		mDesc = nullptr;
 };
-

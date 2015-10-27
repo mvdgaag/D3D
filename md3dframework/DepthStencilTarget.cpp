@@ -8,7 +8,8 @@ void DepthStencilTarget::Init(int inWidth, int inHeight)
 {
 	CleanUp();
 
-	Texture::Init(inWidth, inHeight, 1, DXGI_FORMAT_R24G8_TYPELESS, D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE);
+	mTexture = std::make_shared<Texture>();
+	mTexture->Init(inWidth, inHeight, 1, DXGI_FORMAT_R24G8_TYPELESS, D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE);
 
 	// Create the depth stencil view
 	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
@@ -16,13 +17,13 @@ void DepthStencilTarget::Init(int inWidth, int inHeight)
 	descDSV.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 	descDSV.Texture2D.MipSlice = 0;
-	D3DCall(theRenderContext.GetDevice()->CreateDepthStencilView(mTexture, &descDSV, &mDepthStencilView));
+	D3DCall(theRenderContext.GetDevice()->CreateDepthStencilView(mTexture->mTexture, &descDSV, &mDepthStencilView));
 }
 
 
 void DepthStencilTarget::CleanUp()
 {
-	Texture::CleanUp();
+	mTexture = nullptr;
 	if (mDepthStencilView != nullptr)
 	{
 		mDepthStencilView->Release();

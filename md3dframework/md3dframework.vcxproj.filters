@@ -102,9 +102,6 @@
     <ClInclude Include="Framework.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="GBuffer.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
@@ -116,9 +113,6 @@
     </ClInclude>
     <ClInclude Include="TerrainTile.h">
       <Filter>Header Files\Terrain</Filter>
-    </ClInclude>
-    <ClInclude Include="Material.h">
-      <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="LinearAlgebra.h">
       <Filter>Header Files\Math</Filter>
@@ -205,6 +199,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FileUtil.h">
+      <Filter>Header Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Material.h">
+      <Filter>Header Files\Rendering\D3D</Filter>
+    </ClInclude>
+    <ClInclude Include="GBuffer.h">
+      <Filter>Header Files\Rendering\Renderer Systems</Filter>
+    </ClInclude>
+    <ClInclude Include="GAAGCommon.h">
       <Filter>Header Files\Util</Filter>
     </ClInclude>
   </ItemGroup>

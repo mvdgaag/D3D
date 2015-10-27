@@ -1,11 +1,12 @@
 #pragma once
-#include "LinearAlgebra.h"
+#include "GAAGCommon.h"
 
-class Texture;
-class Sampler;
-class PixelShader;
-class VertexShader;
-class ConstantBuffer;
+PREDEFINE(Texture, pTexture);
+PREDEFINE(Sampler, pSampler);
+PREDEFINE(PixelShader, pPixelShader);
+PREDEFINE(VertexShader, pVertexShader);
+PREDEFINE(ConstantBuffer, pConstantBuffer);
+PREDEFINE(Material, pMaterial);
 
 
 class Material

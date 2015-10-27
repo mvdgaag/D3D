@@ -1,8 +1,11 @@
 #pragma once
 #include "BaseResource.h"
+#include "GAAGCommon.h"
 
 struct ID3D11SamplerState;
 struct D3D11_SAMPLER_DESC;
+
+PREDEFINE(Sampler, pSampler);
 
 class Sampler : public BaseResource
 {
@@ -24,4 +27,3 @@ protected:
 	ID3D11SamplerState* mSamplerState = nullptr;
 	D3D11_SAMPLER_DESC* mSampDesc;
 };
-
