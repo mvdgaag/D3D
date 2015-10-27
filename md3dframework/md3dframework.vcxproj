@@ -247,7 +247,6 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="InputListener.cpp" />
     <ClCompile Include="LightComposeRenderer.cpp" />
-    <ClCompile Include="main.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />
     <ClCompile Include="PixelShader.cpp" />

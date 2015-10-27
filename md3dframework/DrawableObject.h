@@ -1,12 +1,11 @@
 #pragma once
 #include "BaseDrawable.h"
-#include "LinearAlgebra.h"
-
+#include "GAAGCommon.h"
 
 // predefinitions
-class Mesh;
-class Material;
-class ConstantBuffer;
+PREDEFINE(Mesh, pMesh);
+PREDEFINE(Material, pMaterial);
+PREDEFINE(ConstantBuffer, pConstantBuffer);
 
 
 class DrawableObject : public BaseDrawable
@@ -15,12 +14,12 @@ public:
 	DrawableObject() : BaseDrawable() {}
 	~DrawableObject() {};
 
-	void Init(Mesh* inMesh, Material* inMaterial);
+	void Init(pMesh inMesh, pMaterial inMaterial);
 	void CleanUp();
 
-	Mesh* GetMesh() { return mMesh; }
-	Material* GetMaterial() { return mMaterial; }
-	ConstantBuffer* GetConstantBuffer();
+	pMesh GetMesh() { return mMesh; }
+	pMaterial GetMaterial() { return mMaterial; }
+	pConstantBuffer GetConstantBuffer();
 
 private:
 	struct ConstantBufferData
@@ -31,8 +30,8 @@ private:
 	};
 	ConstantBufferData mConstantBufferData;
 	
-	Mesh* mMesh = nullptr;
-	Material* mMaterial = nullptr;
-	ConstantBuffer* mConstantBuffer = nullptr;
+	pMesh mMesh = nullptr;
+	pMaterial mMaterial = nullptr;
+	pConstantBuffer mConstantBuffer = nullptr;
 };
 

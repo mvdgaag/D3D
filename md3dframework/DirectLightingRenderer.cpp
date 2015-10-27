@@ -10,7 +10,7 @@
 #include <assert.h>
 
 
-void DirectLightingRenderer::Render(GBuffer* inSource, RenderTarget* inTargetDiffuse, RenderTarget* inTargetSpecular)
+void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDiffuse, pRenderTarget inTargetSpecular)
 {
 	assert(mInitialized == true);
 
@@ -57,9 +57,9 @@ void DirectLightingRenderer::Render(GBuffer* inSource, RenderTarget* inTargetDif
 void DirectLightingRenderer::Init()
 {
 	CleanUp();
-	mShader = new ComputeShader();
+	mShader = std::make_shared<ComputeShader>();
 	mShader->InitFromFile("../md3dframework/Shaders/DirectLightingCompute.hlsl");
-	mConstantBuffer = new ConstantBuffer();
+	mConstantBuffer = std::make_shared<ConstantBuffer>();
 	mConstantBuffer->Init(sizeof(ConstantBufferData));
 	mInitialized = true;
 }
@@ -67,11 +67,7 @@ void DirectLightingRenderer::Init()
 
 void DirectLightingRenderer::CleanUp()
 {
-	delete mShader;
 	mShader = nullptr;
-	
-	delete mConstantBuffer;
 	mConstantBuffer = nullptr;
-	
 	mInitialized = false;
 }

@@ -8,11 +8,11 @@
 #include <assert.h>
 
 
-void DrawableObject::Init(Mesh* inMesh, Material* inMaterial)
+void DrawableObject::Init(pMesh inMesh, pMaterial inMaterial)
 {
 	mMesh = inMesh;
 	mMaterial = inMaterial;
-	mConstantBuffer = new ConstantBuffer();
+	mConstantBuffer = std::make_shared<ConstantBuffer>();
 	mConstantBuffer->Init(sizeof(ConstantBufferData));
 	mTransform = DirectX::XMMatrixIdentity();
 }
@@ -20,19 +20,13 @@ void DrawableObject::Init(Mesh* inMesh, Material* inMaterial)
 
 void DrawableObject::CleanUp()
 {
-	// TODO: does this object own the mesh, material and buffer?
-	delete mMesh;
 	mMesh = nullptr;
-
-	delete mMaterial;
 	mMaterial = nullptr;
-
-	delete mConstantBuffer;
 	mConstantBuffer = nullptr;
 }
 
 
-ConstantBuffer* DrawableObject::GetConstantBuffer()
+pConstantBuffer DrawableObject::GetConstantBuffer()
 {
 	// TODO: check if already updated this frame?
 	mConstantBufferData.modelView = DirectX::XMMatrixTranspose(theFramework.GetCamera()->GetViewMatrix());

@@ -3,11 +3,11 @@
 #include "ComputeShader.h"
 #include "Texture.h"
 #include "RenderTarget.h"
-#include "LinearAlgebra.h"
+#include "GAAGCommon.h"
 #include <assert.h>
 
 
-void DepthPyramidRenderer::Render(Texture* inSource, RenderTarget* inTarget)
+void DepthPyramidRenderer::Render(pTexture inSource, pRenderTarget inTarget)
 {
 	assert(mInitialized);
 	assert(inSource != nullptr);
@@ -36,9 +36,9 @@ void DepthPyramidRenderer::Render(Texture* inSource, RenderTarget* inTarget)
 }
 
 
-void DepthPyramidRenderer::Init(int inSourceWidth, int inSourceHeight)
+void DepthPyramidRenderer::Init()
 {
-	mShader = new ComputeShader();
+	mShader = std::make_shared<ComputeShader>();
 	mShader->InitFromFile("../md3dframework/Shaders/DepthPyramidCompute.hlsl");
 	assert(mShader != nullptr);
 	mInitialized = true;
@@ -47,11 +47,7 @@ void DepthPyramidRenderer::Init(int inSourceWidth, int inSourceHeight)
 
 void DepthPyramidRenderer::CleanUp()
 {
-	if (mShader)
-	{
-		delete mShader;
-		mShader = nullptr;
-	}
+	mShader = nullptr;
 	mInitialized = false;
 }
 

@@ -7,7 +7,7 @@
 #include "ConstantBuffer.h"
 
 
-void TAARenderer::Render(Texture* inSource, RenderTarget* inHistory, Texture* inMotionVectors, RenderTarget* inTarget)
+void TAARenderer::Render(pTexture inSource, pRenderTarget inHistory, pTexture inMotionVectors, pRenderTarget inTarget)
 {
 	assert(mInitialized == true);
 
@@ -47,9 +47,9 @@ void TAARenderer::Render(Texture* inSource, RenderTarget* inHistory, Texture* in
 void TAARenderer::Init()
 {
 	CleanUp();
-	mShader = new ComputeShader();
+	mShader = std::make_shared<ComputeShader>();
 	mShader->InitFromFile("../md3dframework/Shaders/TemporalAACompute.hlsl");
-	mConstantBuffer = new ConstantBuffer();
+	mConstantBuffer = std::make_shared<ConstantBuffer>();
 	mConstantBuffer->Init(sizeof(ConstantBufferData));
 	mInitialized = true;
 }
@@ -57,16 +57,8 @@ void TAARenderer::Init()
 
 void TAARenderer::CleanUp()
 {
-	if (mShader)
-	{
-		delete mShader;
-		mShader = NULL;
-	}
-	if (mConstantBuffer)
-	{
-		delete mConstantBuffer;
-		mConstantBuffer = NULL;
-	}
+	mShader = nullptr;
+	mConstantBuffer = nullptr;
 	mInitialized = false;
 }
 

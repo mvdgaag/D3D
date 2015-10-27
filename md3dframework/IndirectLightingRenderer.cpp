@@ -8,7 +8,7 @@
 #include "ConstantBuffer.h"
 
 
-void IndirectLightingRenderer::Render(Texture* inSource, Texture* inNormal, Texture* inLinearDepth, RenderTarget* inTarget)
+void IndirectLightingRenderer::Render(pTexture inSource, pTexture inNormal, pTexture inLinearDepth, pRenderTarget inTarget)
 {
 	assert(mInitialized == true);
 
@@ -48,9 +48,9 @@ void IndirectLightingRenderer::Render(Texture* inSource, Texture* inNormal, Text
 void IndirectLightingRenderer::Init()
 {
 	CleanUp();
-	mShader = new ComputeShader();
+	mShader = std::make_shared<ComputeShader>();
 	mShader->InitFromFile("../md3dframework/Shaders/IndirectLightingCompute.hlsl");
-	mConstantBuffer = new ConstantBuffer();
+	mConstantBuffer = std::make_shared<ConstantBuffer>();
 	mConstantBuffer->Init(sizeof(ConstantBufferData));
 	mInitialized = true;
 }
@@ -58,10 +58,7 @@ void IndirectLightingRenderer::Init()
 
 void IndirectLightingRenderer::CleanUp()
 {
-	delete mShader;
 	mShader = nullptr;
-	
-	delete mConstantBuffer;
 	mConstantBuffer = nullptr;
 
 	mInitialized = false;

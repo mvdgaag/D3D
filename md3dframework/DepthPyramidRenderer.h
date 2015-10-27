@@ -1,12 +1,10 @@
 #pragma once
-
+#include "GAAGCommon.h"
 
 // predeclarations
-class ComputeShader;
-class Texture;
-class RenderTarget;
-class ShaderResourceBinding;
-
+PREDEFINE(ComputeShader, pComputeShader);
+PREDEFINE(RenderTarget, pRenderTarget);
+PREDEFINE(Texture, pTexture);
 
 class DepthPyramidRenderer
 {
@@ -14,12 +12,12 @@ public:
 	DepthPyramidRenderer() {};
 	~DepthPyramidRenderer() { CleanUp(); }
 
-	void Init(int inSourceWidth, int inSourceHeight);
+	void Init();
 	void CleanUp();
-	void Render(Texture* inSource, RenderTarget* inTarget);
+	void Render(pTexture inSource, pRenderTarget inTarget);
 
 private:
-	ComputeShader*				mShader = nullptr;
+	pComputeShader				mShader = nullptr;
 	const int					kNumMipLevels = 3; // 1/2 .. 1/8
 	bool						mInitialized = false;
 };

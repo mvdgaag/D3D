@@ -1,12 +1,12 @@
 #pragma once
-#include "LinearAlgebra.h"
+#include "GAAGCommon.h"
 
 
 // predeclarations
-class ComputeShader;
-class RenderTarget;
-class Texture;
-class ConstantBuffer;
+PREDEFINE(ComputeShader, pComputeShader);
+PREDEFINE(RenderTarget, pRenderTarget);
+PREDEFINE(Texture, pTexture);
+PREDEFINE(ConstantBuffer, pConstantBuffer);
 
 
 class PostProcessRenderer
@@ -17,7 +17,7 @@ public:
 
 	void Init();
 	void CleanUp();
-	void Render(Texture* inSource, Texture* inMotionVectors, RenderTarget* inTarget);
+	void Render(pTexture inSource, pTexture inMotionVectors, pRenderTarget inTarget);
 
 private:
 	struct ConstantBufferData
@@ -26,7 +26,7 @@ private:
 	};
 	ConstantBufferData mConstantBufferData;
 
-	ConstantBuffer* mConstantBuffer = nullptr;
-	ComputeShader* mShader = nullptr;
+	pConstantBuffer mConstantBuffer = nullptr;
+	pComputeShader mShader = nullptr;
 	bool mInitialized = false;
 };

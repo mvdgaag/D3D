@@ -8,19 +8,19 @@ Window* g_window = nullptr;
 DrawableObject* g_obj;
 DrawableObject* g_obj2;
 
-Mesh* g_mesh;
-Mesh* g_mesh2;
+pMesh g_mesh;
+pMesh g_mesh2;
 
-Material* g_material;
-Material* g_material2;
+pMaterial g_material;
+pMaterial g_material2;
 
-PixelShader* g_pixel_shader;
-VertexShader* g_vertex_shader;
-Texture* g_diffuse_texture;
-Texture* g_normal_texture;
-Texture* g_surface_texture;
+pPixelShader g_pixel_shader;
+pVertexShader g_vertex_shader;
+pTexture g_diffuse_texture;
+pTexture g_normal_texture;
+pTexture g_surface_texture;
 
-Texture* g_heightmap;
+pTexture g_heightmap;
 TerrainTile* g_terrainTile;
 
 
@@ -87,28 +87,28 @@ void InitContent()
 	g_obj = new DrawableObject();
 	g_obj2 = new DrawableObject();
 
-	g_mesh = new Mesh();
+	g_mesh = std::make_shared<Mesh>();
 	g_mesh->InitFromFile("../md3dframework/Models/sphere.obj");
 
-	g_mesh2 = new Mesh();
+	g_mesh2 = std::make_shared<Mesh>();
 	g_mesh2->InitPlane(1, 1, float2(8, 8));
 
-	g_pixel_shader = new PixelShader();
+	g_pixel_shader = std::make_shared<PixelShader>();
 	g_pixel_shader->InitFromFile("../md3dframework/Shaders/BasicFragmentShader.hlsl");
 
-	g_vertex_shader = new VertexShader();
+	g_vertex_shader = std::make_shared<VertexShader>();
 	g_vertex_shader->InitFromFile("../md3dframework/Shaders/BasicVertexShader.hlsl");
 
-	g_diffuse_texture = new Texture();
+	g_diffuse_texture = std::make_shared<Texture>();
 	g_diffuse_texture->InitFromFile("../md3dframework/Textures/photosculpt-squarebricks-diffuse.dds");
 
-	g_normal_texture = new Texture();
+	g_normal_texture = std::make_shared<Texture>();
 	g_normal_texture->InitFromFile("../md3dframework/Textures/photosculpt-squarebricks-normal.dds");
 
-	g_surface_texture = new Texture();
+	g_surface_texture = std::make_shared<Texture>();
 	g_surface_texture->InitFromFile("../md3dframework/Textures/photosculpt-squarebricks-specular.dds");
 
-	g_material = new Material();
+	g_material = std::make_shared<Material>();
 	g_material->Init();
 	g_material->SetDiffuseTexture(g_diffuse_texture);
 	g_material->SetNormalTexture(g_normal_texture);
@@ -123,7 +123,7 @@ void InitContent()
 	//g_material->SetFlags(Material::MaterialFlags(0));
 	g_obj->Init(g_mesh, g_material);
 
-	g_material2 = new Material();
+	g_material2 = std::make_shared<Material>();
 	g_material2->Init();
 	g_material2->SetDiffuseTexture(g_diffuse_texture);
 	g_material2->SetNormalTexture(g_normal_texture);
@@ -141,7 +141,7 @@ void InitContent()
 	g_obj2->Rotate(float3(1.0f, 0.0f, 0.0f), -3.1415f / 2.0f);
 	g_obj2->Translate(float3(0.0f, 0.0f, 5.0f));
 
-	g_heightmap = new Texture();
+	g_heightmap = std::make_shared<Texture>();
 	g_heightmap->InitFromFile("../md3dframework/Textures/photosculpt-squarebricks-diffuse.dds");
 	g_terrainTile = new TerrainTile();
 	g_terrainTile->Init(float3(0.0f, 0.0f, 0.0f), float3(4.0f, 4.0f, 4.0f), g_heightmap, 256, 256, g_material);

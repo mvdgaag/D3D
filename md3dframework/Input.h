@@ -1,6 +1,6 @@
 #pragma once
 #include <Windows.h>
-#include "LinearAlgebra.h"
+#include "GAAGCommon.h"
 #include <hash_set>
 
 

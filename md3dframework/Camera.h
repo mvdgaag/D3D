@@ -1,5 +1,5 @@
 #pragma once
-#include "LinearAlgebra.h"
+#include "GAAGCommon.h"
 
 
 class Camera

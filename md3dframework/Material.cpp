@@ -5,18 +5,18 @@
 
 void Material::Init()
 {
-	mConstantBuffer = new ConstantBuffer();
+	mConstantBuffer = std::make_shared<ConstantBuffer>();
 	mConstantBuffer->Init(sizeof(mConstantData));
 }
 
 
 void Material::CleanUp()
 {
-	delete mConstantBuffer;
+	mConstantBuffer = nullptr;
 }
 
 
-void Material::SetDiffuseTexture(Texture* inTexture)
+void Material::SetDiffuseTexture(pTexture inTexture)
 {
 	mDiffuseTexture = inTexture;
 	if (mDiffuseTexture != nullptr)
@@ -27,7 +27,7 @@ void Material::SetDiffuseTexture(Texture* inTexture)
 }
 
 
-void Material::SetNormalTexture(Texture* inTexture)
+void Material::SetNormalTexture(pTexture inTexture)
 {
 	mNormalTexture = inTexture;
 	if (mNormalTexture != nullptr)
@@ -38,7 +38,7 @@ void Material::SetNormalTexture(Texture* inTexture)
 }
 
 
-void Material::SetSurfaceTexture(Texture* inTexture)
+void Material::SetSurfaceTexture(pTexture inTexture)
 {
 	mSurfaceTexture = inTexture;
 	if (mSurfaceTexture != nullptr)

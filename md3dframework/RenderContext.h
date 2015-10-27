@@ -39,8 +39,8 @@ public:
 
 	// TODO: add create functions for shaders, buffers, etc, so no d3d link to this header is required anymore..
 	ID3D11Device*	GetDevice() const					{ return mD3DDevice; }
-	Texture*		GetBackBuffer() const				{ return mBackBuffer; }
-	RenderTarget*	GetOutputRenderTarget() const		{ return mOutputRenderTarget; }
+	pTexture		GetBackBuffer() const				{ return mBackBuffer; }
+	pRenderTarget	GetOutputRenderTarget() const		{ return mOutputRenderTarget; }
 	unsigned int	GetWidth() const					{ return mWidth; }
 	unsigned int	GetHeight() const					{ return mHeight; }
 	bool			IsInitialized() const				{ return mInitialized; }
@@ -52,33 +52,33 @@ public:
 	void EndEvent();
 	void SetMarker(std::string inMarker);
 
-	void ClearDepthStencil(DepthStencilTarget* inDepthStencilTarget, float inClearDepth, unsigned char inClearStencil);
-	void ClearRenderTarget(RenderTarget* inRenderTarget, float4 inColor);
-	void SetRenderTargets(unsigned int inNumTargets, RenderTarget** inTargets, DepthStencilTarget* inDepthStencilTarget);
-	void UpdateSubResource(ConstantBuffer* inConstantBuffer, const void* inData);
-	void DrawMesh(Mesh* inMesh);
+	void ClearDepthStencil(pDepthStencilTarget inDepthStencilTarget, float inClearDepth, unsigned char inClearStencil);
+	void ClearRenderTarget(pRenderTarget inRenderTarget, float4 inColor);
+	void SetRenderTargets(unsigned int inNumTargets, pRenderTarget* inTargets, pDepthStencilTarget inDepthStencilTarget);
+	void UpdateSubResource(pConstantBuffer inConstantBuffer, const void* inData);
+	void DrawMesh(pMesh inMesh);
 	void Flush();
 	void SwapBuffers();
 
-	void CSSetShader(ComputeShader* inComputeShader);
-	void CSSetTexture(Texture* inTexture, int idx);
-	void CSSetSampler(Sampler* inSampler, int idx);
-	void CSSetTextureAndSampler(Texture* inTexture, Sampler* inSampler, int idx);
-	void CSSetConstantBuffer(ConstantBuffer* inConstantBuffer, int idx);
-	void CSSetRWTexture(RenderTarget* inRenderTarget, int idx);
+	void CSSetShader(pComputeShader inComputeShader);
+	void CSSetTexture(pTexture inTexture, int idx);
+	void CSSetSampler(pSampler inSampler, int idx);
+	void CSSetTextureAndSampler(pTexture inTexture, pSampler inSampler, int idx);
+	void CSSetConstantBuffer(pConstantBuffer inConstantBuffer, int idx);
+	void CSSetRWTexture(pRenderTarget inRenderTarget, int idx);
 	void Dispatch(unsigned int inX, unsigned int inY, unsigned int inZ);
 	
-	void PSSetShader(PixelShader* inPixelShader);
-	void PSSetTexture(Texture* inTexture, int idx);
-	void PSSetSampler(Sampler* inSampler, int idx);
-	void PSSetTextureAndSampler(Texture* inTexture, Sampler* inSampler, int idx);
-	void PSSetConstantBuffer(ConstantBuffer* inConstantBuffer, int idx);
+	void PSSetShader(pPixelShader inPixelShader);
+	void PSSetTexture(pTexture inTexture, int idx);
+	void PSSetSampler(pSampler inSampler, int idx);
+	void PSSetTextureAndSampler(pTexture inTexture, pSampler inSampler, int idx);
+	void PSSetConstantBuffer(pConstantBuffer inConstantBuffer, int idx);
 
-	void VSSetShader(VertexShader* inVertexShader);
-	void VSSetTexture(Texture* inTexture, int idx);
-	void VSSetSampler(Sampler* inSampler, int idx);
-	void VSSetTextureAndSampler(Texture* inTexture, Sampler* inSampler, int idx);
-	void VSSetConstantBuffer(ConstantBuffer* inConstantBuffer, int idx);
+	void VSSetShader(pVertexShader inVertexShader);
+	void VSSetTexture(pTexture inTexture, int idx);
+	void VSSetSampler(pSampler inSampler, int idx);
+	void VSSetTextureAndSampler(pTexture inTexture, pSampler inSampler, int idx);
+	void VSSetConstantBuffer(pConstantBuffer inConstantBuffer, int idx);
 
 private:
 	RenderContext() { mInitialized = false; }
@@ -97,21 +97,21 @@ private:
 	ID3D11RasterizerState1*			mRasterState1 = nullptr;
 	ID3DUserDefinedAnnotation*		mAnnotation = nullptr;
 
-	Texture*						mBackBuffer;
-	RenderTarget*					mOutputRenderTarget;
+	pTexture						mBackBuffer;
+	pRenderTarget					mOutputRenderTarget;
 
-	Texture*						mCSBoundTextures[8];
-	Sampler*						mCSBoundSamplers[8];
-	ConstantBuffer*					mCSBoundConstantBuffers[8];
-	RenderTarget*					mCSBoundRenderTargets[8];
+	pTexture						mCSBoundTextures[8];
+	pSampler						mCSBoundSamplers[8];
+	pConstantBuffer					mCSBoundConstantBuffers[8];
+	pRenderTarget					mCSBoundRenderTargets[8];
 
-	Texture*						mPSBoundTextures[8];
-	Sampler*						mPSBoundSamplers[8];
-	ConstantBuffer*					mPSBoundConstantBuffers[8];
+	pTexture						mPSBoundTextures[8];
+	pSampler						mPSBoundSamplers[8];
+	pConstantBuffer					mPSBoundConstantBuffers[8];
 
-	Texture*						mVSBoundTextures[8];
-	Sampler*						mVSBoundSamplers[8];
-	ConstantBuffer*					mVSBoundConstantBuffers[8];
+	pTexture						mVSBoundTextures[8];
+	pSampler						mVSBoundSamplers[8];
+	pConstantBuffer					mVSBoundConstantBuffers[8];
 	unsigned int					mWidth, mHeight;
 	bool							mInitialized = false;
 };

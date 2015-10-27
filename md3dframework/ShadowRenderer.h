@@ -1,4 +1,5 @@
 #pragma once
+#include "GAAGCommon.h"
 
 
 class ShadowRenderer

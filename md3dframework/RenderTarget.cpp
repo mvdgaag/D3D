@@ -10,14 +10,14 @@ void RenderTarget::Init(int inWidth, int inHeight, int inMipLevels, unsigned int
 	CleanUp();
 
 	unsigned int bind_flags = (D3D11_BIND_RENDER_TARGET | D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE);
-	Texture* texture = new Texture();
+	pTexture texture = std::make_shared<Texture>();
 	texture->Init(inWidth, inHeight, inMipLevels, inFormat, bind_flags);
 
 	Init(texture);
 }
 
 
-void RenderTarget::Init(Texture* inTexture)
+void RenderTarget::Init(pTexture inTexture)
 {
 	CleanUp();
 
@@ -68,6 +68,5 @@ void RenderTarget::CleanUp()
 		mRenderTargetViews = nullptr;
 	}
 
-	if (mTexture)
-		delete mTexture;
+	mTexture = nullptr;
 }

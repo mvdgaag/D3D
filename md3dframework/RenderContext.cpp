@@ -156,10 +156,10 @@ HRESULT RenderContext::Init(Window* inWindow)
 	if (FAILED(hr))
 		return hr;
 	
-	mBackBuffer = new Texture();
+	mBackBuffer = std::make_shared<Texture>();
 	mBackBuffer->Init(pBackBuffer);
 
-	mOutputRenderTarget = new RenderTarget();
+	mOutputRenderTarget = std::make_shared<RenderTarget>();
 	mOutputRenderTarget->Init(mBackBuffer);
 
 	// setup rasterizer
@@ -201,7 +201,6 @@ HRESULT RenderContext::Init(Window* inWindow)
 
 void RenderContext::CleanUp()
 {
-	delete mOutputRenderTarget;
 	mOutputRenderTarget = nullptr;
 //	delete mBackBuffer; Already deleted by mOutputRenderTarget
 
@@ -238,14 +237,14 @@ void RenderContext::SetMarker(std::string inMarker)
 }
 
 
-void RenderContext::ClearDepthStencil(DepthStencilTarget* inDepthStencilTarget, float inClearDepth, unsigned char inClearStencil)
+void RenderContext::ClearDepthStencil(pDepthStencilTarget inDepthStencilTarget, float inClearDepth, unsigned char inClearStencil)
 {
 	ID3D11DepthStencilView* dsv = inDepthStencilTarget->mDepthStencilView;
 	mImmediateContext->ClearDepthStencilView(dsv, 1, inClearDepth, inClearStencil); // TODO: now just depth (low bit)
 }
 
 
-void RenderContext::ClearRenderTarget(RenderTarget* inRenderTarget, float4 inColor)
+void RenderContext::ClearRenderTarget(pRenderTarget inRenderTarget, float4 inColor)
 {
 	for (int i = 0; i < inRenderTarget->mTexture->GetMipLevels(); i++)
 	{
@@ -256,7 +255,7 @@ void RenderContext::ClearRenderTarget(RenderTarget* inRenderTarget, float4 inCol
 
 
 #define MAX_RENDER_TARGETS (8)
-void RenderContext::SetRenderTargets(unsigned int inNumTargets, RenderTarget** inTargets, DepthStencilTarget* inDepthStencilTarget)
+void RenderContext::SetRenderTargets(unsigned int inNumTargets, pRenderTarget* inTargets, pDepthStencilTarget inDepthStencilTarget)
 {
 	ID3D11RenderTargetView* targets[MAX_RENDER_TARGETS];
 	for (int i = 0; i < inNumTargets; i++)
@@ -272,13 +271,13 @@ void RenderContext::SetRenderTargets(unsigned int inNumTargets, RenderTarget** i
 }
 
 
-void RenderContext::UpdateSubResource(ConstantBuffer* inConstantBuffer, const void* inData)
+void RenderContext::UpdateSubResource(pConstantBuffer inConstantBuffer, const void* inData)
 {
 	mImmediateContext->UpdateSubresource(inConstantBuffer->mBuffer, 0, nullptr, inData, 0, 0);
 }
 
 
-void RenderContext::DrawMesh(Mesh* inMesh)
+void RenderContext::DrawMesh(pMesh inMesh)
 {
 	ID3D11Buffer* mesh_verts = inMesh->mVertexBuffer;
 	ID3D11Buffer* mesh_indices = inMesh->mIndexBuffer;
@@ -303,7 +302,7 @@ void RenderContext::SwapBuffers()
 }
 
 
-void RenderContext::CSSetShader(ComputeShader* inComputeShader)
+void RenderContext::CSSetShader(pComputeShader inComputeShader)
 {
 	if (inComputeShader != nullptr)
 		mImmediateContext->CSSetShader(inComputeShader->mHandle, NULL, 0);
@@ -312,7 +311,7 @@ void RenderContext::CSSetShader(ComputeShader* inComputeShader)
 }
 
 
-void RenderContext::CSSetTexture(Texture* inTexture, int idx)
+void RenderContext::CSSetTexture(pTexture inTexture, int idx)
 {
 	if (mCSBoundTextures[idx] == inTexture)
 		return;
@@ -327,7 +326,7 @@ void RenderContext::CSSetTexture(Texture* inTexture, int idx)
 }
 
 
-void RenderContext::CSSetSampler(Sampler* inSampler, int idx)
+void RenderContext::CSSetSampler(pSampler inSampler, int idx)
 {
 	if (mCSBoundSamplers[idx] == inSampler)
 		return;
@@ -342,14 +341,14 @@ void RenderContext::CSSetSampler(Sampler* inSampler, int idx)
 }
 
 
-void RenderContext::CSSetTextureAndSampler(Texture* inTexture, Sampler* inSampler, int idx)
+void RenderContext::CSSetTextureAndSampler(pTexture inTexture, pSampler inSampler, int idx)
 {
 	CSSetTexture(inTexture, idx);
 	CSSetSampler(inSampler, idx);
 }
 
 
-void RenderContext::CSSetConstantBuffer(ConstantBuffer* inConstantBuffer, int idx)
+void RenderContext::CSSetConstantBuffer(pConstantBuffer inConstantBuffer, int idx)
 {
 	if (mCSBoundConstantBuffers[idx] == inConstantBuffer)
 		return;
@@ -364,7 +363,7 @@ void RenderContext::CSSetConstantBuffer(ConstantBuffer* inConstantBuffer, int id
 }
 
 
-void RenderContext::CSSetRWTexture(RenderTarget* inRenderTarget, int idx)
+void RenderContext::CSSetRWTexture(pRenderTarget inRenderTarget, int idx)
 {
 	if (mCSBoundRenderTargets[idx] == inRenderTarget)
 		return;
@@ -386,7 +385,7 @@ void RenderContext::Dispatch(unsigned int inX, unsigned int inY, unsigned int in
 }
 
 
-void RenderContext::PSSetShader(PixelShader* inPixelShader)
+void RenderContext::PSSetShader(pPixelShader inPixelShader)
 {
 	if (inPixelShader != nullptr)
 		mImmediateContext->PSSetShader(inPixelShader->mHandle, NULL, 0);
@@ -395,7 +394,7 @@ void RenderContext::PSSetShader(PixelShader* inPixelShader)
 }
 
 
-void RenderContext::PSSetTexture(Texture* inTexture, int idx)
+void RenderContext::PSSetTexture(pTexture inTexture, int idx)
 {
 	if (mPSBoundTextures[idx] == inTexture)
 		return;
@@ -410,7 +409,7 @@ void RenderContext::PSSetTexture(Texture* inTexture, int idx)
 }
 
 
-void RenderContext::PSSetSampler(Sampler* inSampler, int idx)
+void RenderContext::PSSetSampler(pSampler inSampler, int idx)
 {
 	if (mPSBoundSamplers[idx] == inSampler)
 		return;
@@ -425,14 +424,14 @@ void RenderContext::PSSetSampler(Sampler* inSampler, int idx)
 }
 
 
-void RenderContext::PSSetTextureAndSampler(Texture* inTexture, Sampler* inSampler, int idx)
+void RenderContext::PSSetTextureAndSampler(pTexture inTexture, pSampler inSampler, int idx)
 {
 	PSSetTexture(inTexture, idx);
 	PSSetSampler(inSampler, idx);
 }
 
 
-void RenderContext::PSSetConstantBuffer(ConstantBuffer* inConstantBuffer, int idx)
+void RenderContext::PSSetConstantBuffer(pConstantBuffer inConstantBuffer, int idx)
 {
 	if (mPSBoundConstantBuffers[idx] == inConstantBuffer)
 		return;
@@ -447,7 +446,7 @@ void RenderContext::PSSetConstantBuffer(ConstantBuffer* inConstantBuffer, int id
 }
 
 
-void RenderContext::VSSetShader(VertexShader* inVertexShader)
+void RenderContext::VSSetShader(pVertexShader inVertexShader)
 {
 	if (inVertexShader != nullptr)
 	{
@@ -459,7 +458,7 @@ void RenderContext::VSSetShader(VertexShader* inVertexShader)
 }
 
 
-void RenderContext::VSSetTexture(Texture* inTexture, int idx)
+void RenderContext::VSSetTexture(pTexture inTexture, int idx)
 {
 	if (mVSBoundTextures[idx] == inTexture)
 		return;
@@ -474,7 +473,7 @@ void RenderContext::VSSetTexture(Texture* inTexture, int idx)
 }
 
 
-void RenderContext::VSSetSampler(Sampler* inSampler, int idx)
+void RenderContext::VSSetSampler(pSampler inSampler, int idx)
 {
 	if (mVSBoundSamplers[idx] == inSampler)
 		return;
@@ -489,14 +488,14 @@ void RenderContext::VSSetSampler(Sampler* inSampler, int idx)
 }
 
 
-void RenderContext::VSSetTextureAndSampler(Texture* inTexture, Sampler* inSampler, int idx)
+void RenderContext::VSSetTextureAndSampler(pTexture inTexture, pSampler inSampler, int idx)
 {
 	VSSetTexture(inTexture, idx);
 	VSSetSampler(inSampler, idx);
 }
 
 
-void RenderContext::VSSetConstantBuffer(ConstantBuffer* inConstantBuffer, int idx)
+void RenderContext::VSSetConstantBuffer(pConstantBuffer inConstantBuffer, int idx)
 {
 	if (mVSBoundConstantBuffers[idx] == inConstantBuffer)
 		return;

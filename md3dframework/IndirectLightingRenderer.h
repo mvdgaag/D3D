@@ -1,12 +1,12 @@
 #pragma once
-#include "LinearAlgebra.h"
+#include "GAAGCommon.h"
 
 
 // predeclarations
-class ComputeShader;
-class RenderTarget;
-class Texture;
-class ConstantBuffer;
+PREDEFINE(ComputeShader, pComputeShader);
+PREDEFINE(RenderTarget, pRenderTarget);
+PREDEFINE(Texture, pTexture);
+PREDEFINE(ConstantBuffer, pConstantBuffer);
 
 
 class IndirectLightingRenderer
@@ -17,7 +17,7 @@ public:
 	
 	void Init();
 	void CleanUp();
-	void Render(Texture* inSource, Texture* inNormal, Texture* inLinearDepth, RenderTarget* inTarget);
+	void Render(pTexture inSource, pTexture inNormal, pTexture inLinearDepth, pRenderTarget inTarget);
 
 private:
 	struct ConstantBufferData
@@ -27,7 +27,7 @@ private:
 		float4 frameData;
 	};
 	ConstantBufferData mConstantBufferData;
-	ConstantBuffer* mConstantBuffer = nullptr;
-	ComputeShader* mShader = nullptr;
+	pConstantBuffer mConstantBuffer = nullptr;
+	pComputeShader mShader = nullptr;
 	bool mInitialized = false;
 };

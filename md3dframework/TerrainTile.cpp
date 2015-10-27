@@ -8,18 +8,18 @@
 #include "ConstantBuffer.h"
 
 
-void TerrainTile::Init(float3 inPosition, float3 inScale, Texture* inHeightMap, int inWidthSegments, int inHeightSegments, Material* inMaterial)
+void TerrainTile::Init(float3 inPosition, float3 inScale, pTexture inHeightMap, int inWidthSegments, int inHeightSegments, pMaterial inMaterial)
 {
 	CleanUp();
 
 	mHeightMap = inHeightMap;
 	
-	Mesh* mesh = new Mesh();
+	pMesh mesh = std::make_shared<Mesh>();
 	mesh->InitPlane(inWidthSegments, inHeightSegments, inScale.XY());
 	
 	DrawableObject::Init(mesh, inMaterial);
 
-	mConstantBuffer = new ConstantBuffer();
+	mConstantBuffer = std::make_shared<ConstantBuffer>();
 	mConstantBuffer->Init(sizeof(mConstantBufferData));
 	
 	mConstantBufferData.widthSegments = inWidthSegments;
@@ -34,12 +34,7 @@ void TerrainTile::Init(float3 inPosition, float3 inScale, Texture* inHeightMap, 
 void TerrainTile::CleanUp()
 {
 	DrawableObject::CleanUp();
-
-	delete mHeightMap;
 	mHeightMap = nullptr;
-
-	delete mConstantBuffer;
 	mConstantBuffer = nullptr;
-	
 	mInitialized = false;
 }

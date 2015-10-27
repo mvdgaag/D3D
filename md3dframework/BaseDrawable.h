@@ -1,7 +1,7 @@
 #pragma once
 #include <unordered_map>
 #include <assert.h>
-#include "LinearAlgebra.h"
+#include "GAAGCommon.h"
 
 
 class BaseDrawable

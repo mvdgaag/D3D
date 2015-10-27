@@ -1,10 +1,10 @@
 #pragma once
 #include "DrawableObject.h"
 
-class Mesh;
-class Material;
-class Texture;
-class ConstantBuffer;
+PREDEFINE(Mesh, pMesh);
+PREDEFINE(Material, pMaterial);
+PREDEFINE(Texture, pTexture);
+PREDEFINE(ConstantBuffer, pConstantBuffer);
 
 
 class TerrainTile : public DrawableObject
@@ -13,7 +13,7 @@ public:
 	TerrainTile() : DrawableObject() { mInitialized = false; }
 	~TerrainTile() {};
 
-	void Init(float3 inPosition, float3 inScale, Texture* inHeightMap, int inWidthSegments, int inHeightSegments, Material* inMaterial);
+	void Init(float3 inPosition, float3 inScale, pTexture inHeightMap, int inWidthSegments, int inHeightSegments, pMaterial inMaterial);
 	void CleanUp();
 	void Draw();
 
@@ -27,8 +27,8 @@ private:
 	};
 
 	ConstantBufferData	mConstantBufferData;
-	ConstantBuffer*		mConstantBuffer		= nullptr;
-	Texture*			mHeightMap			= nullptr;
+	pConstantBuffer		mConstantBuffer		= nullptr;
+	pTexture			mHeightMap			= nullptr;
 	bool				mInitialized		= false;
 };
 

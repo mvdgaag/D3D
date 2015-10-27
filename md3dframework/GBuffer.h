@@ -1,11 +1,10 @@
 #pragma once
-#include <vector>
+#include "GAAGCommon.h"
+#include "RenderTarget.h"
 
-
-// predefinitions
-class Texture;
-class RenderTarget;
-class DepthStencilTarget;
+PREDEFINE(GBuffer, pGBuffer);
+PREDEFINE(Texture, pTexture);
+PREDEFINE(DepthStencilTarget, pDepthStencilTarget);
 
 
 class GBuffer
@@ -29,14 +28,14 @@ public:
 	bool IsInitialized()								{ return mInitialized; }
 	int GetWidth()										{ return mWidth; }
 	int GetHeight()										{ return mHeight; }
-	RenderTarget* GetRenderTarget(GBufferType inType)	{ return mRenderTargets[inType]; }
-	RenderTarget** GetRenderTargets()					{ return mRenderTargets; }
-	DepthStencilTarget* GetDepthStencilTarget()			{ return mDepthStencilTarget; }
-	Texture* GetTexture(GBufferType inType);
+	pRenderTarget GetRenderTarget(GBufferType inType)	{ return mRenderTargets[inType]; }
+	pRenderTarget* GetRenderTargets()					{ return mRenderTargets; }
+	pDepthStencilTarget GetDepthStencilTarget()			{ return mDepthStencilTarget; }
+	pTexture GetTexture(GBufferType inType)				{ return mRenderTargets[inType]->GetTexture(); }
 
 private:
-	RenderTarget**			mRenderTargets = nullptr;
-	DepthStencilTarget*		mDepthStencilTarget = nullptr;
+	pRenderTarget			mRenderTargets[NUM_RENDER_TARGETS];
+	pDepthStencilTarget		mDepthStencilTarget = nullptr;
 
 	int mWidth;
 	int mHeight;

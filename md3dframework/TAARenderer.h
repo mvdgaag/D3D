@@ -1,11 +1,11 @@
 #pragma once
-#include "LinearAlgebra.h"
+#include "GAAGCommon.h"
 
 // predeclarations
-class ConstantBuffer;
-class ComputeShader;
-class RenderTarget;
-class Texture;
+PREDEFINE(ConstantBuffer, pConstantBuffer);
+PREDEFINE(ComputeShader, pComputeShader);
+PREDEFINE(RenderTarget, pRenderTarget);
+PREDEFINE(Texture, pTexture);
 
 
 class TAARenderer
@@ -16,7 +16,7 @@ public:
 
 	void Init();
 	void CleanUp();
-	void Render(Texture* inSource, RenderTarget* inHistory, Texture* inMotionVectors, RenderTarget* inTarget);
+	void Render(pTexture inSource, pRenderTarget inHistory, pTexture inMotionVectors, pRenderTarget inTarget);
 	
 	static float2 GetJitterOffset(int inFrameID);
 
@@ -27,7 +27,7 @@ private:
 		float2 mTargetSize;
 	};
 	ConstantBufferData mConstantBufferData;
-	ConstantBuffer* mConstantBuffer;
-	ComputeShader* mShader = nullptr;
+	pConstantBuffer mConstantBuffer;
+	pComputeShader mShader = nullptr;
 	bool mInitialized = false;
 };

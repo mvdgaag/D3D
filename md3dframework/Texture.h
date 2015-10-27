@@ -11,8 +11,8 @@ PREDEFINE(Texture, pTexture);
 class Texture : public BaseResource
 {
 	friend class RenderContext;
-	friend class RenderTarget;
-	friend class DepthStencilTarget;
+	friend PREDEFINE(RenderTarget, pRenderTarget);
+	friend PREDEFINE(DepthStencilTarget, pDepthStencilTarget);
 
 public:
 	Texture() : BaseResource() {};

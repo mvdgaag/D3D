@@ -7,7 +7,7 @@
 #include "ConstantBuffer.h"
 
 
-void PostProcessRenderer::Render(Texture* inSource, Texture* inMotionVectors, RenderTarget* inTarget)
+void PostProcessRenderer::Render(pTexture inSource, pTexture inMotionVectors, pRenderTarget inTarget)
 {
 	assert(mInitialized == true);
 
@@ -40,10 +40,10 @@ void PostProcessRenderer::Init()
 {
 	CleanUp();
 	
-	mShader = new ComputeShader();
+	mShader = std::make_shared<ComputeShader>();
 	mShader->InitFromFile("../md3dframework/Shaders/PostProcessCompute.hlsl");
 
-	mConstantBuffer = new ConstantBuffer();
+	mConstantBuffer = std::make_shared<ConstantBuffer>();
 	mConstantBuffer->Init(sizeof(ConstantBufferData));
 
 	mInitialized = true;
@@ -52,12 +52,8 @@ void PostProcessRenderer::Init()
 
 void PostProcessRenderer::CleanUp()
 {
-	delete mShader;
 	mShader = nullptr;
-	
-	delete mConstantBuffer;
 	mConstantBuffer = nullptr;
-
 	mInitialized = false;
 }
 

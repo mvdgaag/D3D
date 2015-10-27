@@ -1,10 +1,10 @@
 #pragma once
-
+#include "GAAGCommon.h"
 
 // predeclarations
-class ComputeShader;
-class RenderTarget;
-class Texture;
+PREDEFINE(ComputeShader, pComputeShader);
+PREDEFINE(RenderTarget, pRenderTarget);
+PREDEFINE(Texture, pTexture);
 
 
 class ReflectionRenderer
@@ -15,10 +15,10 @@ public:
 
 	void Init();
 	void CleanUp();
-	void Render(Texture* inSource, RenderTarget* inTarget);
+	void Render(pTexture inSource, pRenderTarget inTarget);
 
 private:
-	ComputeShader* mShader = nullptr;
+	pComputeShader mShader = nullptr;
 	bool mInitialized = false;
 };
 

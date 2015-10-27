@@ -1,10 +1,10 @@
 #pragma once
-
+#include "GAAGCommon.h"
 
 // predeclarations
-class ComputeShader;
-class RenderTarget;
-class Texture;
+PREDEFINE(ComputeShader, pComputeShader);
+PREDEFINE(RenderTarget, pRenderTarget);
+PREDEFINE(Texture, pTexture);
 
 
 class LightComposeRenderer
@@ -15,9 +15,9 @@ public:
 
 	void Init();
 	void CleanUp();
-	void Render(Texture* inDirectDiffuse, Texture* inDirectSpecular, Texture* inIndirect, Texture* inReflections, RenderTarget* inTarget);
+	void Render(pTexture inDirectDiffuse, pTexture inDirectSpecular, pTexture inIndirect, pTexture inReflections, pRenderTarget inTarget);
 
 private:
-	ComputeShader* mShader = nullptr;
+	pComputeShader mShader = nullptr;
 	bool mInitialized = false;
 };

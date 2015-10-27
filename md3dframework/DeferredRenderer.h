@@ -1,23 +1,22 @@
 #pragma once
 #include <vector>
-#include "LinearAlgebra.h"
+#include "GAAGCommon.h"
+#include "ShadowRenderer.h"
+#include "DirectLightingRenderer.h"
+#include "DepthPyramidRenderer.h"
+#include "IndirectLightingRenderer.h"
+#include "ReflectionRenderer.h"
+#include "PostProcessRenderer.h"
+#include "LightComposeRenderer.h"
+#include "TAARenderer.h"
+#include "PostProcessRenderer.h"
 
-
-// predefinitions
-class GBuffer;
-class ShadowRenderer;
-class DirectLightingRenderer;
-class DepthPyramidRenderer;
-class IndirectLightingRenderer;
-class ReflectionRenderer;
-class PostProcessRenderer;
-class LightComposeRenderer;
-class TAARenderer;
-class PostProcessRenderer;
 class DrawableObject;
-class RenderTarget;
-class Texture;
-class ConstantBuffer;
+PREDEFINE(GBuffer, pGBuffer);
+PREDEFINE(DeferredRenderer, pDeferredRenderer);
+PREDEFINE(RenderTarget, pRenderTarget);
+PREDEFINE(Texture, pTexture);
+PREDEFINE(ConstantBuffer, pConstantBuffer);
 
 
 #define MAX_LIGHTS 64
@@ -33,18 +32,18 @@ public:
 	void CleanUp();
 	void Render(std::vector<DrawableObject*> inDrawList);
 
-	GBuffer* GetGBuffer() { return mGBuffer; }
-	RenderTarget* GetDepthPyramid() { return mDepthPyramid; }
-	RenderTarget* GetDirectLightingDiffuse() { return mDirectLightingDiffuse; }
-	RenderTarget* GetDirectLightingSpecular() { return mDirectLightingSpecular; }
-	RenderTarget* GetIndirectLighting() { return mIndirectLighting; }
-	RenderTarget* GetReflections() { return mReflections; }
-	RenderTarget* GetLightComposed() { return mLightComposed; }
-	RenderTarget* GetAntiAliased() { return mAntiAliased; }
-	RenderTarget* GetPostProcessed() { return mPostProcessed; }
+	pGBuffer GetGBuffer() { return mGBuffer; }
+	pRenderTarget GetDepthPyramid() { return mDepthPyramid; }
+	pRenderTarget GetDirectLightingDiffuse() { return mDirectLightingDiffuse; }
+	pRenderTarget GetDirectLightingSpecular() { return mDirectLightingSpecular; }
+	pRenderTarget GetIndirectLighting() { return mIndirectLighting; }
+	pRenderTarget GetReflections() { return mReflections; }
+	pRenderTarget GetLightComposed() { return mLightComposed; }
+	pRenderTarget GetAntiAliased() { return mAntiAliased; }
+	pRenderTarget GetPostProcessed() { return mPostProcessed; }
 
-	ConstantBuffer* GetConstantBufferEveryFrame() { return mConstantBufferEveryFrame; }
-	ConstantBuffer* GetConstantBufferOnDemand() { return mConstantBufferOnDemand; }
+	pConstantBuffer GetConstantBufferEveryFrame() { return mConstantBufferEveryFrame; }
+	pConstantBuffer GetConstantBufferOnDemand() { return mConstantBufferOnDemand; }
 
 	// TODO:
 	void AddLights() {}
@@ -55,17 +54,14 @@ private:
 	void LightingPass();
 	void PostProcessPass();
 
-	ShadowRenderer*				mShadowRenderer = nullptr;
-	DirectLightingRenderer*		mDirectLightingRenderer = nullptr;
-	DepthPyramidRenderer*		mDepthPyramidRenderer = nullptr;
-	IndirectLightingRenderer*	mIndirectLightingRenderer = nullptr;
-	ReflectionRenderer*			mReflectionRenderer = nullptr;
-	LightComposeRenderer*		mLightComposeRenderer = nullptr;
-	TAARenderer*				mTAARenderer = nullptr;
-	PostProcessRenderer*		mPostProcessRenderer = nullptr;
-
-	ConstantBuffer*				mConstantBufferOnDemand = nullptr;
-	ConstantBuffer*				mConstantBufferEveryFrame = nullptr;
+	ShadowRenderer				mShadowRenderer;
+	DirectLightingRenderer		mDirectLightingRenderer;
+	DepthPyramidRenderer		mDepthPyramidRenderer;
+	IndirectLightingRenderer	mIndirectLightingRenderer;
+	ReflectionRenderer			mReflectionRenderer;
+	LightComposeRenderer		mLightComposeRenderer;
+	TAARenderer					mTAARenderer;
+	PostProcessRenderer			mPostProcessRenderer;
 	
 	struct ConstantDataEveryFrame
 	{
@@ -81,16 +77,18 @@ private:
 		float4 lightColors[MAX_LIGHTS];
 	};
 	
-	GBuffer* mGBuffer = nullptr;
-	RenderTarget* mDepthPyramid = nullptr;
-	RenderTarget* mDirectLightingDiffuse = nullptr;
-	RenderTarget* mDirectLightingSpecular = nullptr;
-	RenderTarget* mIndirectLighting = nullptr;
-	RenderTarget* mReflections = nullptr;
-	RenderTarget* mLightComposed = nullptr;
-	RenderTarget* mAntiAliased = nullptr;
-	RenderTarget* mAAHistoryFrame = nullptr;
-	RenderTarget* mPostProcessed = nullptr;
+	pGBuffer			mGBuffer = nullptr;
+	pRenderTarget		mDepthPyramid = nullptr;
+	pRenderTarget		mDirectLightingDiffuse = nullptr;
+	pRenderTarget		mDirectLightingSpecular = nullptr;
+	pRenderTarget		mIndirectLighting = nullptr;
+	pRenderTarget		mReflections = nullptr;
+	pRenderTarget		mLightComposed = nullptr;
+	pRenderTarget		mAntiAliased = nullptr;
+	pRenderTarget		mAAHistoryFrame = nullptr;
+	pRenderTarget		mPostProcessed = nullptr;
+	pConstantBuffer		mConstantBufferOnDemand = nullptr;
+	pConstantBuffer		mConstantBufferEveryFrame = nullptr;
 
 	bool mInitialized = false;
 };

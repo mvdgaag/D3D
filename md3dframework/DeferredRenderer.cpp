@@ -26,64 +26,49 @@ void DeferredRenderer::Init(int inWidth, int inHeight)
 
 	CleanUp();
 
-	mGBuffer = new GBuffer();
+	mGBuffer = std::make_shared<GBuffer>();
 	mGBuffer->Init(inWidth, inHeight);
 
-	mDepthPyramid = new RenderTarget();
+	mDepthPyramid = std::make_shared<RenderTarget>();
 	mDepthPyramid->Init(inWidth / 2, inHeight / 2, 3, DXGI_FORMAT_R16G16_FLOAT);
 	
-	mDirectLightingDiffuse = new RenderTarget();
+	mDirectLightingDiffuse = std::make_shared<RenderTarget>();
 	mDirectLightingDiffuse->Init(inWidth, inHeight, 1, DXGI_FORMAT_R16G16B16A16_FLOAT);
 
-	mDirectLightingSpecular = new RenderTarget();
+	mDirectLightingSpecular = std::make_shared<RenderTarget>();
 	mDirectLightingSpecular->Init(inWidth, inHeight, 1, DXGI_FORMAT_R16G16B16A16_FLOAT);
 
-	mIndirectLighting = new RenderTarget();
+	mIndirectLighting = std::make_shared<RenderTarget>();
 	mIndirectLighting->Init(inWidth, inHeight, 1, DXGI_FORMAT_R16G16B16A16_FLOAT);
 
-	mReflections = new RenderTarget();
+	mReflections = std::make_shared<RenderTarget>();
 	mReflections->Init(inWidth, inHeight, 1, DXGI_FORMAT_R16G16B16A16_FLOAT);
 
-	mLightComposed = new RenderTarget();
+	mLightComposed = std::make_shared<RenderTarget>();
 	mLightComposed->Init(inWidth, inHeight, 1, DXGI_FORMAT_R16G16B16A16_FLOAT);
 
-	mAntiAliased = new RenderTarget();
+	mAntiAliased = std::make_shared<RenderTarget>();
 	mAntiAliased->Init(inWidth, inHeight, 1, DXGI_FORMAT_R16G16B16A16_FLOAT);
 
-	mAAHistoryFrame = new RenderTarget();
+	mAAHistoryFrame = std::make_shared<RenderTarget>();
 	mAAHistoryFrame->Init(inWidth, inHeight, 1, DXGI_FORMAT_R16G16B16A16_FLOAT);
 
-	mPostProcessed = new RenderTarget();
+	mPostProcessed = std::make_shared<RenderTarget>();
 	mPostProcessed->Init(inWidth, inHeight, 1, DXGI_FORMAT_R16G16B16A16_FLOAT);
 
-	mShadowRenderer = new ShadowRenderer();
-	mShadowRenderer->Init();
-
-	mDirectLightingRenderer = new DirectLightingRenderer();
-	mDirectLightingRenderer->Init();
-
-	mDepthPyramidRenderer = new DepthPyramidRenderer();
-	mDepthPyramidRenderer->Init(mGBuffer->GetWidth(), mGBuffer->GetHeight());
-
-	mIndirectLightingRenderer = new IndirectLightingRenderer();
-	mIndirectLightingRenderer->Init();
-
-	mReflectionRenderer = new ReflectionRenderer();
-	mReflectionRenderer->Init();
-
-	mLightComposeRenderer = new LightComposeRenderer();
-	mLightComposeRenderer->Init();
-
-	mTAARenderer = new TAARenderer();
-	mTAARenderer->Init();
-
-	mPostProcessRenderer = new PostProcessRenderer();
-	mPostProcessRenderer->Init();
-
-	mConstantBufferEveryFrame = new ConstantBuffer();
+	mShadowRenderer.Init();
+	mDirectLightingRenderer.Init();
+	mDepthPyramidRenderer.Init();
+	mIndirectLightingRenderer.Init();
+	mReflectionRenderer.Init();
+	mLightComposeRenderer.Init();
+	mTAARenderer.Init();
+	mPostProcessRenderer.Init();
+	
+	mConstantBufferEveryFrame = std::make_shared<ConstantBuffer>();
 	mConstantBufferEveryFrame->Init(sizeof(ConstantDataEveryFrame));
 
-	mConstantBufferOnDemand = new ConstantBuffer();
+	mConstantBufferOnDemand = std::make_shared<ConstantBuffer>();
 	mConstantBufferOnDemand->Init(sizeof(ConstantDataOnDemand));
 
 	mInitialized = true;	
@@ -92,47 +77,26 @@ void DeferredRenderer::Init(int inWidth, int inHeight)
 
 void DeferredRenderer::CleanUp()
 {
-	delete mGBuffer;
-	mGBuffer = NULL;
+	mGBuffer = nullptr;
+	mDepthPyramid = nullptr;
+	mDirectLightingDiffuse = nullptr;
+	mDirectLightingSpecular = nullptr;
+	mIndirectLighting = nullptr;
+	mReflections = nullptr;
+	mLightComposed = nullptr;
+	mAntiAliased = nullptr;
+	mPostProcessed = nullptr;
+	mConstantBufferEveryFrame = nullptr;
+	mConstantBufferOnDemand = nullptr;
 
-	delete mDepthPyramid;
-	mDepthPyramid = NULL;
-	delete mDirectLightingDiffuse;
-	mDirectLightingDiffuse = NULL;
-	delete mDirectLightingSpecular;
-	mDirectLightingSpecular = NULL;
-	delete mIndirectLighting;
-	mIndirectLighting = NULL;
-	delete mReflections;
-	mReflections = NULL;
-	delete mLightComposed;
-	mLightComposed = NULL;
-	delete mAntiAliased;
-	mAntiAliased = NULL;
-	delete mPostProcessed;
-	mPostProcessed = NULL;
-
-	delete mShadowRenderer;
-	mShadowRenderer = NULL;
-	delete mDirectLightingRenderer;
-	mDirectLightingRenderer = NULL;
-	delete mDepthPyramidRenderer;
-	mDepthPyramidRenderer = NULL;
-	delete mIndirectLightingRenderer;
-	mIndirectLightingRenderer = NULL;
-	delete mReflectionRenderer;
-	mReflectionRenderer = NULL;
-	delete mLightComposeRenderer;
-	mLightComposeRenderer = NULL;
-	delete mTAARenderer;
-	mTAARenderer = NULL;
-	delete mPostProcessRenderer;
-	mPostProcessRenderer = NULL;
-
-	delete mConstantBufferEveryFrame;
-	mConstantBufferEveryFrame = NULL;
-	delete mConstantBufferOnDemand;
-	mConstantBufferOnDemand = NULL;
+	mShadowRenderer.CleanUp();
+	mDirectLightingRenderer.CleanUp();
+	mDepthPyramidRenderer.CleanUp();
+	mIndirectLightingRenderer.CleanUp();
+	mReflectionRenderer.CleanUp();
+	mLightComposeRenderer.CleanUp();
+	mTAARenderer.CleanUp();
+	mPostProcessRenderer.CleanUp();
 }
 
 
@@ -197,7 +161,7 @@ void DeferredRenderer::GeometryPass(std::vector<DrawableObject*> inDrawList)
 	theRenderContext.Flush();
 
 	// clear render targets
-	RenderTarget* null_targets[] = { NULL, NULL, NULL, NULL, NULL };
+	pRenderTarget null_targets[] = { NULL, NULL, NULL, NULL, NULL };
 	theRenderContext.SetRenderTargets(5, null_targets, NULL);
 	theRenderContext.EndEvent();
 }
@@ -208,23 +172,23 @@ void DeferredRenderer::LightingPass()
 	theRenderContext.BeginEvent("Lighting Pass");
 	
 	theRenderContext.SetMarker("Shadow Renderer");
-	//mShadowRenderer->Render();
+	//mShadowRenderer.Render();
 	
 	theRenderContext.SetMarker("Direct Lighting Renderer");
-	mDirectLightingRenderer->Render(mGBuffer, mDirectLightingDiffuse, mDirectLightingSpecular);
+	mDirectLightingRenderer.Render(mGBuffer, mDirectLightingDiffuse, mDirectLightingSpecular);
 	
 	theRenderContext.SetMarker("Depth Pyramid Renderer");
-	//mDepthPyramidRenderer->Render(mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), mDepthPyramid);
+	//mDepthPyramidRenderer.Render(mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), mDepthPyramid);
 	
 	theRenderContext.SetMarker("Indirect Lighting Renderer");
-	mIndirectLightingRenderer->Render(mDirectLightingDiffuse->GetTexture(), mGBuffer->GetTexture(GBuffer::NORMAL), 
+	mIndirectLightingRenderer.Render(mDirectLightingDiffuse->GetTexture(), mGBuffer->GetTexture(GBuffer::NORMAL), 
 		mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), mIndirectLighting);
 	
 	theRenderContext.SetMarker("Reflection Renderer");
-	mReflectionRenderer->Render(mIndirectLighting->GetTexture(), mReflections);
+	mReflectionRenderer.Render(mIndirectLighting->GetTexture(), mReflections);
 
 	theRenderContext.SetMarker("Light Compose Renderer");
-	mLightComposeRenderer->Render(	mDirectLightingDiffuse->GetTexture(),
+	mLightComposeRenderer.Render(	mDirectLightingDiffuse->GetTexture(),
 									mDirectLightingSpecular->GetTexture(),
 									mIndirectLighting->GetTexture(),
 									mReflections->GetTexture(),
@@ -236,7 +200,7 @@ void DeferredRenderer::LightingPass()
 void DeferredRenderer::PostProcessPass()
 {
 	theRenderContext.BeginEvent("Post Process Pass");
-	mTAARenderer->Render(mLightComposed->GetTexture(), mAAHistoryFrame, mGBuffer->GetTexture(GBuffer::MOTION_VECTORS), mAntiAliased);
-	mPostProcessRenderer->Render(mAntiAliased->GetTexture(), mGBuffer->GetRenderTarget(GBuffer::MOTION_VECTORS)->GetTexture(), mPostProcessed);
+	mTAARenderer.Render(mLightComposed->GetTexture(), mAAHistoryFrame, mGBuffer->GetTexture(GBuffer::MOTION_VECTORS), mAntiAliased);
+	mPostProcessRenderer.Render(mAntiAliased->GetTexture(), mGBuffer->GetRenderTarget(GBuffer::MOTION_VECTORS)->GetTexture(), mPostProcessed);
 	theRenderContext.EndEvent();
 }

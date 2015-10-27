@@ -6,7 +6,7 @@
 #include "RenderTarget.h"
 
 
-void ReflectionRenderer::Render(Texture* inSource, RenderTarget* inTarget)
+void ReflectionRenderer::Render(pTexture inSource, pRenderTarget inTarget)
 {
 	assert(mInitialized == true);
 
@@ -32,7 +32,7 @@ void ReflectionRenderer::Render(Texture* inSource, RenderTarget* inTarget)
 void ReflectionRenderer::Init()
 {
 	CleanUp();
-	mShader = new ComputeShader();
+	mShader = std::make_shared<ComputeShader>();
 	mShader->InitFromFile("../md3dframework/Shaders/ReflectionCompute.hlsl");
 	mInitialized = true;
 }
@@ -40,11 +40,7 @@ void ReflectionRenderer::Init()
 
 void ReflectionRenderer::CleanUp()
 {
-	if (mShader)
-	{
-		delete mShader;
-		mShader = NULL;
-	}
+	mShader = nullptr;
 	mInitialized = false;
 }
 

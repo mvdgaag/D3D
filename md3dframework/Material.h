@@ -25,20 +25,20 @@ public:
 	void Init();
 	void CleanUp();
 
-	void SetPixelShader(PixelShader* inPixelShader)  { mPixelShader = inPixelShader; }
-	PixelShader* GetPixelShader() { return mPixelShader; }
+	void SetPixelShader(pPixelShader inPixelShader)  { mPixelShader = inPixelShader; }
+	pPixelShader GetPixelShader() { return mPixelShader; }
 
-	void SetVertexShader(VertexShader* inVertexShader)  { mVertexShader = inVertexShader; }
-	VertexShader* GetVertexShader() { return mVertexShader; }
+	void SetVertexShader(pVertexShader inVertexShader)  { mVertexShader = inVertexShader; }
+	pVertexShader GetVertexShader() { return mVertexShader; }
 
-	void SetDiffuseTexture(Texture* inTexture);
-	Texture* GetDiffuseTexture() { return mDiffuseTexture; }
+	void SetDiffuseTexture(pTexture inTexture);
+	pTexture GetDiffuseTexture() { return mDiffuseTexture; }
 	
-	void SetNormalTexture(Texture* inTexture);
-	Texture* GetNormalTexture() { return mNormalTexture; }
+	void SetNormalTexture(pTexture inTexture);
+	pTexture GetNormalTexture() { return mNormalTexture; }
 	
-	void SetSurfaceTexture(Texture* inTexture);
-	Texture* GetSurfaceTexture() { return mSurfaceTexture; }
+	void SetSurfaceTexture(pTexture inTexture);
+	pTexture GetSurfaceTexture() { return mSurfaceTexture; }
 
 	void SetDiffuseValue(float4 inValue);
 	float4 GetDiffuseValue() { return mConstantData.diffuseValue; }
@@ -61,7 +61,7 @@ public:
 	void SetFlags(MaterialFlags inFlags);
 	MaterialFlags GetFlags() { return (MaterialFlags)mConstantData.flags; }
 
-	ConstantBuffer* GetConstantBuffer() { return mConstantBuffer; }
+	pConstantBuffer GetConstantBuffer() { return mConstantBuffer; }
 
 private:
 	void UpdateConstantBuffer();
@@ -77,18 +77,18 @@ private:
 	};
 	ConstantData mConstantData;
 
-	Texture* mDiffuseTexture = nullptr;
-	Sampler* mDiffuseSampler = nullptr;
-	Texture* mEmissiveTexture = nullptr;
-	Sampler* mEmissiveSampler = nullptr;
-	Texture* mNormalTexture = nullptr;
-	Sampler* mNormalSampler = nullptr;
-	Texture* mSurfaceTexture = nullptr; // roughness, reflectivity, metalicity, emissiveness
-	Sampler* mSurfaceSampler = nullptr;
+	pTexture mDiffuseTexture = nullptr;
+	pSampler mDiffuseSampler = nullptr;
+	pTexture mEmissiveTexture = nullptr;
+	pSampler mEmissiveSampler = nullptr;
+	pTexture mNormalTexture = nullptr;
+	pSampler mNormalSampler = nullptr;
+	pTexture mSurfaceTexture = nullptr; // roughness, reflectivity, metalicity, emissiveness
+	pSampler mSurfaceSampler = nullptr;
 
-	PixelShader* mPixelShader = nullptr;
-	VertexShader* mVertexShader = nullptr;
+	pPixelShader mPixelShader = nullptr;
+	pVertexShader mVertexShader = nullptr;
 
-	ConstantBuffer* mConstantBuffer = nullptr;
+	pConstantBuffer mConstantBuffer = nullptr;
 };
 

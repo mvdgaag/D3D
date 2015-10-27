@@ -5,8 +5,8 @@
 struct ID3D11RenderTargetView;
 struct ID3D11UnorderedAccessView;
 
-PREDEFINE(Texture, pTexture);
 PREDEFINE(RenderTarget, pRenderTarget);
+PREDEFINE(Texture, pTexture);
 
 class RenderTarget : public BaseResource
 {
@@ -16,16 +16,14 @@ public:
 	RenderTarget() : BaseResource() {};
 	~RenderTarget() { CleanUp(); }
 
-	Texture*					GetTexture() { return mTexture; }
-
+	pTexture					GetTexture() { return mTexture; }
 	void						Init(int inWidth, int inHeight, int inMipLevels, unsigned int inFormat);
-	void						Init(Texture* inTexture);
+	void						Init(pTexture inTexture);
 	void						CleanUp() override;
-
 	ResourceType				GetResourceType() const override { return ResourceType::RENDER_TARGET; }
 
 protected:
-	Texture* mTexture = nullptr;
+	pTexture mTexture;
 	ID3D11RenderTargetView** mRenderTargetViews = nullptr;
 	ID3D11UnorderedAccessView** mUnorderedAccessViews = nullptr;
 };

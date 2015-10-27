@@ -1,20 +1,20 @@
 #pragma once
-#include "LinearAlgebra.h"
-#include <vector>
+#include "GAAGCommon.h"
 #include <Windows.h>
 
-class DeferredRenderer;
-class PixelShader;
-class VertexShader;
-class ComputeShader;
-class Texture;
-class Sampler;
-class RenderTarget;
-class Mesh;
-class ConstantBuffer;
+PREDEFINE(PixelShader, pPixelShader);
+PREDEFINE(VertexShader, pVertexShader);
+PREDEFINE(ComputeShader, pComputeShader);
+PREDEFINE(Texture, pTexture);
+PREDEFINE(Sampler, pSampler);
+PREDEFINE(RenderTarget, pRenderTarget);
+PREDEFINE(Mesh, pMesh);
+PREDEFINE(ConstantBuffer, pConstantBuffer);
+PREDEFINE(Material, pMaterial);
+PREDEFINE(DeferredRenderer, pDeferredRenderer);
+
 class DrawableObject;
 class Camera;
-class Material;
 
 
 #define theFramework Framework::GetInstance()
@@ -41,12 +41,12 @@ public:
 	int			GetFrameID()													{ return mFrameID; }
 	double		GetFrameTime()													{ return mFrameTime; }
 	double		GetFrameDeltaTime()												{ return mDeltaTime; }
-	void		SetMaterial(Material* inMaterial);
+	void		SetMaterial(pMaterial inMaterial);
 
 	// helper functions
-	Sampler*	GetPointSampler()												{ return mDefaultPointSampler; }
-	Sampler*	GetLinearSampler()												{ return mDefaultLinearSampler; }
-	void		CopyToRenderTarget(RenderTarget* inTarget, Texture* inSource);
+	pSampler	GetPointSampler()												{ return mDefaultPointSampler; }
+	pSampler	GetLinearSampler()												{ return mDefaultLinearSampler; }
+	void		CopyToRenderTarget(pRenderTarget inTarget, pTexture inSource);
 
 private:
 	Framework() { mInitialized = false; }
@@ -54,15 +54,15 @@ private:
 	Framework(Framework const&) = delete;
 	void operator=(Framework const&) = delete;
 
-	Mesh*							mFullScreenTriangle = nullptr;
-	ComputeShader*					mCopyShader = nullptr;
-	Sampler*						mDefaultPointSampler = nullptr;
-	Sampler*						mDefaultLinearSampler = nullptr;
+	pMesh							mFullScreenTriangle = nullptr;
+	pComputeShader					mCopyShader = nullptr;
+	pSampler						mDefaultPointSampler = nullptr;
+	pSampler						mDefaultLinearSampler = nullptr;
 	int								mFrameID;
 	double							mFrameTime;
 	double							mDeltaTime;
 	Camera*							mCamera = nullptr;
-	DeferredRenderer*				mDeferredRenderer = nullptr;
+	pDeferredRenderer				mDeferredRenderer = nullptr;
 	std::vector<DrawableObject*>	mObjectList;
 	bool							mInitialized = false;
 	void							(*mFrameCallback)(void);

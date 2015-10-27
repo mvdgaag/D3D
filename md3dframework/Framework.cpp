@@ -27,19 +27,19 @@ HRESULT Framework::Init()
 {
 	assert(theRenderContext.IsInitialized());
 	
-	mDeferredRenderer = new DeferredRenderer();
+	mDeferredRenderer = std::make_shared<DeferredRenderer>();
 	mDeferredRenderer->Init(theRenderContext.GetWidth(), theRenderContext.GetHeight());
 
-	mFullScreenTriangle = new Mesh();
+	mFullScreenTriangle = std::make_shared<Mesh>();
 	mFullScreenTriangle->InitFullscreenTriangle();
 
-	mCopyShader = new ComputeShader();
+	mCopyShader = std::make_shared<ComputeShader>();
 	mCopyShader->InitFromFile("../md3dframework/Shaders/CopyCompute.hlsl");
 
-	mDefaultPointSampler = new Sampler();
+	mDefaultPointSampler = std::make_shared<Sampler>();
 	mDefaultPointSampler->Init(0); // D3D11_FILTER_MIN_MAG_MIP_POINT
 
-	mDefaultLinearSampler = new Sampler();
+	mDefaultLinearSampler = std::make_shared<Sampler>();
 	mDefaultLinearSampler->Init(21); // D3D11_FILTER_MIN_MAG_MIP_LINEAR
 
 	mCamera = new Camera();
@@ -59,20 +59,11 @@ void Framework::CleanUp()
 {
 	delete mCamera;
 	mCamera = nullptr;
-
-	delete mDeferredRenderer;
+	
 	mDeferredRenderer = nullptr;
-	
-	delete mFullScreenTriangle;
 	mFullScreenTriangle = nullptr;
-	
-	delete mCopyShader;
 	mCopyShader = nullptr;
-	
-	delete mDefaultPointSampler;
 	mDefaultPointSampler = nullptr;
-	
-	delete mDefaultLinearSampler;
 	mDefaultLinearSampler = nullptr;
 	
 	mInitialized = false;
@@ -97,14 +88,14 @@ void Framework::Render()
 }
 
 
-void Framework::SetMaterial(Material* inMaterial)
+void Framework::SetMaterial(pMaterial inMaterial)
 {
 	theRenderContext.PSSetShader(inMaterial->GetPixelShader());
 	theRenderContext.VSSetShader(inMaterial->GetVertexShader());
 	
-	Texture* diffuse_texture = inMaterial->GetDiffuseTexture();
-	Texture* normal_texture = inMaterial->GetNormalTexture();
-	Texture* surface_texture = inMaterial->GetSurfaceTexture();
+	pTexture diffuse_texture = inMaterial->GetDiffuseTexture();
+	pTexture normal_texture = inMaterial->GetNormalTexture();
+	pTexture surface_texture = inMaterial->GetSurfaceTexture();
 	
 	if (diffuse_texture != nullptr)
 		theRenderContext.PSSetTextureAndSampler(diffuse_texture, mDefaultLinearSampler, 0);
@@ -117,7 +108,7 @@ void Framework::SetMaterial(Material* inMaterial)
 }
 
 
-void Framework::CopyToRenderTarget(RenderTarget* inTarget, Texture* inSource)
+void Framework::CopyToRenderTarget(pRenderTarget inTarget, pTexture inSource)
 {
 	assert(inSource != nullptr);
 	assert(inTarget != nullptr);

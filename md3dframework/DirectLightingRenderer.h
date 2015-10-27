@@ -1,13 +1,13 @@
 #pragma once
+#include "GAAGCommon.h"
 #include "float4.h"
 
 
 // predeclarations
-class ComputeShader;
-class RenderTarget;
-class GBuffer;
-class ConstantBuffer;
-
+PREDEFINE(ComputeShader, pComputeShader);
+PREDEFINE(RenderTarget, pRenderTarget);
+PREDEFINE(ConstantBuffer, pConstantBuffer);
+PREDEFINE(GBuffer, pGBuffer);
 
 
 class DirectLightingRenderer
@@ -18,7 +18,7 @@ public:
 
 	void Init();
 	void CleanUp();
-	void Render(GBuffer* inSource, RenderTarget* inTargetDiffuse, RenderTarget* inTargetSpecular);
+	void Render(pGBuffer inSource, pRenderTarget inTargetDiffuse, pRenderTarget inTargetSpecular);
 
 private:
 	struct ConstantBufferData
@@ -28,8 +28,8 @@ private:
 		float4 frameData;
 	};
 	ConstantBufferData mConstantBufferData;
-	ConstantBuffer* mConstantBuffer = nullptr;
-	ComputeShader* mShader = nullptr;
+	pConstantBuffer mConstantBuffer = nullptr;
+	pComputeShader mShader = nullptr;
 	bool mInitialized = false;
 };
 

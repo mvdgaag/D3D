@@ -6,7 +6,7 @@
 #include "RenderTarget.h"
 
 
-void LightComposeRenderer::Render(Texture* inDirectDiffuse, Texture* inDirectSpecular, Texture* inIndirect, Texture* inReflections, RenderTarget* inTarget)
+void LightComposeRenderer::Render(pTexture inDirectDiffuse, pTexture inDirectSpecular, pTexture inIndirect, pTexture inReflections, pRenderTarget inTarget)
 {
 	assert(mInitialized == true);
 
@@ -40,7 +40,7 @@ void LightComposeRenderer::Render(Texture* inDirectDiffuse, Texture* inDirectSpe
 void LightComposeRenderer::Init()
 {
 	CleanUp();
-	mShader = new ComputeShader();
+	mShader = std::make_shared<ComputeShader>();
 	mShader->InitFromFile("../md3dframework/Shaders/LightComposeCompute.hlsl");
 	mInitialized = true;
 }
@@ -48,10 +48,6 @@ void LightComposeRenderer::Init()
 
 void LightComposeRenderer::CleanUp()
 {
-	if (mShader)
-	{
-		delete mShader;
-		mShader = NULL;
-	}
+	mShader = nullptr;
 	mInitialized = false;
 }

@@ -21,7 +21,7 @@ public:
 	ResourceType GetResourceType() const override { return ResourceType::CONSTANT_BUFFER; };
 
 protected:
-	ID3D11Buffer* mBuffer;
-	D3D11_BUFFER_DESC* mDesc;
+	ID3D11Buffer* mBuffer = nullptr;
+	D3D11_BUFFER_DESC* mDesc = nullptr;
 };
 
