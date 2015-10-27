@@ -6,8 +6,7 @@
 
 #define theInput Input::GetInstance()
 
-
-class InputListener;
+PREDEFINE(InputListener, pInputListener);
 
 
 class Input
@@ -19,8 +18,8 @@ public:
 		return instance;
 	}
 
-	void RegisterListener(InputListener* inListener) { mListeners.insert(inListener); }
-	void UnRegisterListener(InputListener* inListener) { mListeners.erase(inListener); }
+	void RegisterListener(pInputListener inListener) { mListeners.insert(inListener); }
+	void UnRegisterListener(pInputListener inListener) { mListeners.erase(inListener); }
 
 	bool GetKeyDown(unsigned int inKey) { return mKeys[inKey]; }
 	float2 GetMouseCoord() { return mMouseCoord; }
@@ -38,7 +37,7 @@ protected:
 	bool mKeys[256];
 	float2 mPrevMouseCoord;
 	float2 mMouseCoord;
-	std::hash_set<InputListener*> mListeners;
+	std::hash_set<pInputListener> mListeners;
 
 private:
 	Input() {};

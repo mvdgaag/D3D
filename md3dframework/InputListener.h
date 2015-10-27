@@ -2,12 +2,13 @@
 #include "GAAGCommon.h"
 #include "Input.h"
 
+PREDEFINE(InputListener, pInputListener);
 
 class InputListener
 {
 public:
-	explicit InputListener() { theInput.RegisterListener(this); }
-	virtual ~InputListener() { theInput.RegisterListener(this); }
+	explicit InputListener() { theInput.RegisterListener(pInputListener(this)); }
+	virtual ~InputListener() { theInput.UnRegisterListener(pInputListener(this)); }
 
 	virtual void OnKeyDown(unsigned int inKey) {}
 	virtual void OnKeyUp(unsigned int inKey) {}
