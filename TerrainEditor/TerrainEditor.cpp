@@ -22,6 +22,7 @@ pTexture g_surface_texture;
 
 pTexture g_heightmap;
 pTerrainTile g_terrainTile;
+pTerrain g_terrain;
 
 
 HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);
@@ -141,14 +142,19 @@ void InitContent()
 	g_obj2->Rotate(float3(1.0f, 0.0f, 0.0f), -3.1415f / 2.0f);
 	g_obj2->Translate(float3(0.0f, 0.0f, 5.0f));
 
+	/*
 	g_heightmap = std::make_shared<Texture>();
 	g_heightmap->InitFromFile("../md3dframework/Textures/photosculpt-squarebricks-diffuse.dds");
 	g_terrainTile = std::make_shared<TerrainTile>();
 	g_terrainTile->Init(float3(0.0f, 0.0f, 0.0f), float3(4.0f, 4.0f, 4.0f), g_heightmap, 256, 256, g_material);
+	*/
+	
+	g_terrain = std::make_shared<Terrain>();
+	g_terrain->Init(10, 10, 2, 2, g_material);
 
-	theFramework.RegisterObject(g_obj);
-	theFramework.RegisterObject(g_obj2);
-	theFramework.RegisterObject(g_terrainTile);
+	//theFramework.RegisterObject(g_obj);
+	//theFramework.RegisterObject(g_obj2);
+	//theFramework.RegisterObject(g_terrainTile);
 }
 
 

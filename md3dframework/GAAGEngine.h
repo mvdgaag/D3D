@@ -6,7 +6,7 @@
 
 // objects
 #include "DrawableObject.h"
-#include "TerrainTile.h"
+#include "Terrain.h"
 
 // rendering basics
 #include "Window.h"

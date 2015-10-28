@@ -18,6 +18,7 @@ void TerrainTile::Init(float3 inPosition, float3 inScale, pTexture inHeightMap, 
 	mesh->InitPlane(inWidthSegments, inHeightSegments, inScale.XY());
 	
 	DrawableObject::Init(mesh, inMaterial);
+	Translate(inPosition);
 
 	mConstantBuffer = std::make_shared<ConstantBuffer>();
 	mConstantBuffer->Init(sizeof(mConstantBufferData));
