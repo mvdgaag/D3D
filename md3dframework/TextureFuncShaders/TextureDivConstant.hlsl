@@ -11,5 +11,5 @@ cbuffer cConstantData : register(b0)
 void CS(uint3 DTid : SV_DispatchThreadID)
 {
 	float2 coord = float2(DTid.x, DTid.y);
-	dst[coord] = max(source[coord], cDiv);
+	dst[coord] = source[coord] / cDiv;
 }
