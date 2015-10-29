@@ -1,5 +1,6 @@
 #include "Gaag.h"
 #include "RenderContext.h"
+#include "TextureUtil.h"
 #include "DeferredRenderer.h"
 #include "RenderTarget.h"
 #include "Camera.h"
@@ -28,6 +29,7 @@ HRESULT GaagFramework::Init(HINSTANCE hInstance)
 	mWindow = std::make_shared<Window>();
 	mWindow->Init(hInstance);
 	theRenderContext.Init(mWindow);
+	TextureUtil::InitTextureUtil();
 	
 	mDeferredRenderer = std::make_shared<DeferredRenderer>();
 	mDeferredRenderer->Init(theRenderContext.GetWidth(), theRenderContext.GetHeight());
@@ -65,6 +67,7 @@ void GaagFramework::CleanUp()
 	mCopyShader = nullptr;
 	mDefaultPointSampler = nullptr;
 	mDefaultLinearSampler = nullptr;
+	TextureUtil::CleanUpTextureUtil();
 	theRenderContext.CleanUp();
 	mWindow = nullptr;
 	

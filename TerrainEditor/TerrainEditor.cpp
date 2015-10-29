@@ -153,32 +153,13 @@ void InitContent()
 
 void CleanUpContent()
 {
-	/* TODO:
-	delete g_obj;
 	g_obj = nullptr;
-
-	delete g_mesh;
 	g_mesh = nullptr;
-
-	delete g_pixel_shader;
 	g_pixel_shader = nullptr;
-
-	delete g_vertex_shader;
 	g_vertex_shader = nullptr;
-
-	delete g_diffuse_texture;
 	g_diffuse_texture = nullptr;
-
-	delete g_normal_texture;
 	g_normal_texture = nullptr;
-
-	delete g_surface_texture;
 	g_surface_texture = nullptr;
-
-	delete g_terrainTile;
 	g_terrainTile = nullptr;
-
-	delete g_material;
 	g_material = nullptr;
-	*/
 }

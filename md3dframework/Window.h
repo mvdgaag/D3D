@@ -2,7 +2,6 @@
 #include <windows.h>
 #include <windowsx.h>
 #include "GaagCommon.h"
-#include "resource.h"
 #include "Input.h"
 
 PREDEFINE(Window, pWindow);

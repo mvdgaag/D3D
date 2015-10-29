@@ -8,48 +8,104 @@
 
 namespace TextureUtil
 {
-	ComputeShader gTextureBlendShader;
-	ComputeShader gTextureCopyShader;
-	ComputeShader gTextureSetShader;
-	ComputeShader gTextureMinShader;
-	ComputeShader gTextureMaxShader;
-	ComputeShader gTextureMulShader;
-	ComputeShader gTextureDivShader;
 	ComputeShader gTextureAddShader;
-	ComputeShader gTextureSubShader;
-	ComputeShader gTextureClampShader;
-	ComputeShader gTextureTresholdShader;
+	ComputeShader gTextureAddConstantShader;
 
+	ComputeShader gTextureBlendShader;
+	ComputeShader gTextureBlendConstantShader;
+
+	ComputeShader gTextureClampShader;
+	ComputeShader gTextureClampConstantShader;
+
+	ComputeShader gTextureCopyShader;
+	
+	ComputeShader gTextureDivShader;
+	ComputeShader gTextureDivConstantShader;
+	
+	ComputeShader gTextureMinShader;
+	ComputeShader gTextureMinConstantShader;
+
+	ComputeShader gTextureMaxShader;
+	ComputeShader gTextureMaxConstantShader;
+
+	ComputeShader gTextureMulShader;
+	ComputeShader gTextureMulConstantShader;
+
+	ComputeShader gTextureSetShader;
+	
+	ComputeShader gTextureSubShader;
+	ComputeShader gTextureSubConstantShader;
+
+	ComputeShader gTextureTresholdShader;
+	ComputeShader gTextureTresholdConstantShader;
 
 	void InitTextureUtil()
 	{
-		gTextureBlendShader.InitFromFile("../md3dFramework/Shaders/TextureBlend.hlsl");
-		gTextureCopyShader.InitFromFile("../md3dFramework/Shaders/TextureCopy.hlsl");
-		gTextureSetShader.InitFromFile("../md3dFramework/Shaders/TextureSet.hlsl");
-		gTextureMinShader.InitFromFile("../md3dFramework/Shaders/TextureMin.hlsl");
-		gTextureMaxShader.InitFromFile("../md3dFramework/Shaders/TextureMax.hlsl");
-		gTextureMulShader.InitFromFile("../md3dFramework/Shaders/TextureMul.hlsl");
-		gTextureDivShader.InitFromFile("../md3dFramework/Shaders/TextureDiv.hlsl");
-		gTextureAddShader.InitFromFile("../md3dFramework/Shaders/TextureAdd.hlsl");
-		gTextureSubShader.InitFromFile("../md3dFramework/Shaders/TextureSub.hlsl");
-		gTextureClampShader.InitFromFile("../md3dFramework/Shaders/TextureClamp.hlsl");
-		gTextureTresholdShader.InitFromFile("../md3dFramework/Shaders/TextureTreshold.hlsl");
+		gTextureAddShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureAdd.hlsl");
+		gTextureAddConstantShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureAddConstant.hlsl");
+
+		gTextureBlendShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureBlend.hlsl");
+		gTextureBlendConstantShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureBlendConstant.hlsl");
+
+		gTextureClampShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureClamp.hlsl");
+		gTextureClampConstantShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureClampConstant.hlsl");
+
+		gTextureCopyShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureCopy.hlsl");
+		
+		gTextureDivShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureDiv.hlsl");
+		gTextureDivConstantShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureDivConstant.hlsl");
+
+		gTextureMaxShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureMax.hlsl");
+		gTextureMaxConstantShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureMaxConstant.hlsl");
+
+		gTextureMinShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureMin.hlsl");
+		gTextureMinConstantShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureMinConstant.hlsl");
+
+		gTextureMulShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureMul.hlsl");
+		gTextureMulConstantShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureMulConstant.hlsl");
+
+		gTextureSetShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureSet.hlsl");
+		
+		gTextureSubShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureSub.hlsl");
+		gTextureSubConstantShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureSubConstant.hlsl");
+		
+		gTextureTresholdShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureTreshold.hlsl");
+		gTextureTresholdConstantShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureTresholdConstant.hlsl");
 	}
 
 
 	void CleanUpTextureUtil()
 	{
-		gTextureBlendShader.CleanUp();
-		gTextureCopyShader.CleanUp();
-		gTextureSetShader.CleanUp();
-		gTextureMinShader.CleanUp();
-		gTextureMaxShader.CleanUp();
-		gTextureMulShader.CleanUp();
-		gTextureDivShader.CleanUp();
 		gTextureAddShader.CleanUp();
-		gTextureSubShader.CleanUp();
+		gTextureAddConstantShader.CleanUp();
+		
+		gTextureBlendShader.CleanUp();
+		gTextureBlendConstantShader.CleanUp();
+		
 		gTextureClampShader.CleanUp();
+		gTextureClampConstantShader.CleanUp();
+
+		gTextureCopyShader.CleanUp();
+
+		gTextureDivShader.CleanUp();
+		gTextureDivConstantShader.CleanUp();
+
+		gTextureMaxShader.CleanUp();
+		gTextureMaxConstantShader.CleanUp();
+
+		gTextureMinShader.CleanUp();
+		gTextureMinConstantShader.CleanUp();
+
+		gTextureMulShader.CleanUp();
+		gTextureMulConstantShader.CleanUp();
+
+		gTextureSetShader.CleanUp();
+		
+		gTextureSubShader.CleanUp();
+		gTextureSubConstantShader.CleanUp();
+		
 		gTextureTresholdShader.CleanUp();
+		gTextureTresholdConstantShader.CleanUp();
 	}
 
 

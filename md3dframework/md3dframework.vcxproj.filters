@@ -138,9 +138,6 @@
     <ClInclude Include="RenderTarget.h">
       <Filter>Header Files\Rendering\D3D</Filter>
     </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ConstantBuffer.h">
       <Filter>Header Files\Rendering\D3D</Filter>
     </ClInclude>
@@ -401,6 +398,33 @@
       <Filter>Resource Files\Shaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureTreshold.hlsl">
+      <Filter>Resource Files\Shaders\TextureFuncShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureFuncShaders\TextureAddConstant.hlsl">
+      <Filter>Resource Files\Shaders\TextureFuncShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureFuncShaders\TextureBlendConstant.hlsl">
+      <Filter>Resource Files\Shaders\TextureFuncShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureFuncShaders\TextureClampConstant.hlsl">
+      <Filter>Resource Files\Shaders\TextureFuncShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureFuncShaders\TextureDivConstant.hlsl">
+      <Filter>Resource Files\Shaders\TextureFuncShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureFuncShaders\TextureMaxConstant.hlsl">
+      <Filter>Resource Files\Shaders\TextureFuncShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureFuncShaders\TextureMinConstant.hlsl">
+      <Filter>Resource Files\Shaders\TextureFuncShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureFuncShaders\TextureMulConstant.hlsl">
+      <Filter>Resource Files\Shaders\TextureFuncShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureFuncShaders\TextureSubConstant.hlsl">
+      <Filter>Resource Files\Shaders\TextureFuncShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureFuncShaders\TextureTresholdConstant.hlsl">
       <Filter>Resource Files\Shaders\TextureFuncShaders</Filter>
     </FxCompile>
   </ItemGroup>

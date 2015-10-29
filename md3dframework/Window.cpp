@@ -1,5 +1,4 @@
 #include "Window.h"
-#include "Resource.h"
 #include "RenderContext.h"
 
 HRESULT Window::Init(HINSTANCE hInstance)
@@ -12,12 +11,12 @@ HRESULT Window::Init(HINSTANCE hInstance)
 	wcex.cbClsExtra = 0;
 	wcex.cbWndExtra = 0;
 	wcex.hInstance = hInstance;
-	wcex.hIcon = LoadIcon(hInstance, (LPCTSTR)IDI_MD3DGaagFramework);
+	wcex.hIcon = LoadIcon(hInstance, IDI_APPLICATION);
 	wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
 	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	wcex.lpszMenuName = nullptr;
 	wcex.lpszClassName = L"Gaag";
-	wcex.hIconSm = LoadIcon(wcex.hInstance, (LPCTSTR)IDI_SMALL);
+	wcex.hIconSm = LoadIcon(wcex.hInstance, IDI_APPLICATION);
 	if (!RegisterClassEx(&wcex))
 		return E_FAIL;
 

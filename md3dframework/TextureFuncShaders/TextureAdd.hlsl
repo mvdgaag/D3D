@@ -8,5 +8,5 @@ Texture2D<float4> source2 : register(t1);
 void CS(uint3 DTid : SV_DispatchThreadID)
 {
 	float2 coord = float2(DTid.x, DTid.y);
-		dst[coord] = max(source1[coord], source2[coord]);
+	dst[coord] = source1[coord] + source2[coord];
 }
