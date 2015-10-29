@@ -153,21 +153,12 @@
   <ItemGroup>
     <ClInclude Include="..\md3dframework\Terrain.h" />
     <ClInclude Include="..\md3dframework\TerrainTile.h" />
-    <ClInclude Include="Resource.h" />
-    <ClInclude Include="targetver.h" />
     <ClInclude Include="TerrainEditor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\md3dframework\Terrain.cpp" />
     <ClCompile Include="..\md3dframework\TerrainTile.cpp" />
     <ClCompile Include="TerrainEditor.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="TerrainEditor.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="small.ico" />
-    <Image Include="TerrainEditor.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
