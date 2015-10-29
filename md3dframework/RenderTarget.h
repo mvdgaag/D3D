@@ -26,4 +26,8 @@ protected:
 	pTexture mTexture;
 	ID3D11RenderTargetView** mRenderTargetViews = nullptr;
 	ID3D11UnorderedAccessView** mUnorderedAccessViews = nullptr;
+
+private:
+	RenderTarget(RenderTarget const&) = delete;
+	void operator=(RenderTarget const&) = delete;
 };

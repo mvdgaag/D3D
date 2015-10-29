@@ -25,4 +25,8 @@ protected:
 	std::hash_map<std::string, unsigned int> mTextures;
 	std::hash_map<std::string, unsigned int> mSamplers;
 	std::hash_map<std::string, unsigned int> mConstantBuffers;
+
+private:
+	PixelShader(PixelShader const&) = delete;
+	void operator=(PixelShader const&) = delete;
 };

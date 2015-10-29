@@ -23,5 +23,9 @@ public:
 protected:
 	pTexture				mTexture;
 	ID3D11DepthStencilView*	mDepthStencilView = nullptr;
+
+private:
+	DepthStencilTarget(DepthStencilTarget const&) = delete;
+	void operator=(DepthStencilTarget const&) = delete;
 };
 

@@ -42,4 +42,8 @@ protected:
 	unsigned int mOffset = 0;
 	unsigned int mNumVerts = 0;
 	unsigned int mNumIndices = 0;
+
+private:
+	Mesh(Mesh const&) = delete;
+	void operator=(Mesh const&) = delete;
 };

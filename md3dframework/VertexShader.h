@@ -22,4 +22,8 @@ public:
 protected:
 	ID3D11VertexShader* mHandle = nullptr;
 	ID3D11InputLayout*	mVertexLayout = nullptr;
+
+private:
+	VertexShader(VertexShader const&) = delete;
+	void operator=(VertexShader const&) = delete;
 };

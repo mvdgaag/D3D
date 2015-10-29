@@ -33,4 +33,8 @@ protected:
 	ID3D11Texture2D*			mTexture = nullptr;
 	ID3D11ShaderResourceView*	mShaderResourceView = nullptr;
 	D3D11_TEXTURE2D_DESC*		mDesc = nullptr;
+
+private:
+	Texture(Texture const&) = delete;
+	void operator=(Texture const&) = delete;
 };

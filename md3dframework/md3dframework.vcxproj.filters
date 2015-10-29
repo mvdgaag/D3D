@@ -70,6 +70,9 @@
     <Filter Include="Header Files\Util">
       <UniqueIdentifier>{a27dfe53-a260-44d6-bed5-6de03e8cd113}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders\TextureFuncShaders">
+      <UniqueIdentifier>{99b4c445-4350-4bc4-8df2-ec8086989530}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -210,12 +213,12 @@
     <ClInclude Include="GBuffer.h">
       <Filter>Header Files\Rendering\D3D</Filter>
     </ClInclude>
+    <ClInclude Include="TextureUtil.h">
+      <Filter>Header Files\Util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DrawableObject.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Framework.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
     <ClCompile Include="Terrain.cpp">
@@ -311,6 +314,12 @@
     <ClCompile Include="Material.cpp">
       <Filter>Source Files\Rendering\D3D</Filter>
     </ClCompile>
+    <ClCompile Include="TextureUtil.cpp">
+      <Filter>Source Files\Util</Filter>
+    </ClCompile>
+    <ClCompile Include="Framework.cpp">
+      <Filter>Source Files\Util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="md3dframework.rc">
@@ -376,6 +385,39 @@
     </FxCompile>
     <FxCompile Include="Shaders\CopyCompute.hlsl">
       <Filter>Resource Files\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureFuncShaders\TextureAdd.hlsl">
+      <Filter>Resource Files\Shaders\TextureFuncShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureFuncShaders\TextureBlend.hlsl">
+      <Filter>Resource Files\Shaders\TextureFuncShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureFuncShaders\TextureClamp.hlsl">
+      <Filter>Resource Files\Shaders\TextureFuncShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureFuncShaders\TextureCopy.hlsl">
+      <Filter>Resource Files\Shaders\TextureFuncShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureFuncShaders\TextureDiv.hlsl">
+      <Filter>Resource Files\Shaders\TextureFuncShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureFuncShaders\TextureMax.hlsl">
+      <Filter>Resource Files\Shaders\TextureFuncShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureFuncShaders\TextureMin.hlsl">
+      <Filter>Resource Files\Shaders\TextureFuncShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureFuncShaders\TextureMul.hlsl">
+      <Filter>Resource Files\Shaders\TextureFuncShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureFuncShaders\TextureSet.hlsl">
+      <Filter>Resource Files\Shaders\TextureFuncShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureFuncShaders\TextureSub.hlsl">
+      <Filter>Resource Files\Shaders\TextureFuncShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureFuncShaders\TextureTreshold.hlsl">
+      <Filter>Resource Files\Shaders\TextureFuncShaders</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

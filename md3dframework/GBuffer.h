@@ -33,12 +33,16 @@ public:
 	pDepthStencilTarget GetDepthStencilTarget()			{ return mDepthStencilTarget; }
 	pTexture GetTexture(GBufferType inType)				{ return mRenderTargets[inType]->GetTexture(); }
 
-private:
+protected:
 	pRenderTarget			mRenderTargets[NUM_RENDER_TARGETS];
 	pDepthStencilTarget		mDepthStencilTarget = nullptr;
 
 	int mWidth;
 	int mHeight;
 	bool mInitialized = false;
+
+private:
+	GBuffer(GBuffer const&) = delete;
+	void operator=(GBuffer const&) = delete;
 };
 

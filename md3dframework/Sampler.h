@@ -26,4 +26,8 @@ public:
 protected:
 	ID3D11SamplerState* mSamplerState = nullptr;
 	D3D11_SAMPLER_DESC* mSampDesc = nullptr;
+
+private:
+	Sampler(Sampler const&) = delete;
+	void operator=(Sampler const&) = delete;
 };

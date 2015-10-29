@@ -21,5 +21,9 @@ public:
 
 protected:
 	ID3D11ComputeShader* mHandle = nullptr;
+	
+private:
+	ComputeShader(ComputeShader const&) = delete;
+	void operator=(ComputeShader const&) = delete;
 };
 

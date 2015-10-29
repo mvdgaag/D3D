@@ -23,5 +23,9 @@ public:
 protected:
 	ID3D11Buffer* mBuffer = nullptr;
 	D3D11_BUFFER_DESC* mDesc = nullptr;
+
+private:
+	ConstantBuffer(ConstantBuffer const&) = delete;
+	void operator=(ConstantBuffer const&) = delete;
 };
 

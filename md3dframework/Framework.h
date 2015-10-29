@@ -56,12 +56,13 @@ private:
 	pComputeShader					mCopyShader = nullptr;
 	pSampler						mDefaultPointSampler = nullptr;
 	pSampler						mDefaultLinearSampler = nullptr;
-	int								mFrameID;
-	double							mFrameTime;
-	double							mDeltaTime;
+	
 	pCamera							mCamera = nullptr;
 	pDeferredRenderer				mDeferredRenderer = nullptr;
 	std::vector<pDrawableObject>	mObjectList;
+	int								mFrameID;
+	double							mFrameTime;
+	double							mDeltaTime;
 	bool							mInitialized = false;
 	void							(*mFrameCallback)(void);
 };

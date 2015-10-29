@@ -63,7 +63,7 @@ public:
 
 	pConstantBuffer GetConstantBuffer() { return mConstantBuffer; }
 
-private:
+protected:
 	void UpdateConstantBuffer();
 
 	struct ConstantData
@@ -90,5 +90,9 @@ private:
 	pVertexShader mVertexShader = nullptr;
 
 	pConstantBuffer mConstantBuffer = nullptr;
+
+private:
+	Material(Material const&) = delete;
+	void operator=(Material const&) = delete;
 };
 
