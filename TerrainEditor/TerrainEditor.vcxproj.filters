@@ -28,18 +28,15 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
-    <Text Include="..\md3dframework\Models\sphere.obj">
-      <Filter>Resource Files\Models</Filter>
-    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TerrainEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\md3dframework\Terrain.h">
+    <ClInclude Include="Terrain.h">
       <Filter>Header Files\Terrain</Filter>
     </ClInclude>
-    <ClInclude Include="..\md3dframework\TerrainTile.h">
+    <ClInclude Include="TerrainTile.h">
       <Filter>Header Files\Terrain</Filter>
     </ClInclude>
   </ItemGroup>
@@ -47,28 +44,33 @@
     <ClCompile Include="TerrainEditor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\md3dframework\Terrain.cpp">
+    <ClCompile Include="Terrain.cpp">
       <Filter>Source Files\Terrain</Filter>
     </ClCompile>
-    <ClCompile Include="..\md3dframework\TerrainTile.cpp">
+    <ClCompile Include="TerrainTile.cpp">
       <Filter>Source Files\Terrain</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\md3dframework\Textures\photosculpt-squarebricks-ambientocclusion.dds">
+    <Image Include="Textures\photosculpt-squarebricks-ambientocclusion.dds">
       <Filter>Resource Files\Textures</Filter>
     </Image>
-    <Image Include="..\md3dframework\Textures\photosculpt-squarebricks-depth.dds">
+    <Image Include="Textures\photosculpt-squarebricks-depth.dds">
       <Filter>Resource Files\Textures</Filter>
     </Image>
-    <Image Include="..\md3dframework\Textures\photosculpt-squarebricks-diffuse.dds">
+    <Image Include="Textures\photosculpt-squarebricks-diffuse.dds">
       <Filter>Resource Files\Textures</Filter>
     </Image>
-    <Image Include="..\md3dframework\Textures\photosculpt-squarebricks-normal.dds">
+    <Image Include="Textures\photosculpt-squarebricks-normal.dds">
       <Filter>Resource Files\Textures</Filter>
     </Image>
-    <Image Include="..\md3dframework\Textures\photosculpt-squarebricks-specular.dds">
+    <Image Include="Textures\photosculpt-squarebricks-specular.dds">
       <Filter>Resource Files\Textures</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="Models\sphere.obj">
+      <Filter>Resource Files\Models</Filter>
+    </Object>
   </ItemGroup>
 </Project>

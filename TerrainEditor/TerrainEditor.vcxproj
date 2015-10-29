@@ -151,30 +151,42 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\md3dframework\Terrain.h" />
-    <ClInclude Include="..\md3dframework\TerrainTile.h" />
+    <ClInclude Include="Terrain.h" />
     <ClInclude Include="TerrainEditor.h" />
+    <ClInclude Include="TerrainTile.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\md3dframework\Terrain.cpp" />
-    <ClCompile Include="..\md3dframework\TerrainTile.cpp" />
+    <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TerrainEditor.cpp" />
+    <ClCompile Include="TerrainTile.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="..\md3dframework\Textures\photosculpt-squarebricks-ambientocclusion.dds" />
-    <Image Include="..\md3dframework\Textures\photosculpt-squarebricks-depth.dds" />
-    <Image Include="..\md3dframework\Textures\photosculpt-squarebricks-diffuse.dds" />
-    <Image Include="..\md3dframework\Textures\photosculpt-squarebricks-normal.dds" />
-    <Image Include="..\md3dframework\Textures\photosculpt-squarebricks-specular.dds" />
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="..\md3dframework\Models\sphere.obj">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    <Image Include="Textures\photosculpt-squarebricks-ambientocclusion.dds">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <FileType>Document</FileType>
-    </Text>
+    </Image>
+    <Image Include="Textures\photosculpt-squarebricks-depth.dds">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </Image>
+    <Image Include="Textures\photosculpt-squarebricks-diffuse.dds">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </Image>
+    <Image Include="Textures\photosculpt-squarebricks-normal.dds">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </Image>
+    <Image Include="Textures\photosculpt-squarebricks-specular.dds">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="Models\sphere.obj">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </Object>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

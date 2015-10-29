@@ -73,7 +73,7 @@ void InitContent()
 	g_obj = std::make_shared<DrawableObject>();
 
 	g_mesh = std::make_shared<Mesh>();
-	g_mesh->InitFromFile("../md3dFramework/Models/sphere.obj");
+	g_mesh->InitFromFile("Models/sphere.obj");
 
 	g_pixel_shader = std::make_shared<PixelShader>();
 	g_pixel_shader->InitFromFile("../md3dFramework/Shaders/BasicFragmentShader.hlsl");
@@ -82,13 +82,13 @@ void InitContent()
 	g_vertex_shader->InitFromFile("../md3dFramework/Shaders/BasicVertexShader.hlsl");
 
 	g_diffuse_texture = std::make_shared<Texture>();
-	g_diffuse_texture->InitFromFile("../md3dFramework/Textures/photosculpt-squarebricks-diffuse.dds");
+	g_diffuse_texture->InitFromFile("Textures/photosculpt-squarebricks-diffuse.dds");
 
 	g_normal_texture = std::make_shared<Texture>();
-	g_normal_texture->InitFromFile("../md3dFramework/Textures/photosculpt-squarebricks-normal.dds");
+	g_normal_texture->InitFromFile("Textures/photosculpt-squarebricks-normal.dds");
 
 	g_surface_texture = std::make_shared<Texture>();
-	g_surface_texture->InitFromFile("../md3dFramework/Textures/photosculpt-squarebricks-specular.dds");
+	g_surface_texture->InitFromFile("Textures/photosculpt-squarebricks-specular.dds");
 
 	g_material = std::make_shared<Material>();
 	g_material->Init();
