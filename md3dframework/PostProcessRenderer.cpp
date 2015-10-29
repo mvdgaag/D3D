@@ -1,6 +1,6 @@
 #include "PostProcessRenderer.h"
 #include "RenderContext.h"
-#include "Framework.h"
+#include "Gaag.h"
 #include "ComputeShader.h"
 #include "RenderTarget.h"
 #include "Texture.h"
@@ -15,8 +15,8 @@ void PostProcessRenderer::Render(pTexture inSource, pTexture inMotionVectors, pR
 	assert(inTarget != nullptr);
 
 	theRenderContext.CSSetShader(mShader);
-	theRenderContext.CSSetTextureAndSampler(inSource, theFramework.GetLinearSampler(), 0);
-	theRenderContext.CSSetTextureAndSampler(inMotionVectors, theFramework.GetLinearSampler(), 1);
+	theRenderContext.CSSetTextureAndSampler(inSource, Gaag.GetLinearSampler(), 0);
+	theRenderContext.CSSetTextureAndSampler(inMotionVectors, Gaag.GetLinearSampler(), 1);
 	theRenderContext.CSSetRWTexture(inTarget, 0);
 
 	mConstantBufferData.mTargetSize = float4(theRenderContext.GetWidth(), theRenderContext.GetHeight(),0,0);
@@ -41,7 +41,7 @@ void PostProcessRenderer::Init()
 	CleanUp();
 	
 	mShader = std::make_shared<ComputeShader>();
-	mShader->InitFromFile("../md3dframework/Shaders/PostProcessCompute.hlsl");
+	mShader->InitFromFile("../md3dFramework/Shaders/PostProcessCompute.hlsl");
 
 	mConstantBuffer = std::make_shared<ConstantBuffer>();
 	mConstantBuffer->Init(sizeof(ConstantBufferData));

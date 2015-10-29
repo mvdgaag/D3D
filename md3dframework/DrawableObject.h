@@ -1,6 +1,6 @@
 #pragma once
 #include "BaseDrawable.h"
-#include "GAAGCommon.h"
+#include "GaagCommon.h"
 
 // predefinitions
 PREDEFINE(DrawableObject, pDrawableObject);

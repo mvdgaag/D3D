@@ -1,6 +1,6 @@
 #include "DeferredRenderer.h"
 #include "RenderContext.h"
-#include "Framework.h"
+#include "Gaag.h"
 #include "Camera.h"
 #include "ConstantBuffer.h"
 #include "GBuffer.h"
@@ -104,8 +104,8 @@ void DeferredRenderer::Render(std::vector<pDrawableObject> inDrawList)
 {
 	assert(mInitialized);
 	
-	Camera& camera = *(theFramework.GetCamera());
-	int frame_id = theFramework.GetFrameID();
+	Camera& camera = *(Gaag.GetCamera());
+	int frame_id = Gaag.GetFrameID();
 	float2 jitter_offset = TAARenderer::GetJitterOffset(frame_id);
 
 	ConstantDataEveryFrame constantData;
@@ -141,7 +141,7 @@ void DeferredRenderer::GeometryPass(std::vector<pDrawableObject> inDrawList)
 	{
 		theRenderContext.SetMarker("Drawing Object");
 
-		theFramework.SetMaterial(obj->GetMaterial());
+		Gaag.SetMaterial(obj->GetMaterial());
 
 		theRenderContext.VSSetConstantBuffer(mConstantBufferEveryFrame, 0);
 		theRenderContext.VSSetConstantBuffer(obj->GetConstantBuffer(), 1);

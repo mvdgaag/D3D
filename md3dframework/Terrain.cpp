@@ -1,5 +1,5 @@
 #include "Terrain.h"
-#include "Framework.h"
+#include "Gaag.h"
 #include "TerrainTile.h"
 #include "Material.h"
 #include "Texture.h"
@@ -30,7 +30,7 @@ void Terrain::Init(int inWidth, int inHeight, int inTileWidth, int inTileHeight,
 			mTiles[idx] = std::make_shared<TerrainTile>();
 			mTiles[idx]->Init(tile_pos, tile_scale, height_map, inTileWidth, inTileHeight, inMaterial);
 			
-			theFramework.RegisterObject(mTiles[idx]);
+			Gaag.RegisterObject(mTiles[idx]);
 		}
 	}
 }

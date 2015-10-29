@@ -1,6 +1,6 @@
 #pragma once
 #include "BaseResource.h"
-#include "GAAGCommon.h"
+#include "GaagCommon.h"
 
 struct ID3D11Texture2D;
 struct ID3D11ShaderResourceView;

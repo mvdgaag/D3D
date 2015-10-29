@@ -1,7 +1,7 @@
 #ifndef FILE_UTIL_H_
 #define FILE_UTIL_H_
 
-#include "GAAGCommon.h"
+#include "GaagCommon.h"
 
 
 PREDEFINE(Texture, pTexture);

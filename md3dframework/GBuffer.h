@@ -1,5 +1,5 @@
 #pragma once
-#include "GAAGCommon.h"
+#include "GaagCommon.h"
 #include "RenderTarget.h"
 
 PREDEFINE(GBuffer, pGBuffer);

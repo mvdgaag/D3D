@@ -1,6 +1,5 @@
 #pragma once
-#include "GAAGCommon.h"
-#include <Windows.h>
+#include "GaagCommon.h"
 
 struct ID3D11Device;
 struct ID3D11Device1;
@@ -12,6 +11,7 @@ struct ID3D11RasterizerState;
 struct ID3D11RasterizerState1;
 struct ID3DUserDefinedAnnotation;
 
+PREDEFINE(Window, pWindow);
 PREDEFINE(PixelShader, pPixelShader);
 PREDEFINE(VertexShader, pVertexShader);
 PREDEFINE(ComputeShader, pComputeShader);
@@ -45,7 +45,7 @@ public:
 	unsigned int	GetHeight() const					{ return mHeight; }
 	bool			IsInitialized() const				{ return mInitialized; }
 
-	HRESULT Init(Window* inWindow);
+	void Init(pWindow inWindow);
 	void CleanUp();
 
 	void BeginEvent(std::string inEventString);

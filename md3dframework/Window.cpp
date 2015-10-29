@@ -1,8 +1,8 @@
 #include "Window.h"
 #include "Resource.h"
+#include "RenderContext.h"
 
-
-HRESULT Window::Init(HINSTANCE hInstance, int nCmdShow)
+HRESULT Window::Init(HINSTANCE hInstance)
 {
 	// Register class
 	WNDCLASSEX wcex;
@@ -12,11 +12,11 @@ HRESULT Window::Init(HINSTANCE hInstance, int nCmdShow)
 	wcex.cbClsExtra = 0;
 	wcex.cbWndExtra = 0;
 	wcex.hInstance = hInstance;
-	wcex.hIcon = LoadIcon(hInstance, (LPCTSTR)IDI_MD3DFramework);
+	wcex.hIcon = LoadIcon(hInstance, (LPCTSTR)IDI_MD3DGaagFramework);
 	wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
 	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
 	wcex.lpszMenuName = nullptr;
-	wcex.lpszClassName = L"GAAG";
+	wcex.lpszClassName = L"Gaag";
 	wcex.hIconSm = LoadIcon(wcex.hInstance, (LPCTSTR)IDI_SMALL);
 	if (!RegisterClassEx(&wcex))
 		return E_FAIL;
@@ -25,14 +25,14 @@ HRESULT Window::Init(HINSTANCE hInstance, int nCmdShow)
 	mHInst = hInstance;
 	RECT rc = { 0, 0, 800, 600 };
 	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
-	mHWnd = CreateWindow(L"GAAG", L"GAAG",
+	mHWnd = CreateWindow(L"Gaag", L"Gaag",
 		WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,
 		CW_USEDEFAULT, CW_USEDEFAULT, rc.right - rc.left, rc.bottom - rc.top, nullptr, nullptr, hInstance,
 		nullptr);
 	if (!mHWnd)
 		return E_FAIL;
 
-	ShowWindow(mHWnd, nCmdShow);
+	ShowWindow(mHWnd, SW_SHOW);
 
 	return S_OK;
 }

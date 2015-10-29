@@ -1,5 +1,5 @@
 #pragma once
-#include "GAAGCommon.h"
+#include "GaagCommon.h"
 
 PREDEFINE(Texture, pTexture);
 PREDEFINE(Sampler, pSampler);

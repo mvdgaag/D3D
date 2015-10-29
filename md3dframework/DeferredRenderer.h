@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "GAAGCommon.h"
+#include "GaagCommon.h"
 #include "ShadowRenderer.h"
 #include "DirectLightingRenderer.h"
 #include "DepthPyramidRenderer.h"

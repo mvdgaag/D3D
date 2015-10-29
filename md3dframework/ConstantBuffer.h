@@ -1,6 +1,6 @@
 #pragma once
 #include "BaseResource.h"
-#include "GAAGCommon.h"
+#include "GaagCommon.h"
 
 struct ID3D11Buffer;
 struct D3D11_BUFFER_DESC;

@@ -1,6 +1,6 @@
 #include "IndirectLightingRenderer.h"
 #include "RenderContext.h"
-#include "Framework.h"
+#include "Gaag.h"
 #include "ComputeShader.h"
 #include "RenderTarget.h"
 #include "Texture.h"
@@ -16,17 +16,17 @@ void IndirectLightingRenderer::Render(pTexture inSource, pTexture inNormal, pTex
 	assert(inTarget != nullptr);
 
 	theRenderContext.CSSetShader(mShader);
-	theRenderContext.CSSetTextureAndSampler(inSource, theFramework.GetPointSampler(), 0);
-	theRenderContext.CSSetTextureAndSampler(inNormal, theFramework.GetPointSampler(), 1);
-	theRenderContext.CSSetTextureAndSampler(inLinearDepth, theFramework.GetPointSampler(), 2);
+	theRenderContext.CSSetTextureAndSampler(inSource, Gaag.GetPointSampler(), 0);
+	theRenderContext.CSSetTextureAndSampler(inNormal, Gaag.GetPointSampler(), 1);
+	theRenderContext.CSSetTextureAndSampler(inLinearDepth, Gaag.GetPointSampler(), 2);
 	theRenderContext.CSSetRWTexture(inTarget, 0);
 
-	pCamera cam = theFramework.GetCamera();
+	pCamera cam = Gaag.GetCamera();
 	mConstantBufferData.viewspaceReconstructionVector.x = tan(0.5 * cam->GetFovX());
 	mConstantBufferData.viewspaceReconstructionVector.y = tan(0.5 * cam->GetFovY());
 	mConstantBufferData.targetSize.x = theRenderContext.GetWidth();
 	mConstantBufferData.targetSize.y = theRenderContext.GetHeight();
-	mConstantBufferData.frameData.x = theFramework.GetFrameID();
+	mConstantBufferData.frameData.x = Gaag.GetFrameID();
 
 	theRenderContext.UpdateSubResource(mConstantBuffer, &mConstantBufferData);
 	theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);
@@ -49,7 +49,7 @@ void IndirectLightingRenderer::Init()
 {
 	CleanUp();
 	mShader = std::make_shared<ComputeShader>();
-	mShader->InitFromFile("../md3dframework/Shaders/IndirectLightingCompute.hlsl");
+	mShader->InitFromFile("../md3dFramework/Shaders/IndirectLightingCompute.hlsl");
 	mConstantBuffer = std::make_shared<ConstantBuffer>();
 	mConstantBuffer->Init(sizeof(ConstantBufferData));
 	mInitialized = true;

@@ -3,7 +3,7 @@
 #include "ComputeShader.h"
 #include "Texture.h"
 #include "RenderTarget.h"
-#include "GAAGCommon.h"
+#include "GaagCommon.h"
 #include <assert.h>
 
 
@@ -39,7 +39,7 @@ void DepthPyramidRenderer::Render(pTexture inSource, pRenderTarget inTarget)
 void DepthPyramidRenderer::Init()
 {
 	mShader = std::make_shared<ComputeShader>();
-	mShader->InitFromFile("../md3dframework/Shaders/DepthPyramidCompute.hlsl");
+	mShader->InitFromFile("../md3dFramework/Shaders/DepthPyramidCompute.hlsl");
 	assert(mShader != nullptr);
 	mInitialized = true;
 }

@@ -1,5 +1,5 @@
 #include "LightComposeRenderer.h"
-#include "Framework.h"
+#include "Gaag.h"
 #include "ComputeShader.h"
 #include "RenderContext.h"
 #include "Texture.h"
@@ -17,10 +17,10 @@ void LightComposeRenderer::Render(pTexture inDirectDiffuse, pTexture inDirectSpe
 	assert(inTarget != nullptr);
 
 	theRenderContext.CSSetShader(mShader);
-	theRenderContext.CSSetTextureAndSampler(inDirectDiffuse, theFramework.GetPointSampler(), 0);
-	theRenderContext.CSSetTextureAndSampler(inDirectSpecular, theFramework.GetPointSampler(), 1);
-	theRenderContext.CSSetTextureAndSampler(inIndirect, theFramework.GetPointSampler(), 2);
-	theRenderContext.CSSetTextureAndSampler(inReflections, theFramework.GetPointSampler(), 3);
+	theRenderContext.CSSetTextureAndSampler(inDirectDiffuse, Gaag.GetPointSampler(), 0);
+	theRenderContext.CSSetTextureAndSampler(inDirectSpecular, Gaag.GetPointSampler(), 1);
+	theRenderContext.CSSetTextureAndSampler(inIndirect, Gaag.GetPointSampler(), 2);
+	theRenderContext.CSSetTextureAndSampler(inReflections, Gaag.GetPointSampler(), 3);
 	theRenderContext.CSSetRWTexture(inTarget, 0);
 
 	int groups_x = (inTarget->GetTexture()->GetWidth() + 7) / 8;
@@ -41,7 +41,7 @@ void LightComposeRenderer::Init()
 {
 	CleanUp();
 	mShader = std::make_shared<ComputeShader>();
-	mShader->InitFromFile("../md3dframework/Shaders/LightComposeCompute.hlsl");
+	mShader->InitFromFile("../md3dFramework/Shaders/LightComposeCompute.hlsl");
 	mInitialized = true;
 }
 

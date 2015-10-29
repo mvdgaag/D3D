@@ -1,6 +1,6 @@
 #include "DirectLightingRenderer.h"
 #include "RenderContext.h"
-#include "Framework.h"
+#include "Gaag.h"
 #include "ComputeShader.h"
 #include "GBuffer.h"
 #include "RenderTarget.h"
@@ -21,19 +21,19 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 		inTargetDiffuse->GetTexture()->GetHeight() == inTargetDiffuse->GetTexture()->GetHeight());
 
 	theRenderContext.CSSetShader(mShader);
-	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::LINEAR_DEPTH), theFramework.GetPointSampler(), 0);
-	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::NORMAL), theFramework.GetPointSampler(), 1);
-	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::DIFFUSE), theFramework.GetPointSampler(), 2);
-	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::MATERIAL), theFramework.GetPointSampler(), 3);
+	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::LINEAR_DEPTH), Gaag.GetPointSampler(), 0);
+	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::NORMAL), Gaag.GetPointSampler(), 1);
+	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::DIFFUSE), Gaag.GetPointSampler(), 2);
+	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::MATERIAL), Gaag.GetPointSampler(), 3);
 	theRenderContext.CSSetRWTexture(inTargetDiffuse, 0);
 	theRenderContext.CSSetRWTexture(inTargetSpecular, 1);
 
-	pCamera cam = theFramework.GetCamera();
+	pCamera cam = Gaag.GetCamera();
 	mConstantBufferData.viewspaceReconstructionVector.x = tan(0.5 * cam->GetFovX());
 	mConstantBufferData.viewspaceReconstructionVector.y = tan(0.5 * cam->GetFovY());
 	mConstantBufferData.targetSize.x = theRenderContext.GetWidth();
 	mConstantBufferData.targetSize.y = theRenderContext.GetHeight();
-	mConstantBufferData.frameData.x = theFramework.GetFrameID();
+	mConstantBufferData.frameData.x = Gaag.GetFrameID();
 
 	theRenderContext.UpdateSubResource(mConstantBuffer, &mConstantBufferData);
 	theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);
@@ -58,7 +58,7 @@ void DirectLightingRenderer::Init()
 {
 	CleanUp();
 	mShader = std::make_shared<ComputeShader>();
-	mShader->InitFromFile("../md3dframework/Shaders/DirectLightingCompute.hlsl");
+	mShader->InitFromFile("../md3dFramework/Shaders/DirectLightingCompute.hlsl");
 	mConstantBuffer = std::make_shared<ConstantBuffer>();
 	mConstantBuffer->Init(sizeof(ConstantBufferData));
 	mInitialized = true;

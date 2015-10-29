@@ -1,6 +1,6 @@
 #include "TAARenderer.h"
 #include "RenderContext.h"
-#include "Framework.h"
+#include "Gaag.h"
 #include "ComputeShader.h"
 #include "Texture.h"
 #include "RenderTarget.h"
@@ -17,12 +17,12 @@ void TAARenderer::Render(pTexture inSource, pRenderTarget inHistory, pTexture in
 	assert(inTarget != nullptr);
 
 	theRenderContext.CSSetShader(mShader);
-	theRenderContext.CSSetTextureAndSampler(inSource, theFramework.GetPointSampler(), 0);
-	theRenderContext.CSSetTextureAndSampler(inHistory->GetTexture(), theFramework.GetLinearSampler(), 1);
-	theRenderContext.CSSetTextureAndSampler(inMotionVectors, theFramework.GetPointSampler(), 2);
+	theRenderContext.CSSetTextureAndSampler(inSource, Gaag.GetPointSampler(), 0);
+	theRenderContext.CSSetTextureAndSampler(inHistory->GetTexture(), Gaag.GetLinearSampler(), 1);
+	theRenderContext.CSSetTextureAndSampler(inMotionVectors, Gaag.GetPointSampler(), 2);
 	theRenderContext.CSSetRWTexture(inTarget, 0);
 	
-	mConstantBufferData.mJitterOffset = GetJitterOffset(theFramework.GetFrameID());
+	mConstantBufferData.mJitterOffset = GetJitterOffset(Gaag.GetFrameID());
 	mConstantBufferData.mTargetSize = float2(theRenderContext.GetWidth(), theRenderContext.GetHeight());
 	theRenderContext.UpdateSubResource(mConstantBuffer, &mConstantBufferData);
 	theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);
@@ -40,7 +40,7 @@ void TAARenderer::Render(pTexture inSource, pRenderTarget inHistory, pTexture in
 	theRenderContext.CSSetRWTexture(NULL, 0);
 
 	// make history copy;
-	theFramework.CopyToRenderTarget(inHistory, inTarget->GetTexture());
+	Gaag.CopyToRenderTarget(inHistory, inTarget->GetTexture());
 }
 
 
@@ -48,7 +48,7 @@ void TAARenderer::Init()
 {
 	CleanUp();
 	mShader = std::make_shared<ComputeShader>();
-	mShader->InitFromFile("../md3dframework/Shaders/TemporalAACompute.hlsl");
+	mShader->InitFromFile("../md3dFramework/Shaders/TemporalAACompute.hlsl");
 	mConstantBuffer = std::make_shared<ConstantBuffer>();
 	mConstantBuffer->Init(sizeof(ConstantBufferData));
 	mInitialized = true;

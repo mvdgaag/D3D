@@ -1,4 +1,4 @@
-#include "Framework.h"
+#include "Gaag.h"
 #include "RenderContext.h"
 #include "DeferredRenderer.h"
 #include "RenderTarget.h"
@@ -15,7 +15,7 @@
 #include "Time.h"
 
 
-Framework::~Framework()
+GaagFramework::~GaagFramework()
 {
 	CleanUp();
 }
@@ -23,9 +23,11 @@ Framework::~Framework()
 //--------------------------------------------------------------------------------------
 // Create Direct3D device and swap chain
 //--------------------------------------------------------------------------------------
-HRESULT Framework::Init()
+HRESULT GaagFramework::Init(HINSTANCE hInstance)
 {
-	assert(theRenderContext.IsInitialized());
+	mWindow = std::make_shared<Window>();
+	mWindow->Init(hInstance);
+	theRenderContext.Init(mWindow);
 	
 	mDeferredRenderer = std::make_shared<DeferredRenderer>();
 	mDeferredRenderer->Init(theRenderContext.GetWidth(), theRenderContext.GetHeight());
@@ -34,7 +36,7 @@ HRESULT Framework::Init()
 	mFullScreenTriangle->InitFullscreenTriangle();
 
 	mCopyShader = std::make_shared<ComputeShader>();
-	mCopyShader->InitFromFile("../md3dframework/Shaders/CopyCompute.hlsl");
+	mCopyShader->InitFromFile("../md3dFramework/Shaders/CopyCompute.hlsl");
 
 	mDefaultPointSampler = std::make_shared<Sampler>();
 	mDefaultPointSampler->Init(0); // D3D11_FILTER_MIN_MAG_MIP_POINT
@@ -55,7 +57,7 @@ HRESULT Framework::Init()
 }
 
 
-void Framework::CleanUp()
+void GaagFramework::CleanUp()
 {
 	mCamera = nullptr;
 	mDeferredRenderer = nullptr;
@@ -63,12 +65,14 @@ void Framework::CleanUp()
 	mCopyShader = nullptr;
 	mDefaultPointSampler = nullptr;
 	mDefaultLinearSampler = nullptr;
+	theRenderContext.CleanUp();
+	mWindow = nullptr;
 	
 	mInitialized = false;
 }
 
 
-void Framework::Render()
+void GaagFramework::Render()
 {
 	assert(mInitialized);
 	
@@ -86,7 +90,7 @@ void Framework::Render()
 }
 
 
-void Framework::SetMaterial(pMaterial inMaterial)
+void GaagFramework::SetMaterial(pMaterial inMaterial)
 {
 	theRenderContext.PSSetShader(inMaterial->GetPixelShader());
 	theRenderContext.VSSetShader(inMaterial->GetVertexShader());
@@ -106,7 +110,7 @@ void Framework::SetMaterial(pMaterial inMaterial)
 }
 
 
-void Framework::CopyToRenderTarget(pRenderTarget inTarget, pTexture inSource)
+void GaagFramework::CopyToRenderTarget(pRenderTarget inTarget, pTexture inSource)
 {
 	assert(inSource != nullptr);
 	assert(inTarget != nullptr);

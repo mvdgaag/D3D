@@ -1,6 +1,9 @@
 #pragma once
-#include "GAAGCommon.h"
-#include <Windows.h>
+#include "GaagCommon.h"
+#include "RenderContext.h"
+#include "Input.h"
+#include "Time.h"
+#include "Window.h"
 
 PREDEFINE(PixelShader, pPixelShader);
 PREDEFINE(VertexShader, pVertexShader);
@@ -15,19 +18,19 @@ PREDEFINE(DeferredRenderer, pDeferredRenderer);
 PREDEFINE(DrawableObject, pDrawableObject);
 PREDEFINE(Camera, pCamera);
 
-#define theFramework Framework::GetInstance()
+#define Gaag GaagFramework::GetInstance()
 
 
-class Framework
+class GaagFramework
 {
 public:
-	static Framework& GetInstance()
+	static GaagFramework& GetInstance()
 	{
-		static Framework instance;
+		static GaagFramework instance;
 		return instance;
 	}
 
-	HRESULT Init();
+	HRESULT Init(HINSTANCE hInstance);
 	bool IsInitialized() { return mInitialized; }
 	void CleanUp();
 
@@ -47,16 +50,17 @@ public:
 	void		CopyToRenderTarget(pRenderTarget inTarget, pTexture inSource);
 
 private:
-	Framework() { mInitialized = false; }
-	~Framework();
-	Framework(Framework const&) = delete;
-	void operator=(Framework const&) = delete;
+	GaagFramework() { mInitialized = false; }
+	~GaagFramework();
+	GaagFramework(GaagFramework const&) = delete;
+	void operator=(GaagFramework const&) = delete;
 
 	pMesh							mFullScreenTriangle = nullptr;
 	pComputeShader					mCopyShader = nullptr;
 	pSampler						mDefaultPointSampler = nullptr;
 	pSampler						mDefaultLinearSampler = nullptr;
 	
+	pWindow							mWindow;
 	pCamera							mCamera = nullptr;
 	pDeferredRenderer				mDeferredRenderer = nullptr;
 	std::vector<pDrawableObject>	mObjectList;

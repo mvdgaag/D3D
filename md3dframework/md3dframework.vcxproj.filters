@@ -102,9 +102,6 @@
     <ClInclude Include="DrawableObject.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Framework.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="targetver.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
@@ -198,22 +195,22 @@
     <ClInclude Include="Window.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="GAAGEngine.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="FileUtil.h">
       <Filter>Header Files\Util</Filter>
     </ClInclude>
     <ClInclude Include="Material.h">
       <Filter>Header Files\Rendering\D3D</Filter>
     </ClInclude>
-    <ClInclude Include="GAAGCommon.h">
-      <Filter>Header Files\Util</Filter>
-    </ClInclude>
     <ClInclude Include="GBuffer.h">
       <Filter>Header Files\Rendering\D3D</Filter>
     </ClInclude>
     <ClInclude Include="TextureUtil.h">
+      <Filter>Header Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="GaagCommon.h">
+      <Filter>Header Files\Util</Filter>
+    </ClInclude>
+    <ClInclude Include="Gaag.h">
       <Filter>Header Files\Util</Filter>
     </ClInclude>
   </ItemGroup>
@@ -317,22 +314,11 @@
     <ClCompile Include="TextureUtil.cpp">
       <Filter>Source Files\Util</Filter>
     </ClCompile>
-    <ClCompile Include="Framework.cpp">
+    <ClCompile Include="Gaag.cpp">
       <Filter>Source Files\Util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="md3dframework.rc">
-      <Filter>Resource Files</Filter>
-    </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="small.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="md3dframework.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
     <Image Include="Textures\photosculpt-squarebricks-ambientocclusion.dds">
       <Filter>Resource Files\Textures</Filter>
     </Image>

@@ -1,9 +1,11 @@
 #pragma once
 #include <windows.h>
 #include <windowsx.h>
+#include "GaagCommon.h"
 #include "resource.h"
 #include "Input.h"
 
+PREDEFINE(Window, pWindow);
 
 class Window
 {
@@ -13,7 +15,7 @@ public:
 	Window() {};
 	~Window() {};
 	
-	HRESULT Init(HINSTANCE hInstance, int nCmdShow);
+	HRESULT Init(HINSTANCE hInstance);
 
 protected:
 	static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);

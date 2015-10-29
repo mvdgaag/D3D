@@ -1,5 +1,5 @@
 #include "RenderContext.h"
-#include "Framework.h"
+#include "Gaag.h"
 #include "Texture.h"
 #include "Sampler.h"
 #include "PixelShader.h"
@@ -15,12 +15,12 @@
 
 RenderContext::~RenderContext()
 {
-	theFramework.CleanUp();
+	Gaag.CleanUp();
 	CleanUp();
 }
 
 
-HRESULT RenderContext::Init(Window* inWindow)
+void RenderContext::Init(pWindow inWindow)
 {
 	CleanUp();
 
@@ -71,8 +71,9 @@ HRESULT RenderContext::Init(Window* inWindow)
 			break;
 	}
 	if (FAILED(hr))
-		return hr;
-
+	{
+		exit(hr);
+	}
 	// Obtain DXGI factory from device (since we used nullptr for pAdapter above)
 	IDXGIFactory1* dxgiFactory = nullptr;
 	{
@@ -91,7 +92,9 @@ HRESULT RenderContext::Init(Window* inWindow)
 		}
 	}
 	if (FAILED(hr))
-		return hr;
+	{
+		exit(hr);
+	}
 
 	// Create swap chain
 	IDXGIFactory2* dxgiFactory2 = nullptr;
@@ -148,14 +151,18 @@ HRESULT RenderContext::Init(Window* inWindow)
 	dxgiFactory->Release();
 
 	if (FAILED(hr))
-		return hr;
+	{
+		exit(hr);
+	}
 
 	// Create a render target view
 	ID3D11Texture2D* pBackBuffer = nullptr;
 	hr = mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&pBackBuffer));
 	if (FAILED(hr))
-		return hr;
-	
+	{
+		exit(hr);
+	}
+
 	mBackBuffer = std::make_shared<Texture>();
 	mBackBuffer->Init(pBackBuffer);
 
@@ -177,7 +184,9 @@ HRESULT RenderContext::Init(Window* inWindow)
 
 	hr = mD3DDevice->CreateRasterizerState(&rasterDesc, &mRasterState);
 	if (FAILED(hr))
-		return hr;
+	{
+		exit(hr);
+	}
 	mImmediateContext->RSSetState(mRasterState);
 
 	// Setup the viewport
@@ -192,10 +201,11 @@ HRESULT RenderContext::Init(Window* inWindow)
 
 	hr = mImmediateContext->QueryInterface(__uuidof(mAnnotation), reinterpret_cast<void**>(&mAnnotation));
 	if (FAILED(hr))
-		return hr;
+	{
+		exit(hr);
+	}
 
 	mInitialized = true;
-	return S_OK;
 }
 
 

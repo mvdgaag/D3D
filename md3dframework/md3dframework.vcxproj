@@ -201,9 +201,8 @@
     <ClInclude Include="float3.h" />
     <ClInclude Include="float4.h" />
     <ClInclude Include="float4x4.h" />
-    <ClInclude Include="Framework.h" />
-    <ClInclude Include="GAAGEngine.h" />
-    <ClInclude Include="GAAGCommon.h" />
+    <ClInclude Include="Gaag.h" />
+    <ClInclude Include="GaagCommon.h" />
     <ClInclude Include="GBuffer.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="InputListener.h" />
@@ -242,7 +241,7 @@
     <ClCompile Include="DirectLightingRenderer.cpp" />
     <ClCompile Include="DrawableObject.cpp" />
     <ClCompile Include="FileUtil.cpp" />
-    <ClCompile Include="Framework.cpp" />
+    <ClCompile Include="Gaag.cpp" />
     <ClCompile Include="GBuffer.cpp" />
     <ClCompile Include="IndirectLightingRenderer.cpp" />
     <ClCompile Include="Input.cpp" />
@@ -268,11 +267,6 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="md3dframework.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="md3dframework.ico" />
-    <Image Include="small.ico" />
     <Image Include="Textures\photosculpt-squarebricks-ambientocclusion.dds" />
     <Image Include="Textures\photosculpt-squarebricks-depth.dds" />
     <Image Include="Textures\photosculpt-squarebricks-diffuse.dds" />

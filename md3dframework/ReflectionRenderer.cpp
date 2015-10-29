@@ -1,6 +1,6 @@
 #include "ReflectionRenderer.h"
 #include "RenderContext.h"
-#include "Framework.h"
+#include "Gaag.h"
 #include "ComputeShader.h"
 #include "Texture.h"
 #include "RenderTarget.h"
@@ -14,7 +14,7 @@ void ReflectionRenderer::Render(pTexture inSource, pRenderTarget inTarget)
 	assert(inTarget != nullptr);
 
 	theRenderContext.CSSetShader(mShader);
-	theRenderContext.CSSetTextureAndSampler(inSource, theFramework.GetPointSampler(), 0);
+	theRenderContext.CSSetTextureAndSampler(inSource, Gaag.GetPointSampler(), 0);
 	theRenderContext.CSSetRWTexture(inTarget, 0);
 
 	int groups_x = (inTarget->GetTexture()->GetWidth() + 7) / 8;
@@ -33,7 +33,7 @@ void ReflectionRenderer::Init()
 {
 	CleanUp();
 	mShader = std::make_shared<ComputeShader>();
-	mShader->InitFromFile("../md3dframework/Shaders/ReflectionCompute.hlsl");
+	mShader->InitFromFile("../md3dFramework/Shaders/ReflectionCompute.hlsl");
 	mInitialized = true;
 }
 

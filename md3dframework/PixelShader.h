@@ -1,7 +1,7 @@
 #pragma once
 #include "BaseResource.h"
 #include <hash_map>
-#include "GAAGCommon.h"
+#include "GaagCommon.h"
 
 struct ID3D11PixelShader;
 

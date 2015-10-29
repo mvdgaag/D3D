@@ -1,6 +1,6 @@
 #include "Mesh.h"
 #include "RenderContext.h"
-#include "GAAGCommon.h"
+#include "GaagCommon.h"
 #include <assert.h>
 #include <iostream>
 #include <fstream>

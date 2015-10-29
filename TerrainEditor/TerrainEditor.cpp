@@ -1,7 +1,15 @@
 #include <windows.h>
 #include <windowsx.h>
-#include "GAAGEngine.h"
+#include "Gaag.h"
 
+#include "Terrain.h"
+#include "Mesh.h"
+#include "Material.h"
+#include "VertexShader.h"
+#include "ComputeShader.h"
+#include "PixelShader.h"
+#include "DrawableObject.h"
+#include "Texture.h"
 
 Window* g_window = nullptr;
 
@@ -33,7 +41,7 @@ LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
 static void FrameFunc()
 {
-	float angle = 0.1f * 2.0f * 3.1415f * (float)theFramework.GetFrameDeltaTime();
+	float angle = 0.1f * 2.0f * 3.1415f * (float)Gaag.GetFrameDeltaTime();
 	g_obj->Rotate(float3(0.0f, 1.0f, 0.0f), angle);
 }
 
@@ -43,22 +51,8 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-	g_window = new Window();
-
-	if (FAILED(g_window->Init(hInstance, nCmdShow)))
-	{
-		return 0;
-	}
-
-	if (FAILED(theRenderContext.Init(g_window)))
-	{
-		theRenderContext.CleanUp();
-		return 0;
-	}
-
-	theFramework.Init();
-	theFramework.SetFrameCallback(&FrameFunc);
-
+	Gaag.Init(hInstance);
+	Gaag.SetFrameCallback(&FrameFunc);
 	InitContent();
 
 	MSG msg = { 0 };
@@ -71,13 +65,12 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 		}
 		else
 		{
-			theFramework.Render();
+			Gaag.Render();
 		}
 	}
 
 	CleanUpContent();
-	theFramework.CleanUp();
-	theRenderContext.CleanUp();
+	Gaag.CleanUp();
 
 	return (int)msg.wParam;
 }
@@ -89,25 +82,25 @@ void InitContent()
 	g_obj2 = std::make_shared<DrawableObject>();
 
 	g_mesh = std::make_shared<Mesh>();
-	g_mesh->InitFromFile("../md3dframework/Models/sphere.obj");
+	g_mesh->InitFromFile("../md3dFramework/Models/sphere.obj");
 
 	g_mesh2 = std::make_shared<Mesh>();
 	g_mesh2->InitPlane(1, 1, float2(8, 8));
 
 	g_pixel_shader = std::make_shared<PixelShader>();
-	g_pixel_shader->InitFromFile("../md3dframework/Shaders/BasicFragmentShader.hlsl");
+	g_pixel_shader->InitFromFile("../md3dFramework/Shaders/BasicFragmentShader.hlsl");
 
 	g_vertex_shader = std::make_shared<VertexShader>();
-	g_vertex_shader->InitFromFile("../md3dframework/Shaders/BasicVertexShader.hlsl");
+	g_vertex_shader->InitFromFile("../md3dFramework/Shaders/BasicVertexShader.hlsl");
 
 	g_diffuse_texture = std::make_shared<Texture>();
-	g_diffuse_texture->InitFromFile("../md3dframework/Textures/photosculpt-squarebricks-diffuse.dds");
+	g_diffuse_texture->InitFromFile("../md3dFramework/Textures/photosculpt-squarebricks-diffuse.dds");
 
 	g_normal_texture = std::make_shared<Texture>();
-	g_normal_texture->InitFromFile("../md3dframework/Textures/photosculpt-squarebricks-normal.dds");
+	g_normal_texture->InitFromFile("../md3dFramework/Textures/photosculpt-squarebricks-normal.dds");
 
 	g_surface_texture = std::make_shared<Texture>();
-	g_surface_texture->InitFromFile("../md3dframework/Textures/photosculpt-squarebricks-specular.dds");
+	g_surface_texture->InitFromFile("../md3dFramework/Textures/photosculpt-squarebricks-specular.dds");
 
 	g_material = std::make_shared<Material>();
 	g_material->Init();
@@ -144,7 +137,7 @@ void InitContent()
 
 	/*
 	g_heightmap = std::make_shared<Texture>();
-	g_heightmap->InitFromFile("../md3dframework/Textures/photosculpt-squarebricks-diffuse.dds");
+	g_heightmap->InitFromFile("../md3dFramework/Textures/photosculpt-squarebricks-diffuse.dds");
 	g_terrainTile = std::make_shared<TerrainTile>();
 	g_terrainTile->Init(float3(0.0f, 0.0f, 0.0f), float3(4.0f, 4.0f, 4.0f), g_heightmap, 256, 256, g_material);
 	*/
@@ -152,9 +145,9 @@ void InitContent()
 	g_terrain = std::make_shared<Terrain>();
 	g_terrain->Init(10, 10, 2, 2, g_material);
 
-	//theFramework.RegisterObject(g_obj);
-	//theFramework.RegisterObject(g_obj2);
-	//theFramework.RegisterObject(g_terrainTile);
+	//Gaag.RegisterObject(g_obj);
+	//Gaag.RegisterObject(g_obj2);
+	//Gaag.RegisterObject(g_terrainTile);
 }
 
 
