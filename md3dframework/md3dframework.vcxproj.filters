@@ -207,11 +207,11 @@
     <ClInclude Include="TextureUtil.h">
       <Filter>Header Files\Util</Filter>
     </ClInclude>
-    <ClInclude Include="GaagCommon.h">
-      <Filter>Header Files\Util</Filter>
-    </ClInclude>
     <ClInclude Include="Gaag.h">
-      <Filter>Header Files\Util</Filter>
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GaagCommon.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -314,9 +314,7 @@
     <ClCompile Include="TextureUtil.cpp">
       <Filter>Source Files\Util</Filter>
     </ClCompile>
-    <ClCompile Include="Gaag.cpp">
-      <Filter>Source Files\Util</Filter>
-    </ClCompile>
+    <ClCompile Include="Gaag.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\photosculpt-squarebricks-ambientocclusion.dds">
