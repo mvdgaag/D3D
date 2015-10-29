@@ -19,12 +19,6 @@
     <Filter Include="Source Files\Rendering">
       <UniqueIdentifier>{96799217-0c5b-4ec9-8b98-f75bb361ade9}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Terrain">
-      <UniqueIdentifier>{e4667f6a-fc45-4310-818c-6066118f79c6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Terrain">
-      <UniqueIdentifier>{818081d8-01ba-456a-86fa-f0fc28e9f163}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Rendering\D3D">
       <UniqueIdentifier>{d4a01008-b3d8-420f-9d7b-d4658dcd8772}</UniqueIdentifier>
     </Filter>
@@ -105,14 +99,8 @@
     <ClInclude Include="targetver.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="Terrain.h">
-      <Filter>Header Files\Terrain</Filter>
-    </ClInclude>
     <ClInclude Include="BaseDrawable.h">
       <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="TerrainTile.h">
-      <Filter>Header Files\Terrain</Filter>
     </ClInclude>
     <ClInclude Include="LinearAlgebra.h">
       <Filter>Header Files\Math</Filter>
@@ -214,12 +202,6 @@
   <ItemGroup>
     <ClCompile Include="DrawableObject.cpp">
       <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Terrain.cpp">
-      <Filter>Source Files\Terrain</Filter>
-    </ClCompile>
-    <ClCompile Include="TerrainTile.cpp">
-      <Filter>Source Files\Terrain</Filter>
     </ClCompile>
     <ClCompile Include="DeferredRenderer.cpp">
       <Filter>Source Files\Rendering\Render Systems</Filter>

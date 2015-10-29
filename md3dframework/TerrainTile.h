@@ -16,7 +16,6 @@ public:
 
 	void Init(float3 inPosition, float3 inScale, pTexture inHeightMap, int inWidthSegments, int inHeightSegments, pMaterial inMaterial);
 	void CleanUp();
-	void Draw();
 
 private:
 	struct ConstantBufferData

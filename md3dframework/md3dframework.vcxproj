@@ -220,8 +220,6 @@
     <ClInclude Include="ShadowRenderer.h" />
     <ClInclude Include="TAARenderer.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="Terrain.h" />
-    <ClInclude Include="TerrainTile.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureUtil.h" />
     <ClInclude Include="Time.h" />
@@ -256,8 +254,6 @@
     <ClCompile Include="Sampler.cpp" />
     <ClCompile Include="ShadowRenderer.cpp" />
     <ClCompile Include="TAARenderer.cpp" />
-    <ClCompile Include="Terrain.cpp" />
-    <ClCompile Include="TerrainTile.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureUtil.cpp" />
     <ClCompile Include="Time.cpp" />

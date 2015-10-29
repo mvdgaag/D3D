@@ -67,6 +67,7 @@ void GaagFramework::CleanUp()
 	mCopyShader = nullptr;
 	mDefaultPointSampler = nullptr;
 	mDefaultLinearSampler = nullptr;
+
 	TextureUtil::CleanUpTextureUtil();
 	theRenderContext.CleanUp();
 	mWindow = nullptr;
