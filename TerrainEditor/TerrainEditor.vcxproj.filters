@@ -19,9 +19,18 @@
     <Filter Include="Header Files\Terrain">
       <UniqueIdentifier>{39d3300b-2198-43e9-909a-83dd2dd6d539}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Textures">
+      <UniqueIdentifier>{a32084c6-ab1a-47d2-8261-0ddceff44bd6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\Models">
+      <UniqueIdentifier>{d218d989-d4fa-4b93-aa82-e9e34434377b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
+    <Text Include="..\md3dframework\Models\sphere.obj">
+      <Filter>Resource Files\Models</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="TerrainEditor.h">
@@ -44,5 +53,22 @@
     <ClCompile Include="..\md3dframework\TerrainTile.cpp">
       <Filter>Source Files\Terrain</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\md3dframework\Textures\photosculpt-squarebricks-ambientocclusion.dds">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="..\md3dframework\Textures\photosculpt-squarebricks-depth.dds">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="..\md3dframework\Textures\photosculpt-squarebricks-diffuse.dds">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="..\md3dframework\Textures\photosculpt-squarebricks-normal.dds">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
+    <Image Include="..\md3dframework\Textures\photosculpt-squarebricks-specular.dds">
+      <Filter>Resource Files\Textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>
