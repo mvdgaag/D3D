@@ -87,9 +87,6 @@
     <ClInclude Include="DrawableObject.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="targetver.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="BaseDrawable.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
@@ -122,9 +119,6 @@
     </ClInclude>
     <ClInclude Include="ComputeShader.h">
       <Filter>Header Files\Rendering\D3D</Filter>
-    </ClInclude>
-    <ClInclude Include="DeferredRenderer.h">
-      <Filter>Header Files\Rendering\Renderer Systems</Filter>
     </ClInclude>
     <ClInclude Include="DepthPyramidRenderer.h">
       <Filter>Header Files\Rendering\Renderer Systems</Filter>
@@ -191,6 +185,9 @@
     </ClInclude>
     <ClInclude Include="int2.h">
       <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="DeferredRenderer.h">
+      <Filter>Header Files\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

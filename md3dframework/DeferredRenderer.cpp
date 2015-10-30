@@ -68,8 +68,13 @@ void DeferredRenderer::Init(int inWidth, int inHeight)
 	mConstantBufferEveryFrame = std::make_shared<ConstantBuffer>();
 	mConstantBufferEveryFrame->Init(sizeof(ConstantDataEveryFrame));
 
+	mConstantBufferEveryObject = std::make_shared<ConstantBuffer>();
+	mConstantBufferEveryObject->Init(sizeof(ConstantDataEveryObject));
+
 	mConstantBufferOnDemand = std::make_shared<ConstantBuffer>();
 	mConstantBufferOnDemand->Init(sizeof(ConstantDataOnDemand));
+
+	//mPrevViewMatrix = Gaag.GetCamera()->GetViewMatrix();
 
 	mInitialized = true;	
 }
@@ -141,10 +146,25 @@ void DeferredRenderer::GeometryPass(std::vector<pDrawableObject> inDrawList)
 	{
 		theRenderContext.SetMarker("Drawing Object");
 
-		Gaag.SetMaterial(obj->GetMaterial());
+		ConstantDataEveryObject constantData;
 
+		constantData.modelView = DirectX::XMMatrixTranspose(Gaag.GetCamera()->GetViewMatrix());
+		constantData.modelView *= DirectX::XMMatrixTranspose(obj->GetTransform());
+
+		constantData.prevModelViewProjection = DirectX::XMMatrixTranspose(mPrevViewProjectionMatrix);
+		constantData.prevModelViewProjection *= DirectX::XMMatrixTranspose(obj->GetPrevTransform());
+
+		constantData.modelViewProjection = DirectX::XMMatrixTranspose(Gaag.GetCamera()->GetViewProjectionMatrix());
+		constantData.modelViewProjection *= DirectX::XMMatrixTranspose(obj->GetTransform());
+
+		theRenderContext.UpdateSubResource(mConstantBufferEveryObject, &constantData);
+		obj->SwapTransform();
+
+		Gaag.SetMaterial(obj->GetMaterial());
+		
 		theRenderContext.VSSetConstantBuffer(mConstantBufferEveryFrame, 0);
-		theRenderContext.VSSetConstantBuffer(obj->GetConstantBuffer(), 1);
+		theRenderContext.VSSetConstantBuffer(mConstantBufferEveryObject, 1);
+		obj->PrepareToDraw();
 
 		theRenderContext.DrawMesh(obj->GetMesh());
 
@@ -164,6 +184,8 @@ void DeferredRenderer::GeometryPass(std::vector<pDrawableObject> inDrawList)
 	pRenderTarget null_targets[] = { NULL, NULL, NULL, NULL, NULL };
 	theRenderContext.SetRenderTargets(5, null_targets, NULL);
 	theRenderContext.EndEvent();
+
+	mPrevViewProjectionMatrix = Gaag.GetCamera()->GetViewProjectionMatrix();
 }
 
 

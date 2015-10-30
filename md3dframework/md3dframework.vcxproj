@@ -220,7 +220,6 @@
     <ClInclude Include="Sampler.h" />
     <ClInclude Include="ShadowRenderer.h" />
     <ClInclude Include="TAARenderer.h" />
-    <ClInclude Include="targetver.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureUtil.h" />
     <ClInclude Include="Time.h" />

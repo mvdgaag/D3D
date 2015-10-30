@@ -71,6 +71,14 @@ private:
 		DirectX::XMMATRIX inverseProjectionMatrix;
 		float4 frameData;								// jitter_offset.xy, frameID, 0
 	};
+
+	struct ConstantDataEveryObject
+	{
+		DirectX::XMMATRIX modelView;
+		DirectX::XMMATRIX modelViewProjection;
+		DirectX::XMMATRIX prevModelViewProjection;
+	};
+
 	struct ConstantDataOnDemand
 	{
 		float4 lightPositions[MAX_LIGHTS];
@@ -89,6 +97,8 @@ private:
 	pRenderTarget		mPostProcessed = nullptr;
 	pConstantBuffer		mConstantBufferOnDemand = nullptr;
 	pConstantBuffer		mConstantBufferEveryFrame = nullptr;
+	pConstantBuffer		mConstantBufferEveryObject = nullptr;
+	DirectX::XMMATRIX	mPrevViewProjectionMatrix;
 
 	bool mInitialized = false;
 };
