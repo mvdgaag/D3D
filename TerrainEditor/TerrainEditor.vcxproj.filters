@@ -25,6 +25,9 @@
     <Filter Include="Resource Files\Models">
       <UniqueIdentifier>{d218d989-d4fa-4b93-aa82-e9e34434377b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Shaders">
+      <UniqueIdentifier>{3a4c680c-8e28-4f76-a8ae-4cc3377f6613}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -72,5 +75,13 @@
     <Object Include="Models\sphere.obj">
       <Filter>Resource Files\Models</Filter>
     </Object>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="Shaders\TerrainFragmentShader.hlsl">
+      <Filter>Resource Files\Shaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\TerrainVertexShader.hlsl">
+      <Filter>Resource Files\Shaders</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

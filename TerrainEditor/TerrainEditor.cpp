@@ -74,10 +74,10 @@ void InitContent()
 	g_mesh->InitFromFile("Models/sphere.obj");
 
 	g_pixel_shader = std::make_shared<PixelShader>();
-	g_pixel_shader->InitFromFile("../md3dFramework/Shaders/BasicFragmentShader.hlsl");
+	g_pixel_shader->InitFromFile("Shaders/TerrainFragmentShader.hlsl");
 
 	g_vertex_shader = std::make_shared<VertexShader>();
-	g_vertex_shader->InitFromFile("../md3dFramework/Shaders/BasicVertexShader.hlsl");
+	g_vertex_shader->InitFromFile("Shaders/TerrainVertexShader.hlsl");
 
 	g_diffuse_texture = std::make_shared<Texture>();
 	g_diffuse_texture->InitFromFile("Textures/photosculpt-squarebricks-diffuse.dds");
@@ -105,7 +105,7 @@ void InitContent()
 	Gaag.RegisterObject(g_obj);
 
 	g_terrain = std::make_shared<Terrain>();
-	g_terrain->Init(int2(10), int2(1), float3(5,5,1), g_material);
+	g_terrain->Init(int2(4), int2(256), float3(5,5,1), g_material);
 }
 
 
