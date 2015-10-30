@@ -206,6 +206,7 @@
     <ClInclude Include="GBuffer.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="InputListener.h" />
+    <ClInclude Include="int2.h" />
     <ClInclude Include="LightComposeRenderer.h" />
     <ClInclude Include="LinearAlgebra.h" />
     <ClInclude Include="IndirectLightingRenderer.h" />

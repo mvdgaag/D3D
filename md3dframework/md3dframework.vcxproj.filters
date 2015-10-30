@@ -189,6 +189,9 @@
     <ClInclude Include="GaagCommon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="int2.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DrawableObject.cpp">

@@ -24,11 +24,9 @@ pTexture g_surface_texture;
 pTexture g_heightmap;
 pTerrain g_terrain;
 
-
-HRESULT InitWindow(HINSTANCE hInstance, int nCmdShow);
+void FrameFunc();
 void InitContent();
 void CleanUpContent();
-LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
 
 static void FrameFunc()
@@ -107,7 +105,7 @@ void InitContent()
 	Gaag.RegisterObject(g_obj);
 
 	g_terrain = std::make_shared<Terrain>();
-	g_terrain->Init(10, 10, 2, 2, g_material);
+	g_terrain->Init(int2(10), int2(1), float3(5,5,1), g_material);
 }
 
 

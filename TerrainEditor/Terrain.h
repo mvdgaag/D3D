@@ -11,11 +11,12 @@ class Terrain
 public:
 	Terrain() {};
 	~Terrain() {};
-	void Init(int inWidth, int inHeight, int inTileWidth, int inTileHeight, pMaterial inMaterial);
+	void Init(int2 inNumTiles, int2 inTileSegments, float3 inTileScale, pMaterial inMaterial);
 	void CleanUp();
 private:
-	int mWidth = 0;
-	int mHeight = 0;
+	int2 mNumTiles;
+	int2 mTileSegments;
+	float3 mTileScale;
 	pTerrainTile* mTiles = nullptr;
 };
 
