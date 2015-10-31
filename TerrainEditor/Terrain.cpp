@@ -1,8 +1,5 @@
 #include "Terrain.h"
-#include "Gaag.h"
 #include "TerrainTile.h"
-#include "Material.h"
-#include "Texture.h"
 
 
 void Terrain::Init(int2 inNumTiles, int2 inTileSegments, float3 inTileScale, pMaterial inMaterial)

@@ -1,5 +1,5 @@
 #pragma once
-#include "GaagCommon.h"
+#include "Gaag.h"
 
 PREDEFINE(Terrain, pTerrain);
 PREDEFINE(TerrainTile, pTerrainTile);

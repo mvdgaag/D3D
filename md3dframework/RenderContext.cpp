@@ -1,5 +1,5 @@
 #include "RenderContext.h"
-#include "Gaag.h"
+#include "GaagFramework.h"
 #include "Texture.h"
 #include "Sampler.h"
 #include "PixelShader.h"

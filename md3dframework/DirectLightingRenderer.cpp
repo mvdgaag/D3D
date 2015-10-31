@@ -1,6 +1,6 @@
 #include "DirectLightingRenderer.h"
 #include "RenderContext.h"
-#include "Gaag.h"
+#include "GaagFramework.h"
 #include "ComputeShader.h"
 #include "GBuffer.h"
 #include "RenderTarget.h"

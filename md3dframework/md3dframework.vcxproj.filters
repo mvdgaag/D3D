@@ -177,9 +177,6 @@
     <ClInclude Include="TextureUtil.h">
       <Filter>Header Files\Util</Filter>
     </ClInclude>
-    <ClInclude Include="Gaag.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GaagCommon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -188,6 +185,12 @@
     </ClInclude>
     <ClInclude Include="DeferredRenderer.h">
       <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="GaagFramework.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Gaag.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -284,7 +287,7 @@
     <ClCompile Include="TextureUtil.cpp">
       <Filter>Source Files\Util</Filter>
     </ClCompile>
-    <ClCompile Include="Gaag.cpp" />
+    <ClCompile Include="GaagFramework.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\BasicFragmentShader.hlsl">

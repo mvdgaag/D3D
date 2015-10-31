@@ -1,6 +1,6 @@
 #include "DeferredRenderer.h"
 #include "RenderContext.h"
-#include "Gaag.h"
+#include "GaagFramework.h"
 #include "Camera.h"
 #include "ConstantBuffer.h"
 #include "GBuffer.h"

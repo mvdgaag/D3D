@@ -1,6 +1,6 @@
 #include "DrawableObject.h"
 #include "RenderContext.h"
-#include "Gaag.h"
+#include "GaagFramework.h"
 #include "Camera.h"
 #include "Material.h"
 #include "ConstantBuffer.h"

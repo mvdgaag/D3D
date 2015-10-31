@@ -1,15 +1,6 @@
 #include <windows.h>
 #include <windowsx.h>
-#include "Gaag.h"
-
 #include "Terrain.h"
-#include "Mesh.h"
-#include "Material.h"
-#include "VertexShader.h"
-#include "ComputeShader.h"
-#include "PixelShader.h"
-#include "DrawableObject.h"
-#include "Texture.h"
 
 Window* g_window = nullptr;
 

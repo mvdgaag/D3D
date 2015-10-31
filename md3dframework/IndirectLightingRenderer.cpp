@@ -1,6 +1,6 @@
 #include "IndirectLightingRenderer.h"
 #include "RenderContext.h"
-#include "Gaag.h"
+#include "GaagFramework.h"
 #include "ComputeShader.h"
 #include "RenderTarget.h"
 #include "Texture.h"

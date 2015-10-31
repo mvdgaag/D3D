@@ -202,6 +202,7 @@
     <ClInclude Include="float4.h" />
     <ClInclude Include="float4x4.h" />
     <ClInclude Include="Gaag.h" />
+    <ClInclude Include="GaagFramework.h" />
     <ClInclude Include="GaagCommon.h" />
     <ClInclude Include="GBuffer.h" />
     <ClInclude Include="Input.h" />
@@ -238,7 +239,7 @@
     <ClCompile Include="DirectLightingRenderer.cpp" />
     <ClCompile Include="DrawableObject.cpp" />
     <ClCompile Include="FileUtil.cpp" />
-    <ClCompile Include="Gaag.cpp" />
+    <ClCompile Include="GaagFramework.cpp" />
     <ClCompile Include="GBuffer.cpp" />
     <ClCompile Include="IndirectLightingRenderer.cpp" />
     <ClCompile Include="Input.cpp" />

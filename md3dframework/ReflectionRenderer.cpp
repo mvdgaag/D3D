@@ -1,6 +1,6 @@
 #include "ReflectionRenderer.h"
 #include "RenderContext.h"
-#include "Gaag.h"
+#include "GaagFramework.h"
 #include "ComputeShader.h"
 #include "Texture.h"
 #include "RenderTarget.h"

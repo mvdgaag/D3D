@@ -1,5 +1,5 @@
 #include "LightComposeRenderer.h"
-#include "Gaag.h"
+#include "GaagFramework.h"
 #include "ComputeShader.h"
 #include "RenderContext.h"
 #include "Texture.h"

@@ -1,11 +1,7 @@
 #pragma once
-#include "DrawableObject.h"
+#include "Gaag.h"
 
 PREDEFINE(TerrainTile, pTerrainTile);
-PREDEFINE(Mesh, pMesh);
-PREDEFINE(Material, pMaterial);
-PREDEFINE(Texture, pTexture);
-PREDEFINE(ConstantBuffer, pConstantBuffer);
 
 
 class TerrainTile : public DrawableObject

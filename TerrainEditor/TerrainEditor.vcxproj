@@ -151,11 +151,13 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="PaintTool.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="TerrainEditor.h" />
     <ClInclude Include="TerrainTile.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="PaintTool.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TerrainEditor.cpp" />
     <ClCompile Include="TerrainTile.cpp" />
