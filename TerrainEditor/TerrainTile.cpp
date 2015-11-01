@@ -1,25 +1,31 @@
 #include "TerrainTile.h"
 
 
-void TerrainTile::Init(float3 inPosition, float3 inScale, pTexture inHeightMap, int inWidthSegments, int inHeightSegments, pMaterial inMaterial)
+void TerrainTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments, pMaterial inMaterial)
 {
 	CleanUp();
 
-	mHeightMap = inHeightMap;
+	mHeightMapRenderTarget = MAKE_NEW(RenderTarget);
+	mHeightMapRenderTarget->Init(inNumSegments.x, inNumSegments.y, 1, 41); // 41 = DXGI_FORMAT_R32_FLOAT
+	mHeightMapTexture = mHeightMapRenderTarget->GetTexture();
+
+	mHeightScale = inScale.z;
+	mPixelsPerMeter = float2(mHeightMapTexture->GetWidth(), mHeightMapTexture->GetHeight()) / inScale.XY();
+	mNumSegments = inNumSegments;
 	
-	pMesh mesh = std::make_shared<Mesh>();
-	mesh->InitPlane(inWidthSegments, inHeightSegments, inScale.XY());
+	pMesh mesh = MAKE_NEW(Mesh);
+	mesh->InitPlane(mNumSegments, inScale.XY());
 	
 	DrawableObject::Init(mesh, inMaterial);
 	Translate(inPosition);
 
-	mConstantBuffer = std::make_shared<ConstantBuffer>();
+	mConstantBuffer = MAKE_NEW(ConstantBuffer);
 	mConstantBuffer->Init(sizeof(mConstantBufferData));
 	
-	mConstantBufferData.widthSegments = inWidthSegments;
-	mConstantBufferData.heightSegments = inHeightSegments;
-	mConstantBufferData.heightScale = inScale.z;
-	theRenderContext.UpdateSubResource(mConstantBuffer, &mConstantBufferData);
+	mConstantBufferData.widthSegments = mNumSegments.x;
+	mConstantBufferData.heightSegments = mNumSegments.y;
+	mConstantBufferData.heightScale = mHeightScale;
+	theRenderContext.UpdateSubResource(*mConstantBuffer, &mConstantBufferData);
 
 	mInitialized = true; 
 }
@@ -28,7 +34,8 @@ void TerrainTile::Init(float3 inPosition, float3 inScale, pTexture inHeightMap, 
 void TerrainTile::CleanUp()
 {
 	DrawableObject::CleanUp();
-	mHeightMap = nullptr;
+	mHeightMapTexture = nullptr;
+	mHeightMapRenderTarget = nullptr;
 	mConstantBuffer = nullptr;
 	mInitialized = false;
 }

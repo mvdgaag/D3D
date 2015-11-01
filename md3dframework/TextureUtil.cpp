@@ -111,7 +111,7 @@ namespace TextureUtil
 
 	void GPUTextureFunc(pTexture inDst, pTexture inSrc1, pTexture inSrc2, pTexture inSrc3, ComputeShader& inShader)
 	{
-		pRenderTarget rt = std::make_shared<RenderTarget>();
+		pRenderTarget rt = MAKE_NEW(RenderTarget);
 		rt->Init(inDst);
 
 		pComputeShader cs(&inShader);
@@ -136,7 +136,7 @@ namespace TextureUtil
 
 	void GPUTextureFunc(pTexture inDst, pTexture inSrc1, pTexture inSrc2, ComputeShader& inShader)
 	{
-		pRenderTarget rt = std::make_shared<RenderTarget>();
+		pRenderTarget rt = MAKE_NEW(RenderTarget);
 		rt->Init(inDst);
 		
 		pComputeShader cs(&inShader);
@@ -159,10 +159,10 @@ namespace TextureUtil
 
 	void GPUTextureFunc(pTexture inDst, pTexture inSrc, float4 inVal, ComputeShader& inShader)
 	{
-		pRenderTarget rt = std::make_shared<RenderTarget>();
+		pRenderTarget rt = MAKE_NEW(RenderTarget);
 		rt->Init(inDst);
 
-		pConstantBuffer cb = std::make_shared<ConstantBuffer>();
+		pConstantBuffer cb = MAKE_NEW(ConstantBuffer);
 		cb->Init(sizeof(float4));
 
 		pComputeShader cs(&inShader);
@@ -170,7 +170,7 @@ namespace TextureUtil
 		theRenderContext.CSSetShader(cs);
 		theRenderContext.CSSetRWTexture(rt, 0);
 		theRenderContext.CSSetTexture(inSrc, 0);
-		theRenderContext.UpdateSubResource(cb, &inVal);
+		theRenderContext.UpdateSubResource(*cb, &inVal);
 		theRenderContext.CSSetConstantBuffer(cb, 0);
 
 		int threads_x = (inDst->GetWidth() + 7) / 8;
@@ -186,7 +186,7 @@ namespace TextureUtil
 
 	void GPUTextureFunc(pTexture inDst, pTexture inSrc, ComputeShader& inShader)
 	{
-		pRenderTarget rt = std::make_shared<RenderTarget>();
+		pRenderTarget rt = MAKE_NEW(RenderTarget);
 		rt->Init(inDst);
 
 		pComputeShader cs(&inShader);
@@ -207,17 +207,17 @@ namespace TextureUtil
 
 	void GPUTextureFunc(pTexture inDst, float4 inVal, ComputeShader& inShader)
 	{
-		pRenderTarget rt = std::make_shared<RenderTarget>();
+		pRenderTarget rt = MAKE_NEW(RenderTarget);
 		rt->Init(inDst);
 
-		pConstantBuffer cb = std::make_shared<ConstantBuffer>();
+		pConstantBuffer cb = MAKE_NEW(ConstantBuffer);
 		cb->Init(sizeof(float4));
 
 		pComputeShader cs(&inShader);
 
 		theRenderContext.CSSetShader(cs);
 		theRenderContext.CSSetRWTexture(rt, 0);
-		theRenderContext.UpdateSubResource(cb, &inVal);
+		theRenderContext.UpdateSubResource(*cb, &inVal);
 		theRenderContext.CSSetConstantBuffer(cb, 0);
 
 		int threads_x = (inDst->GetWidth() + 7) / 8;
@@ -232,10 +232,10 @@ namespace TextureUtil
 
 	void GPUTextureFunc(pTexture inDst, pTexture inSource, float4 inVal1, float4 inVal2, ComputeShader& inShader)
 	{
-		pRenderTarget rt = std::make_shared<RenderTarget>();
+		pRenderTarget rt = MAKE_NEW(RenderTarget);
 		rt->Init(inDst);
 
-		pConstantBuffer cb = std::make_shared<ConstantBuffer>();
+		pConstantBuffer cb = MAKE_NEW(ConstantBuffer);
 		cb->Init(sizeof(float4) * 2);
 
 		float4 cb_data[2] = { inVal1, inVal2 };
@@ -243,7 +243,7 @@ namespace TextureUtil
 
 		theRenderContext.CSSetShader(cs);
 		theRenderContext.CSSetRWTexture(rt, 0);
-		theRenderContext.UpdateSubResource(cb, &cb_data);
+		theRenderContext.UpdateSubResource(*cb, &cb_data);
 		theRenderContext.CSSetConstantBuffer(cb, 0);
 
 		int threads_x = (inDst->GetWidth() + 7) / 8;

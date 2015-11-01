@@ -26,28 +26,28 @@ GaagFramework::~GaagFramework()
 //--------------------------------------------------------------------------------------
 HRESULT GaagFramework::Init(HINSTANCE hInstance)
 {
-	mWindow = std::make_shared<Window>();
+	mWindow = MAKE_NEW(Window);
 	mWindow->Init(hInstance);
 	theRenderContext.Init(mWindow);
 	TextureUtil::InitTextureUtil();
 	
-	mDeferredRenderer = std::make_shared<DeferredRenderer>();
+	mDeferredRenderer = MAKE_NEW(DeferredRenderer);
 	mDeferredRenderer->Init(theRenderContext.GetWidth(), theRenderContext.GetHeight());
 
-	mFullScreenTriangle = std::make_shared<Mesh>();
+	mFullScreenTriangle = MAKE_NEW(Mesh);
 	mFullScreenTriangle->InitFullscreenTriangle();
 
-	mCopyShader = std::make_shared<ComputeShader>();
+	mCopyShader = MAKE_NEW(ComputeShader);
 	mCopyShader->InitFromFile("../md3dFramework/Shaders/CopyCompute.hlsl");
 
-	mDefaultPointSampler = std::make_shared<Sampler>();
+	mDefaultPointSampler = MAKE_NEW(Sampler);
 	mDefaultPointSampler->Init(0); // D3D11_FILTER_MIN_MAG_MIP_POINT
 
-	mDefaultLinearSampler = std::make_shared<Sampler>();
+	mDefaultLinearSampler = MAKE_NEW(Sampler);
 	mDefaultLinearSampler->Init(21); // D3D11_FILTER_MIN_MAG_MIP_LINEAR
 
-	mCamera = std::make_shared<Camera>();
-	mCamera->SetPosition(0.0, 2.0, -3.0);
+	mCamera = MAKE_NEW(Camera);
+	mCamera->SetPosition(0.0, 20.0, -25.0);
 	mCamera->SetTarget(0.0, 0.0, 0.0);
 	mCamera->SetUp(0.0, 1.0, 0.0);
 
@@ -94,6 +94,44 @@ void GaagFramework::Render()
 }
 
 
+float3 GaagFramework::ScreenToCameraPos(int2 inScreenPos)
+{
+	pTexture linear_depth_texture = mDeferredRenderer->GetGBuffer()->GetTexture(GBuffer::LINEAR_DEPTH);
+	float2 NDC = float2(		float(inScreenPos.x) / linear_depth_texture->GetWidth(), 
+						  1.0 -	float(inScreenPos.y) / linear_depth_texture->GetHeight() ) * 2.0 - 1.0;
+	float linear_depth = linear_depth_texture->GetPixel(inScreenPos).x;
+	float2 view_reconstruct = float2(tan(0.5 * mCamera->GetFovX()), tan(0.5 * mCamera->GetFovY()));
+	float2 xy = view_reconstruct * NDC * linear_depth;
+	float3 cam_pos = float3(xy.x, xy.y, -linear_depth);
+	return cam_pos;
+}
+
+
+float3 GaagFramework::CameraToWorldPos(float3 inCameraPos)
+{
+	DirectX::XMVECTOR cam_pos;
+	cam_pos.m128_f32[0] = inCameraPos.x;
+	cam_pos.m128_f32[1] = inCameraPos.y;
+	cam_pos.m128_f32[2] = inCameraPos.z;
+	cam_pos.m128_f32[3] = 1.0f;
+
+	DirectX::XMMATRIX inverse_view = DirectX::XMMatrixInverse(nullptr, mCamera->GetViewMatrix());
+	inverse_view = DirectX::XMMatrixTranspose(inverse_view);
+
+	DirectX::XMVECTOR world_pos = DirectX::XMVector4Transform(cam_pos, inverse_view);
+	float3 out_world_pos = float3(world_pos.m128_f32[0], world_pos.m128_f32[1], world_pos.m128_f32[2]);
+	return out_world_pos;
+}
+
+
+float3 GaagFramework::ScreenToWorldPos(int2 inScreenPos)
+{
+	float3 cam_pos = ScreenToCameraPos(inScreenPos);
+	float3 world_pos = CameraToWorldPos(cam_pos) - mCamera->GetPosition();
+	return world_pos;
+}
+
+
 void GaagFramework::SetMaterial(pMaterial inMaterial)
 {
 	theRenderContext.PSSetShader(inMaterial->GetPixelShader());
@@ -123,8 +161,8 @@ void GaagFramework::CopyToRenderTarget(pRenderTarget inTarget, pTexture inSource
 	theRenderContext.CSSetTexture(inSource, 0);
 	theRenderContext.CSSetRWTexture(inTarget, 0);
 
-	int groups_x = 1 + (inTarget->GetTexture()->GetWidth() - 1) / 8;
-	int groups_y = 1 + (inTarget->GetTexture()->GetHeight() - 1) / 8;
+	int groups_x = (inTarget->GetTexture()->GetWidth() + 7) / 8;
+	int groups_y = (inTarget->GetTexture()->GetHeight() + 7) / 8;
 	theRenderContext.Dispatch(groups_x, groups_y, 1);
 	theRenderContext.Flush();
 

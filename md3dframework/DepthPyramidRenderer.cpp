@@ -38,7 +38,7 @@ void DepthPyramidRenderer::Render(pTexture inSource, pRenderTarget inTarget)
 
 void DepthPyramidRenderer::Init()
 {
-	mShader = std::make_shared<ComputeShader>();
+	mShader = MAKE_NEW(ComputeShader);
 	mShader->InitFromFile("../md3dFramework/Shaders/DepthPyramidCompute.hlsl");
 	assert(mShader != nullptr);
 	mInitialized = true;

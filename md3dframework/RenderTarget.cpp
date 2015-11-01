@@ -10,8 +10,8 @@ void RenderTarget::Init(int inWidth, int inHeight, int inMipLevels, unsigned int
 	CleanUp();
 
 	unsigned int bind_flags = (D3D11_BIND_RENDER_TARGET | D3D11_BIND_UNORDERED_ACCESS | D3D11_BIND_SHADER_RESOURCE);
-	pTexture texture = std::make_shared<Texture>();
-	texture->Init(inWidth, inHeight, inMipLevels, inFormat, bind_flags);
+	pTexture texture = MAKE_NEW(Texture);
+	texture->Init(inWidth, inHeight, inMipLevels, inFormat, 0, bind_flags);
 
 	Init(texture);
 }

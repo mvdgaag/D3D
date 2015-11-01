@@ -1,6 +1,8 @@
 #include <windows.h>
 #include <windowsx.h>
 #include "Terrain.h"
+#include "PaintTool.h"
+#include "Brush.h"
 
 Window* g_window = nullptr;
 
@@ -14,6 +16,9 @@ pTexture g_normal_texture;
 pTexture g_surface_texture;
 pTexture g_heightmap;
 pTerrain g_terrain;
+
+pPaintTool g_paint_tool;
+pBrush g_brush;
 
 void FrameFunc();
 void InitContent();
@@ -59,27 +64,27 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
 void InitContent()
 {
-	g_obj = std::make_shared<DrawableObject>();
+	g_obj = MAKE_NEW(DrawableObject);
 
-	g_mesh = std::make_shared<Mesh>();
+	g_mesh = MAKE_NEW(Mesh);
 	g_mesh->InitFromFile("Models/sphere.obj");
 
-	g_pixel_shader = std::make_shared<PixelShader>();
+	g_pixel_shader = MAKE_NEW(PixelShader);
 	g_pixel_shader->InitFromFile("Shaders/TerrainFragmentShader.hlsl");
 
-	g_vertex_shader = std::make_shared<VertexShader>();
+	g_vertex_shader = MAKE_NEW(VertexShader);
 	g_vertex_shader->InitFromFile("Shaders/TerrainVertexShader.hlsl");
 
-	g_diffuse_texture = std::make_shared<Texture>();
+	g_diffuse_texture = MAKE_NEW(Texture);
 	g_diffuse_texture->InitFromFile("Textures/photosculpt-squarebricks-diffuse.dds");
 
-	g_normal_texture = std::make_shared<Texture>();
+	g_normal_texture = MAKE_NEW(Texture);
 	g_normal_texture->InitFromFile("Textures/photosculpt-squarebricks-normal.dds");
 
-	g_surface_texture = std::make_shared<Texture>();
+	g_surface_texture = MAKE_NEW(Texture);
 	g_surface_texture->InitFromFile("Textures/photosculpt-squarebricks-specular.dds");
 
-	g_material = std::make_shared<Material>();
+	g_material = MAKE_NEW(Material);
 	g_material->Init();
 	g_material->SetDiffuseTexture(g_diffuse_texture);
 	g_material->SetNormalTexture(g_normal_texture);
@@ -95,8 +100,14 @@ void InitContent()
 	g_obj->Init(g_mesh, g_material);
 	Gaag.RegisterObject(g_obj);
 
-	g_terrain = std::make_shared<Terrain>();
+	g_terrain = MAKE_NEW(Terrain);
 	g_terrain->Init(int2(4), int2(256), float3(5,5,1), g_material);
+
+	g_brush = MAKE_NEW(Brush);
+
+	g_paint_tool = MAKE_NEW(PaintTool);
+	g_paint_tool->SetBrush(g_brush);
+	g_paint_tool->SetTargetTerrain(g_terrain);
 }
 
 

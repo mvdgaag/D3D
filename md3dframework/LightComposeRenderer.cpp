@@ -40,7 +40,7 @@ void LightComposeRenderer::Render(pTexture inDirectDiffuse, pTexture inDirectSpe
 void LightComposeRenderer::Init()
 {
 	CleanUp();
-	mShader = std::make_shared<ComputeShader>();
+	mShader = MAKE_NEW(ComputeShader);
 	mShader->InitFromFile("../md3dFramework/Shaders/LightComposeCompute.hlsl");
 	mInitialized = true;
 }

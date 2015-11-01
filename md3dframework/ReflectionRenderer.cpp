@@ -32,7 +32,7 @@ void ReflectionRenderer::Render(pTexture inSource, pRenderTarget inTarget)
 void ReflectionRenderer::Init()
 {
 	CleanUp();
-	mShader = std::make_shared<ComputeShader>();
+	mShader = MAKE_NEW(ComputeShader);
 	mShader->InitFromFile("../md3dFramework/Shaders/ReflectionCompute.hlsl");
 	mInitialized = true;
 }

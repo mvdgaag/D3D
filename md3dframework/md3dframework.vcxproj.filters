@@ -90,9 +90,6 @@
     <ClInclude Include="BaseDrawable.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="LinearAlgebra.h">
-      <Filter>Header Files\Math</Filter>
-    </ClInclude>
     <ClInclude Include="Mesh.h">
       <Filter>Header Files\Rendering\D3D</Filter>
     </ClInclude>
@@ -191,6 +188,12 @@
     </ClInclude>
     <ClInclude Include="Gaag.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="rect.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="GaagMath.h">
+      <Filter>Header Files\Math</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

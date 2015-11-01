@@ -67,6 +67,16 @@ public:
 		return *(&x + idx);
 	}
 
+	inline const float4 float4::operator %(const float4& vec) const
+	{
+		return float4(fmod(x, vec.x), fmod(y, vec.y), fmod(z, vec.z), fmod(w, vec.w));
+	}
+
+	inline const float4 float4::operator %(const float scalar) const
+	{
+		return float4(fmod(x, scalar), fmod(y, scalar), fmod(z, scalar), fmod(w, scalar));
+	}
+
 	inline const float4 float4::operator +(const float4& vec) const
 	{
 		return float4(x + vec.x, y + vec.y, z + vec.z, w + vec.w);
@@ -105,7 +115,7 @@ public:
 		return *this;
 	}
 
-	inline float4& float4::operator -=(const float4 scalar)
+	inline float4& float4::operator -=(const float scalar)
 	{
 		*this = *this - scalar;
 		return *this;

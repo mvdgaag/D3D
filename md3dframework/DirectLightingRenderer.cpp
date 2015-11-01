@@ -35,7 +35,7 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 	mConstantBufferData.targetSize.y = theRenderContext.GetHeight();
 	mConstantBufferData.frameData.x = Gaag.GetFrameID();
 
-	theRenderContext.UpdateSubResource(mConstantBuffer, &mConstantBufferData);
+	theRenderContext.UpdateSubResource(*mConstantBuffer, &mConstantBufferData);
 	theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);
 
 	int groups_x = (inTargetDiffuse->GetTexture()->GetWidth() + 7) / 8;
@@ -57,9 +57,9 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 void DirectLightingRenderer::Init()
 {
 	CleanUp();
-	mShader = std::make_shared<ComputeShader>();
+	mShader = MAKE_NEW(ComputeShader);
 	mShader->InitFromFile("../md3dFramework/Shaders/DirectLightingCompute.hlsl");
-	mConstantBuffer = std::make_shared<ConstantBuffer>();
+	mConstantBuffer = MAKE_NEW(ConstantBuffer);
 	mConstantBuffer->Init(sizeof(ConstantBufferData));
 	mInitialized = true;
 }

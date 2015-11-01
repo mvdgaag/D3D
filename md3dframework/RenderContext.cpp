@@ -163,10 +163,10 @@ void RenderContext::Init(pWindow inWindow)
 		exit(hr);
 	}
 
-	mBackBuffer = std::make_shared<Texture>();
+	mBackBuffer = MAKE_NEW(Texture);
 	mBackBuffer->Init(pBackBuffer);
 
-	mOutputRenderTarget = std::make_shared<RenderTarget>();
+	mOutputRenderTarget = MAKE_NEW(RenderTarget);
 	mOutputRenderTarget->Init(mBackBuffer);
 
 	// setup rasterizer
@@ -281,22 +281,49 @@ void RenderContext::SetRenderTargets(unsigned int inNumTargets, pRenderTarget* i
 }
 
 
-void RenderContext::UpdateSubResource(pConstantBuffer inConstantBuffer, const void* inData)
+void RenderContext::UpdateSubResource(const ConstantBuffer& inConstantBuffer, const void* inData)
 {
-	mImmediateContext->UpdateSubresource(inConstantBuffer->mBuffer, 0, nullptr, inData, 0, 0);
+	mImmediateContext->UpdateSubresource(inConstantBuffer.mBuffer, 0, nullptr, inData, 0, 0);
 }
 
 
-void RenderContext::DrawMesh(pMesh inMesh)
+void RenderContext::CopySubResourceRegion(const Texture& dst, const Texture& src, const rect& inSourceRect, int2 inTargetCoord)
 {
-	ID3D11Buffer* mesh_verts = inMesh->mVertexBuffer;
-	ID3D11Buffer* mesh_indices = inMesh->mIndexBuffer;
-	UINT stride = inMesh->mStride;
-	UINT offset = inMesh->mOffset;
+	D3D11_BOX srcBox;
+	srcBox.left = inSourceRect.topLeft.x;
+	srcBox.right = inSourceRect.bottomRight.x;
+	srcBox.top = inSourceRect.topLeft.y;
+	srcBox.bottom = inSourceRect.bottomRight.y;
+	srcBox.front = 0;
+	srcBox.back = 1;
+	mImmediateContext->CopySubresourceRegion(dst.mTexture, 0, inTargetCoord.x, inTargetCoord.y, 0, src.mTexture, 0, &srcBox);
+}
+
+
+void RenderContext::Map(const Texture& inTexture, void** outDataPtr, int inMapType)
+{
+	D3D11_MAPPED_SUBRESOURCE msr;
+	mImmediateContext->Map(inTexture.mTexture, 0, (D3D11_MAP)inMapType, 0, &msr);
+	outDataPtr[0] = msr.pData;
+}
+
+
+void RenderContext::UnMap(const Texture& inTexture)
+{
+	mImmediateContext->Unmap(inTexture.mTexture, 0);
+}
+
+
+void RenderContext::DrawMesh(const Mesh& inMesh)
+{
+	ID3D11Buffer* mesh_verts = inMesh.mVertexBuffer;
+	ID3D11Buffer* mesh_indices = inMesh.mIndexBuffer;
+	UINT stride = inMesh.mStride;
+	UINT offset = inMesh.mOffset;
 	mImmediateContext->IASetVertexBuffers(0, 1, &mesh_verts, &stride, &offset);
 	mImmediateContext->IASetIndexBuffer(mesh_indices, DXGI_FORMAT_R16_UINT, 0);
 	mImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	mImmediateContext->DrawIndexed(inMesh->mNumIndices, 0, 0);
+	mImmediateContext->DrawIndexed(inMesh.mNumIndices, 0, 0);
 }
 
 

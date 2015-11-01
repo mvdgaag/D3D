@@ -5,7 +5,7 @@
 
 void Material::Init()
 {
-	mConstantBuffer = std::make_shared<ConstantBuffer>();
+	mConstantBuffer = MAKE_NEW(ConstantBuffer);
 	mConstantBuffer->Init(sizeof(mConstantData));
 }
 
@@ -100,5 +100,5 @@ void Material::SetFlags(MaterialFlags inFlags)
 
 void Material::UpdateConstantBuffer()
 {
-	theRenderContext.UpdateSubResource(mConstantBuffer, &mConstantData);
+	theRenderContext.UpdateSubResource(*mConstantBuffer, &mConstantData);
 }

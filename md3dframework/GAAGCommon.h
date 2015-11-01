@@ -4,7 +4,8 @@
 #include <assert.h>
 #include <vector>
 #include <unordered_map>
-#include "LinearAlgebra.h"
+#include <hash_set>
+#include "GaagMath.h"
 
 
 #ifndef D3DCall
@@ -25,4 +26,8 @@
 
 #ifndef PREDEFINE
 #define PREDEFINE(x, px) class x; typedef std::shared_ptr<x> px;
+#endif
+
+#ifndef MAKE_NEW
+#define MAKE_NEW(x) std::make_shared<x>();
 #endif

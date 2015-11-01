@@ -2,6 +2,7 @@
 #include "GaagCommon.h"
 #include "RenderContext.h"
 #include "Input.h"
+#include "InputListener.h"
 #include "Time.h"
 #include "Window.h"
 			
@@ -37,6 +38,9 @@ public:
 	void Render();
 	void SetFrameCallback(void(*inCallBack)(void)) { mFrameCallback = inCallBack; }
 	void RegisterObject(pDrawableObject obj) { mObjectList.push_back(obj); }
+	float3 ScreenToCameraPos(int2 inScreenPos);
+	float3 CameraToWorldPos(float3 inCameraPos);
+	float3 ScreenToWorldPos(int2 inScreenPos);
 
 	pCamera		GetCamera()														{ return mCamera; }
 	int			GetFrameID()													{ return mFrameID; }

@@ -55,8 +55,11 @@ public:
 	void ClearDepthStencil(pDepthStencilTarget inDepthStencilTarget, float inClearDepth, unsigned char inClearStencil);
 	void ClearRenderTarget(pRenderTarget inRenderTarget, float4 inColor);
 	void SetRenderTargets(unsigned int inNumTargets, pRenderTarget* inTargets, pDepthStencilTarget inDepthStencilTarget);
-	void UpdateSubResource(pConstantBuffer inConstantBuffer, const void* inData);
-	void DrawMesh(pMesh inMesh);
+	void UpdateSubResource(const ConstantBuffer& inConstantBuffer, const void* inData);
+	void CopySubResourceRegion(const Texture& dst, const Texture& src, const rect& inSourceRect, int2 inTargetCoord);
+	void Map(const Texture& inTexture, void** outDataPtr, int inMapType = 1); // 1 == read
+	void UnMap(const Texture& inTexture);
+	void DrawMesh(const Mesh& inMesh);
 	void Flush();
 	void SwapBuffers();
 

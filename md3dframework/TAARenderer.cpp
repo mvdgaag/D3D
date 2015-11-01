@@ -24,7 +24,7 @@ void TAARenderer::Render(pTexture inSource, pRenderTarget inHistory, pTexture in
 	
 	mConstantBufferData.mJitterOffset = GetJitterOffset(Gaag.GetFrameID());
 	mConstantBufferData.mTargetSize = float2(theRenderContext.GetWidth(), theRenderContext.GetHeight());
-	theRenderContext.UpdateSubResource(mConstantBuffer, &mConstantBufferData);
+	theRenderContext.UpdateSubResource(*mConstantBuffer, &mConstantBufferData);
 	theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);
 
 	int groups_x = (inTarget->GetTexture()->GetWidth() + 7) / 8;
@@ -47,9 +47,9 @@ void TAARenderer::Render(pTexture inSource, pRenderTarget inHistory, pTexture in
 void TAARenderer::Init()
 {
 	CleanUp();
-	mShader = std::make_shared<ComputeShader>();
+	mShader = MAKE_NEW(ComputeShader);
 	mShader->InitFromFile("../md3dFramework/Shaders/TemporalAACompute.hlsl");
-	mConstantBuffer = std::make_shared<ConstantBuffer>();
+	mConstantBuffer = MAKE_NEW(ConstantBuffer);
 	mConstantBuffer->Init(sizeof(ConstantBufferData));
 	mInitialized = true;
 }

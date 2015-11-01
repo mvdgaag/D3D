@@ -209,11 +209,12 @@
     <ClInclude Include="InputListener.h" />
     <ClInclude Include="int2.h" />
     <ClInclude Include="LightComposeRenderer.h" />
-    <ClInclude Include="LinearAlgebra.h" />
+    <ClInclude Include="GaagMath.h" />
     <ClInclude Include="IndirectLightingRenderer.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Mesh.h" />
     <ClInclude Include="PostProcessRenderer.h" />
+    <ClInclude Include="rect.h" />
     <ClInclude Include="ReflectionRenderer.h" />
     <ClInclude Include="RenderContext.h" />
     <ClInclude Include="RenderTarget.h" />

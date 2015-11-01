@@ -17,6 +17,9 @@ SamplerState LinearSampler
 [numthreads(8, 8, 1)]
 void CS(uint3 DTid : SV_DispatchThreadID)
 {
+	// coord from bottom left of brush rect
 	float2 coord = float2(DTid.x, DTid.y);
+
+
 	dst[coord] = DirectDiffuse[coord] + DirectSpecular[coord] + Indirect[coord] + Reflections[coord];
 }

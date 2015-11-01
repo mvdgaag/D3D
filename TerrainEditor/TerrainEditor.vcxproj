@@ -151,12 +151,14 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Brush.h" />
     <ClInclude Include="PaintTool.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="TerrainEditor.h" />
     <ClInclude Include="TerrainTile.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Brush.cpp" />
     <ClCompile Include="PaintTool.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TerrainEditor.cpp" />
@@ -191,6 +193,10 @@
     </Object>
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="BrushBasicShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
     <FxCompile Include="Shaders\TerrainFragmentShader.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>

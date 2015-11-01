@@ -22,9 +22,12 @@ public:
 	int GetHeight();		
 	int GetMipLevels();		
 
-	virtual void Init(int inWidth, int inHeight, int inMipLevels, unsigned int inFormat, unsigned int inBindFlags = 8); // 8 = D3D11_BIND_SHADER_RESOURCE
+	virtual void Init(int inWidth, int inHeight, int inMipLevels, unsigned int inFormat, 
+		unsigned int inUsage = 0, unsigned int inBindFlags = 8, unsigned int inCPUAccessFlags = 0); // 0 = D3D11_USAGE_DEFAULT, 8 = D3D11_BIND_SHADER_RESOURCE
 	virtual void Init(ID3D11Texture2D* inTexture);
 	virtual void InitFromFile(std::string inFileName);
+
+	float4 GetPixel(int2 inPixelCoordinate);
 	
 	virtual void CleanUp() override;
 	virtual ResourceType GetResourceType() const override { return ResourceType::TEXTURE; };

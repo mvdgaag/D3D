@@ -64,7 +64,7 @@ void Mesh::InitCube(float3 inScale)
 }
 
 
-void Mesh::InitPlane(int inSubX, int inSubY, float2 inScale)
+void Mesh::InitPlane(int2 inSegments, float2 inScale)
 {
 	std::vector<SimpleVertex> vertices;
 	std::vector<WORD> indices;
@@ -73,23 +73,23 @@ void Mesh::InitPlane(int inSubX, int inSubY, float2 inScale)
 	vert.Normal = float3(0, 1, 0);
 	vert.Tangent = float3(0, 0, 1);
 
-	for (int x = 0; x <= inSubX; x++)
+	for (int x = 0; x <= inSegments.x; x++)
 	{
-		float u = float(x) / inSubX;
-		for (int y = 0; y <= inSubY; y++)
+		float u = float(x) / inSegments.x;
+		for (int y = 0; y <= inSegments.y; y++)
 		{
-			float v = float(y) / inSubY;
+			float v = float(y) / inSegments.y;
 			vert.TexCoord = float2(u, v);
 			vert.Position = float3((u - 0.5) * inScale.x, 0, (v - 0.5) * inScale.y);
 			vertices.push_back(vert);
 		}
 	}
 
-	for (int x = 0; x < inSubX; x++)
+	for (int x = 0; x < inSegments.x; x++)
 	{
-		for (int y = 0; y < inSubY; y++)
+		for (int y = 0; y < inSegments.y; y++)
 		{
-			int row_offset = inSubY + 1;
+			int row_offset = inSegments.y + 1;
 			int idx = x * row_offset + y;
 			indices.push_back(idx);
 			indices.push_back(idx + 1);

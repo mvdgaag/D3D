@@ -52,7 +52,9 @@ PS_INPUT VS(VS_INPUT input)
 	PS_INPUT output =		(PS_INPUT)0;
 
 	float3 pos = input.Position;
-	pos.y += cTerrainScale.z - 0.125 * cHeightTexture.SampleLevel(cHeightSampler, input.TexCoord, 0).x;
+	
+		// no displace
+		//pos.y += cTerrainScale.z - 0.125 * cHeightTexture.SampleLevel(cHeightSampler, input.TexCoord, 0).x;
 	
 
 	// jitter for TAA

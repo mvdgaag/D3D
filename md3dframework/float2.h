@@ -59,6 +59,16 @@ public:
 		return *(&x + idx);
 	}
 
+	inline const float2 float2::operator %(const float2& vec) const
+	{
+		return float2(fmod(x, vec.x), fmod(y, vec.y));
+	}
+
+	inline const float2 float2::operator %(const float scalar) const
+	{
+		return float2(fmod(x, scalar), fmod(y, scalar));
+	}
+
 	inline const float2 float2::operator +(const float2& vec) const
 	{
 		return float2(x + vec.x, y + vec.y);
@@ -97,7 +107,7 @@ public:
 		return *this;
 	}
 
-	inline float2& float2::operator -=(const float2 scalar)
+	inline float2& float2::operator -=(const float scalar)
 	{
 		*this = *this - scalar;
 		return *this;

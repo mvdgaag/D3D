@@ -20,22 +20,22 @@ void GBuffer::Init(int inWidth, int inHeight)
 	mWidth = inWidth;
 	mHeight = inHeight;
 
-	mRenderTargets[LINEAR_DEPTH] = std::make_shared<RenderTarget>();
+	mRenderTargets[LINEAR_DEPTH] = MAKE_NEW(RenderTarget);
 	mRenderTargets[LINEAR_DEPTH]->Init(mWidth, mHeight, 1, DXGI_FORMAT_R32_FLOAT);
 
-	mRenderTargets[NORMAL] = std::make_shared<RenderTarget>();
+	mRenderTargets[NORMAL] = MAKE_NEW(RenderTarget);
 	mRenderTargets[NORMAL]->Init(mWidth, mHeight, 1, DXGI_FORMAT_R16G16_FLOAT);
 
-	mRenderTargets[DIFFUSE] = std::make_shared<RenderTarget>();
+	mRenderTargets[DIFFUSE] = MAKE_NEW(RenderTarget);
 	mRenderTargets[DIFFUSE]->Init(mWidth, mHeight, 1, DXGI_FORMAT_R8G8B8A8_UNORM);
 
-	mRenderTargets[MATERIAL] = std::make_shared<RenderTarget>();
+	mRenderTargets[MATERIAL] = MAKE_NEW(RenderTarget);
 	mRenderTargets[MATERIAL]->Init(mWidth, mHeight, 1, DXGI_FORMAT_R8G8B8A8_UNORM);
 
-	mRenderTargets[MOTION_VECTORS] = std::make_shared<RenderTarget>();
+	mRenderTargets[MOTION_VECTORS] = MAKE_NEW(RenderTarget);
 	mRenderTargets[MOTION_VECTORS]->Init(mWidth, mHeight, 1, DXGI_FORMAT_R16G16_FLOAT);
 
-	mDepthStencilTarget = std::make_shared<DepthStencilTarget>();
+	mDepthStencilTarget = MAKE_NEW(DepthStencilTarget);
 	mDepthStencilTarget->Init(mWidth, mHeight);
 
 	mInitialized = true;

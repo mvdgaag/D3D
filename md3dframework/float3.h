@@ -44,6 +44,11 @@ public:
 	}
 
 	inline float2 float3::XY() const { return float2(x, y); }
+	inline float2 float3::XZ() const { return float2(x, z); }
+	inline float2 float3::YX() const { return float2(y, x); }
+	inline float2 float3::YZ() const { return float2(y, z); }
+	inline float2 float3::ZX() const { return float2(z, x); }
+	inline float2 float3::ZY() const { return float2(z, y); }
 
 	inline bool float3::operator ==(const float3& vec) const
 	{
@@ -63,6 +68,16 @@ public:
 	inline float float3::operator [](int idx) const
 	{
 		return *(&x + idx);
+	}
+
+	inline const float3 float3::operator %(const float3& vec) const
+	{
+		return float3(fmod(x, vec.x), fmod(y, vec.y), fmod(z, vec.z));
+	}
+
+	inline const float3 float3::operator %(const float scalar) const
+	{
+		return float3(fmod(x, scalar), fmod(y, scalar), fmod(z, scalar));
 	}
 
 	inline const float3 float3::operator +(const float3& vec) const
@@ -103,7 +118,7 @@ public:
 		return *this;
 	}
 
-	inline float3& float3::operator -=(const float3 scalar)
+	inline float3& float3::operator -=(const float scalar)
 	{
 		*this = *this - scalar;
 		return *this;

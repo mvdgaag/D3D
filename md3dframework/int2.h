@@ -1,6 +1,6 @@
 #pragma once
 #include <math.h>
-
+#include "float2.h"
 
 // predeclarations
 class int2;
@@ -29,6 +29,12 @@ public:
 	{
 		x = scalar;
 		y = scalar;
+	}
+
+	inline int2::int2(const float2& vec)
+	{
+		x = vec.x;
+		y = vec.y;
 	}
 
 	inline int2& int2::operator = (const int2& vec)
@@ -96,7 +102,7 @@ public:
 		return *this;
 	}
 
-	inline int2& int2::operator -=(const int2 scalar)
+	inline int2& int2::operator -=(const int scalar)
 	{
 		*this = *this - scalar;
 		return *this;

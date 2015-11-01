@@ -26,34 +26,34 @@ void DeferredRenderer::Init(int inWidth, int inHeight)
 
 	CleanUp();
 
-	mGBuffer = std::make_shared<GBuffer>();
+	mGBuffer = MAKE_NEW(GBuffer);
 	mGBuffer->Init(inWidth, inHeight);
 
-	mDepthPyramid = std::make_shared<RenderTarget>();
+	mDepthPyramid = MAKE_NEW(RenderTarget);
 	mDepthPyramid->Init(inWidth / 2, inHeight / 2, 3, DXGI_FORMAT_R16G16_FLOAT);
 	
-	mDirectLightingDiffuse = std::make_shared<RenderTarget>();
+	mDirectLightingDiffuse = MAKE_NEW(RenderTarget);
 	mDirectLightingDiffuse->Init(inWidth, inHeight, 1, DXGI_FORMAT_R16G16B16A16_FLOAT);
 
-	mDirectLightingSpecular = std::make_shared<RenderTarget>();
+	mDirectLightingSpecular = MAKE_NEW(RenderTarget);
 	mDirectLightingSpecular->Init(inWidth, inHeight, 1, DXGI_FORMAT_R16G16B16A16_FLOAT);
 
-	mIndirectLighting = std::make_shared<RenderTarget>();
+	mIndirectLighting = MAKE_NEW(RenderTarget);
 	mIndirectLighting->Init(inWidth, inHeight, 1, DXGI_FORMAT_R16G16B16A16_FLOAT);
 
-	mReflections = std::make_shared<RenderTarget>();
+	mReflections = MAKE_NEW(RenderTarget);
 	mReflections->Init(inWidth, inHeight, 1, DXGI_FORMAT_R16G16B16A16_FLOAT);
 
-	mLightComposed = std::make_shared<RenderTarget>();
+	mLightComposed = MAKE_NEW(RenderTarget);
 	mLightComposed->Init(inWidth, inHeight, 1, DXGI_FORMAT_R16G16B16A16_FLOAT);
 
-	mAntiAliased = std::make_shared<RenderTarget>();
+	mAntiAliased = MAKE_NEW(RenderTarget);
 	mAntiAliased->Init(inWidth, inHeight, 1, DXGI_FORMAT_R16G16B16A16_FLOAT);
 
-	mAAHistoryFrame = std::make_shared<RenderTarget>();
+	mAAHistoryFrame = MAKE_NEW(RenderTarget);
 	mAAHistoryFrame->Init(inWidth, inHeight, 1, DXGI_FORMAT_R16G16B16A16_FLOAT);
 
-	mPostProcessed = std::make_shared<RenderTarget>();
+	mPostProcessed = MAKE_NEW(RenderTarget);
 	mPostProcessed->Init(inWidth, inHeight, 1, DXGI_FORMAT_R16G16B16A16_FLOAT);
 
 	mShadowRenderer.Init();
@@ -65,13 +65,13 @@ void DeferredRenderer::Init(int inWidth, int inHeight)
 	mTAARenderer.Init();
 	mPostProcessRenderer.Init();
 	
-	mConstantBufferEveryFrame = std::make_shared<ConstantBuffer>();
+	mConstantBufferEveryFrame = MAKE_NEW(ConstantBuffer);
 	mConstantBufferEveryFrame->Init(sizeof(ConstantDataEveryFrame));
 
-	mConstantBufferEveryObject = std::make_shared<ConstantBuffer>();
+	mConstantBufferEveryObject = MAKE_NEW(ConstantBuffer);
 	mConstantBufferEveryObject->Init(sizeof(ConstantDataEveryObject));
 
-	mConstantBufferOnDemand = std::make_shared<ConstantBuffer>();
+	mConstantBufferOnDemand = MAKE_NEW(ConstantBuffer);
 	mConstantBufferOnDemand->Init(sizeof(ConstantDataOnDemand));
 
 	//mPrevViewMatrix = Gaag.GetCamera()->GetViewMatrix();
@@ -121,7 +121,7 @@ void DeferredRenderer::Render(std::vector<pDrawableObject> inDrawList)
 	DirectX::XMVECTOR determinant = DirectX::XMMatrixDeterminant(constantData.projectionMatrix);
 	constantData.inverseProjectionMatrix = DirectX::XMMatrixInverse(&determinant, constantData.projectionMatrix);
 	
-	theRenderContext.UpdateSubResource(mConstantBufferEveryFrame, &constantData);
+	theRenderContext.UpdateSubResource(*mConstantBufferEveryFrame, &constantData);
 
 	GeometryPass(inDrawList);
 	
@@ -157,7 +157,7 @@ void DeferredRenderer::GeometryPass(std::vector<pDrawableObject> inDrawList)
 		constantData.modelViewProjection = DirectX::XMMatrixTranspose(Gaag.GetCamera()->GetViewProjectionMatrix());
 		constantData.modelViewProjection *= DirectX::XMMatrixTranspose(obj->GetTransform());
 
-		theRenderContext.UpdateSubResource(mConstantBufferEveryObject, &constantData);
+		theRenderContext.UpdateSubResource(*mConstantBufferEveryObject, &constantData);
 		obj->SwapTransform();
 
 		Gaag.SetMaterial(obj->GetMaterial());
@@ -166,7 +166,7 @@ void DeferredRenderer::GeometryPass(std::vector<pDrawableObject> inDrawList)
 		theRenderContext.VSSetConstantBuffer(mConstantBufferEveryObject, 1);
 		obj->PrepareToDraw();
 
-		theRenderContext.DrawMesh(obj->GetMesh());
+		theRenderContext.DrawMesh(*(obj->GetMesh()));
 
 		// reset state
 		theRenderContext.VSSetConstantBuffer(NULL, 0);
