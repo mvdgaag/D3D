@@ -8,14 +8,22 @@ public:
 	explicit BaseDrawable() {}
 	virtual ~BaseDrawable() {}
 	
-	const DirectX::XMMATRIX&	GetTransform()		{ return mTransform; }
-	const DirectX::XMMATRIX&	GetPrevTransform()	{ return mPrevTransform; }
+	const float4x4&				GetTransform()		{ return mTransform; }
+	const float4x4&				GetPrevTransform()	{ return mPrevTransform; }
 	void						SwapTransform()		{ mPrevTransform = mTransform; }
-	void						Rotate(float3 inAxis, float inAngle)	{ mTransform *= DirectX::XMMatrixRotationAxis(DirectX::XMVectorSet(inAxis.x, inAxis.y, inAxis.z, 0.0), inAngle); }
-	void						Translate(float3 inTranslation)			{ mTransform *= DirectX::XMMatrixTranslation(inTranslation.x, inTranslation.y, inTranslation.z); }
+	
+	void Rotate(float3 inAxis, float inAngle)	
+	{ 
+		mTransform = rotate(mTransform, inAngle, inAxis);
+	}
+	
+	void Translate(float3 inTranslation)			
+	{ 
+		mTransform = translate(mTransform, inTranslation);
+	}
 
 protected:
-	DirectX::XMMATRIX mTransform;
-	DirectX::XMMATRIX mPrevTransform;
+	float4x4 mTransform;
+	float4x4 mPrevTransform;
 };
 

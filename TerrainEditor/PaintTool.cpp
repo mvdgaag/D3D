@@ -25,19 +25,19 @@ void PaintTool::OnMouseMove(float2 inCurrentCoord, float2 inPrevCoord)
 void PaintTool::BeginPaint(float3 inWorldPos)
 {
 	mPainting = true;
-	ApplyPaint(inWorldPos.XZ());
+	ApplyPaint(float2(inWorldPos.x, inWorldPos.z));
 }
 
 
 void PaintTool::EndPaint(float3 inWorldPos)
 {
-	ApplyPaint(inWorldPos.XZ());
+	ApplyPaint(float2(inWorldPos.x, inWorldPos.z));
 }
 
 
 void PaintTool::ContinuePaint(float3 inWorldPos)
 {
-	ApplyPaint(inWorldPos.XZ());
+	ApplyPaint(float2(inWorldPos.x, inWorldPos.z));
 	mPainting = false;
 }
 
@@ -53,9 +53,9 @@ void PaintTool::ApplyPaint(float2 inWorldCoord)
 	if (mCurrentBrush == nullptr)
 		return;
 
-	float2 terrain_coord = inWorldCoord + mTargetTerrain->GetWorldCenter();
-	float2 tile_size = mTargetTerrain->GetTileScale().XY();
-	float2 tile_coord = terrain_coord % tile_size;
+	int2 terrain_coord = inWorldCoord + mTargetTerrain->GetWorldCenter();
+	int2 tile_size = int2(mTargetTerrain->GetTileScale());
+	int2 tile_coord = terrain_coord % tile_size;
 	int2 tile_index = terrain_coord / tile_size;
 
 	// take tiles around nearest crossing
@@ -79,7 +79,7 @@ void PaintTool::ApplyPaint(float2 inWorldCoord)
 	pTerrainTile NE = mTargetTerrain->GetTile(tile_index + int2(1, 1));
 	pTerrainTile SW = mTargetTerrain->GetTile(tile_index + int2(0, 0));
 	pTerrainTile SE = mTargetTerrain->GetTile(tile_index + int2(0, 1));
-	float2 pixel_coord = tile_coord * NW->GetPixelsPerMeter();
+	float2 pixel_coord = float2(tile_coord) * NW->GetPixelsPerMeter();
 
 	mCurrentBrush->Apply(NW, NE, SW, SE, pixel_coord);
 }

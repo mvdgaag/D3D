@@ -4,8 +4,10 @@
 #include <assert.h>
 #include <vector>
 #include <unordered_map>
-#include <hash_set>
+#include <unordered_set>
+
 #include "GaagMath.h"
+#include "rect.h"
 
 
 #ifndef D3DCall

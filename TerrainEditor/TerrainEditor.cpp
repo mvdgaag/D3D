@@ -101,7 +101,7 @@ void InitContent()
 	Gaag.RegisterObject(g_obj);
 
 	g_terrain = MAKE_NEW(Terrain);
-	g_terrain->Init(int2(4), int2(256), float3(5,5,1), g_material);
+	g_terrain->Init(int2(3), int2(256), float3(5,5,1), g_material);
 
 	g_brush = MAKE_NEW(Brush);
 

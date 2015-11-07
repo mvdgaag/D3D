@@ -10,11 +10,11 @@ void TerrainTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments, pM
 	mHeightMapTexture = mHeightMapRenderTarget->GetTexture();
 
 	mHeightScale = inScale.z;
-	mPixelsPerMeter = float2(mHeightMapTexture->GetWidth(), mHeightMapTexture->GetHeight()) / inScale.XY();
+	mPixelsPerMeter = float2(mHeightMapTexture->GetWidth(), mHeightMapTexture->GetHeight()) / float2(inScale);
 	mNumSegments = inNumSegments;
 	
 	pMesh mesh = MAKE_NEW(Mesh);
-	mesh->InitPlane(mNumSegments, inScale.XY());
+	mesh->InitPlane(mNumSegments, float2(inScale));
 	
 	DrawableObject::Init(mesh, inMaterial);
 	Translate(inPosition);

@@ -1,6 +1,6 @@
 #pragma once
 #include <math.h>
-#include "int2.h"
+#include "GaagMath.h"
 
 // predeclarations
 class rect;

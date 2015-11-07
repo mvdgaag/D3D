@@ -47,7 +47,7 @@ HRESULT GaagFramework::Init(HINSTANCE hInstance)
 	mDefaultLinearSampler->Init(21); // D3D11_FILTER_MIN_MAG_MIP_LINEAR
 
 	mCamera = MAKE_NEW(Camera);
-	mCamera->SetPosition(0.0, 20.0, -25.0);
+	mCamera->SetPosition(0.0, 2.0, 5.0);
 	mCamera->SetTarget(0.0, 0.0, 0.0);
 	mCamera->SetUp(0.0, 1.0, 0.0);
 
@@ -98,9 +98,9 @@ float3 GaagFramework::ScreenToCameraPos(int2 inScreenPos)
 {
 	pTexture linear_depth_texture = mDeferredRenderer->GetGBuffer()->GetTexture(GBuffer::LINEAR_DEPTH);
 	float2 NDC = float2(		float(inScreenPos.x) / linear_depth_texture->GetWidth(), 
-						  1.0 -	float(inScreenPos.y) / linear_depth_texture->GetHeight() ) * 2.0 - 1.0;
+						  1.0 -	float(inScreenPos.y) / linear_depth_texture->GetHeight() ) * 2.0f - 1.0f;
 	float linear_depth = linear_depth_texture->GetPixel(inScreenPos).x;
-	float2 view_reconstruct = float2(tan(0.5 * mCamera->GetFovX()), tan(0.5 * mCamera->GetFovY()));
+	float2 view_reconstruct = float2(tan(0.5f * mCamera->GetFovX()), tan(0.5f * mCamera->GetFovY()));
 	float2 xy = view_reconstruct * NDC * linear_depth;
 	float3 cam_pos = float3(xy.x, xy.y, -linear_depth);
 	return cam_pos;
@@ -109,25 +109,16 @@ float3 GaagFramework::ScreenToCameraPos(int2 inScreenPos)
 
 float3 GaagFramework::CameraToWorldPos(float3 inCameraPos)
 {
-	DirectX::XMVECTOR cam_pos;
-	cam_pos.m128_f32[0] = inCameraPos.x;
-	cam_pos.m128_f32[1] = inCameraPos.y;
-	cam_pos.m128_f32[2] = inCameraPos.z;
-	cam_pos.m128_f32[3] = 1.0f;
-
-	DirectX::XMMATRIX inverse_view = DirectX::XMMatrixInverse(nullptr, mCamera->GetViewMatrix());
-	inverse_view = DirectX::XMMatrixTranspose(inverse_view);
-
-	DirectX::XMVECTOR world_pos = DirectX::XMVector4Transform(cam_pos, inverse_view);
-	float3 out_world_pos = float3(world_pos.m128_f32[0], world_pos.m128_f32[1], world_pos.m128_f32[2]);
-	return out_world_pos;
+	float4x4 inverse_view = inverse(mCamera->GetViewMatrix());
+	float4 world_pos = inverse_view * float4(inCameraPos, 1.0);
+	return float3(world_pos);
 }
 
 
 float3 GaagFramework::ScreenToWorldPos(int2 inScreenPos)
 {
 	float3 cam_pos = ScreenToCameraPos(inScreenPos);
-	float3 world_pos = CameraToWorldPos(cam_pos) - mCamera->GetPosition();
+	float3 world_pos = CameraToWorldPos(cam_pos);
 	return world_pos;
 }
 

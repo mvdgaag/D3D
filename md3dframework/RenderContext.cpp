@@ -177,7 +177,7 @@ void RenderContext::Init(pWindow inWindow)
 	rasterDesc.DepthBiasClamp = 0.0f;
 	rasterDesc.DepthClipEnable = true;
 	rasterDesc.FillMode = D3D11_FILL_SOLID;
-	rasterDesc.FrontCounterClockwise = false;
+	rasterDesc.FrontCounterClockwise = true;
 	rasterDesc.MultisampleEnable = false;
 	rasterDesc.ScissorEnable = false;
 	rasterDesc.SlopeScaledDepthBias = 0.0f;
@@ -188,6 +188,30 @@ void RenderContext::Init(pWindow inWindow)
 		exit(hr);
 	}
 	mImmediateContext->RSSetState(mRasterState);
+	
+	D3D11_DEPTH_STENCIL_DESC dsDesc;
+
+	dsDesc.DepthEnable = true;
+	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
+	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	dsDesc.StencilEnable = false;
+	dsDesc.StencilReadMask = 0xFF;
+	dsDesc.StencilWriteMask = 0xFF;
+	dsDesc.FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	dsDesc.FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_INCR;
+	dsDesc.FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	dsDesc.FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	// Stencil operations if pixel is back-facing
+	dsDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+	dsDesc.BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_DECR;
+	dsDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+	dsDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+
+	// Create depth stencil state
+	ID3D11DepthStencilState * pDSState;
+	mD3DDevice->CreateDepthStencilState(&dsDesc, &pDSState);
+	mImmediateContext->OMSetDepthStencilState(pDSState, 1);
 
 	// Setup the viewport
 	D3D11_VIEWPORT vp;

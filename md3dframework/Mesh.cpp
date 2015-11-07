@@ -346,7 +346,7 @@ void Mesh::InitFromFile(std::string inFileName)
 		vertices[i].Tangent = normalize(t - n * dot(n, t));
 
 		// Calculate handedness
-		vertices[i].Tangent[i] *= (dot(cross(n, t), tan2[i]) < 0.0) ? -1.0 : 1.0;
+		vertices[i].Tangent *= (dot(cross(n, t), tan2[i]) < 0.0) ? -1.0 : 1.0;
 	}
 
 	InitFromData(vertices.data(), vertices.size(), indices.data(), indices.size());

@@ -2,6 +2,12 @@
 #include <math.h>
 #include "float2.h"
 
+
+#define USE_GLM
+#ifndef USE_GLM
+
+
+
 // predeclarations
 class int2;
 
@@ -211,3 +217,5 @@ inline int sumOfElem(const int2& vec)
 {
 	return vec.x + vec.y;
 }
+
+#endif

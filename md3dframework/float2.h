@@ -1,6 +1,8 @@
 #pragma once
 #include <math.h>
 
+#define USE_GLM
+#ifndef USE_GLM
 
 // predeclarations
 class float2;
@@ -261,3 +263,5 @@ inline const float2 normalize(const float2& vec)
 	float rcpLength = 1.0f / length(vec);
 	return vec * rcpLength;
 }
+
+#endif

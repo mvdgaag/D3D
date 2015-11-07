@@ -2,6 +2,9 @@
 #include "InputListener.h"
 
 
+std::unordered_set<pInputListener> Input::mListeners = std::unordered_set<pInputListener>();
+
+
 void Input::OnKeyDown(unsigned int inKey)
 {
 	mKeys[inKey] = true;

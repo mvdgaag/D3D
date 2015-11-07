@@ -2,6 +2,11 @@
 #include <math.h>
 #include "float2.h"
 
+
+#define USE_GLM
+#ifndef USE_GLM
+
+
 // predeclarations
 class float3;
 inline float dot(const float3& vec0, const float3& vec1);
@@ -282,3 +287,5 @@ inline const float3 cross(const float3& vec0, const float3& vec1)
 					(vec0.z * vec1.x) - (vec0.x * vec1.z),
 					(vec0.x * vec1.y) - (vec0.y * vec1.x));
 }
+
+#endif

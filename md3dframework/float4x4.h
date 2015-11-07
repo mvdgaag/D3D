@@ -2,6 +2,10 @@
 #include "float3.h"
 #include "float4.h"
 
+#define USE_GLM
+#ifndef USE_GLM
+
+
 // predeclarations
 class float4x4;
 inline const float4x4 orthoInverse(const float4x4 & tfrm);
@@ -15,7 +19,13 @@ public:
 	float4 mCol2;
 	float4 mCol3;
 
-	inline float4x4() { };
+	inline float4x4() 
+	{ 
+		mCol0 = float4(1.0f, 0.0f, 0.0f, 0.0f);
+		mCol1 = float4(0.0f, 1.0f, 0.0f, 0.0f);
+		mCol2 = float4(0.0f, 0.0f, 1.0f, 0.0f);
+		mCol3 = float4(0.0f, 0.0f, 0.0f, 1.0f);
+	};
 
 	inline float4x4::float4x4(const float4x4& mat)
 	{
@@ -178,16 +188,27 @@ public:
 };
 
 
+
+inline const float4x4 makeIdentityMatrix()
+{
+	return float4x4(
+		float4(1.0f, 0.0f, 0.0f, 0.0f),
+		float4(0.0f, 1.0f, 0.0f, 0.0f),
+		float4(0.0f, 0.0f, 1.0f, 0.0f),
+		float4(0.0f, 0.0f, 0.0f, 1.0f)
+		);
+}
+
 inline const float4x4 makeRotationMatrixX(float radians)
 {
 	float s, c;
 	s = sinf(radians);
 	c = cosf(radians);
 	return float4x4(
-		float4(1.0f, 0.0f, 0.0f, 0.0f),
-		float4(0.0f, c, s, 0.0f),
-		float4(0.0f, -s, c, 0.0f),
-		float4(0.0f, 0.0f, 0.0f, 1.0f)
+		float4(1.0f,	0.0f,	0.0f,	0.0f),
+		float4(0.0f,	c,		s,		0.0f),
+		float4(0.0f,	-s,		c,		0.0f),
+		float4(0.0f,	0.0f,	0.0f,	1.0f)
 		);
 }
 
@@ -197,10 +218,10 @@ inline const float4x4 makeRotationMatrixY(float radians)
 	s = sinf(radians);
 	c = cosf(radians);
 	return float4x4(
-		float4(c, 0.0f, -s, 0.0f),
-		float4(0.0f, 1.0f, 0.0f, 0.0f),
-		float4(s, 0.0f, c, 0.0f),
-		float4(0.0f, 0.0f, 0.0f, 1.0f)
+		float4(c,		0.0f,	-s,		0.0f),
+		float4(0.0f,	1.0f,	0.0f,	0.0f),
+		float4(s,		0.0f,	c,		0.0f),
+		float4(0.0f,	0.0f,	0.0f,	1.0f)
 		);
 }
 
@@ -210,10 +231,10 @@ inline const float4x4 makeRotationMatrixZ(float radians)
 	s = sinf(radians);
 	c = cosf(radians);
 	return float4x4(
-		float4(c, s, 0.0f, 0.0f),
-		float4(-s, c, 0.0f, 0.0f),
-		float4(0.0f, 0.0f, 1.0f, 0.0f),
-		float4(0.0f, 0.0f, 0.0f, 1.0f)
+		float4(c,		s,		0.0f,	0.0f),
+		float4(-s,		c,		0.0f,	0.0f),
+		float4(0.0f,	0.0f,	1.0f,	0.0f),
+		float4(0.0f,	0.0f,	0.0f,	1.0f)
 		);
 }
 
@@ -281,11 +302,14 @@ inline const float4x4 makeLookAtMatrix(const float3& eyePos, const float3& lookA
 	float4x4 result;
 	float3 camX, camY, camZ;
 	camY = normalize(upVec);
-	camZ = normalize((lookAtPos - eyePos));
-	camX = normalize(cross(camY, camZ));
-	camY = cross(camZ, camX);
-	result = float4x4(float4(camX, 0.0), float4(camY, 0.0), float4(camZ, 0.0), float4(eyePos, 0.0));
-	return orthoInverse(result);
+	camZ = normalize(lookAtPos - eyePos); // forward is positive
+	camX = normalize(cross(camY, camZ));  // right is positive
+	camY = cross(camZ, camX); // up is positive
+	result = float4x4(	float4(camX.x, camY.x, camZ.x, 0.0), 
+						float4(camX.y, camY.y, camZ.y, 0.0),
+						float4(camX.z, camY.z, camZ.z, 0.0),
+						float4(-dot(camX, eyePos), -dot(camY, eyePos), -dot(camZ, eyePos), 1.0));
+	return result;
 }
 
 inline const float4x4 makePerspectiveMatrix(float fovyRadians, float aspect, float zNear, float zFar)
@@ -312,10 +336,10 @@ inline const float4x4 makeFrustum(float left, float right, float bottom, float t
 	inv_nf = (1.0f / (zNear - zFar));
 	n2 = (zNear + zNear);
 	return float4x4(
-		float4((n2 * inv_rl), 0.0f, 0.0f, 0.0f),
-		float4(0.0f, (n2 * inv_tb), 0.0f, 0.0f),
-		float4((sum_rl * inv_rl), (sum_tb * inv_tb), (sum_nf * inv_nf), -1.0f),
-		float4(0.0f, 0.0f, ((n2 * inv_nf) * zFar), 0.0f)
+		float4((n2 * inv_rl),		0.0f,				0.0f,						0.0f),
+		float4(0.0f,				(n2 * inv_tb),		0.0f,						0.0f),
+		float4((sum_rl * inv_rl),	(sum_tb * inv_tb),	(sum_nf * inv_nf),			-1.0f),
+		float4(0.0f,				0.0f,				((n2 * inv_nf) * zFar),		0.0f)
 		);
 }
 
@@ -329,10 +353,10 @@ inline const float4x4 makeOrthographicMatrix(float left, float right, float bott
 	inv_tb = (1.0f / (top - bottom));
 	inv_nf = (1.0f / (zNear - zFar));
 	return float4x4(
-		float4((inv_rl + inv_rl), 0.0f, 0.0f, 0.0f),
-		float4(0.0f, (inv_tb + inv_tb), 0.0f, 0.0f),
-		float4(0.0f, 0.0f, (inv_nf + inv_nf), 0.0f),
-		float4((-sum_rl * inv_rl), (-sum_tb * inv_tb), (sum_nf * inv_nf), 1.0f)
+		float4((inv_rl + inv_rl),	0.0f,				0.0f,				0.0f),
+		float4(0.0f,				(inv_tb + inv_tb),	0.0f,				0.0f),
+		float4(0.0f,				0.0f,				(inv_nf + inv_nf),	0.0f),
+		float4((-sum_rl * inv_rl),	(-sum_tb * inv_tb), (sum_nf * inv_nf),	1.0f)
 		);
 }
 
@@ -451,3 +475,5 @@ inline float determinant(const float4x4& mat)
 	dw = (((m13 * tmp2) + (m12 * tmp4)) - (m11 * tmp0));
 	return ((((m00 * dx) + (m10 * dy)) + (m20 * dz)) + (m30 * dw));
 }
+
+#endif

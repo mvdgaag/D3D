@@ -3,6 +3,9 @@
 #include "float3.h"
 #include "float2.h"
 
+#define USE_GLM
+#ifndef USE_GLM
+
 
 // predeclarations
 class float4;
@@ -284,3 +287,5 @@ inline const float4 normalize(const float4& vec)
 	float rcpLength = 1.0f / length(vec);
 	return vec * rcpLength;
 }
+
+#endif

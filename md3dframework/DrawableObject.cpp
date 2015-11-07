@@ -12,7 +12,7 @@ void DrawableObject::Init(pMesh inMesh, pMaterial inMaterial)
 {
 	mMesh = inMesh;
 	mMaterial = inMaterial;
-	mTransform = DirectX::XMMatrixIdentity();
+	mTransform = float4x4();
 }
 
 

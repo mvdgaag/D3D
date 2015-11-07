@@ -105,6 +105,7 @@ void DeferredRenderer::CleanUp()
 }
 
 
+
 void DeferredRenderer::Render(std::vector<pDrawableObject> inDrawList)
 {
 	assert(mInitialized);
@@ -114,13 +115,12 @@ void DeferredRenderer::Render(std::vector<pDrawableObject> inDrawList)
 	float2 jitter_offset = TAARenderer::GetJitterOffset(frame_id);
 
 	ConstantDataEveryFrame constantData;
+	constantData.viewMatrix = lookAt(camera.GetPosition(), float3(0.0), float3(0.0, 1.0, 0.0));
+	constantData.projectionMatrix = perspective(camera.GetFovY(), camera.GetAspect(), camera.GetNear(), camera.GetFar());
+	constantData.viewProjectionMatrix = constantData.projectionMatrix * constantData.viewMatrix;
+	constantData.inverseProjectionMatrix = inverse(constantData.projectionMatrix);
 	constantData.frameData = float4(jitter_offset.x, jitter_offset.y, frame_id, 0);
-	constantData.viewMatrix = camera.GetViewMatrix();
-	constantData.projectionMatrix = camera.GetProjectionMatrix();
-	constantData.viewProjectionMatrix = camera.GetViewProjectionMatrix();
-	DirectX::XMVECTOR determinant = DirectX::XMMatrixDeterminant(constantData.projectionMatrix);
-	constantData.inverseProjectionMatrix = DirectX::XMMatrixInverse(&determinant, constantData.projectionMatrix);
-	
+
 	theRenderContext.UpdateSubResource(*mConstantBufferEveryFrame, &constantData);
 
 	GeometryPass(inDrawList);
@@ -147,15 +147,10 @@ void DeferredRenderer::GeometryPass(std::vector<pDrawableObject> inDrawList)
 		theRenderContext.SetMarker("Drawing Object");
 
 		ConstantDataEveryObject constantData;
-
-		constantData.modelView = DirectX::XMMatrixTranspose(Gaag.GetCamera()->GetViewMatrix());
-		constantData.modelView *= DirectX::XMMatrixTranspose(obj->GetTransform());
-
-		constantData.prevModelViewProjection = DirectX::XMMatrixTranspose(mPrevViewProjectionMatrix);
-		constantData.prevModelViewProjection *= DirectX::XMMatrixTranspose(obj->GetPrevTransform());
-
-		constantData.modelViewProjection = DirectX::XMMatrixTranspose(Gaag.GetCamera()->GetViewProjectionMatrix());
-		constantData.modelViewProjection *= DirectX::XMMatrixTranspose(obj->GetTransform());
+		Camera& camera = *(Gaag.GetCamera());
+		constantData.modelViewMatrix = transpose(camera.GetViewMatrix() * obj->GetTransform());
+		constantData.modelViewProjectionMatrix = transpose(camera.GetViewProjectionMatrix() * obj->GetTransform());
+		constantData.PrevModelViewProjectionMatrix = transpose(mPrevViewProjectionMatrix * obj->GetPrevTransform());
 
 		theRenderContext.UpdateSubResource(*mConstantBufferEveryObject, &constantData);
 		obj->SwapTransform();

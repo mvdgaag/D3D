@@ -50,7 +50,7 @@ PS_INPUT VS(VS_INPUT input)
 	output.TexCoord = input.TexCoord.xy;
 
 	float4 cam_space_pos = mul(float4(input.Position, 1.0), (modelViewMatrix));
-	output.LinearDepth = cam_space_pos.z;
+	output.LinearDepth = -cam_space_pos.z;
 	
 	// motion vectors
 	float4 prevPos = mul(float4(input.Position, 1.0), prevModelViewProjectionMatrix);

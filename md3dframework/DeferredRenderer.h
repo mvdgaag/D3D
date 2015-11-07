@@ -65,18 +65,18 @@ private:
 	
 	struct ConstantDataEveryFrame
 	{
-		DirectX::XMMATRIX viewMatrix;
-		DirectX::XMMATRIX projectionMatrix;
-		DirectX::XMMATRIX viewProjectionMatrix;
-		DirectX::XMMATRIX inverseProjectionMatrix;
+		float4x4 viewMatrix;
+		float4x4 projectionMatrix;
+		float4x4 viewProjectionMatrix;
+		float4x4 inverseProjectionMatrix;
 		float4 frameData;								// jitter_offset.xy, frameID, 0
 	};
 
 	struct ConstantDataEveryObject
 	{
-		DirectX::XMMATRIX modelView;
-		DirectX::XMMATRIX modelViewProjection;
-		DirectX::XMMATRIX prevModelViewProjection;
+		float4x4 modelViewMatrix;
+		float4x4 modelViewProjectionMatrix;
+		float4x4 PrevModelViewProjectionMatrix;
 	};
 
 	struct ConstantDataOnDemand
@@ -98,7 +98,7 @@ private:
 	pConstantBuffer		mConstantBufferOnDemand = nullptr;
 	pConstantBuffer		mConstantBufferEveryFrame = nullptr;
 	pConstantBuffer		mConstantBufferEveryObject = nullptr;
-	DirectX::XMMATRIX	mPrevViewProjectionMatrix;
+	float4x4			mPrevViewProjectionMatrix;
 
 	bool mInitialized = false;
 };

@@ -1,7 +1,6 @@
 #pragma once
 #include <Windows.h>
 #include "GaagCommon.h"
-#include <hash_set>
 
 
 #define theInput Input::GetInstance()
@@ -24,7 +23,7 @@ public:
 	bool GetKeyDown(unsigned int inKey) { return mKeys[inKey]; }
 	float2 GetMouseCoord() { return mMouseCoord; }
 	float2 GetPrevMouseCoord() { return mPrevMouseCoord; }
-	float2 GetMouseButton(unsigned int inButton) { return mMouseButtons[inButton]; }
+	bool GetMouseButton(unsigned int inButton) { return mMouseButtons[inButton]; }
 
 	void OnKeyDown(unsigned int inKey);
 	void OnKeyUp(unsigned int inKey);
@@ -37,12 +36,13 @@ protected:
 	bool mKeys[256];
 	float2 mPrevMouseCoord;
 	float2 mMouseCoord;
-	std::hash_set<pInputListener> mListeners;
 
 private:
 	Input() {};
 	~Input() {};
 	Input(Input const&) = delete;
 	void operator=(Input const&) = delete;
+
+	static std::unordered_set<pInputListener> mListeners;
 };
 
