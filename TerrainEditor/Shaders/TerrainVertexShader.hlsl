@@ -53,9 +53,8 @@ PS_INPUT VS(VS_INPUT input)
 
 	float3 pos = input.Position;
 	
-		// no displace
-		//pos.y += cTerrainScale.z - 0.125 * cHeightTexture.SampleLevel(cHeightSampler, input.TexCoord, 0).x;
-	
+	// displace
+	pos.y += cTerrainScale.z * 0.125 * cHeightTexture.SampleLevel(cHeightSampler, input.TexCoord, 0).x;
 
 	// jitter for TAA
 	output.Position = mul(float4(pos, 1.0), modelViewProjectionMatrix);

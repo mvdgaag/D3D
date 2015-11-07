@@ -22,9 +22,7 @@ void TerrainTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments, pM
 	mConstantBuffer = MAKE_NEW(ConstantBuffer);
 	mConstantBuffer->Init(sizeof(mConstantBufferData));
 	
-	mConstantBufferData.widthSegments = mNumSegments.x;
-	mConstantBufferData.heightSegments = mNumSegments.y;
-	mConstantBufferData.heightScale = mHeightScale;
+	mConstantBufferData.scale = float4(inScale, 0);
 	theRenderContext.UpdateSubResource(*mConstantBuffer, &mConstantBufferData);
 
 	mInitialized = true; 
@@ -43,7 +41,7 @@ void TerrainTile::CleanUp()
 
 void TerrainTile::PrepareToDraw()
 {
+	theRenderContext.VSSetConstantBuffer(mConstantBuffer, 2);
 	theRenderContext.VSSetTextureAndSampler(GetMaterial()->GetDiffuseTexture(), Gaag.GetPointSampler(), 0);
-	// TODO: set constant buffer
-	// set heightmap texture
+	// TODO: set heightmap texture
 }

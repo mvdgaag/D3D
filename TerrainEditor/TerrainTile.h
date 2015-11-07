@@ -10,6 +10,7 @@ public:
 	~TerrainTile() {};
 
 	void Init(float3 inPosition, float3 inScale, int2 inNumSegments, pMaterial inMaterial);
+	void PrepareToDraw() override;
 	void CleanUp();
 
 	pTexture		GetTexture()		{ return mHeightMapTexture; }
@@ -18,15 +19,10 @@ public:
 	float			GetHeightScale()	{ return mHeightScale; }
 	int2			GetSegments()		{ return mNumSegments; }
 
-	void PrepareToDraw() override;
-
 private:
 	struct ConstantBufferData
 	{
-		unsigned int widthSegments;
-		unsigned int heightSegments;
-		float heightScale;
-		float bogus_padding;
+		float4 scale;
 	};
 
 	float2				mPixelsPerMeter;
