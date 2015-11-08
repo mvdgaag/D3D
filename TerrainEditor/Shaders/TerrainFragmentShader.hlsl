@@ -64,7 +64,7 @@ PS_OUTPUT PS(PS_INPUT input)
 	PS_OUTPUT output = (PS_OUTPUT)0;
 	output.LinearDepth = input.LinearDepth;
 	
-	uint flags = cFlags;
+	uint flags = 0;// cFlags;
 
 	if ((flags & HAS_DIFFUSE_MAP) == 0)
 		output.Diffuse = cDiffuse;

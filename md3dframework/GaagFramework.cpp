@@ -46,6 +46,23 @@ HRESULT GaagFramework::Init(HINSTANCE hInstance)
 	mDefaultLinearSampler = MAKE_NEW(Sampler);
 	mDefaultLinearSampler->Init(21); // D3D11_FILTER_MIN_MAG_MIP_LINEAR
 
+	pPixelShader default_pixel_shader = MAKE_NEW(PixelShader);
+	default_pixel_shader->InitFromFile("../md3dFramework/Shaders/BasicFragmentShader.hlsl");
+
+	pVertexShader default_vertex_shader = MAKE_NEW(VertexShader);
+	default_vertex_shader->InitFromFile("../md3dFramework/Shaders/BasicVertexShader.hlsl");
+
+	mDefaultMaterial = MAKE_NEW(Material);
+	mDefaultMaterial->Init();
+	mDefaultMaterial->SetPixelShader(default_pixel_shader);
+	mDefaultMaterial->SetVertexShader(default_vertex_shader);
+	mDefaultMaterial->SetDiffuseValue(float4(0.7, 0.7, 0.7, 1.0));
+	mDefaultMaterial->SetReflectivityValue(0.5f);
+	mDefaultMaterial->SetRoughnessValue(0.5f);
+	mDefaultMaterial->SetMetalicityValue(0.0f);
+	mDefaultMaterial->SetEmissivenessValue(0.0f);
+	mDefaultMaterial->SetFlags(Material::MaterialFlags(0));
+
 	mCamera = MAKE_NEW(Camera);
 	mCamera->SetPosition(1.0, 1.0, 1.0);
 	mCamera->SetTarget(0.0, 0.0, 0.0);
@@ -67,6 +84,7 @@ void GaagFramework::CleanUp()
 	mCopyShader = nullptr;
 	mDefaultPointSampler = nullptr;
 	mDefaultLinearSampler = nullptr;
+	mDefaultMaterial = nullptr;
 
 	TextureUtil::CleanUpTextureUtil();
 	theRenderContext.CleanUp();

@@ -41,7 +41,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	Gaag.Init(hInstance);
 	Gaag.SetFrameCallback(&FrameFunc);
 	pCamera cam = Gaag.GetCamera();
-	cam->SetPosition(10, 10, 10);
+	cam->SetPosition(10, 20, 10);
 	InitContent();
 
 	MSG msg = { 0 };
@@ -103,17 +103,17 @@ void InitContent()
 	g_material->SetPixelShader(g_pixel_shader);
 	g_material->SetVertexShader(g_vertex_shader);
 	//g_material->SetFlags(Material::MaterialFlags(0));
-	g_obj->Init(g_mesh, g_material);
+	g_obj->Init(g_mesh, Gaag.GetDefaultMaterial());
 	Gaag.RegisterObject(g_obj);
 
 	g_terrain = MAKE_NEW(Terrain);
 	g_terrain->Init(int2(3), int2(256), float3(10,10,1), g_material);
 
 	g_brush = MAKE_NEW(Brush);
-	g_brush->SetRadius(2.0);
+	g_brush->SetRadius(4.0);
 	g_brush->SetShader(g_brush_shader);
-	g_brush->SetStrength(2.0);
-	g_brush->SetFalloffFraction(0.666);
+	g_brush->SetStrength(0.2);
+	g_brush->SetFalloffFraction(1.0);
 
 	g_paint_tool = MAKE_NEW(PaintTool);
 	g_paint_tool->SetBrush(g_brush);

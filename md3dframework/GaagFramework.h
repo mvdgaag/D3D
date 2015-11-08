@@ -51,6 +51,7 @@ public:
 	// helper functions
 	pSampler	GetPointSampler()												{ return mDefaultPointSampler; }
 	pSampler	GetLinearSampler()												{ return mDefaultLinearSampler; }
+	pMaterial	GetDefaultMaterial()											{ return mDefaultMaterial; }
 	void		CopyToRenderTarget(pRenderTarget inTarget, pTexture inSource);
 
 private:
@@ -61,9 +62,11 @@ private:
 
 	pMesh							mFullScreenTriangle = nullptr;
 	pComputeShader					mCopyShader = nullptr;
+	
 	pSampler						mDefaultPointSampler = nullptr;
 	pSampler						mDefaultLinearSampler = nullptr;
-	
+	pMaterial						mDefaultMaterial = nullptr;
+
 	pWindow							mWindow;
 	pCamera							mCamera = nullptr;
 	pDeferredRenderer				mDeferredRenderer = nullptr;
