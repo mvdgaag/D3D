@@ -12,21 +12,24 @@ public:
 	
 	void Apply(pTerrainTile inTile, const rect& inPixelRect);
 	
-	void			SetRadius(float inRadius)			{ mRadius = inRadius; }
-	float			GetRadius()							{ return mRadius; }
-	void			SetShader(pComputeShader inShader)	{ mShader = inShader; }
-	pComputeShader	GetShader()							{ return mShader; }
+	void			SetRadius(float inRadius)					{ mRadius = inRadius; }
+	float			GetRadius()									{ return mRadius; }
+	void			SetShader(pComputeShader inShader)			{ mShader = inShader; }
+	pComputeShader	GetShader()									{ return mShader; }
+	void			SetFalloffFraction(float inFalloffFraction) { mFalloffFraction = inFalloffFraction; }
+	float			GetFalloffFraction()						{ return mFalloffFraction; }
+	void			SetStrength(float inStrength)				{ mStrength = inStrength; }
+	float			GetStrength()								{ return mStrength; }
 private:
 	struct ConstantBufferData
 	{
 		float4 rect;
-		float2 coord;
-		float2 radius;
-		int2 resolution;
-		int2 bogus;
+		float4 paintData;
 	};
 	ConstantBufferData mConstantBuffer;
 	float mRadius;
+	float mFalloffFraction;
+	float mStrength;
 	pComputeShader mShader;
 };
 

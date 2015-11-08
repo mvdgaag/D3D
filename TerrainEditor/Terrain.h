@@ -16,32 +16,47 @@ public:
 	int2			GetTileSegments()			{ return mTileSegments; }
 	float3			GetTileScale()				{ return mTileScale; }
 
-	bool ToTileSpace(float2 inWorldCoord, int2& outTileIndex, int2& outPixelCoord)
+
+	float2 WorldToTileSpace(float2 inWorldCoord)
 	{
 		float2 world_top_left = float2(mNumTiles.x, mNumTiles.y) * float2(mTileScale.x, mTileScale.y) / 2.0f;
 		float2 offset_coord = inWorldCoord + world_top_left;
-		float2 tile_index = offset_coord / float2(mTileScale.x, mTileScale.y);
-		
-		if (tile_index.x < 0 || tile_index.x >= mNumTiles.x || tile_index.y < 0 || tile_index.y >= mNumTiles.y)
-			return false;
-		
-		outTileIndex = tile_index;
-
-		float2 tile_uv = glm::modf(tile_index, float2(1.0f, 1.0f));
-		int2 resolution = GetTile(outTileIndex)->GetTexture()->GetResolution();
-		float2 tile_pixel = tile_uv * float2(resolution);
-
-		outPixelCoord = tile_pixel;
-		outPixelCoord %= resolution;
-		return true;
+		return offset_coord / float2(mTileScale.x, mTileScale.y);
 	}
 
-	pTerrainTile GetTile(int2 inTileIndex)	
+
+	pTerrainTile GetTile(const int2& inTileIndex)	
 	{ 
 		if (inTileIndex.x >= 0 && inTileIndex.x < mNumTiles.x && inTileIndex.y >= 0 && inTileIndex.y < mNumTiles.y)
 			return mTiles[inTileIndex.y * mNumTiles.x + inTileIndex.x];
 		else
 			return nullptr;
+	}
+
+	
+	pTerrainTile GetTile(const float2& inWorldCoord)
+	{
+		int2 tile_index = WorldToTileSpace(inWorldCoord);
+		if (tile_index.x >= 0 && tile_index.x < mNumTiles.x && tile_index.y >= 0 && tile_index.y < mNumTiles.y)
+			return mTiles[tile_index.y * mNumTiles.x + tile_index.x];
+		else
+			return nullptr;
+	}
+
+
+	std::vector<int2> GetTiles(const rect& inWorldRect)
+	{
+		float2 tile_min = float2(0.0, 0.0);
+		float2 tile_max = float2(mNumTiles);
+		float2 top_left = glm::clamp(WorldToTileSpace(inWorldRect.topLeft), tile_min, tile_max);
+		float2 bottom_right = glm::clamp(WorldToTileSpace(inWorldRect.bottomRight), tile_min, tile_max);
+
+		std::vector<int2> result;
+		for (int x = top_left.x; x < bottom_right.x; x++)
+			for (int y = top_left.y; y < bottom_right.y; y++)
+				result.push_back(int2(x, y));
+
+		return result;
 	}
 
 private:

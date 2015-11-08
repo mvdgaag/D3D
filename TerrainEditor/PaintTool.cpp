@@ -32,36 +32,32 @@ void PaintTool::BeginPaint(float3 inWorldPos)
 void PaintTool::EndPaint(float3 inWorldPos)
 {
 	ApplyPaint(float2(inWorldPos.x, inWorldPos.z));
+	mPainting = false;
 }
 
 
 void PaintTool::ContinuePaint(float3 inWorldPos)
 {
 	ApplyPaint(float2(inWorldPos.x, inWorldPos.z));
-	mPainting = false;
 }
 
 
 void PaintTool::ApplyPaint(float2 inWorldCoord)
 {
-	//fprintf(stdout, "paint at coord: %f, %f, %f", inWorldCoord.x, inWorldCoord.y);
-	//return;
-
 	assert(mTargetTerrain != nullptr);
 
 	if (mCurrentBrush == nullptr)
 		return;
 
-	// todo: find overlapping tiles
+	float2 tile_coord = mTargetTerrain->WorldToTileSpace(inWorldCoord);
 
-	int2 tile_index;
-	int2 pixel;
-	if (mTargetTerrain->ToTileSpace(inWorldCoord, tile_index, pixel))
+	std::vector<int2> tile_indices = mTargetTerrain->GetTiles(rect(inWorldCoord - mCurrentBrush->GetRadius(), inWorldCoord + mCurrentBrush->GetRadius()));
+	for each (int2 index in tile_indices)
 	{
-		pTerrainTile tile = mTargetTerrain->GetTile(tile_index);
-
-		int2 radius = int2(mCurrentBrush->GetRadius() * tile->GetPixelsPerMeter() + 0.5f);
-		rect paint_rect(pixel - radius, pixel + radius);
+		pTerrainTile tile = mTargetTerrain->GetTile(index);
+		int2 pixel = (tile_coord - float2(index)) * float2(tile->GetTexture()->GetResolution());
+		int2 pixel_radius = int2(mCurrentBrush->GetRadius() * tile->GetPixelsPerMeter() + 0.5f);
+		rect paint_rect(pixel - pixel_radius, pixel + pixel_radius);
 
 		if (tile != nullptr)
 			mCurrentBrush->Apply(tile, paint_rect);

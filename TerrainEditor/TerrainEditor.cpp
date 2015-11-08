@@ -110,8 +110,10 @@ void InitContent()
 	g_terrain->Init(int2(3), int2(256), float3(10,10,1), g_material);
 
 	g_brush = MAKE_NEW(Brush);
-	g_brush->SetRadius(1.0);
+	g_brush->SetRadius(2.0);
 	g_brush->SetShader(g_brush_shader);
+	g_brush->SetStrength(2.0);
+	g_brush->SetFalloffFraction(0.666);
 
 	g_paint_tool = MAKE_NEW(PaintTool);
 	g_paint_tool->SetBrush(g_brush);

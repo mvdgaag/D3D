@@ -90,7 +90,7 @@ public:
 		bottomRight = maxPerElem(topLeft, bottomRight);
 	}
 
-	inline int rect::GetArea()
+	inline int rect::GetArea() const
 	{
 		int2 sides = bottomRight - topLeft;
 		return sides.x * sides.y;

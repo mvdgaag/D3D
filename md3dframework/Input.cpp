@@ -42,5 +42,5 @@ void Input::OnMouseUp(int inButton)
 {
 	mMouseButtons[inButton] = false;
 	for each (pInputListener listener in mListeners)
-		listener->OnMouseDown(inButton);
+		listener->OnMouseUp(inButton);
 }
