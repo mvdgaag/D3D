@@ -42,6 +42,5 @@ void TerrainTile::CleanUp()
 void TerrainTile::PrepareToDraw()
 {
 	theRenderContext.VSSetConstantBuffer(mConstantBuffer, 2);
-	theRenderContext.VSSetTextureAndSampler(GetMaterial()->GetDiffuseTexture(), Gaag.GetPointSampler(), 0);
-	// TODO: set heightmap texture
+	theRenderContext.VSSetTextureAndSampler(mHeightMapTexture, Gaag.GetPointSampler(), 0);
 }

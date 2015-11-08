@@ -19,6 +19,12 @@ int Texture::GetHeight()
 }
 
 
+int2 Texture::GetResolution()
+{ 
+	return int2(mDesc->Width, mDesc->Height); 
+}
+
+
 int Texture::GetMipLevels()
 {
 	return mDesc->MipLevels; 

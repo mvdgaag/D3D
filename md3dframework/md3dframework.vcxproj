@@ -197,17 +197,12 @@
     <ClInclude Include="DirectLightingRenderer.h" />
     <ClInclude Include="DrawableObject.h" />
     <ClInclude Include="FileUtil.h" />
-    <ClInclude Include="float2.h" />
-    <ClInclude Include="float3.h" />
-    <ClInclude Include="float4.h" />
-    <ClInclude Include="float4x4.h" />
     <ClInclude Include="Gaag.h" />
     <ClInclude Include="GaagFramework.h" />
     <ClInclude Include="GaagCommon.h" />
     <ClInclude Include="GBuffer.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="InputListener.h" />
-    <ClInclude Include="int2.h" />
     <ClInclude Include="LightComposeRenderer.h" />
     <ClInclude Include="GaagMath.h" />
     <ClInclude Include="IndirectLightingRenderer.h" />

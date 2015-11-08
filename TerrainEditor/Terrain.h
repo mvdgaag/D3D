@@ -15,13 +15,34 @@ public:
 	int2			GetNumTiles()				{ return mNumTiles; }
 	int2			GetTileSegments()			{ return mTileSegments; }
 	float3			GetTileScale()				{ return mTileScale; }
-	pTerrainTile	GetTile(int2 inTileIndex)	{ return mTiles[inTileIndex.y * mNumTiles.x + inTileIndex.x]; }
-	pTerrainTile	GetTile(float2 inWorldCoord)	
-	{ 
-		int2 tile_index = inWorldCoord / float2(mTileScale);
-		return mTiles[tile_index.y * mNumTiles.x + tile_index.x];
+
+	bool ToTileSpace(float2 inWorldCoord, int2& outTileIndex, int2& outPixelCoord)
+	{
+		float2 world_top_left = float2(mNumTiles.x, mNumTiles.y) * float2(mTileScale.x, mTileScale.y) / 2.0f;
+		float2 offset_coord = inWorldCoord + world_top_left;
+		float2 tile_index = offset_coord / float2(mTileScale.x, mTileScale.y);
+		
+		if (tile_index.x < 0 || tile_index.x >= mNumTiles.x || tile_index.y < 0 || tile_index.y >= mNumTiles.y)
+			return false;
+		
+		outTileIndex = tile_index;
+
+		float2 tile_uv = glm::modf(tile_index, float2(1.0f, 1.0f));
+		int2 resolution = GetTile(outTileIndex)->GetTexture()->GetResolution();
+		float2 tile_pixel = tile_uv * float2(resolution);
+
+		outPixelCoord = tile_pixel;
+		outPixelCoord %= resolution;
+		return true;
 	}
-	float2			GetWorldCenter()			{ return float2(float2(mNumTiles.x * mTileScale.x, mNumTiles.y * mTileScale.y) / 2.0f); }
+
+	pTerrainTile GetTile(int2 inTileIndex)	
+	{ 
+		if (inTileIndex.x >= 0 && inTileIndex.x < mNumTiles.x && inTileIndex.y >= 0 && inTileIndex.y < mNumTiles.y)
+			return mTiles[inTileIndex.y * mNumTiles.x + inTileIndex.x];
+		else
+			return nullptr;
+	}
 
 private:
 	int2 mNumTiles;

@@ -19,7 +19,8 @@ public:
 	~Texture() { CleanUp(); }
 
 	int GetWidth();			
-	int GetHeight();		
+	int GetHeight();
+	int2 GetResolution();
 	int GetMipLevels();		
 
 	virtual void Init(int inWidth, int inHeight, int inMipLevels, unsigned int inFormat, 

@@ -20,16 +20,16 @@ public:
 		bottomRight = other.bottomRight;
 	}
 
-	inline rect::rect(int inBottom, int inLeft, int inTop, int inRight)
+	inline rect::rect(int inTop, int inLeft, int inBottom, int inRight)
 	{
-		topLeft = int2(inBottom, inLeft);
-		bottomRight = int2(inTop, inRight);
+		topLeft = int2(inTop, inLeft);
+		bottomRight = int2(inBottom, inRight);
 	}
 
-	inline rect::rect(int2 inBottomLeft, int2 inTopRight)
+	inline rect::rect(int2 inTopLeft, int2 inBottomRight)
 	{
-		topLeft = inBottomLeft;
-		bottomRight = inTopRight;
+		topLeft = inTopLeft;
+		bottomRight = inBottomRight;
 	}
 
 	inline rect::rect(int2 scalar)
@@ -70,17 +70,29 @@ public:
 		return topLeft + int2(GetWidth() / 2, GetHeight() / 2);
 	}
 
-	inline void rect::Extend(const int2& inPoint) const
+	inline void rect::Extend(const int2& inPoint)
 	{
-		//topLeft = 
-		minPerElem(topLeft, inPoint);
-		//bottomRight = 
-		maxPerElem(bottomRight, inPoint);
+		topLeft = minPerElem(topLeft, inPoint);
+		bottomRight = maxPerElem(bottomRight, inPoint);
 	}
 
-	inline void rect::Extend(const rect& inRect) const
+	inline void rect::Extend(const rect& inRect)
 	{
 		Extend(inRect.topLeft);
 		Extend(inRect.bottomRight);
+	}
+
+	inline void rect::Overlap(const rect& inRect)
+	{
+		topLeft = minPerElem(topLeft, inRect.topLeft);
+		bottomRight = maxPerElem(bottomRight, inRect.bottomRight);
+		// avoid negative size
+		bottomRight = maxPerElem(topLeft, bottomRight);
+	}
+
+	inline int rect::GetArea()
+	{
+		int2 sides = bottomRight - topLeft;
+		return sides.x * sides.y;
 	}
 };

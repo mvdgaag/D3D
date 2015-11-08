@@ -89,7 +89,7 @@
     <FxCompile Include="Shaders\TerrainVertexShader.hlsl">
       <Filter>Resource Files\Shaders</Filter>
     </FxCompile>
-    <FxCompile Include="BrushBasicShader.hlsl">
+    <FxCompile Include="Shaders\BrushBasicShader.hlsl">
       <Filter>Resource Files\Shaders</Filter>
     </FxCompile>
   </ItemGroup>

@@ -47,7 +47,7 @@ HRESULT GaagFramework::Init(HINSTANCE hInstance)
 	mDefaultLinearSampler->Init(21); // D3D11_FILTER_MIN_MAG_MIP_LINEAR
 
 	mCamera = MAKE_NEW(Camera);
-	mCamera->SetPosition(0.0, 2.0, 5.0);
+	mCamera->SetPosition(1.0, 1.0, 1.0);
 	mCamera->SetTarget(0.0, 0.0, 0.0);
 	mCamera->SetUp(0.0, 1.0, 0.0);
 
