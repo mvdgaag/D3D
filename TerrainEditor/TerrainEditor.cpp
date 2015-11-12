@@ -111,7 +111,7 @@ void InitContent()
 	g_terrain->GetTile(int2(1, 1));
 
 	g_brush = MAKE_NEW(Brush);
-	g_brush->SetRadius(2.0);
+	g_brush->SetRadius(5.0);
 	g_brush->SetShader(g_brush_shader);
 	g_brush->SetStrength(0.05);
 	g_brush->SetFalloffFraction(0.5);

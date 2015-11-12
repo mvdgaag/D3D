@@ -28,5 +28,5 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	falloff = saturate((1.0 - falloff) / falloff_start_frac);
 	falloff = smoothstep(0.0, 1.0, falloff);
 
-	rwTarget[target_pixel] += falloff * height_add * snoise(float2(target_pixel));
+	rwTarget[target_pixel] += falloff * height_add * snoise(float2(target_pixel) / 20);
 }
