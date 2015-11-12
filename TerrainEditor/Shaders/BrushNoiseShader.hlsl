@@ -16,7 +16,6 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	int2 coord_in_brush = DTid.xy;
 
 	int2 target_pixel = cPaintRect.xy + coord_in_brush;
-	int2 world_pixel_position = cPaintData.zw;
 
 	float2 radius = (cPaintRect.zw - cPaintRect.xy) / 2.0;
 	float2 brush_center_pixel = cPaintRect.xy + radius;
@@ -28,5 +27,11 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	falloff = saturate((1.0 - falloff) / falloff_start_frac);
 	falloff = smoothstep(0.0, 1.0, falloff);
 
-	rwTarget[target_pixel] += falloff * height_add * snoise(0.1 * float2(world_pixel_position + coord_in_brush - radius));
+	int2 world_pixel_position = cPaintData.zw + coord_in_brush - radius;
+	float noise = 0.25 * snoise(0.1 * float2(world_pixel_position));
+	noise += 0.5 * snoise(0.05 * float2(world_pixel_position) + 42.0);
+	noise += snoise(0.025 * float2(world_pixel_position) + 666.0);
+	noise /= 1.75;
+
+	rwTarget[target_pixel] += falloff * height_add * noise;
 }
