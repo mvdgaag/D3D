@@ -60,6 +60,6 @@ void PaintTool::ApplyPaint(float2 inWorldCoord)
 		rect paint_rect(pixel - pixel_radius, pixel + pixel_radius);
 
 		if (tile != nullptr)
-			mCurrentBrush->Apply(tile, paint_rect);
+			mCurrentBrush->Apply(tile, paint_rect, tile_coord * float2(tile->GetTexture()->GetResolution()));
 	}
 }

@@ -6,7 +6,7 @@ RWTexture2D<float> rwTarget : register(u0);
 cbuffer cPaintData
 {
 	int4	cPaintRect;		// top left bottom right
-	float4	cPaintData;		// height add, falloff radius fraction, targetResolution.xy
+	float4	cPaintData;		// height add, falloff radius fraction, world_pixel_position.xy
 };
 
 
@@ -16,7 +16,7 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	int2 coord_in_brush = DTid.xy;
 
 	int2 target_pixel = cPaintRect.xy + coord_in_brush;
-	int2 target_resolution = cPaintData.zw;
+	int2 world_pixel_position = cPaintData.zw;
 
 	float2 radius = (cPaintRect.zw - cPaintRect.xy) / 2.0;
 	float2 brush_center_pixel = cPaintRect.xy + radius;
@@ -28,5 +28,5 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	falloff = saturate((1.0 - falloff) / falloff_start_frac);
 	falloff = smoothstep(0.0, 1.0, falloff);
 
-	rwTarget[target_pixel] += falloff * height_add * snoise(float2(target_pixel) / 20);
+	rwTarget[target_pixel] += falloff * height_add * snoise(0.1 * float2(world_pixel_position + coord_in_brush - radius));
 }

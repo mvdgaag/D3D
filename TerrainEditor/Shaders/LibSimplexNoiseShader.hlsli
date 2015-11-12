@@ -55,23 +55,6 @@ float4 taylorInvSqrt(float4 r)
 }
 
 
-
-float4 grad4(float j, float4 ip)
-{
-	const float4 ones = float4(1.0, 1.0, 1.0, -1.0);
-	float4 p, s;
-	p.xyz = floor( frac(j * ip.xyz) * 7.0) * ip.z - 1.0;
-	p.w = 1.5 - dot( abs(p.xyz), ones.xyz );
-	
-	// GLSL: lessThan(x, y) = x < y
-	// HLSL: 1 - step(y, x) = x < y
-	s = float4(  - step(0.0, p));
-	p.xyz = p.xyz + (s.xyz * 2 - 1) * s.www; 
-	
-	return p;
-}
-
-
 // ----------------------------------- 2D -------------------------------------
 float snoise(float2 v)
 {

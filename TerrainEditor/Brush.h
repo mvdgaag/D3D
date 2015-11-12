@@ -10,7 +10,7 @@ public:
 	Brush() {};
 	~Brush() {};
 	
-	void Apply(pTerrainTile inTile, const rect& inPixelRect);
+	void Apply(pTerrainTile inTile, const rect& inPixelRect, const float2& inWorldPosition);
 	
 	void			SetRadius(float inRadius)					{ mRadius = inRadius; }
 	float			GetRadius()									{ return mRadius; }

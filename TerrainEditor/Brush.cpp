@@ -1,7 +1,7 @@
 #include "Brush.h"
 
 
-void Brush::Apply(pTerrainTile inTile, const rect& inPixelRect)
+void Brush::Apply(pTerrainTile inTile, const rect& inPixelRect, const float2& inWorldPosition)
 {
 	int2 resolution = inTile->GetTexture()->GetResolution();
 	if (inPixelRect.GetArea() <= 0)
@@ -9,7 +9,7 @@ void Brush::Apply(pTerrainTile inTile, const rect& inPixelRect)
 
 	// assume all tiles are identital resolution
 	mConstantBuffer.rect = int4(inPixelRect.topLeft, inPixelRect.bottomRight);
-	mConstantBuffer.paintData = float4(mStrength, mFalloffFraction, inTile->GetTexture()->GetResolution());
+	mConstantBuffer.paintData = float4(mStrength, mFalloffFraction, inWorldPosition);
 
 	pConstantBuffer cbuf = MAKE_NEW(ConstantBuffer);
 	cbuf->Init(sizeof(mConstantBuffer));
