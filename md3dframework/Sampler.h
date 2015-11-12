@@ -15,9 +15,9 @@ public:
 	Sampler() : BaseResource() {};
 	~Sampler() {};
 
-	void Init(int inFilter = 21, int inAddressU = 1, int inAddressV = 1, float inMinLod = 0, float inMaxLod = 1024);
+	void Init(int inFilter = 21, int inAddressU = 3, int inAddressV = 3, float inMinLod = 0, float inMaxLod = 1024);
 	// D3D11_FILTER_MIN_MAG_MIP_LINEAR = 21
-	// D3D11_TEXTURE_ADDRESS_WRAP = 1
+	// D3D11_TEXTURE_ADDRESS_CLAMP = 3
 
 	void CleanUp() override;
 	

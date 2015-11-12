@@ -56,7 +56,7 @@ void PaintTool::ApplyPaint(float2 inWorldCoord)
 	{
 		pTerrainTile tile = mTargetTerrain->GetTile(index);
 		int2 pixel = (tile_coord - float2(index)) * float2(tile->GetTexture()->GetResolution());
-		int2 pixel_radius = int2(mCurrentBrush->GetRadius() * tile->GetPixelsPerMeter() + 0.5f);
+		int2 pixel_radius = int2(mCurrentBrush->GetRadius() * tile->GetPixelsPerMeter()) + 1;
 		rect paint_rect(pixel - pixel_radius, pixel + pixel_radius);
 
 		if (tile != nullptr)

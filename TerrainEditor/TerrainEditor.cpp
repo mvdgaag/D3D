@@ -41,7 +41,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	Gaag.Init(hInstance);
 	Gaag.SetFrameCallback(&FrameFunc);
 	pCamera cam = Gaag.GetCamera();
-	cam->SetPosition(10, 20, 10);
+	cam->SetPosition(15, 30, 15);
 	InitContent();
 
 	MSG msg = { 0 };
@@ -79,7 +79,7 @@ void InitContent()
 	g_vertex_shader->InitFromFile("Shaders/TerrainVertexShader.hlsl");
 
 	g_brush_shader = MAKE_NEW(ComputeShader);
-	g_brush_shader->InitFromFile("Shaders/BrushBasicShader.hlsl");
+	g_brush_shader->InitFromFile("Shaders/BrushNoiseShader.hlsl");
 
 	g_diffuse_texture = MAKE_NEW(Texture);
 	g_diffuse_texture->InitFromFile("Textures/photosculpt-squarebricks-diffuse.dds");
@@ -95,9 +95,9 @@ void InitContent()
 	g_material->SetDiffuseTexture(g_diffuse_texture);
 	g_material->SetNormalTexture(g_normal_texture);
 	g_material->SetSurfaceTexture(g_surface_texture);
-	g_material->SetDiffuseValue(float4(0.6f, 0.4f, 0.0f, 0.0f));
-	g_material->SetReflectivityValue(0.5f);
-	g_material->SetRoughnessValue(0.5f);
+	g_material->SetDiffuseValue(float4(0.6f, 0.6f, 0.6f, 0.0f));
+	g_material->SetReflectivityValue(0.1f);
+	g_material->SetRoughnessValue(0.9f);
 	g_material->SetMetalicityValue(0.0f);
 	g_material->SetEmissivenessValue(0.0f);
 	g_material->SetPixelShader(g_pixel_shader);
@@ -107,13 +107,14 @@ void InitContent()
 	Gaag.RegisterObject(g_obj);
 
 	g_terrain = MAKE_NEW(Terrain);
-	g_terrain->Init(int2(3), int2(256), float3(10,10,1), g_material);
+	g_terrain->Init(int2(3), int2(64), float3(10,10,1), g_material);
+	g_terrain->GetTile(int2(1, 1));
 
 	g_brush = MAKE_NEW(Brush);
-	g_brush->SetRadius(4.0);
+	g_brush->SetRadius(2.0);
 	g_brush->SetShader(g_brush_shader);
-	g_brush->SetStrength(0.2);
-	g_brush->SetFalloffFraction(1.0);
+	g_brush->SetStrength(0.05);
+	g_brush->SetFalloffFraction(0.5);
 
 	g_paint_tool = MAKE_NEW(PaintTool);
 	g_paint_tool->SetBrush(g_brush);

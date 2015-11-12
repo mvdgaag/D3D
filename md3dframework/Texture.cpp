@@ -32,7 +32,7 @@ int Texture::GetMipLevels()
 
 
 void Texture::Init(int inWidth, int inHeight, int inMipLevels, unsigned int inFormat, 
-	unsigned int inUsage, unsigned int inBindFlags, unsigned int inCPUAccessFlags)
+	unsigned int inUsage, BindFlag inBindFlags, CPUAccessFlag inCPUAccessFlags)
 {
 	CleanUp();
 

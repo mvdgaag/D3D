@@ -8,7 +8,7 @@ void Brush::Apply(pTerrainTile inTile, const rect& inPixelRect)
 		return;
 
 	// assume all tiles are identital resolution
-	mConstantBuffer.rect = float4(inPixelRect.topLeft, inPixelRect.bottomRight);
+	mConstantBuffer.rect = int4(inPixelRect.topLeft, inPixelRect.bottomRight);
 	mConstantBuffer.paintData = float4(mStrength, mFalloffFraction, inTile->GetTexture()->GetResolution());
 
 	pConstantBuffer cbuf = MAKE_NEW(ConstantBuffer);

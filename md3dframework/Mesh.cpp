@@ -75,10 +75,10 @@ void Mesh::InitPlane(int2 inSegments, float2 inScale)
 
 	for (int x = 0; x <= inSegments.x; x++)
 	{
-		float u = float(x) / inSegments.x;
+		float u = float(x) / float(inSegments.x);
 		for (int y = 0; y <= inSegments.y; y++)
 		{
-			float v = float(y) / inSegments.y;
+			float v = float(y) / float(inSegments.y);
 			vert.TexCoord = float2(u, v);
 			vert.Position = float3((u - 0.5) * inScale.x, 0, (v - 0.5) * inScale.y);
 			vertices.push_back(vert);
@@ -95,7 +95,7 @@ void Mesh::InitPlane(int2 inSegments, float2 inScale)
 			indices.push_back(idx + 1);
 			indices.push_back(idx + row_offset);
 			indices.push_back(idx + 1);
-			indices.push_back(idx + 1 + row_offset);
+			indices.push_back(idx + row_offset + 1);
 			indices.push_back(idx + row_offset);
 		}
 	}
@@ -135,7 +135,6 @@ void Mesh::InitFullscreenTriangle()
 }
 
 
-
 void Mesh::InitFromData(SimpleVertex* inVertexData, int inNumVerts, unsigned short* inIndexData, int inNumIndices)
 {
 	CleanUp();
@@ -169,7 +168,6 @@ void Mesh::InitFromData(SimpleVertex* inVertexData, int inNumVerts, unsigned sho
 	assert(mVertexBuffer != nullptr);
 	assert(mIndexBuffer != nullptr);
 }
-
 
 
 std::vector<std::string> StringSplit(const std::string &s, char delim) 

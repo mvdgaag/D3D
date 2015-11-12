@@ -71,6 +71,9 @@ PS_OUTPUT PS(PS_INPUT input)
 	else
 		output.Diffuse = cDiffuseTexture.Sample(cDiffuseSampler, input.TexCoord);
 
+	//HACK
+	output.Diffuse.xy = input.TexCoord;
+
 	if ((flags & HAS_NORMAL_MAP) == 0)
 		output.Normal = EncodeNormal(normalize(input.Normal));
 	else

@@ -9,15 +9,17 @@ public:
 	TerrainTile() : DrawableObject() { mInitialized = false; }
 	~TerrainTile() {};
 
-	void Init(float3 inPosition, float3 inScale, int2 inNumSegments, pMaterial inMaterial);
+	void Init(float3 inPosition, float3 inScale, int2 inNumSegments, pMaterial inMaterial, pTexture inHeightTexture);
 	void PrepareToDraw() override;
 	void CleanUp();
 
-	pTexture		GetTexture()		{ return mHeightMapTexture; }
-	pRenderTarget	GetRenderTarget()	{ return mHeightMapRenderTarget; }
-	float2			GetPixelsPerMeter()	{ return mPixelsPerMeter; }
-	float			GetHeightScale()	{ return mHeightScale; }
-	int2			GetSegments()		{ return mNumSegments; }
+	void			SetTexture(pTexture inTexture);
+
+	pTexture		GetTexture()					{ return mHeightMapTexture; }
+	pRenderTarget	GetRenderTarget()				{ return mHeightMapRenderTarget; }
+	float2			GetPixelsPerMeter()				{ return mPixelsPerMeter; }
+	float			GetHeightScale()				{ return mHeightScale; }
+	int2			GetSegments()					{ return mNumSegments; }
 
 private:
 	struct ConstantBufferData

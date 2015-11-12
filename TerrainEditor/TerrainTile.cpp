@@ -1,17 +1,18 @@
 #include "TerrainTile.h"
 
 
-void TerrainTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments, pMaterial inMaterial)
+void TerrainTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments, pMaterial inMaterial, pTexture inHeightTexture)
 {
 	CleanUp();
 
+	mNumSegments = inNumSegments;
+
 	mHeightMapRenderTarget = MAKE_NEW(RenderTarget);
-	mHeightMapRenderTarget->Init(inNumSegments.x, inNumSegments.y, 1, 41); // 41 = DXGI_FORMAT_R32_FLOAT
+	mHeightMapRenderTarget->Init(inHeightTexture);
 	mHeightMapTexture = mHeightMapRenderTarget->GetTexture();
 
 	mHeightScale = inScale.z;
 	mPixelsPerMeter = float2(mHeightMapTexture->GetWidth(), mHeightMapTexture->GetHeight()) / float2(inScale);
-	mNumSegments = inNumSegments;
 	
 	pMesh mesh = MAKE_NEW(Mesh);
 	mesh->InitPlane(mNumSegments, float2(inScale));
@@ -36,6 +37,12 @@ void TerrainTile::CleanUp()
 	mHeightMapRenderTarget = nullptr;
 	mConstantBuffer = nullptr;
 	mInitialized = false;
+}
+
+
+void TerrainTile::SetTexture(pTexture inTexture)
+{
+
 }
 
 

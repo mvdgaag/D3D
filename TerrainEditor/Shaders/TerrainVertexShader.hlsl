@@ -53,24 +53,24 @@ PS_INPUT VS(VS_INPUT input)
 
 	float3 pos = input.Position;
 		pos.y += cTerrainScale.z * cHeightTexture.SampleLevel(cHeightSampler, input.TexCoord, 0).x;
+		//pos.y += input.TexCoord.x + input.TexCoord.y;
 
-	float sigma = 0.001;
+	float sigma = 1.0f / 16.0f;
 	float3 dx = float3(
 		2.0 * sigma,
-		cHeightTexture.SampleLevel(cHeightSampler, input.TexCoord + float2(+sigma, 0.0), 0).x -
-		cHeightTexture.SampleLevel(cHeightSampler, input.TexCoord + float2(-sigma, 0.0), 0).x,
+		cHeightTexture.SampleLevel(cHeightSampler, saturate(input.TexCoord + float2(+sigma, 0.0)), 0).x -
+		cHeightTexture.SampleLevel(cHeightSampler, saturate(input.TexCoord + float2(-sigma, 0.0)), 0).x,
 		0.0);
 	float3 dz = float3(
 		0.0,
-		cHeightTexture.SampleLevel(cHeightSampler, input.TexCoord + float2(0.0, +sigma), 0).x -
-		cHeightTexture.SampleLevel(cHeightSampler, input.TexCoord + float2(0.0, -sigma), 0).x,
+		cHeightTexture.SampleLevel(cHeightSampler, saturate(input.TexCoord + float2(0.0, +sigma)), 0).x -
+		cHeightTexture.SampleLevel(cHeightSampler, saturate(input.TexCoord + float2(0.0, -sigma)), 0).x,
 		2.0 * sigma);
 	float3 nor = normalize(cross(dz, dx));
 	output.Normal = mul(float4(nor, 0.0), modelViewMatrix).xyz;
 
 	// jitter for TAA
 	output.Position = mul(float4(pos, 1.0), modelViewProjectionMatrix);
-	//output.Normal = mul(float4(input.Normal, 0.0), modelViewMatrix).xyz;
 	output.Tangent = mul(float4(input.Tangent, 0.0), modelViewMatrix).xyz;
 	output.TexCoord = input.TexCoord.xy;
 

@@ -23,8 +23,8 @@ public:
 private:
 	struct ConstantBufferData
 	{
-		float4 rect;
-		float4 paintData;
+		int4	rect;
+		float4	paintData;
 	};
 	ConstantBufferData mConstantBuffer;
 	float mRadius;
