@@ -1,4 +1,36 @@
 #include "PaintTool.h"
+#include "BrushLibrary.h"
+
+
+void PaintTool::Init(pBrushLibrary inBrushLibrary)
+{
+	mBrushLibrary = inBrushLibrary;
+}
+
+
+void PaintTool::CleanUp()
+{
+	mBrushLibrary = nullptr;
+}
+
+
+void PaintTool::OnKeyDown(unsigned int inKey)
+{
+	switch (inKey)
+	{
+	case (0x42) : // b
+		mCurrentBrush = mBrushLibrary->GetBrush("Basic");
+		break;
+	case (0x4E) : // n
+		mCurrentBrush = mBrushLibrary->GetBrush("Noise");
+		break;
+	case (0x53) : // s
+		mCurrentBrush = mBrushLibrary->GetBrush("Smooth");
+		break;
+	default:
+		break;
+	}
+}
 
 
 void PaintTool::OnMouseDown(int inButton) 

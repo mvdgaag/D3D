@@ -1,6 +1,15 @@
 #include "Brush.h"
 
 
+void Brush::Init(pComputeShader inShader, float inRadius, float inFalloff, float inStrength)
+{
+	SetShader(inShader);
+	SetRadius(inRadius);
+	SetFalloffFraction(inFalloff);
+	SetStrength(inStrength);
+}
+
+
 void Brush::Apply(pTerrainTile inTile, const rect& inPixelRect, const float2& inWorldPosition)
 {
 	int2 resolution = inTile->GetTexture()->GetResolution();

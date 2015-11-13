@@ -107,6 +107,7 @@ void GaagFramework::Render()
 		mFrameCallback();
 
 	mDeferredRenderer->Render(mObjectList);
+	//CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetGBuffer()->GetTexture(GBuffer::NORMAL));
 	CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetPostProcessed()->GetTexture());
 	theRenderContext.SwapBuffers();
 }
