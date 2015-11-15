@@ -9,9 +9,9 @@ public:
 	Camera();
 	~Camera();
 
-	float4x4			GetViewMatrix() { return lookAt(mPosition, mTarget, mUp); }
-	float4x4			GetProjectionMatrix() { return perspective(mFovY, mAspect, mNear, mFar); }
-	float4x4			GetViewProjectionMatrix() { return GetProjectionMatrix() * GetViewMatrix(); };
+	float4x4	GetViewMatrix() { return lookAt(mPosition, mTarget, mWorldUp); }
+	float4x4	GetProjectionMatrix() { return perspective(mFovY, mAspect, mNear, mFar); }
+	float4x4	GetViewProjectionMatrix() { return GetProjectionMatrix() * GetViewMatrix(); };
 
 	float		GetFovX() { return mFovY * mAspect; }
 	float		GetFovY() { return mFovY; }
@@ -20,15 +20,23 @@ public:
 	float		GetFar() { return mFar; }
 	float3		GetPosition() { return mPosition; }
 
-	void		SetPosition(float x, float y, float z) { mPosition = float3(x, y, z); }
-	void		SetTarget(float x, float y, float z) { mTarget = float3(x, y, z); }
-	void		SetUp(float x, float y, float z) { mUp = float3(x, y, z); }
+	// TODO: test, need to transpose?
+	float3		GetRight()		{ float4x4 view_mat = GetViewMatrix(); return float3(view_mat[0].x, view_mat[1].x, view_mat[2].x); }
+	float3		GetUp()			{ float4x4 view_mat = GetViewMatrix(); return float3(view_mat[0].y, view_mat[1].y, view_mat[2].y); }
+	float3		GetForward()	{ float4x4 view_mat = GetViewMatrix(); return float3(view_mat[0].z, view_mat[1].z, view_mat[2].z); }
+
+	void		SetPosition(float inX, float inY, float inZ) { SetPosition(float3(inX, inY, inZ)); }
+	void		SetPosition(float3 inPosition) { mPosition = inPosition; }
+	void		SetTarget(float inX, float inY, float inZ) { SetTarget(float3(inX, inY, inZ)); }
+	void		SetTarget(float3 inTarget) { mTarget = inTarget; }
+	void		SetWorldUp(float inX, float inY, float inZ) { SetWorldUp(float3(inX, inY, inZ)); }
+	void		SetWorldUp(float3 inUp) { mWorldUp = inUp; }
 	void		SetProjectionMatrix(float inNear, float inFar, float inFovY);
 
 private:
 	float3 mPosition;
 	float3 mTarget;
-	float3 mUp;
+	float3 mWorldUp;
 
 	float mFovY;
 	float mNear;

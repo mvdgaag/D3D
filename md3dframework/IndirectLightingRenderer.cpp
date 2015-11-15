@@ -22,11 +22,11 @@ void IndirectLightingRenderer::Render(pTexture inSource, pTexture inNormal, pTex
 	theRenderContext.CSSetRWTexture(inTarget, 0);
 
 	pCamera cam = Gaag.GetCamera();
-	mConstantBufferData.viewspaceReconstructionVector.x = tan(0.5 * cam->GetFovX());
-	mConstantBufferData.viewspaceReconstructionVector.y = tan(0.5 * cam->GetFovY());
-	mConstantBufferData.targetSize.x = theRenderContext.GetWidth();
-	mConstantBufferData.targetSize.y = theRenderContext.GetHeight();
-	mConstantBufferData.frameData.x = Gaag.GetFrameID();
+	mConstantBufferData.viewspaceReconstructionVector.x = tan(0.5f * cam->GetFovX());
+	mConstantBufferData.viewspaceReconstructionVector.y = tan(0.5f * cam->GetFovY());
+	mConstantBufferData.targetSize.x = (float)theRenderContext.GetWidth();
+	mConstantBufferData.targetSize.y = (float)theRenderContext.GetHeight();
+	mConstantBufferData.frameData.x = (float)Gaag.GetFrameID();
 
 	theRenderContext.UpdateSubResource(*mConstantBuffer, &mConstantBufferData);
 	theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);

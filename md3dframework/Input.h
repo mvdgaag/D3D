@@ -17,8 +17,8 @@ public:
 		return instance;
 	}
 
-	void RegisterListener(pInputListener inListener) { mListeners.insert(inListener); }
-	void UnRegisterListener(pInputListener inListener) { mListeners.erase(inListener); }
+	static void RegisterListener(pInputListener inListener) { mListeners.insert(inListener); }
+	static void UnRegisterListener(pInputListener inListener) { if (mListeners.find(inListener) != mListeners.end()) mListeners.erase(inListener); }
 
 	bool GetKeyDown(unsigned int inKey) { return mKeys[inKey]; }
 	float2 GetMouseCoord() { return mMouseCoord; }

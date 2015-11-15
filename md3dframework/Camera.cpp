@@ -6,7 +6,7 @@ Camera::Camera()
 {
 	mPosition = float3(0.0f, 0.0f, -5.0f);
 	mTarget = float3(0.0f, 0.0f, 0.0f);
-	mUp = float3(0.0f, 1.0f, 0.0f);
+	mWorldUp = float3(0.0f, 1.0f, 0.0f);
 	SetProjectionMatrix(0.1, 100.0, 3.1415 / 4.0);
 }
 

@@ -4,6 +4,7 @@
 #include "PaintTool.h"
 #include "BrushLibrary.h"
 #include "Brush.h"
+#include "CameraController.h"
 
 Window* g_window = nullptr;
 
@@ -20,6 +21,7 @@ pTerrain g_terrain;
 
 pPaintTool g_paint_tool;
 pBrushLibrary g_brush_library;
+pCameraController g_camera_controller;
 
 void FrameFunc();
 void InitContent();
@@ -100,8 +102,8 @@ void InitContent()
 	g_material->SetPixelShader(g_pixel_shader);
 	g_material->SetVertexShader(g_vertex_shader);
 	//g_material->SetFlags(Material::MaterialFlags(0));
-	g_obj->Init(g_mesh, Gaag.GetDefaultMaterial());
-	Gaag.RegisterObject(g_obj);
+	//g_obj->Init(g_mesh, Gaag.GetDefaultMaterial());
+	//Gaag.RegisterObject(g_obj);
 
 	g_terrain = MAKE_NEW(Terrain);
 	g_terrain->Init(int2(3), int2(64), float3(10,10,1), g_material);
@@ -113,6 +115,9 @@ void InitContent()
 	g_paint_tool = MAKE_NEW(PaintTool);
 	g_paint_tool->Init(g_brush_library);
 	g_paint_tool->SetTargetTerrain(g_terrain);
+
+	g_camera_controller = MAKE_NEW(CameraController);
+	g_camera_controller->SetTargetCamera(Gaag.GetCamera());
 }
 
 

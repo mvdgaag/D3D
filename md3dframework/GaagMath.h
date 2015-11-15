@@ -5,6 +5,7 @@
 
 #define GLM_FORCE_RADIANS
 #include "glm\glm.hpp"
+#include "glm\gtc\quaternion.hpp"
 #include "glm\gtc\matrix_transform.hpp"
 
 typedef glm::vec2 float2;
@@ -16,6 +17,8 @@ typedef glm::ivec3 int3;
 typedef glm::ivec4 int4;
 
 typedef glm::mat4 float4x4;
+
+typedef glm::quat quat;
 
 
 inline float4x4 rotate(const float4x4& inMatrix, float inRadians, const float3& inAxis)

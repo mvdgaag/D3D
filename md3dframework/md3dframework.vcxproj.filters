@@ -180,6 +180,9 @@
     <ClInclude Include="GaagMath.h">
       <Filter>Header Files\Math</Filter>
     </ClInclude>
+    <ClInclude Include="CameraController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DrawableObject.cpp">
@@ -276,6 +279,9 @@
       <Filter>Source Files\Util</Filter>
     </ClCompile>
     <ClCompile Include="GaagFramework.cpp" />
+    <ClCompile Include="CameraController.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\BasicFragmentShader.hlsl">

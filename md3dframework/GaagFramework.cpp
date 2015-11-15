@@ -66,7 +66,7 @@ HRESULT GaagFramework::Init(HINSTANCE hInstance)
 	mCamera = MAKE_NEW(Camera);
 	mCamera->SetPosition(1.0, 1.0, 1.0);
 	mCamera->SetTarget(0.0, 0.0, 0.0);
-	mCamera->SetUp(0.0, 1.0, 0.0);
+	mCamera->SetWorldUp(0.0, 1.0, 0.0);
 
 	mFrameID = 0;
 	mFrameTime = theTime.GetTime();
