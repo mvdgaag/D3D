@@ -30,31 +30,31 @@ void DeferredRenderer::Init(int inWidth, int inHeight)
 	mGBuffer->Init(inWidth, inHeight);
 
 	mDepthPyramid = MAKE_NEW(RenderTarget);
-	mDepthPyramid->Init(inWidth / 2, inHeight / 2, 3, DXGI_FORMAT_R16G16_FLOAT);
+	mDepthPyramid->Init(inWidth / 2, inHeight / 2, 3, FORMAT_R16G16_FLOAT);
 	
 	mDirectLightingDiffuse = MAKE_NEW(RenderTarget);
-	mDirectLightingDiffuse->Init(inWidth, inHeight, 1, DXGI_FORMAT_R16G16B16A16_FLOAT);
+	mDirectLightingDiffuse->Init(inWidth, inHeight, 1, FORMAT_R16G16B16A16_FLOAT);
 
 	mDirectLightingSpecular = MAKE_NEW(RenderTarget);
-	mDirectLightingSpecular->Init(inWidth, inHeight, 1, DXGI_FORMAT_R16G16B16A16_FLOAT);
+	mDirectLightingSpecular->Init(inWidth, inHeight, 1, FORMAT_R16G16B16A16_FLOAT);
 
 	mIndirectLighting = MAKE_NEW(RenderTarget);
-	mIndirectLighting->Init(inWidth, inHeight, 1, DXGI_FORMAT_R16G16B16A16_FLOAT);
+	mIndirectLighting->Init(inWidth, inHeight, 1, FORMAT_R16G16B16A16_FLOAT);
 
 	mReflections = MAKE_NEW(RenderTarget);
-	mReflections->Init(inWidth, inHeight, 1, DXGI_FORMAT_R16G16B16A16_FLOAT);
+	mReflections->Init(inWidth, inHeight, 1, FORMAT_R16G16B16A16_FLOAT);
 
 	mLightComposed = MAKE_NEW(RenderTarget);
-	mLightComposed->Init(inWidth, inHeight, 1, DXGI_FORMAT_R16G16B16A16_FLOAT);
+	mLightComposed->Init(inWidth, inHeight, 1, FORMAT_R16G16B16A16_FLOAT);
 
 	mAntiAliased = MAKE_NEW(RenderTarget);
-	mAntiAliased->Init(inWidth, inHeight, 1, DXGI_FORMAT_R16G16B16A16_FLOAT);
+	mAntiAliased->Init(inWidth, inHeight, 1, FORMAT_R16G16B16A16_FLOAT);
 
 	mAAHistoryFrame = MAKE_NEW(RenderTarget);
-	mAAHistoryFrame->Init(inWidth, inHeight, 1, DXGI_FORMAT_R16G16B16A16_FLOAT);
+	mAAHistoryFrame->Init(inWidth, inHeight, 1, FORMAT_R16G16B16A16_FLOAT);
 
 	mPostProcessed = MAKE_NEW(RenderTarget);
-	mPostProcessed->Init(inWidth, inHeight, 1, DXGI_FORMAT_R16G16B16A16_FLOAT);
+	mPostProcessed->Init(inWidth, inHeight, 1, FORMAT_R16G16B16A16_FLOAT);
 
 	mShadowRenderer.Init();
 	mDirectLightingRenderer.Init();

@@ -157,6 +157,7 @@
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="TerrainEditor.h" />
     <ClInclude Include="TerrainTile.h" />
+    <ClInclude Include="WaterTile.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Brush.cpp" />
@@ -165,6 +166,7 @@
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TerrainEditor.cpp" />
     <ClCompile Include="TerrainTile.cpp" />
+    <ClCompile Include="WaterTile.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\photosculpt-squarebricks-ambientocclusion.dds">
@@ -217,6 +219,14 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Shaders\TerrainVertexShader.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Shaders\UpdateFlux.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Shaders\UpdateWater.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>

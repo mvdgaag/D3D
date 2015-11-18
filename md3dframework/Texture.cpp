@@ -7,47 +7,33 @@
 #include "FileUtil.h"
 
 
-int Texture::GetWidth()				
-{
-	return mDesc->Width; 
-}
-
-
-int Texture::GetHeight()
-{
-	return mDesc->Height; 
-}
-
-
-int2 Texture::GetResolution()
-{ 
-	return int2(mDesc->Width, mDesc->Height); 
-}
-
-
-int Texture::GetMipLevels()
-{
-	return mDesc->MipLevels; 
-}
-
-
-void Texture::Init(int inWidth, int inHeight, int inMipLevels, unsigned int inFormat, 
+void Texture::Init(int inWidth, int inHeight, int inMipLevels, Format inFormat, 
 	unsigned int inUsage, BindFlag inBindFlags, CPUAccessFlag inCPUAccessFlags)
 {
 	CleanUp();
 
 	mDesc = new D3D11_TEXTURE2D_DESC();
 	ZeroMemory(mDesc, sizeof(D3D11_TEXTURE2D_DESC));
-	mDesc->Width = inWidth;
-	mDesc->Height = inHeight;
-	mDesc->MipLevels = mDesc->ArraySize = inMipLevels;
+	mWidth = mDesc->Width = inWidth;
+	mHeight = mDesc->Height = inHeight;
+	mMipLevels = mDesc->MipLevels = mDesc->ArraySize = inMipLevels;
+	
+	mFormat = inFormat;
 	mDesc->Format = (DXGI_FORMAT)inFormat;
+	
 	mDesc->SampleDesc.Count = 1;
+	
 	mDesc->SampleDesc.Quality = 0;
+	
 	mDesc->Usage = (D3D11_USAGE)inUsage;
-	mDesc->BindFlags = inBindFlags;
+	
+	mBindFlags = inBindFlags;
+	mDesc->BindFlags = (D3D11_BIND_FLAG)inBindFlags;
+
+	mCPUAccessFlags = inCPUAccessFlags;
 	mDesc->CPUAccessFlags = (D3D11_CPU_ACCESS_FLAG)inCPUAccessFlags;
 	mDesc->MiscFlags = 0;
+
 
 	D3DCall(theRenderContext.GetDevice()->CreateTexture2D(mDesc, NULL, &mTexture));
 	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
@@ -72,9 +58,16 @@ void Texture::Init(ID3D11Texture2D* inTexture)
 	mTexture = inTexture;
 	mDesc = new D3D11_TEXTURE2D_DESC();
 	mTexture->GetDesc(mDesc);
-	
+
 	D3DCall(theRenderContext.GetDevice()->CreateShaderResourceView(mTexture, NULL, &mShaderResourceView));
 	
+	mWidth = mDesc->Width;
+	mHeight = mDesc->Height;
+	mMipLevels = mDesc->MipLevels;
+	mFormat = (Format)mDesc->Format;
+	mBindFlags = (BindFlag)mDesc->BindFlags;
+	mCPUAccessFlags = (CPUAccessFlag)mDesc->CPUAccessFlags;
+
 	assert(mTexture != nullptr);
 	assert(mShaderResourceView != nullptr);
 }
@@ -93,6 +86,13 @@ void Texture::InitFromFile(std::string inFileName)
 	mShaderResourceView->GetResource(reinterpret_cast<ID3D11Resource**>(&mTexture));
 	mDesc = new D3D11_TEXTURE2D_DESC();
 	mTexture->GetDesc(mDesc);
+
+	mWidth = mDesc->Width;
+	mHeight = mDesc->Height;
+	mMipLevels = mDesc->MipLevels;
+	mFormat = (Format)mDesc->Format;
+	mBindFlags = (BindFlag)mDesc->BindFlags;
+	mCPUAccessFlags = (CPUAccessFlag)mDesc->CPUAccessFlags;
 
 	assert(mTexture != nullptr);
 	assert(mShaderResourceView != nullptr);

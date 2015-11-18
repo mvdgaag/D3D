@@ -9,7 +9,7 @@ void DepthStencilTarget::Init(int inWidth, int inHeight)
 	CleanUp();
 
 	mTexture = MAKE_NEW(Texture);
-	mTexture->Init(inWidth, inHeight, 1, DXGI_FORMAT_R24G8_TYPELESS, 0, BIND_DEPTH_STENCIL | BIND_SHADER_RESOURCE);
+	mTexture->Init(inWidth, inHeight, 1, FORMAT_R24G8_TYPELESS, 0, BIND_DEPTH_STENCIL | BIND_SHADER_RESOURCE);
 
 	// Create the depth stencil view
 	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;

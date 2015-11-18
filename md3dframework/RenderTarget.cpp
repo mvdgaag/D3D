@@ -5,7 +5,7 @@
 #include <d3d11_1.h>
 
 
-void RenderTarget::Init(int inWidth, int inHeight, int inMipLevels, unsigned int inFormat)
+void RenderTarget::Init(int inWidth, int inHeight, int inMipLevels, Format inFormat)
 {
 	CleanUp();
 

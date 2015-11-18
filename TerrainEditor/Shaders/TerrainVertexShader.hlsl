@@ -55,17 +55,24 @@ PS_INPUT VS(VS_INPUT input)
 		pos.y += cTerrainScale.z * cHeightTexture.SampleLevel(cHeightSampler, input.TexCoord, 0).x;
 		//pos.y += input.TexCoord.x + input.TexCoord.y;
 
-	float sigma = 1.0f / 16.0f;
+	float2 tex_size;
+	cHeightTexture.GetDimensions(tex_size.x, tex_size.y);
+	float2 rcp_tex_size = 1.0 / tex_size;
+	
 	float3 dx = float3(
-		2.0 * sigma,
-		cHeightTexture.SampleLevel(cHeightSampler, saturate(input.TexCoord + float2(+sigma, 0.0)), 0).x -
-		cHeightTexture.SampleLevel(cHeightSampler, saturate(input.TexCoord + float2(-sigma, 0.0)), 0).x,
+		2.0 * rcp_tex_size.x,
+		(cTerrainScale.z / cTerrainScale.x) *
+		(	cHeightTexture.SampleLevel(cHeightSampler, saturate(input.TexCoord + float2( rcp_tex_size.x, 0.0)), 0).x -
+			cHeightTexture.SampleLevel(cHeightSampler, saturate(input.TexCoord + float2(-rcp_tex_size.x, 0.0)), 0).x ),
 		0.0);
+	
 	float3 dz = float3(
 		0.0,
-		cHeightTexture.SampleLevel(cHeightSampler, saturate(input.TexCoord + float2(0.0, +sigma)), 0).x -
-		cHeightTexture.SampleLevel(cHeightSampler, saturate(input.TexCoord + float2(0.0, -sigma)), 0).x,
-		2.0 * sigma);
+		(cTerrainScale.z / cTerrainScale.y) *
+		(	cHeightTexture.SampleLevel(cHeightSampler, saturate(input.TexCoord + float2(0.0,  rcp_tex_size.y)), 0).x -
+			cHeightTexture.SampleLevel(cHeightSampler, saturate(input.TexCoord + float2(0.0, -rcp_tex_size.y)), 0).x ),
+		2.0 * rcp_tex_size.y);
+	
 	float3 nor = normalize(cross(dz, dx));
 	output.Normal = mul(float4(nor, 0.0), modelViewMatrix).xyz;
 
@@ -82,7 +89,7 @@ PS_INPUT VS(VS_INPUT input)
 	output.MotionVectors = (output.Position.xy / output.Position.w); // currentNDC
 	output.MotionVectors -= (prevPos.xy / prevPos.w); // prevNDC
 	output.MotionVectors *= 0.5; // NDC to UV range conversion
-
+ 
 	// jitter for TAA
 	float2 jitter_offset = frameData.xy;
 	output.Position.xy += jitter_offset.xy * output.Position.w;

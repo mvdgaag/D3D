@@ -5,6 +5,7 @@
 #include "BrushLibrary.h"
 #include "Brush.h"
 #include "CameraController.h"
+#include "WaterTile.h"
 
 Window* g_window = nullptr;
 
@@ -18,6 +19,7 @@ pTexture g_normal_texture;
 pTexture g_surface_texture;
 pTexture g_heightmap;
 pTerrain g_terrain;
+pWaterTile g_water_tile;
 
 pPaintTool g_paint_tool;
 pBrushLibrary g_brush_library;
@@ -32,6 +34,8 @@ static void FrameFunc()
 {
 	float angle = 0.1f * 2.0f * 3.1415f * (float)Gaag.GetFrameDeltaTime();
 	g_obj->Rotate(float3(0.0f, 1.0f, 0.0f), angle);
+
+	g_water_tile->Update();
 }
 
 
@@ -102,8 +106,8 @@ void InitContent()
 	g_material->SetPixelShader(g_pixel_shader);
 	g_material->SetVertexShader(g_vertex_shader);
 	//g_material->SetFlags(Material::MaterialFlags(0));
-	//g_obj->Init(g_mesh, Gaag.GetDefaultMaterial());
-	//Gaag.RegisterObject(g_obj);
+	g_obj->Init(g_mesh, Gaag.GetDefaultMaterial());
+	Gaag.RegisterObject(g_obj);
 
 	g_terrain = MAKE_NEW(Terrain);
 	g_terrain->Init(int2(3), int2(64), float3(10,10,1), g_material);
@@ -118,6 +122,11 @@ void InitContent()
 
 	g_camera_controller = MAKE_NEW(CameraController);
 	g_camera_controller->SetTargetCamera(Gaag.GetCamera());
+
+	g_water_tile = MAKE_NEW(WaterTile);
+	pTerrainTile t1 = g_terrain->GetTile(float2(0, 0));
+	pTerrainTile t2 = g_terrain->GetTile(float2(10, 10));
+	g_water_tile->Init(t1->GetTexture(), t2->GetTexture());
 }
 
 

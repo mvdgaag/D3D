@@ -1,12 +1,13 @@
 #pragma once
 #include "BaseResource.h"
 #include "GaagCommon.h"
+#include "Texture.h"
 
 struct ID3D11RenderTargetView;
 struct ID3D11UnorderedAccessView;
 
 PREDEFINE(RenderTarget, pRenderTarget);
-PREDEFINE(Texture, pTexture);
+
 
 class RenderTarget : public BaseResource
 {
@@ -17,7 +18,7 @@ public:
 	~RenderTarget() { CleanUp(); }
 
 	pTexture					GetTexture() { return mTexture; }
-	void						Init(int inWidth, int inHeight, int inMipLevels, unsigned int inFormat);
+	void						Init(int inWidth, int inHeight, int inMipLevels, Format inFormat);
 	void						Init(pTexture inTexture);
 	void						CleanUp() override;
 	ResourceType				GetResourceType() const override { return ResourceType::RENDER_TARGET; }

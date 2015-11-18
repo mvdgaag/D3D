@@ -28,6 +28,9 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	float2 history_uv = saturate((coord + 0.5) / cTargetSize - mv);
 	float4 history_val = history.SampleLevel(historySamper, history_uv, 0);
 	
+	if (isnan(history_val.x) == true)
+		history_val = 0;
+
 	// gather neighborhood
 	float4 valn = source[coord + int2(0, 1)];
 	float4 valne = source[coord + int2(-1, 1)];
@@ -44,7 +47,6 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	val = (unsharp_strength + 1.0) * val - 
 		(unsharp_strength * normalization_factor * 0.125) * (valn + vale + vals + valw) -
 		(unsharp_strength * normalization_factor * (0.125 / sqrt(2.0))) * (valne + valse + valnw + valsw);
-	
 
 	// 3*3 neighborhood clamp
 	float4 max_val = max(max(max(valn, vals), max(vale, valw)), max(max(valne, valse), max(valnw, valsw)));
@@ -53,7 +55,5 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	
 	// blend
 	float blend_strength = 0.85;
-	//float motion_limit = 2.0;
-	//blend_strength *= saturate(1.0 - length(mv*cTargetSize) / motion_limit); // blend less motion more than motion limit (linear falloff)
 	dst[coord] = lerp(val, history_val, blend_strength);
 }
