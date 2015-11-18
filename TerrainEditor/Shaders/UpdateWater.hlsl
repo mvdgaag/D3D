@@ -22,6 +22,7 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	const float dt = 0.001;
 	
 	float water = rwWater[coord];
+	float terrain = tTerrain[coord];
 	
 	float2 ne = GetFlux(coord);
 	

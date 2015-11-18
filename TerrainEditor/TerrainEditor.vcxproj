@@ -157,6 +157,7 @@
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="TerrainEditor.h" />
     <ClInclude Include="TerrainTile.h" />
+    <ClInclude Include="Water.h" />
     <ClInclude Include="WaterTile.h" />
   </ItemGroup>
   <ItemGroup>
@@ -166,6 +167,7 @@
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TerrainEditor.cpp" />
     <ClCompile Include="TerrainTile.cpp" />
+    <ClCompile Include="Water.cpp" />
     <ClCompile Include="WaterTile.cpp" />
   </ItemGroup>
   <ItemGroup>

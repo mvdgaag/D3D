@@ -6,6 +6,7 @@ void WaterTile::Init(pTexture inTerrainHeightTexture, pTexture inWaterHeightText
 	BindFlag required_flags = BindFlag::BIND_SHADER_RESOURCE | BindFlag::BIND_UNORDERED_ACCESS | BindFlag::BIND_RENDER_TARGET;
 	assert((inWaterHeightTexture->GetBindFlags() & required_flags) == required_flags);
 	assert(inWaterHeightTexture->GetFormat() == Format::FORMAT_R32_FLOAT);
+	assert(inTerrainHeightTexture != nullptr);
 
 	mTerrainTexture = inTerrainHeightTexture;
 	mWaterRenderTarget = MAKE_NEW(RenderTarget);
