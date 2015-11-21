@@ -29,6 +29,8 @@ HRESULT GaagFramework::Init(HINSTANCE hInstance)
 	mWindow = MAKE_NEW(Window);
 	mWindow->Init(hInstance);
 	theRenderContext.Init(mWindow);
+	theTime.Init();
+	theInput.Init();
 	TextureUtil::InitTextureUtil();
 	
 	mDeferredRenderer = MAKE_NEW(DeferredRenderer);
@@ -87,9 +89,12 @@ void GaagFramework::CleanUp()
 	mDefaultMaterial = nullptr;
 
 	TextureUtil::CleanUpTextureUtil();
+	theInput.CleanUp();
+	theTime.CleanUp();
 	theRenderContext.CleanUp();
 	mWindow = nullptr;
 	
+
 	mInitialized = false;
 }
 

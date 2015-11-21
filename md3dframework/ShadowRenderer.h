@@ -11,5 +11,10 @@ public:
 	void Init();
 	void CleanUp();
 	void Render();
+
+private:
+	ShadowRenderer(ShadowRenderer const&) = delete;
+	void operator=(ShadowRenderer const&) = delete;
+
 };
 

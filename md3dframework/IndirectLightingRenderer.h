@@ -20,6 +20,9 @@ public:
 	void Render(pTexture inSource, pTexture inNormal, pTexture inLinearDepth, pRenderTarget inTarget);
 
 private:
+	IndirectLightingRenderer(IndirectLightingRenderer const&) = delete;
+	void operator=(IndirectLightingRenderer const&) = delete;
+
 	struct ConstantBufferData
 	{
 		float2 viewspaceReconstructionVector;

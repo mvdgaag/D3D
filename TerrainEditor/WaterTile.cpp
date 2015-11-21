@@ -44,7 +44,7 @@ void WaterTile::Init(pTexture inTerrainHeightTexture, pTexture inWaterHeightText
 	mGravity = 9.81;
 	mPixelScale = inPixelScale;
 	mHeightScale = inHeightScale;
-	mFriction = 0.99;
+	mFriction = 0.9;
 
 	mFluxConstantBuffer = MAKE_NEW(ConstantBuffer);
 	mFluxConstantBuffer->Init(sizeof(float4));
@@ -56,6 +56,7 @@ void WaterTile::Init(pTexture inTerrainHeightTexture, pTexture inWaterHeightText
 
 void WaterTile::Update(float inTimeStep)
 {
+	// fixed timestep
 	inTimeStep = 0.01;// min(inTimeStep * 0.1, 0.01);
 
 	float4 constant_data;

@@ -21,6 +21,9 @@ public:
 	static float2 GetJitterOffset(int inFrameID);
 
 private:
+	TAARenderer(TAARenderer const&) = delete;
+	void operator=(TAARenderer const&) = delete;
+
 	struct ConstantBufferData
 	{
 		float2 mJitterOffset;

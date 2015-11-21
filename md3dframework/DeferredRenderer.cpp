@@ -58,7 +58,7 @@ void DeferredRenderer::Init(int inWidth, int inHeight)
 
 	mShadowRenderer.Init();
 	mDirectLightingRenderer.Init();
-	mDepthPyramidRenderer.Init();
+	//mDepthPyramidRenderer.Init();
 	mIndirectLightingRenderer.Init();
 	mReflectionRenderer.Init();
 	mLightComposeRenderer.Init();
@@ -96,7 +96,7 @@ void DeferredRenderer::CleanUp()
 
 	mShadowRenderer.CleanUp();
 	mDirectLightingRenderer.CleanUp();
-	mDepthPyramidRenderer.CleanUp();
+	//mDepthPyramidRenderer.CleanUp();
 	mIndirectLightingRenderer.CleanUp();
 	mReflectionRenderer.CleanUp();
 	mLightComposeRenderer.CleanUp();

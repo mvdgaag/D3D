@@ -18,6 +18,9 @@ public:
 	void Render(pTexture inDirectDiffuse, pTexture inDirectSpecular, pTexture inIndirect, pTexture inReflections, pRenderTarget inTarget);
 
 private:
+	LightComposeRenderer(LightComposeRenderer const&) = delete;
+	void operator=(LightComposeRenderer const&) = delete;
+
 	pComputeShader mShader = nullptr;
 	bool mInitialized = false;
 };

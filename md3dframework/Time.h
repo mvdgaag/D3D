@@ -21,20 +21,17 @@ public:
 		return (endTime.QuadPart - startTime.QuadPart) / fFreq;
 	}
 
+	void Init();
+	void CleanUp();
+
 private:
-	Time() 
-	{
-		LARGE_INTEGER freq;
-		QueryPerformanceFrequency(&freq);
-		fFreq = (double)freq.QuadPart;
-		QueryPerformanceCounter(&startTime);
-	}
-	~Time() {};
+	Time() {}
+	~Time() {}
+
 	Time(Time const&) = delete;
 	void operator=(Time const&) = delete;
 
 	LARGE_INTEGER startTime;
 	double fFreq;
-
 };
 

@@ -2,7 +2,17 @@
 #include "InputListener.h"
 
 
-std::unordered_set<pInputListener> Input::mListeners = std::unordered_set<pInputListener>();
+void Input::Init()
+{
+	mInitialized = true;
+}
+
+
+void Input::CleanUp()
+{
+	mListeners.clear();
+	mInitialized = false;
+}
 
 
 void Input::OnKeyDown(unsigned int inKey)

@@ -21,6 +21,9 @@ public:
 	void Render(pGBuffer inSource, pRenderTarget inTargetDiffuse, pRenderTarget inTargetSpecular);
 
 private:
+	DirectLightingRenderer(DirectLightingRenderer const&) = delete;
+	void operator=(DirectLightingRenderer const&) = delete;
+
 	struct ConstantBufferData
 	{
 		float2 viewspaceReconstructionVector;

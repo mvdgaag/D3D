@@ -50,6 +50,9 @@ public:
 	void RemoveLights() {}
 
 private:
+	DeferredRenderer(DeferredRenderer const&) = delete;
+	void operator=(DeferredRenderer const&) = delete;
+
 	void GeometryPass(std::vector<pDrawableObject> inDrawList);
 	void LightingPass();
 	void PostProcessPass();

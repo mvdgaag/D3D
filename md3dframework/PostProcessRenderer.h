@@ -20,6 +20,9 @@ public:
 	void Render(pTexture inSource, pTexture inMotionVectors, pRenderTarget inTarget);
 
 private:
+	PostProcessRenderer(PostProcessRenderer const&) = delete;
+	void operator=(PostProcessRenderer const&) = delete;
+
 	struct ConstantBufferData
 	{
 		float4 mTargetSize;

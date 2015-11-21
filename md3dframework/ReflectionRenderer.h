@@ -18,6 +18,9 @@ public:
 	void Render(pTexture inSource, pRenderTarget inTarget);
 
 private:
+	ReflectionRenderer(ReflectionRenderer const&) = delete;
+	void operator=(ReflectionRenderer const&) = delete;
+
 	pComputeShader mShader = nullptr;
 	bool mInitialized = false;
 };

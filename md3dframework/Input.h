@@ -17,8 +17,11 @@ public:
 		return instance;
 	}
 
-	static void RegisterListener(pInputListener inListener) { mListeners.insert(inListener); }
-	static void UnRegisterListener(pInputListener inListener) { if (mListeners.find(inListener) != mListeners.end()) mListeners.erase(inListener); }
+	void Init();
+	void CleanUp();
+
+	void RegisterListener(pInputListener inListener) { if (mInitialized) mListeners.insert(inListener); }
+	void UnRegisterListener(pInputListener inListener) { if (mInitialized) mListeners.erase(inListener); }
 
 	bool GetKeyDown(unsigned int inKey) { return mKeys[inKey]; }
 	float2 GetMouseCoord() { return mMouseCoord; }
@@ -43,6 +46,7 @@ private:
 	Input(Input const&) = delete;
 	void operator=(Input const&) = delete;
 
-	static std::unordered_set<pInputListener> mListeners;
+	bool mInitialized;
+	std::unordered_set<pInputListener> mListeners;
 };
 

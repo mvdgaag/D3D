@@ -17,6 +17,9 @@ public:
 	void Render(pTexture inSource, pRenderTarget inTarget);
 
 private:
+	DepthPyramidRenderer(DepthPyramidRenderer const&) = delete;
+	void operator=(DepthPyramidRenderer const&) = delete;
+
 	pComputeShader				mShader = nullptr;
 	const int					kNumMipLevels = 3; // 1/2 .. 1/8
 	bool						mInitialized = false;

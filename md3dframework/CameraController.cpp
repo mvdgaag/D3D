@@ -27,7 +27,7 @@ void CameraController::OnKeyDown(unsigned int inKey)
 		mTargetCamera->SetPosition(cam_pos + cam_right);
 		mTargetCamera->SetTarget(cam_target + cam_right);
 		break;
-	case 0x51: // q
+	case 0x45: // e
 		mTargetCamera->SetPosition(cam_pos + cam_up);
 		mTargetCamera->SetTarget(cam_target + cam_up);
 		break;

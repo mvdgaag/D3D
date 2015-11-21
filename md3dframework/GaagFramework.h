@@ -1,9 +1,11 @@
 #pragma once
 #include "GaagCommon.h"
+
 #include "RenderContext.h"
 #include "Input.h"
-#include "InputListener.h"
 #include "Time.h"
+
+#include "InputListener.h"
 #include "Window.h"
 			
 PREDEFINE(PixelShader, pPixelShader);

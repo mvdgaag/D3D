@@ -113,7 +113,7 @@ void InitContent()
 	Gaag.RegisterObject(g_obj);
 
 	g_terrain = MAKE_NEW(Terrain);
-	g_terrain->Init(int2(3), int2(128), float3(10,10,1), g_terrain_material);
+	g_terrain->Init(int2(3), int2(128), float3(50,50,5), g_terrain_material);
 
 	g_water = MAKE_NEW(Water);
 	g_water->Init(g_terrain, g_terrain_material);
