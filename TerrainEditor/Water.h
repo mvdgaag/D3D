@@ -14,7 +14,7 @@ public:
 
 	void Init(pTerrain inTerrain, pMaterial inMaterial);
 	void CleanUp();
-	void Update();
+	void Update(float inTimeStep);
 
 private:
 	int2 mNumTiles;

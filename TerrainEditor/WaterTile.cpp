@@ -1,7 +1,7 @@
 #include "WaterTile.h"
 
 
-void WaterTile::Init(pTexture inTerrainHeightTexture, pTexture inWaterHeightTexture)
+void WaterTile::Init(pTexture inTerrainHeightTexture, pTexture inWaterHeightTexture, float inPixelScale, float inHeightScale)
 {
 	// assert for assumptions
 	BindFlag required_flags = BindFlag::BIND_SHADER_RESOURCE | BindFlag::BIND_UNORDERED_ACCESS | BindFlag::BIND_RENDER_TARGET;
@@ -39,11 +39,36 @@ void WaterTile::Init(pTexture inTerrainHeightTexture, pTexture inWaterHeightText
 
 	mUpdateWaterShader = MAKE_NEW(ComputeShader);
 	mUpdateWaterShader->InitFromFile("Shaders/UpdateWater.hlsl");
+
+	mFluidity = 10.0;
+	mGravity = 9.81;
+	mPixelScale = inPixelScale;
+	mHeightScale = inHeightScale;
+	mFriction = 0.99;
+
+	mFluxConstantBuffer = MAKE_NEW(ConstantBuffer);
+	mFluxConstantBuffer->Init(sizeof(float4));
+
+	mWaterConstantBuffer = MAKE_NEW(ConstantBuffer);
+	mWaterConstantBuffer->Init(sizeof(float4));
 }
 
 
-void WaterTile::Update()
+void WaterTile::Update(float inTimeStep)
 {
+	inTimeStep = 0.01;// min(inTimeStep * 0.1, 0.01);
+
+	float4 constant_data;
+	constant_data.x = inTimeStep * mFluidity * mPixelScale * mGravity * mHeightScale;
+	constant_data.y = mFriction;
+	constant_data.z = inTimeStep,
+	constant_data.w = 1.0 / (mHeightScale * mPixelScale * mPixelScale); // pixel_value / m^3
+	theRenderContext.UpdateSubResource(*mFluxConstantBuffer, &constant_data);
+	
+	constant_data.x = mHeightScale;
+	constant_data.y = mPixelScale * mPixelScale;
+	theRenderContext.UpdateSubResource(*mWaterConstantBuffer, &constant_data);
+
 	// update water first, so that all values are initialized to the terrain on the first frame
 	UpdateWater();
 	UpdateFlux();
@@ -52,15 +77,16 @@ void WaterTile::Update()
 
 void WaterTile::UpdateFlux()
 {
-	// update flux
 	theRenderContext.CSSetShader(mUpdateFluxShader);
 	theRenderContext.CSSetRWTexture(mFluxRenderTarget, 0);
 	theRenderContext.CSSetTexture(mWaterHeightTarget->GetTexture(), 0);
 	theRenderContext.CSSetTexture(mWaterDepthTarget->GetTexture(), 1);
+	theRenderContext.CSSetConstantBuffer(mFluxConstantBuffer, 0);
 
 	int2 num_threads = (mFluxRenderTarget->GetTexture()->GetResolution() + 7) / 8;
 	theRenderContext.Dispatch(num_threads.x, num_threads.y, 1);
 
+	theRenderContext.CSSetConstantBuffer(NULL, 0);
 	theRenderContext.CSSetRWTexture(NULL, 0);
 	theRenderContext.CSSetTexture(NULL, 0);
 	theRenderContext.CSSetTexture(NULL, 1);
@@ -70,16 +96,17 @@ void WaterTile::UpdateFlux()
 
 void WaterTile::UpdateWater()
 {
-	// update water
 	theRenderContext.CSSetShader(mUpdateWaterShader);
 	theRenderContext.CSSetRWTexture(mWaterDepthTarget, 0);
 	theRenderContext.CSSetRWTexture(mWaterHeightTarget, 1);
 	theRenderContext.CSSetTexture(mTerrainHeightTexture, 0);
 	theRenderContext.CSSetTexture(mFluxRenderTarget->GetTexture(), 1);
+	theRenderContext.CSSetConstantBuffer(mWaterConstantBuffer, 0);
 
 	int2 num_threads = (mWaterDepthTarget->GetTexture()->GetResolution() + 7) / 8;
 	theRenderContext.Dispatch(num_threads.x, num_threads.y, 1);
 
+	theRenderContext.CSSetConstantBuffer(NULL, 0);
 	theRenderContext.CSSetRWTexture(NULL, 0);
 	theRenderContext.CSSetRWTexture(NULL, 1);
 	theRenderContext.CSSetTexture(NULL, 0);

@@ -23,7 +23,9 @@ void Water::Init(pTerrain inTerrain, pMaterial inMaterial)
 			pTexture water_height_texture = mHeightField->GetTile(tile_coord)->GetTexture();
 			
 			pWaterTile water_tile = MAKE_NEW(WaterTile);
-			water_tile->Init(terrain_height_texture, water_height_texture);
+			water_tile->Init(terrain_height_texture, water_height_texture, 
+				mHeightField->GetTileScale().x / water_height_texture->GetWidth(), // pixelscale assumes square pixels
+				mHeightField->GetTileScale().z);
 
 			mWaterTiles[x][y] = water_tile;
 		}
@@ -48,13 +50,13 @@ void Water::CleanUp()
 }
 
 
-void Water::Update()
+void Water::Update(float inTimeStep)
 {
 	for (int y = 0; y < mNumTiles.y; y++)
 	{
 		for (int x = 0; x < mNumTiles.x; x++)
 		{
-			mWaterTiles[x][y]->Update();
+			mWaterTiles[x][y]->Update(inTimeStep);
 		}
 	}
 }

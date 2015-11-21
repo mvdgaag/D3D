@@ -3,6 +3,16 @@ Texture2D<float> tWaterHeight : register(t0);
 Texture2D<float> tWaterDepth : register(t1);
 
 
+cbuffer cConstantData : register(b0)
+{
+	float4 cParams; 
+	// x = time_step * cell_size * gravity * fluidity * pixel_height_scale / pixel_width_scale
+	// y = friction coefficient
+	// z = time_step
+	// w = pixel_value / m^3
+}
+
+
 float4 GetFlux(int2 inCoord)
 {
 	float4 result;
@@ -49,26 +59,24 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	float s = tWaterHeight[coord - int2(0, 1)];
 	float w = tWaterHeight[coord - int2(1, 0)];
 
-	const float l = 2.0;
-	const float g = 9.81;
-	const float dt = 0.01;
-	const float A = 20.0;
-
-	float k = l * g * dt * A;
-	float fric = 0.999;
+	const float flux_constant = cParams.x;
+	const float friction = cParams.y;
+	const float time_step = cParams.z;
+	const float volume_scale = cParams.w;
 
 	float4 flux = GetFlux(coord);
 
-	flux.x += max(0, k * (c - n));
-	flux.y += max(0, k * (c - e));
-	flux.z += max(0, k * (c - s));
-	flux.w += max(0, k * (c - w));
+	flux.x += max(0, flux_constant * (c - n));
+	flux.y += max(0, flux_constant * (c - e));
+	flux.z += max(0, flux_constant * (c - s));
+	flux.w += max(0, flux_constant * (c - w));
+	
+	float delta_height = time_step * volume_scale * (flux.x + flux.y + flux.z + flux.w);
+	if (delta_height > water_depth)
+		flux *= water_depth / delta_height;
 
-	float sum_flux = dt * (flux.x + flux.y + flux.z + flux.w);
-	if (sum_flux > water_depth)
-		flux *= water_depth / sum_flux;
-
-	flux *= fric;
+	float fric = friction * water_depth / (water_depth + delta_height);
+	flux *= pow(fric, time_step);
 	
 	SetFlux(coord, flux);
 }

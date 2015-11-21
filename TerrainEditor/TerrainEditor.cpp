@@ -34,10 +34,11 @@ void CleanUpContent();
 
 static void FrameFunc()
 {
-	float angle = 0.1f * 2.0f * 3.1415f * (float)Gaag.GetFrameDeltaTime();
+	float time_step = (float)Gaag.GetFrameDeltaTime();
+	float angle = 0.1f * 2.0f * 3.1415f * time_step;
 	g_obj->Rotate(float3(0.0f, 1.0f, 0.0f), angle);
 
-	g_water->Update();
+	g_water->Update(time_step);
 }
 
 
@@ -112,7 +113,7 @@ void InitContent()
 	Gaag.RegisterObject(g_obj);
 
 	g_terrain = MAKE_NEW(Terrain);
-	g_terrain->Init(int2(3), int2(64), float3(10,10,1), g_terrain_material);
+	g_terrain->Init(int2(3), int2(128), float3(10,10,1), g_terrain_material);
 
 	g_water = MAKE_NEW(Water);
 	g_water->Init(g_terrain, g_terrain_material);

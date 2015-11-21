@@ -4,6 +4,16 @@ Texture2D<float> tTerrain : register(t0);
 Texture2D<float> tFlux : register(t1);
 
 
+cbuffer cConstantData : register(b0)
+{
+	float4 cParams;
+	// x = pixel_height_scale (meters)
+	// y = pixel_area (meter^2)
+	// z = time_step
+	// w = pixel_value / m^3
+}
+
+
 float4 GetFlux(int2 inCoord)
 {
 	float4 result;
@@ -24,7 +34,10 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 {
 	int2 coord = DTid.xy;
 
-	const float dt = 0.01;
+	const float height_scale = cParams.x;
+	const float pixel_area = cParams.y;
+	const float time_step = cParams.z;
+	const float volume_scale = cParams.w;
 	
 	float water_depth = rwWaterDepth[coord];
 	float terrain_height = tTerrain[coord];
@@ -39,7 +52,7 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	
 	float sum_flux = (in_flux.x + in_flux.y + in_flux.z + in_flux.w) - (out_flux.x + out_flux.y + out_flux.z + out_flux.w);
 
-	water_depth += dt * sum_flux;
+	water_depth += time_step * volume_scale * sum_flux;
 	water_depth += 0.001; // rain
 	water_depth = max(0.0, water_depth);
 	
