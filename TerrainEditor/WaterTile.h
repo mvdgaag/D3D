@@ -11,7 +11,8 @@ public:
 
 	void Init(pTexture inTerrainHeightTexture, pTexture inWaterHeightTexture);
 	void Update();
-	pTexture GetWaterTexture() { return mWaterRenderTarget->GetTexture(); }
+	pTexture GetWaterHeightTexture() { return mWaterHeightTarget->GetTexture(); }
+	pTexture GetWaterDepthTexture() { return mWaterDepthTarget->GetTexture(); }
 	pTexture GetFluxTexture() { return mFluxRenderTarget->GetTexture(); }
 
 private:
@@ -19,8 +20,11 @@ private:
 	void UpdateWater();
 	pComputeShader	mUpdateFluxShader;
 	pComputeShader	mUpdateWaterShader;
-	pTexture		mTerrainTexture;
-	pRenderTarget	mWaterRenderTarget;
+
+	pTexture		mTerrainHeightTexture;
+	pRenderTarget	mWaterDepthTarget;
+	pRenderTarget	mWaterHeightTarget;
+
 	pRenderTarget	mFluxRenderTarget;
 };
 
