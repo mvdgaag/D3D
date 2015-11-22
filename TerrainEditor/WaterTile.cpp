@@ -80,6 +80,8 @@ void WaterTile::CleanUp()
 
 void WaterTile::UpdateFlux(pWaterTile inNorthNeighbor, pWaterTile inEastNeighbor, pWaterTile inSouthNeighbor, pWaterTile inWestNeighbor)
 {
+	assert(inNorthNeighbor && inEastNeighbor && inSouthNeighbor && inWestNeighbor);
+
 	float4 constant_data;
 	constant_data.x = mTimeStep * mFluidity * mPixelScale * mGravity * mHeightScale;
 	constant_data.y = mFriction;
@@ -106,14 +108,10 @@ void WaterTile::UpdateFlux(pWaterTile inNorthNeighbor, pWaterTile inEastNeighbor
 	theRenderContext.CSSetRWTexture(mFluxRenderTarget, 0);
 	theRenderContext.CSSetTexture(mWaterHeightTarget->GetTexture(), 0);
 	theRenderContext.CSSetTexture(mWaterDepthTarget->GetTexture(), 1);
-	if (inNorthNeighbor) 
-		theRenderContext.CSSetTexture(inNorthNeighbor->GetWaterHeightTexture(), 2);
-	if (inEastNeighbor) 
-		theRenderContext.CSSetTexture(inEastNeighbor->GetWaterHeightTexture(), 3);
-	if (inSouthNeighbor)
-		theRenderContext.CSSetTexture(inSouthNeighbor->GetFluxTexture(), 4);
-	if (inWestNeighbor)
-		theRenderContext.CSSetTexture(inWestNeighbor->GetFluxTexture(), 5);
+	theRenderContext.CSSetTexture(inNorthNeighbor->GetWaterHeightTexture(), 2);
+	theRenderContext.CSSetTexture(inEastNeighbor->GetWaterHeightTexture(), 3);
+	theRenderContext.CSSetTexture(inSouthNeighbor->GetFluxTexture(), 4);
+	theRenderContext.CSSetTexture(inWestNeighbor->GetFluxTexture(), 5);
 	theRenderContext.CSSetConstantBuffer(mFluxConstantBuffer, 0);
 	num_threads = (mFluxRenderTarget->GetTexture()->GetResolution() + 31) / 32;
 	theRenderContext.Dispatch(num_threads.x, 0, 1); // assumes square texture
@@ -131,6 +129,8 @@ void WaterTile::UpdateFlux(pWaterTile inNorthNeighbor, pWaterTile inEastNeighbor
 
 void WaterTile::UpdateWater(pWaterTile inNorthNeighbor, pWaterTile inEastNeighbor, pWaterTile inSouthNeighbor, pWaterTile inWestNeighbor)
 {
+	assert(inNorthNeighbor && inEastNeighbor && inSouthNeighbor && inWestNeighbor);
+
 	float4 constant_data;
 	constant_data.x = mHeightScale;
 	constant_data.y = mPixelScale * mPixelScale;
@@ -161,20 +161,12 @@ void WaterTile::UpdateWater(pWaterTile inNorthNeighbor, pWaterTile inEastNeighbo
 	
 	theRenderContext.CSSetTexture(mTerrainHeightTexture, 0);
 	theRenderContext.CSSetTexture(mFluxRenderTarget->GetTexture(), 1);
-	if (inNorthNeighbor) 
-		theRenderContext.CSSetTexture(inNorthNeighbor->GetFluxTexture(), 2);
-	if (inEastNeighbor) 
-		theRenderContext.CSSetTexture(inEastNeighbor->GetFluxTexture(), 3);
-	if (inSouthNeighbor)
-	{
-		theRenderContext.CSSetTexture(inSouthNeighbor->GetWaterDepthTexture(), 4);
-		theRenderContext.CSSetTexture(inSouthNeighbor->GetWaterHeightTexture(), 6);
-	}
-	if (inWestNeighbor)
-	{
-		theRenderContext.CSSetTexture(inWestNeighbor->GetWaterDepthTexture(), 5);
-		theRenderContext.CSSetTexture(inWestNeighbor->GetWaterHeightTexture(), 7);
-	}
+	theRenderContext.CSSetTexture(inNorthNeighbor->GetFluxTexture(), 2);
+	theRenderContext.CSSetTexture(inEastNeighbor->GetFluxTexture(), 3);
+	theRenderContext.CSSetTexture(inSouthNeighbor->GetWaterDepthTexture(), 4);
+	theRenderContext.CSSetTexture(inSouthNeighbor->GetWaterHeightTexture(), 6);
+	theRenderContext.CSSetTexture(inWestNeighbor->GetWaterDepthTexture(), 5);
+	theRenderContext.CSSetTexture(inWestNeighbor->GetWaterHeightTexture(), 7);
 	theRenderContext.CSSetConstantBuffer(mWaterConstantBuffer, 0);
 	num_threads = (mWaterDepthTarget->GetTexture()->GetResolution() + 31) / 32;
 	theRenderContext.Dispatch(num_threads.x, 1, 1); // assumes square texture

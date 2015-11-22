@@ -102,8 +102,8 @@ void InitContent()
 	g_terrain_material->SetNormalTexture(g_normal_texture);
 	g_terrain_material->SetSurfaceTexture(g_surface_texture);
 	g_terrain_material->SetDiffuseValue(float4(0.6f, 0.6f, 0.6f, 0.0f));
-	g_terrain_material->SetReflectivityValue(0.1f);
-	g_terrain_material->SetRoughnessValue(0.9f);
+	g_terrain_material->SetReflectivityValue(0.5f);
+	g_terrain_material->SetRoughnessValue(0.25f);
 	g_terrain_material->SetMetalicityValue(0.0f);
 	g_terrain_material->SetEmissivenessValue(0.0f);
 	g_terrain_material->SetPixelShader(g_terrain_pixel_shader);

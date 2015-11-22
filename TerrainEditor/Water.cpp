@@ -62,14 +62,10 @@ void Water::Update(float inTimeStep)
 			pWaterTile south = nullptr;
 			pWaterTile west = nullptr;
 
-			if (y > 0)
-				south = mWaterTiles[x][y - 1];
-			if (x > 0)
-				west = mWaterTiles[x - 1][y];
-			if (x < mNumTiles.x - 1)
-				east = mWaterTiles[x + 1][y];
-			if (y < mNumTiles.y - 1)
-				north = mWaterTiles[x][y + 1];
+			south = mWaterTiles[x][(y + mNumTiles.y - 1) % mNumTiles.y];
+			west = mWaterTiles[(x + mNumTiles.x - 1) % mNumTiles.x][y];
+			east = mWaterTiles[(x + 1) % mNumTiles.x][y];
+			north = mWaterTiles[x][(y + 1) % mNumTiles.y];
 
 			mWaterTiles[x][y]->UpdateWater(north, east, south, west);
 		}
@@ -85,14 +81,10 @@ void Water::Update(float inTimeStep)
 			pWaterTile south = nullptr;
 			pWaterTile west = nullptr;
 
-			if (y > 0)
-				south = mWaterTiles[x][(y + mNumTiles.y - 1) % mNumTiles.y];
-			if (x > 0)
-				west = mWaterTiles[(x + mNumTiles.x - 1) % mNumTiles.x][y];
-			if (x < mNumTiles.x - 1)
-				east = mWaterTiles[(x + 1) % mNumTiles.x][y];
-			if (y < mNumTiles.y - 1)
-				north = mWaterTiles[x][(y + 1) % mNumTiles.y];
+			south = mWaterTiles[x][(y + mNumTiles.y - 1) % mNumTiles.y];
+			west = mWaterTiles[(x + mNumTiles.x - 1) % mNumTiles.x][y];
+			east = mWaterTiles[(x + 1) % mNumTiles.x][y];
+			north = mWaterTiles[x][(y + 1) % mNumTiles.y];
 
 			mWaterTiles[x][y]->UpdateFlux(north, east, south, west);
 		}

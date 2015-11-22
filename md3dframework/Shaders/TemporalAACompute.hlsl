@@ -42,7 +42,8 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	float4 valnw = source[coord + int2( 1, 1)];
 	
 	// sharpen new value
-	const float unsharp_strength = 1.0;
+	// TODO: does not work with high contrast. disabled for now
+	const float unsharp_strength = 0.0;
 	const float normalization_factor = 8.0 / (4.0 + 4.0 / sqrt(2));
 	val = (unsharp_strength + 1.0) * val - 
 		(unsharp_strength * normalization_factor * 0.125) * (valn + vale + vals + valw) -
