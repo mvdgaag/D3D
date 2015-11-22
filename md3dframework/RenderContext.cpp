@@ -372,6 +372,12 @@ void RenderContext::CSSetShader(pComputeShader inComputeShader)
 }
 
 
+void RenderContext::CSSetShader(const ComputeShader& inComputeShader)
+{
+	mImmediateContext->CSSetShader(inComputeShader.mHandle, NULL, 0);
+}
+
+
 void RenderContext::CSSetTexture(pTexture inTexture, int idx)
 {
 	if (mCSBoundTextures[idx] == inTexture)

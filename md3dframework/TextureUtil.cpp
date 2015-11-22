@@ -39,6 +39,9 @@ namespace TextureUtil
 	ComputeShader gTextureTresholdShader;
 	ComputeShader gTextureTresholdConstantShader;
 
+	ComputeShader gTextureStitchNorthShader;
+	ComputeShader gTextureStitchEastShader;
+
 	void InitTextureUtil()
 	{
 		gTextureAddShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureAdd.hlsl");
@@ -71,6 +74,9 @@ namespace TextureUtil
 		
 		gTextureTresholdShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureTreshold.hlsl");
 		gTextureTresholdConstantShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureTresholdConstant.hlsl");
+
+		gTextureStitchNorthShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureStitchNorth.hlsl");
+		gTextureStitchEastShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureStitchEast.hlsl");
 	}
 
 
@@ -106,6 +112,9 @@ namespace TextureUtil
 		
 		gTextureTresholdShader.CleanUp();
 		gTextureTresholdConstantShader.CleanUp();
+
+		gTextureStitchNorthShader.CleanUp();
+		gTextureStitchEastShader.CleanUp();
 	}
 
 
@@ -367,5 +376,59 @@ namespace TextureUtil
 	void TextureTreshold(pTexture inDst, pTexture inSrc, float4 inVal)
 	{
 		GPUTextureFunc(inDst, inSrc, inVal, gTextureTresholdShader);
+	}
+
+
+	void TextureStitchNorth(pTexture inDst, pTexture inSrc)
+	{
+		float4 params(inSrc->GetWidth() - 1, inSrc->GetHeight() - 1, 0, 0);
+		assert(params.x == inDst->GetWidth() - 1);
+
+		pRenderTarget rt = MAKE_NEW(RenderTarget);
+		rt->Init(inDst);
+
+		pConstantBuffer cb = MAKE_NEW(ConstantBuffer);
+		cb->Init(sizeof(float4));
+
+		theRenderContext.CSSetShader(gTextureStitchNorthShader);
+		theRenderContext.CSSetRWTexture(rt, 0);
+		theRenderContext.CSSetTexture(inSrc, 0);
+		theRenderContext.UpdateSubResource(*cb, &params);
+		theRenderContext.CSSetConstantBuffer(cb, 0);
+
+		int threads_x = (params.x + 63) / 64;
+		theRenderContext.Dispatch(threads_x, 1, 1);
+
+		theRenderContext.CSSetConstantBuffer(nullptr, 0);
+		theRenderContext.CSSetTexture(nullptr, 0);
+		theRenderContext.CSSetRWTexture(nullptr, 0);
+		theRenderContext.CSSetShader(nullptr);
+	}
+
+
+	void TextureStitchEast(pTexture inDst, pTexture inSrc)
+	{
+		float4 params(inSrc->GetWidth() - 1, inSrc->GetHeight() - 1, 0, 0);
+		assert(params.y == inDst->GetHeight() - 1);
+
+		pRenderTarget rt = MAKE_NEW(RenderTarget);
+		rt->Init(inDst);
+
+		pConstantBuffer cb = MAKE_NEW(ConstantBuffer);
+		cb->Init(sizeof(float4));
+
+		theRenderContext.CSSetShader(gTextureStitchEastShader);
+		theRenderContext.CSSetRWTexture(rt, 0);
+		theRenderContext.CSSetTexture(inSrc, 0);
+		theRenderContext.UpdateSubResource(*cb, &params);
+		theRenderContext.CSSetConstantBuffer(cb, 0);
+
+		int threads_y = (params.y + 63) / 64;
+		theRenderContext.Dispatch(1, threads_y, 1);
+
+		theRenderContext.CSSetConstantBuffer(nullptr, 0);
+		theRenderContext.CSSetTexture(nullptr, 0);
+		theRenderContext.CSSetRWTexture(nullptr, 0);
+		theRenderContext.CSSetShader(nullptr);
 	}
 }

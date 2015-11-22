@@ -20,8 +20,8 @@ public:
 	void Init();
 	void CleanUp();
 
-	void RegisterListener(pInputListener inListener) { if (mInitialized) mListeners.insert(inListener); }
-	void UnRegisterListener(pInputListener inListener) { if (mInitialized) mListeners.erase(inListener); }
+	static void RegisterListener(InputListener* inListener) { if (mInitialized) mListeners.insert(inListener); }
+	static void UnRegisterListener(InputListener* inListener) { if (mInitialized) mListeners.erase(inListener); }
 
 	bool GetKeyDown(unsigned int inKey) { return mKeys[inKey]; }
 	float2 GetMouseCoord() { return mMouseCoord; }
@@ -46,7 +46,7 @@ private:
 	Input(Input const&) = delete;
 	void operator=(Input const&) = delete;
 
-	bool mInitialized;
-	std::unordered_set<pInputListener> mListeners;
+	static bool mInitialized;
+	static std::unordered_set<InputListener*> mListeners;
 };
 

@@ -64,6 +64,10 @@ public:
 	void SwapBuffers();
 
 	void CSSetShader(pComputeShader inComputeShader);
+	
+	// TODO: pass by reference for all other functions as well!
+	void CSSetShader(const ComputeShader& inComputeShader);
+
 	void CSSetTexture(pTexture inTexture, int idx);
 	void CSSetSampler(pSampler inSampler, int idx);
 	void CSSetTextureAndSampler(pTexture inTexture, pSampler inSampler, int idx);

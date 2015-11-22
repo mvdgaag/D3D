@@ -7,8 +7,9 @@ PREDEFINE(InputListener, pInputListener);
 class InputListener
 {
 public:
-	explicit InputListener() { theInput.RegisterListener(pInputListener(this)); }
-	virtual ~InputListener() { theInput.UnRegisterListener(pInputListener(this)); }
+	explicit InputListener() { theInput.RegisterListener(this); }
+	// cannot make smart pointer to itself in destructor, because it would lead to an infinite loop
+	virtual ~InputListener() { theInput.UnRegisterListener(this); } 
 
 	virtual void OnKeyDown(unsigned int inKey) {}
 	virtual void OnKeyUp(unsigned int inKey) {}

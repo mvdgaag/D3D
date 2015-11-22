@@ -2,6 +2,10 @@
 #include "InputListener.h"
 
 
+bool Input::mInitialized;
+std::unordered_set<InputListener*> Input::mListeners;
+
+
 void Input::Init()
 {
 	mInitialized = true;
@@ -10,7 +14,6 @@ void Input::Init()
 
 void Input::CleanUp()
 {
-	mListeners.clear();
 	mInitialized = false;
 }
 
@@ -18,7 +21,7 @@ void Input::CleanUp()
 void Input::OnKeyDown(unsigned int inKey)
 {
 	mKeys[inKey] = true;
-	for each (pInputListener listener in mListeners)
+	for each (InputListener* listener in mListeners)
 		listener->OnKeyDown(inKey);
 }
 
@@ -26,7 +29,7 @@ void Input::OnKeyDown(unsigned int inKey)
 void Input::OnKeyUp(unsigned int inKey)
 {
 	mKeys[inKey] = false;
-	for each (pInputListener listener in mListeners)
+	for each (InputListener* listener in mListeners)
 		listener->OnKeyUp(inKey);
 }
 
@@ -35,7 +38,7 @@ void Input::OnMouseMove(float2 inCoord)
 {
 	mPrevMouseCoord = mMouseCoord;
 	mMouseCoord = inCoord;
-	for each (pInputListener listener in mListeners)
+	for each (InputListener* listener in mListeners)
 		listener->OnMouseMove(inCoord, mPrevMouseCoord);
 }
 
@@ -43,7 +46,7 @@ void Input::OnMouseMove(float2 inCoord)
 void Input::OnMouseDown(int inButton)
 {
 	mMouseButtons[inButton] = true;
-	for each (pInputListener listener in mListeners)
+	for each (InputListener* listener in mListeners)
 		listener->OnMouseDown(inButton);
 }
 
@@ -51,6 +54,6 @@ void Input::OnMouseDown(int inButton)
 void Input::OnMouseUp(int inButton)
 {
 	mMouseButtons[inButton] = false;
-	for each (pInputListener listener in mListeners)
+	for each (InputListener* listener in mListeners)
 		listener->OnMouseUp(inButton);
 }

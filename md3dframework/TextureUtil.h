@@ -42,6 +42,9 @@ namespace TextureUtil
 
 	void TextureTreshold(pTexture inDst, pTexture inSrc1, pTexture inSrc2);
 	void TextureTreshold(pTexture inDst, pTexture inSrc, float4 inVal);
+
+	void TextureStitchNorth(pTexture inDst, pTexture inSrc);
+	void TextureStitchEast(pTexture inDst, pTexture inSrc);
 }
 
 #endif

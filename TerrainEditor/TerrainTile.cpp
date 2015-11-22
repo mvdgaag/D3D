@@ -35,9 +35,9 @@ void TerrainTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments, pM
 	}
 
 	int row_offset = inNumSegments.x + 1;
-	for (int y = 0; y < inNumSegments.y-1; y++)
+	for (int y = 0; y < inNumSegments.y; y++)
 	{
-		for (int x = 0; x < inNumSegments.x-1; x++)
+		for (int x = 0; x < inNumSegments.x; x++)
 		{
 			int idx = y * row_offset + x;
 			indices.push_back(idx);

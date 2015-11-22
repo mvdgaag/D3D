@@ -113,7 +113,7 @@ void InitContent()
 	Gaag.RegisterObject(g_obj);
 
 	g_terrain = MAKE_NEW(Terrain);
-	g_terrain->Init(int2(3), int2(128), float3(50,50,5), g_terrain_material);
+	g_terrain->Init(int2(3), int2(63), float3(50,50,5), g_terrain_material);
 
 	g_water = MAKE_NEW(Water);
 	g_water->Init(g_terrain, g_terrain_material);
@@ -132,14 +132,18 @@ void InitContent()
 
 void CleanUpContent()
 {
-	g_terrain = nullptr;
 	g_obj = nullptr;
 	g_mesh = nullptr;
+	g_terrain_material = nullptr;
 	g_terrain_pixel_shader = nullptr;
 	g_terrain_vertex_shader = nullptr;
 	g_diffuse_texture = nullptr;
 	g_normal_texture = nullptr;
 	g_surface_texture = nullptr;
 	g_heightmap = nullptr;
-	g_terrain_material = nullptr;
+	g_terrain = nullptr;
+	g_water = nullptr;
+	g_paint_tool = nullptr;
+	g_brush_library = nullptr;
+	g_camera_controller = nullptr;
 }

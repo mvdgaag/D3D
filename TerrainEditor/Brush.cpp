@@ -16,7 +16,6 @@ void Brush::Apply(pTerrainTile inTile, const rect& inPixelRect, const float2& in
 	if (inPixelRect.GetArea() <= 0)
 		return;
 
-	// assume all tiles are identital resolution
 	mConstantBuffer.rect = int4(inPixelRect.topLeft, inPixelRect.bottomRight);
 	mConstantBuffer.paintData = float4(mStrength, mFalloffFraction, inWorldPosition);
 

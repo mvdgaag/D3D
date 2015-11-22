@@ -24,7 +24,7 @@ void Terrain::Init(int2 inNumTiles, int2 inTileSegments, float3 inTileScale, pMa
 
 			pTexture heightmap = MAKE_NEW(Texture);
 			// TODO: set proper access flags for render target
-			heightmap->Init(mTileSegments.x, mTileSegments.y, 1, FORMAT_R32_FLOAT, CPU_ACCESS_DEFAULT, BIND_SHADER_RESOURCE | BIND_RENDER_TARGET | BIND_UNORDERED_ACCESS);
+			heightmap->Init(mTileSegments.x + 1, mTileSegments.y + 1, 1, FORMAT_R32_FLOAT, CPU_ACCESS_DEFAULT, BIND_SHADER_RESOURCE | BIND_RENDER_TARGET | BIND_UNORDERED_ACCESS);
 
 
 			mTiles[idx] = MAKE_NEW(TerrainTile);

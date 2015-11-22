@@ -26,6 +26,7 @@ private:
 	{
 		int4	rect;
 		float4	paintData;
+		float4	brushData;
 	};
 	ConstantBufferData mConstantBuffer;
 	float mRadius;

@@ -94,4 +94,15 @@ void PaintTool::ApplyPaint(float2 inWorldCoord)
 		if (tile != nullptr)
 			mCurrentBrush->Apply(tile, paint_rect, tile_coord * float2(tile->GetTexture()->GetResolution()));
 	}
+
+	for each (int2 index in tile_indices)
+	{
+		pTerrainTile tile = mTargetTerrain->GetTile(index);
+		pTerrainTile east = mTargetTerrain->GetTile(index + int2(1, 0));
+		pTerrainTile north = mTargetTerrain->GetTile(index + int2(0, 1));
+		if (east) 
+			TextureUtil::TextureStitchEast(tile->GetTexture(), east->GetTexture());
+		if (north) 
+			TextureUtil::TextureStitchNorth(tile->GetTexture(), north->GetTexture());
+	}
 }

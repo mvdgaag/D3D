@@ -59,4 +59,20 @@ void Water::Update(float inTimeStep)
 			mWaterTiles[x][y]->Update(inTimeStep);
 		}
 	}
+
+	for (int y = 0; y < mNumTiles.y - 1; y++)
+	{
+		for (int x = 0; x < mNumTiles.x - 1; x++)
+		{
+			pWaterTile center = mWaterTiles[x][y];
+			pWaterTile north = mWaterTiles[x][y+1];
+			pWaterTile east = mWaterTiles[x+1][y];
+			TextureUtil::TextureStitchNorth(center->GetFluxTexture(), north->GetFluxTexture());
+			TextureUtil::TextureStitchEast(center->GetFluxTexture(), east->GetFluxTexture());
+			TextureUtil::TextureStitchNorth(center->GetWaterDepthTexture(), north->GetWaterDepthTexture());
+			TextureUtil::TextureStitchEast(center->GetWaterDepthTexture(), east->GetWaterDepthTexture());
+			TextureUtil::TextureStitchNorth(center->GetWaterHeightTexture(), north->GetWaterHeightTexture());
+			TextureUtil::TextureStitchEast(center->GetWaterHeightTexture(), east->GetWaterHeightTexture());
+		}
+	}
 }
