@@ -32,8 +32,14 @@ float4 GetFlux(int2 inCoord)
 [numthreads(8, 8, 1)]
 void CS(uint3 DTid : SV_DispatchThreadID)
 {
-	int2 coord = DTid.xy;
+	int2 tex_size;
+	rwWaterHeight.GetDimensions(tex_size.x, tex_size.y);
 
+	// skip border pixels
+	int2 coord = DTid.xy;
+	if ((coord.x <= 0) || (coord.x >= tex_size.x - 1) || (coord.y <= 0) || (coord.y >= tex_size.y - 1))
+		return;
+		
 	// gather parameters
 	const float height_scale = cParams.x;
 	const float pixel_area = cParams.y;

@@ -41,6 +41,8 @@ namespace TextureUtil
 
 	ComputeShader gTextureStitchNorthShader;
 	ComputeShader gTextureStitchEastShader;
+	ComputeShader gTextureStitchSouthShader;
+	ComputeShader gTextureStitchWestShader;
 
 	void InitTextureUtil()
 	{
@@ -77,6 +79,8 @@ namespace TextureUtil
 
 		gTextureStitchNorthShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureStitchNorth.hlsl");
 		gTextureStitchEastShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureStitchEast.hlsl");
+		gTextureStitchSouthShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureStitchSouth.hlsl");
+		gTextureStitchWestShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureStitchWest.hlsl");
 	}
 
 
@@ -115,6 +119,8 @@ namespace TextureUtil
 
 		gTextureStitchNorthShader.CleanUp();
 		gTextureStitchEastShader.CleanUp();
+		gTextureStitchSouthShader.CleanUp();
+		gTextureStitchWestShader.CleanUp();
 	}
 
 
@@ -396,7 +402,34 @@ namespace TextureUtil
 		theRenderContext.UpdateSubResource(*cb, &params);
 		theRenderContext.CSSetConstantBuffer(cb, 0);
 
-		int threads_x = (params.x + 63) / 64;
+		int threads_x = (params.x + 31) / 32;
+		theRenderContext.Dispatch(threads_x, 1, 1);
+
+		theRenderContext.CSSetConstantBuffer(nullptr, 0);
+		theRenderContext.CSSetTexture(nullptr, 0);
+		theRenderContext.CSSetRWTexture(nullptr, 0);
+		theRenderContext.CSSetShader(nullptr);
+	}
+
+
+	void TextureStitchSouth(pTexture inDst, pTexture inSrc)
+	{
+		float4 params(inSrc->GetWidth() - 1, inSrc->GetHeight() - 1, 0, 0);
+		assert(params.x == inDst->GetWidth() - 1);
+
+		pRenderTarget rt = MAKE_NEW(RenderTarget);
+		rt->Init(inDst);
+
+		pConstantBuffer cb = MAKE_NEW(ConstantBuffer);
+		cb->Init(sizeof(float4));
+
+		theRenderContext.CSSetShader(gTextureStitchSouthShader);
+		theRenderContext.CSSetRWTexture(rt, 0);
+		theRenderContext.CSSetTexture(inSrc, 0);
+		theRenderContext.UpdateSubResource(*cb, &params);
+		theRenderContext.CSSetConstantBuffer(cb, 0);
+
+		int threads_x = (params.x + 31) / 32;
 		theRenderContext.Dispatch(threads_x, 1, 1);
 
 		theRenderContext.CSSetConstantBuffer(nullptr, 0);
@@ -423,7 +456,34 @@ namespace TextureUtil
 		theRenderContext.UpdateSubResource(*cb, &params);
 		theRenderContext.CSSetConstantBuffer(cb, 0);
 
-		int threads_y = (params.y + 63) / 64;
+		int threads_y = (params.y + 31) / 32;
+		theRenderContext.Dispatch(1, threads_y, 1);
+
+		theRenderContext.CSSetConstantBuffer(nullptr, 0);
+		theRenderContext.CSSetTexture(nullptr, 0);
+		theRenderContext.CSSetRWTexture(nullptr, 0);
+		theRenderContext.CSSetShader(nullptr);
+	}
+
+
+	void TextureStitchWest(pTexture inDst, pTexture inSrc)
+	{
+		float4 params(inSrc->GetWidth() - 1, inSrc->GetHeight() - 1, 0, 0);
+		assert(params.y == inDst->GetHeight() - 1);
+
+		pRenderTarget rt = MAKE_NEW(RenderTarget);
+		rt->Init(inDst);
+
+		pConstantBuffer cb = MAKE_NEW(ConstantBuffer);
+		cb->Init(sizeof(float4));
+
+		theRenderContext.CSSetShader(gTextureStitchWestShader);
+		theRenderContext.CSSetRWTexture(rt, 0);
+		theRenderContext.CSSetTexture(inSrc, 0);
+		theRenderContext.UpdateSubResource(*cb, &params);
+		theRenderContext.CSSetConstantBuffer(cb, 0);
+
+		int threads_y = (params.y + 31) / 32;
 		theRenderContext.Dispatch(1, threads_y, 1);
 
 		theRenderContext.CSSetConstantBuffer(nullptr, 0);

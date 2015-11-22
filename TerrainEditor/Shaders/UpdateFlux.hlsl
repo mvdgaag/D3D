@@ -47,7 +47,13 @@ void SetFlux(int2 inCoord, float4 inFlux)
 [numthreads(8, 8, 1)]
 void CS(uint3 DTid : SV_DispatchThreadID)
 {
+	int2 tex_size;
+	tWaterHeight.GetDimensions(tex_size.x, tex_size.y);
+
+	// skip border pixels
 	int2 coord = DTid.xy;
+	if ((coord.x <= 0) || (coord.x >= tex_size.x - 1) || (coord.y <= 0) || (coord.y >= tex_size.y - 1))
+		return;
 
 	// only run the sim if there's water
 	float water_depth = tWaterDepth[coord];

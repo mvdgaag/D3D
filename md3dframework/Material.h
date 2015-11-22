@@ -95,4 +95,3 @@ private:
 	Material(Material const&) = delete;
 	void operator=(Material const&) = delete;
 };
-

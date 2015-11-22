@@ -52,27 +52,49 @@ void Water::CleanUp()
 
 void Water::Update(float inTimeStep)
 {
+	// update water height for all tiles
 	for (int y = 0; y < mNumTiles.y; y++)
 	{
 		for (int x = 0; x < mNumTiles.x; x++)
 		{
-			mWaterTiles[x][y]->Update(inTimeStep);
+			pWaterTile north = nullptr;
+			pWaterTile east = nullptr;
+			pWaterTile south = nullptr;
+			pWaterTile west = nullptr;
+
+			if (y > 0)
+				south = mWaterTiles[x][y - 1];
+			if (x > 0)
+				west = mWaterTiles[x - 1][y];
+			if (x < mNumTiles.x - 1)
+				east = mWaterTiles[x + 1][y];
+			if (y < mNumTiles.y - 1)
+				north = mWaterTiles[x][y + 1];
+
+			mWaterTiles[x][y]->UpdateWater(north, east, south, west);
 		}
 	}
 
-	for (int y = 0; y < mNumTiles.y - 1; y++)
+	// update flux for all tiles
+	for (int y = 0; y < mNumTiles.y; y++)
 	{
-		for (int x = 0; x < mNumTiles.x - 1; x++)
+		for (int x = 0; x < mNumTiles.x; x++)
 		{
-			pWaterTile center = mWaterTiles[x][y];
-			pWaterTile north = mWaterTiles[x][y+1];
-			pWaterTile east = mWaterTiles[x+1][y];
-			TextureUtil::TextureStitchNorth(center->GetFluxTexture(), north->GetFluxTexture());
-			TextureUtil::TextureStitchEast(center->GetFluxTexture(), east->GetFluxTexture());
-			TextureUtil::TextureStitchNorth(center->GetWaterDepthTexture(), north->GetWaterDepthTexture());
-			TextureUtil::TextureStitchEast(center->GetWaterDepthTexture(), east->GetWaterDepthTexture());
-			TextureUtil::TextureStitchNorth(center->GetWaterHeightTexture(), north->GetWaterHeightTexture());
-			TextureUtil::TextureStitchEast(center->GetWaterHeightTexture(), east->GetWaterHeightTexture());
+			pWaterTile north = nullptr;
+			pWaterTile east = nullptr;
+			pWaterTile south = nullptr;
+			pWaterTile west = nullptr;
+
+			if (y > 0)
+				south = mWaterTiles[x][(y + mNumTiles.y - 1) % mNumTiles.y];
+			if (x > 0)
+				west = mWaterTiles[(x + mNumTiles.x - 1) % mNumTiles.x][y];
+			if (x < mNumTiles.x - 1)
+				east = mWaterTiles[(x + 1) % mNumTiles.x][y];
+			if (y < mNumTiles.y - 1)
+				north = mWaterTiles[x][(y + 1) % mNumTiles.y];
+
+			mWaterTiles[x][y]->UpdateFlux(north, east, south, west);
 		}
 	}
 }

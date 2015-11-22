@@ -7,20 +7,23 @@ class WaterTile
 {
 public:
 	WaterTile() {}
-	~WaterTile() {}
+	~WaterTile() { CleanUp(); }
 
 	void Init(pTexture inTerrainHeightTexture, pTexture inWaterHeightTexture, float inPixelScale, float inHeightScale);
-	void Update(float inTimeStep);
+	void CleanUp();
+
+	void UpdateFlux(pWaterTile inNorthNeighbor, pWaterTile inEastNeighbor, pWaterTile inSouthNeighbor, pWaterTile inWestNeighbor);
+	void UpdateWater(pWaterTile inNorthNeighbor, pWaterTile inEastNeighbor, pWaterTile inSouthNeighbor, pWaterTile inWestNeighbor);
+
 	pTexture GetWaterHeightTexture() { return mWaterHeightTarget->GetTexture(); }
 	pTexture GetWaterDepthTexture() { return mWaterDepthTarget->GetTexture(); }
 	pTexture GetFluxTexture() { return mFluxRenderTarget->GetTexture(); }
 
 private:
-	void UpdateFlux();
-	void UpdateWater();
 
 	pConstantBuffer	mFluxConstantBuffer;
 	pConstantBuffer	mWaterConstantBuffer;
+	float mTimeStep;			// seconds
 	float mFluidity;			// unitless constant, low means high viscocity
 	float mGravity;				// meters / second^2
 	float mPixelScale;			// meters / pixel
@@ -29,7 +32,9 @@ private:
 	float mMaxFrictionDepth;	// meters depth where fluidity is constant (0..mMaxfrictionDepth is mapped to 0..1 in dFlux)
 
 	pComputeShader	mUpdateFluxShader;
+	pComputeShader	mUpdateFluxBorderShader;
 	pComputeShader	mUpdateWaterShader;
+	pComputeShader	mUpdateWaterBorderShader;
 
 	pTexture		mTerrainHeightTexture;
 	pRenderTarget	mWaterDepthTarget;

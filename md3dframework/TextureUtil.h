@@ -45,6 +45,8 @@ namespace TextureUtil
 
 	void TextureStitchNorth(pTexture inDst, pTexture inSrc);
 	void TextureStitchEast(pTexture inDst, pTexture inSrc);
+	void TextureStitchSouth(pTexture inDst, pTexture inSrc);
+	void TextureStitchWest(pTexture inDst, pTexture inSrc);
 }
 
 #endif
