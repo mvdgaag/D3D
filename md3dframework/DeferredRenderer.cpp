@@ -160,8 +160,8 @@ void DeferredRenderer::GeometryPass(std::vector<pDrawableObject> inDrawList)
 		theRenderContext.VSSetConstantBuffer(mConstantBufferEveryFrame, 0);
 		theRenderContext.VSSetConstantBuffer(mConstantBufferEveryObject, 1);
 		obj->PrepareToDraw();
-
 		theRenderContext.DrawMesh(*(obj->GetMesh()));
+		obj->FinalizeAfterDraw();
 
 		// reset state
 		theRenderContext.VSSetConstantBuffer(NULL, 0);

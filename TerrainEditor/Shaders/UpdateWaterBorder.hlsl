@@ -43,58 +43,63 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	int2 tex_size;
 	rwWaterHeight.GetDimensions(tex_size.x, tex_size.y);
 
-	int2 coord1 = int2(DTid.x, tex_size.y - 1);
-	int2 coord2 = int2(tex_size.x - 1, DTid.x);
+	int2 coord_north_edge = int2(DTid.x, tex_size.y - 1);
+	int2 coord_east_edge =	int2(tex_size.x - 1, DTid.x);
 
 	// gather parameters
-	const float height_scale = cParams.x;
-	const float pixel_area = cParams.y;
-	const float time_step = cParams.z;
-	const float volume_scale = cParams.w;
+	const float height_scale =	cParams.x;
+	const float pixel_area =	cParams.y;
+	const float time_step =		cParams.z;
+	const float volume_scale =	cParams.w;
 	
 	// the water depth and terrain height
-	float water_depth1 = rwWaterDepth[coord1];
-	float terrain_height1 = tTerrain[coord1];
-	float water_depth2 = rwWaterDepth[coord2];
-	float terrain_height2 = tTerrain[coord2];
+	float water_depth_north_edge =		rwWaterDepth[coord_north_edge];
+	float terrain_height_north_edge =	tTerrain[coord_north_edge];
+	float water_depth_east_edge =		rwWaterDepth[coord_east_edge];
+	float terrain_height_east_edge =	tTerrain[coord_east_edge];
 
-	// the flux in and out of this texel
-	float4 out_flux1 = GetFlux(tFlux, coord1);
-	float4 in_flux1;
-	in_flux1.x = GetFlux(tFlux, coord1 + int2(0, 1)).z; // from north, to south
-	in_flux1.y = GetFlux(tFlux, coord1 + int2(1, 0)).w; // from east, to west
-	in_flux1.z = GetFlux(tFluxNorth, int2(coord1.x, 0)).x; // from south, to north
-	in_flux1.w = GetFlux(tFlux, coord1 - int2(1, 0)).y; // from west, to east
-	float4 out_flux2 = GetFlux(tFlux, coord2);
-	float4 in_flux2;
-	in_flux2.x = GetFlux(tFlux, coord2 + int2(0, 1)).z; // from north, to south
-	in_flux2.y = GetFlux(tFlux, coord2 + int2(1, 0)).w; // from east, to west
-	in_flux2.z = GetFlux(tFlux, coord2 - int2(0, 1)).x; // from south, to north
-	in_flux2.w = GetFlux(tFluxEast, int2(0, coord2.y)).y; // from west, to east
+	// the flux in and out of the texels
+	float4 out_flux_north_edge = GetFlux(tFlux, coord_north_edge);
+	float4 in_flux_north_edge;
+	in_flux_north_edge.x = GetFlux(tFluxNorth, int2(DTid.x, 0)).z;			// from north, to south
+	in_flux_north_edge.y = GetFlux(tFlux, coord_north_edge + int2(1, 0)).w; // from east, to west
+	in_flux_north_edge.z = GetFlux(tFlux, coord_north_edge - int2(0, 1)).x; // from south, to north
+	in_flux_north_edge.w = GetFlux(tFlux, coord_north_edge - int2(1, 0)).y;	// from west, to east
+	float4 out_flux_east_edge = GetFlux(tFlux, coord_east_edge);
+	float4 in_flux_east_edge;
+	in_flux_east_edge.x = GetFlux(tFlux, coord_east_edge + int2(0, 1)).z;	// from north, to south
+	in_flux_east_edge.y = GetFlux(tFluxEast, int2(0, DTid.x)).w;			// from east, to west
+	in_flux_east_edge.z = GetFlux(tFlux, coord_east_edge - int2(0, 1)).x;	// from south, to north
+	in_flux_east_edge.w = GetFlux(tFlux, coord_east_edge - int2(1, 0)).y;	// from west, to east
 
 	// the sum of all incoming and outgoing flux
-	float sum_flux1 = (in_flux1.x + in_flux1.y + in_flux1.z + in_flux1.w) - (out_flux1.x + out_flux1.y + out_flux1.z + out_flux1.w);
-	float sum_flux2 = (in_flux2.x + in_flux2.y + in_flux2.z + in_flux2.w) - (out_flux2.x + out_flux2.y + out_flux2.z + out_flux2.w);
+	float sum_flux_north_edge = (in_flux_north_edge.x + in_flux_north_edge.y + in_flux_north_edge.z + in_flux_north_edge.w) - 
+								(out_flux_north_edge.x + out_flux_north_edge.y + out_flux_north_edge.z + out_flux_north_edge.w);
+	float sum_flux_east_edge =	(in_flux_east_edge.x + in_flux_east_edge.y + in_flux_east_edge.z + in_flux_east_edge.w) - 
+								(out_flux_east_edge.x + out_flux_east_edge.y + out_flux_east_edge.z + out_flux_east_edge.w);
 
 	// update the water depth
-	water_depth1 += time_step * volume_scale * sum_flux1;
-	water_depth1 += 0.001; // rain
-	water_depth2 += time_step * volume_scale * sum_flux2;
-	water_depth2 += 0.001; // rain
+	water_depth_north_edge += time_step * volume_scale * sum_flux_north_edge;
+	water_depth_north_edge += 0.001; // rain
+	water_depth_east_edge += time_step * volume_scale * sum_flux_east_edge;
+	water_depth_east_edge += 0.001; // rain
 
 	// cannot be negative
-	water_depth1 = max(0.0, water_depth1);
-	water_depth2 = max(0.0, water_depth2);
+	water_depth_north_edge =	max(0.0, water_depth_north_edge);
+	water_depth_east_edge =		max(0.0, water_depth_east_edge);
 	
 	// set north east borders
-	rwWaterDepth[coord1] = water_depth1;
-	rwWaterHeight[coord1] = water_depth1 + terrain_height1;
-	rwWaterDepth[coord2] = water_depth2;
-	rwWaterHeight[coord2] = water_depth2 + terrain_height2;
+	rwWaterDepth[coord_north_edge] =	water_depth_north_edge;
+	rwWaterHeight[coord_north_edge] =	water_depth_north_edge + terrain_height_north_edge;
+	rwWaterDepth[coord_east_edge] =		water_depth_east_edge;
+	rwWaterHeight[coord_east_edge] =	water_depth_east_edge + terrain_height_east_edge;
 
 	// copy south west borders
-	rwWaterDepth[int2(DTid.x, 0)] = tWaterDepthSouth[coord1];
-	rwWaterHeight[int2(DTid.x, 0)] = tWaterHeightSouth[coord1];
-	rwWaterDepth[int2(0, DTid.x)] = tWaterDepthWest[coord2];
-	rwWaterHeight[int2(0, DTid.x)] = tWaterHeightWest[coord2];
+	// doesn't do a thing?
+	int2 coord_south_edge =	int2(DTid.x, 0);
+	int2 coord_west_edge =	int2(0, DTid.x);
+	rwWaterDepth[coord_south_edge] =	tWaterDepthSouth[coord_north_edge];
+	rwWaterHeight[coord_south_edge] =	tWaterHeightSouth[coord_north_edge];
+	rwWaterDepth[coord_west_edge] =		tWaterDepthWest[coord_east_edge];
+	rwWaterHeight[coord_west_edge] =	tWaterHeightWest[coord_east_edge];
 }

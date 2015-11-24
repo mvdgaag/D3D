@@ -11,6 +11,7 @@ public:
 
 	void Init(float3 inPosition, float3 inScale, int2 inNumSegments, pMaterial inMaterial, pTexture inHeightTexture);
 	void PrepareToDraw() override;
+	void FinalizeAfterDraw() override;
 	void CleanUp();
 
 	void			SetTexture(pTexture inTexture);

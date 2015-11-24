@@ -86,3 +86,10 @@ void TerrainTile::PrepareToDraw()
 	theRenderContext.VSSetConstantBuffer(mConstantBuffer, 2);
 	theRenderContext.VSSetTextureAndSampler(mHeightMapTexture, Gaag.GetPointSampler(), 0);
 }
+
+
+void TerrainTile::FinalizeAfterDraw()
+{
+	theRenderContext.VSSetConstantBuffer(NULL, 2);
+	theRenderContext.VSSetTextureAndSampler(NULL, NULL, 0);
+}
