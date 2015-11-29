@@ -1,6 +1,6 @@
 #pragma once
 #include "Gaag.h"
-#include "TerrainTile.h"
+#include "HeightFieldTile.h"
 
 PREDEFINE(Brush, pBrush);
 
@@ -11,7 +11,7 @@ public:
 	~Brush() {};
 	
 	void			Init(pComputeShader inShader, float inRadius = 10.0, float inFalloff = 0.5, float inStrength = 1.0);
-	void			Apply(pTerrainTile inTile, const rect& inPixelRect, const float2& inWorldPosition);
+	void			Apply(pHeightFieldTile inTile, const rect& inPixelRect, const float2& inWorldPosition);
 	
 	void			SetRadius(float inRadius)					{ mRadius = inRadius; }
 	float			GetRadius()									{ return mRadius; }

@@ -10,7 +10,7 @@ void Brush::Init(pComputeShader inShader, float inRadius, float inFalloff, float
 }
 
 
-void Brush::Apply(pTerrainTile inTile, const rect& inPixelRect, const float2& inWorldPosition)
+void Brush::Apply(pHeightFieldTile inTile, const rect& inPixelRect, const float2& inWorldPosition)
 {
 	int2 resolution = inTile->GetTexture()->GetResolution();
 	if (inPixelRect.GetArea() <= 0)

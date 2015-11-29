@@ -60,6 +60,12 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	if (water_depth <= 0)
 		return;
 
+	// get constants
+	const float flux_constant = cParams.x;
+	const float friction = cParams.y;
+	const float time_step = cParams.z;
+	const float volume_scale = cParams.w;
+
 	// find the water height for this texel and its neighbors
 	float c = tWaterHeight[coord];
 	float n = tWaterHeight[coord + int2(0, 1)];
@@ -67,16 +73,11 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	float s = tWaterHeight[coord - int2(0, 1)];
 	float w = tWaterHeight[coord - int2(1, 0)];
 
-	// get constants
-	const float flux_constant = cParams.x;
-	const float friction = cParams.y;
-	const float time_step = cParams.z;
-	const float volume_scale = cParams.w;
-
 	// get the current flux
 	float4 flux = GetFlux(coord);
 
-	// we're only keeping track of flux out of the cell. Update
+	// we're only keeping track of flux out of the cell.
+	// update according to height differences
 	flux.x += max(0, flux_constant * (c - n));
 	flux.y += max(0, flux_constant * (c - e));
 	flux.z += max(0, flux_constant * (c - s));

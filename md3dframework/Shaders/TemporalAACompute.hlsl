@@ -23,9 +23,11 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	float2 current_uv = (coord + 0.5) / cTargetSize + counter_jitter;
 	float4 val = source.SampleLevel(sourceSampler, current_uv, 0);
 
-	// history value (stupid dx11 doesn't allow float4 reads from RWTexture2D, so use history texture
-	float2 mv = motionVectors.SampleLevel(motionVectorSamper, current_uv, 0);
-	float2 history_uv = saturate((coord + 0.5) / cTargetSize - mv);
+	// history value (stupid dx11 doesn't allow float4 writes to RWTexture2D, so use history texture)
+	float2 mv = motionVectors.SampleLevel(motionVectorSamper, current_uv, 0) * float2(1, -1);
+	float2 history_uv = (coord + 0.5) / cTargetSize - mv;
+	const float blend_strength = ((history_uv.x <= 0) || (history_uv.y <= 0) || (history_uv.x >= 1) || (history_uv.y >= 1)) ? 0.0 : 0.85;
+
 	float4 history_val = history.SampleLevel(historySamper, history_uv, 0);
 	
 	if (isnan(history_val.x) == true)
@@ -55,6 +57,5 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	history_val = clamp(history_val, min_val, max_val);
 	
 	// blend
-	float blend_strength = 0.85;
 	dst[coord] = lerp(val, history_val, blend_strength);
 }

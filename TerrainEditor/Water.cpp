@@ -1,17 +1,17 @@
 #include "Water.h"
-#include "Terrain.h"
+#include "HeightField.h"
 #include "WaterTile.h"
 
 
-void Water::Init(pTerrain inTerrain, pMaterial inMaterial)
+void Water::Init(pHeightField inTerrainHeightField, pMaterial inMaterial)
 {
-	assert(inTerrain != nullptr);
-	mTerrain = inTerrain;
+	assert(inTerrainHeightField != nullptr);
+	mTerrainHeightField = inTerrainHeightField;
 
-	mHeightField = MAKE_NEW(Terrain);
-	mHeightField->Init(mTerrain->GetNumTiles(), mTerrain->GetTileSegments(), mTerrain->GetTileScale(), inMaterial);
+	mWaterHeightField = MAKE_NEW(HeightField);
+	mWaterHeightField->Init(mTerrainHeightField->GetNumTiles(), mTerrainHeightField->GetTileSegments(), mTerrainHeightField->GetTileScale(), inMaterial);
 
-	mNumTiles = mHeightField->GetNumTiles();
+	mNumTiles = mWaterHeightField->GetNumTiles();
 	mWaterTiles = new pWaterTile*[mNumTiles.x];
 	for (int x = 0; x < mNumTiles.x; x++)
 	{
@@ -19,13 +19,13 @@ void Water::Init(pTerrain inTerrain, pMaterial inMaterial)
 		for (int y = 0; y < mNumTiles.y; y++)
 		{
 			int2 tile_coord(x, y);
-			pTexture terrain_height_texture = mTerrain->GetTile(tile_coord)->GetTexture();
-			pTexture water_height_texture = mHeightField->GetTile(tile_coord)->GetTexture();
+			pTexture terrain_height_texture = mTerrainHeightField->GetTile(tile_coord)->GetTexture();
+			pTexture water_height_texture = mWaterHeightField->GetTile(tile_coord)->GetTexture();
 			
 			pWaterTile water_tile = MAKE_NEW(WaterTile);
 			water_tile->Init(terrain_height_texture, water_height_texture, 
-				mHeightField->GetTileScale().x / water_height_texture->GetWidth(), // pixelscale assumes square pixels
-				mHeightField->GetTileScale().z);
+				mWaterHeightField->GetTileScale().x / water_height_texture->GetWidth(), // pixelscale assumes square pixels
+				mWaterHeightField->GetTileScale().z);
 
 			mWaterTiles[x][y] = water_tile;
 		}
@@ -45,8 +45,8 @@ void Water::CleanUp()
 	}
 	delete[] mWaterTiles;
 
-	mHeightField = nullptr;
-	mTerrain = nullptr;
+	mWaterHeightField = nullptr;
+	mTerrainHeightField = nullptr;
 }
 
 

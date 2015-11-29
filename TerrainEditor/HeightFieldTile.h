@@ -1,13 +1,13 @@
 #pragma once
 #include "Gaag.h"
 
-PREDEFINE(TerrainTile, pTerrainTile);
+PREDEFINE(HeightFieldTile, pHeightFieldTile);
 
-class TerrainTile : public DrawableObject
+class HeightFieldTile : public DrawableObject
 {
 public:
-	TerrainTile() : DrawableObject() { mInitialized = false; }
-	~TerrainTile() {};
+	HeightFieldTile() : DrawableObject() { mInitialized = false; }
+	~HeightFieldTile() {};
 
 	void Init(float3 inPosition, float3 inScale, int2 inNumSegments, pMaterial inMaterial, pTexture inHeightTexture);
 	void PrepareToDraw() override;

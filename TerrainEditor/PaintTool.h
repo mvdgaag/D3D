@@ -1,6 +1,6 @@
 #pragma once
 #include "Gaag.h"
-#include "Terrain.h"
+#include "HeightField.h"
 #include "Brush.h"
 
 PREDEFINE(PaintTool, pPaintTool);
@@ -18,8 +18,8 @@ public:
 	void SetBrush(pBrush inBrush) { mCurrentBrush = inBrush; }
 	pBrush GetBrush() { return mCurrentBrush; }
 
-	void SetTargetTerrain(pTerrain inTerrain) { mTargetTerrain = inTerrain; }
-	pTerrain GetTargetTerrain() { return mTargetTerrain; }
+	void SetTargetHeightField(pHeightField inHeightField) { mTargetHeightField = inHeightField; }
+	pHeightField GetTargetHeightField() { return mTargetHeightField; }
 
 	void OnKeyDown(unsigned int inKey) override;
 	void OnKeyUp(unsigned int inKey) override  {}
@@ -36,7 +36,7 @@ private:
 
 	pBrushLibrary mBrushLibrary;
 	pBrush mCurrentBrush;
-	pTerrain mTargetTerrain;
+	pHeightField mTargetHeightField;
 	bool mPainting;
 };
 

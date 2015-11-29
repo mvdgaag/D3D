@@ -2,24 +2,29 @@
 #include "Gaag.h"
 
 PREDEFINE(Water, pWater);
-PREDEFINE(Terrain, pTerrain);
+PREDEFINE(HeightField, pHeightField);
 PREDEFINE(WaterTile, pWaterTile);
 PREDEFINE(Material, pMaterial);
 
 class Water
 {
 public:
-	Water() { mHeightField = nullptr; mWaterTiles = nullptr; }
+	Water() { mTerrainHeightField = nullptr; mWaterHeightField = nullptr; mWaterTiles = nullptr; }
 	~Water() { CleanUp(); }
 
-	void Init(pTerrain inTerrain, pMaterial inMaterial);
+	void Init(pHeightField inHeightField, pMaterial inMaterial);
 	void CleanUp();
 	void Update(float inTimeStep);
 
+	pHeightField GetTerrainHeightField() { return mTerrainHeightField; }
+	pHeightField GetWaterHeightField() { return mWaterHeightField; }
+	pWaterTile GetTile(int2 inTileCoord) { return mWaterTiles[inTileCoord.x][inTileCoord.y]; }
+
+
 private:
 	int2 mNumTiles;
-	pTerrain mTerrain;
-	pTerrain mHeightField;
+	pHeightField mTerrainHeightField;
+	pHeightField mWaterHeightField;
 	pWaterTile** mWaterTiles;
 };
 

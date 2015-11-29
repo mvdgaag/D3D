@@ -76,17 +76,17 @@ void PaintTool::ContinuePaint(float3 inWorldPos)
 
 void PaintTool::ApplyPaint(float2 inWorldCoord)
 {
-	assert(mTargetTerrain != nullptr);
+	assert(mTargetHeightField != nullptr);
 
 	if (mCurrentBrush == nullptr)
 		return;
 
-	float2 tile_coord = mTargetTerrain->WorldToTileSpace(inWorldCoord);
+	float2 tile_coord = mTargetHeightField->WorldToTileSpace(inWorldCoord);
 
-	std::vector<int2> tile_indices = mTargetTerrain->GetTiles(rect(inWorldCoord - mCurrentBrush->GetRadius(), inWorldCoord + mCurrentBrush->GetRadius()));
+	std::vector<int2> tile_indices = mTargetHeightField->GetTiles(rect(inWorldCoord - mCurrentBrush->GetRadius(), inWorldCoord + mCurrentBrush->GetRadius()));
 	for each (int2 index in tile_indices)
 	{
-		pTerrainTile tile = mTargetTerrain->GetTile(index);
+		pHeightFieldTile tile = mTargetHeightField->GetTile(index);
 		int2 pixel = (tile_coord - float2(index)) * float2(tile->GetTexture()->GetResolution());
 		int2 pixel_radius = int2(mCurrentBrush->GetRadius() * tile->GetPixelsPerMeter()) + 1;
 		rect paint_rect(pixel - pixel_radius, pixel + pixel_radius);
@@ -97,9 +97,9 @@ void PaintTool::ApplyPaint(float2 inWorldCoord)
 
 	for each (int2 index in tile_indices)
 	{
-		pTerrainTile tile = mTargetTerrain->GetTile(index);
-		pTerrainTile east = mTargetTerrain->GetTile(index + int2(1, 0));
-		pTerrainTile north = mTargetTerrain->GetTile(index + int2(0, 1));
+		pHeightFieldTile tile = mTargetHeightField->GetTile(index);
+		pHeightFieldTile east = mTargetHeightField->GetTile(index + int2(1, 0));
+		pHeightFieldTile north = mTargetHeightField->GetTile(index + int2(0, 1));
 		if (east) 
 			TextureUtil::TextureStitchEast(tile->GetTexture(), east->GetTexture());
 		if (north) 

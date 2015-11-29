@@ -21,6 +21,8 @@ public:
 
 	Material() {};
 	~Material() {};
+	Material(Material const& inOther);
+	void operator=(Material const& inOther);
 
 	void Init();
 	void CleanUp();
@@ -92,6 +94,4 @@ protected:
 	pConstantBuffer mConstantBuffer = nullptr;
 
 private:
-	Material(Material const&) = delete;
-	void operator=(Material const&) = delete;
 };

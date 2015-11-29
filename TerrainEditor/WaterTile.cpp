@@ -18,8 +18,8 @@ void WaterTile::Init(pTexture inTerrainHeightTexture, pTexture inWaterHeightText
 	mWaterHeightTarget->Init(inWaterHeightTexture);
 
 	// collect data for creating the other textures/rendertargets
-	int width = inWaterHeightTexture->GetWidth();
-	int height = inWaterHeightTexture->GetHeight();
+	mResolution.x = inWaterHeightTexture->GetWidth();
+	mResolution.y = inWaterHeightTexture->GetHeight();
 	Format format = inWaterHeightTexture->GetFormat();
 	BindFlag bind_flags = required_flags;
 	CPUAccessFlag cpu_access_flags = CPUAccessFlag::CPU_ACCESS_DEFAULT;
@@ -27,13 +27,13 @@ void WaterTile::Init(pTexture inTerrainHeightTexture, pTexture inWaterHeightText
 	// flux has four components, but dx11 does not allow writing both from compute
 	// to they are interleaved in an R32 texture of four times the width
 	pTexture flux_texture = MAKE_NEW(Texture);
-	flux_texture->Init(width * 4, height, 1, FORMAT_R32_FLOAT, 0, bind_flags, cpu_access_flags);
+	flux_texture->Init(mResolution.x * 4, mResolution.y, 1, FORMAT_R32_FLOAT, 0, bind_flags, cpu_access_flags);
 	mFluxRenderTarget = MAKE_NEW(RenderTarget);
 	mFluxRenderTarget->Init(flux_texture);
 
 	// create the water height rendertarget for drawing (this will total height plus water)
 	mWaterDepthTarget = MAKE_NEW(RenderTarget);
-	mWaterDepthTarget->Init(width, height, 1, FORMAT_R32_FLOAT);
+	mWaterDepthTarget->Init(mResolution.x, mResolution.y, 1, FORMAT_R32_FLOAT);
 
 	// create the compute shaders for the sim
 	mUpdateFluxShader = MAKE_NEW(ComputeShader);
@@ -95,7 +95,7 @@ void WaterTile::UpdateFlux(pWaterTile inNorthNeighbor, pWaterTile inEastNeighbor
 	theRenderContext.CSSetTexture(mWaterHeightTarget->GetTexture(), 0);
 	theRenderContext.CSSetTexture(mWaterDepthTarget->GetTexture(), 1);
 	theRenderContext.CSSetConstantBuffer(mFluxConstantBuffer, 0);
-	int2 num_threads = (mFluxRenderTarget->GetTexture()->GetResolution() + 7) / 8;
+	int2 num_threads = (mResolution + 7) / 8;
 	theRenderContext.Dispatch(num_threads.x, num_threads.y, 1);
 	theRenderContext.CSSetConstantBuffer(NULL, 0);
 	theRenderContext.CSSetRWTexture(NULL, 0);
@@ -113,8 +113,8 @@ void WaterTile::UpdateFlux(pWaterTile inNorthNeighbor, pWaterTile inEastNeighbor
 	theRenderContext.CSSetTexture(inSouthNeighbor->GetFluxTexture(), 4);
 	theRenderContext.CSSetTexture(inWestNeighbor->GetFluxTexture(), 5);
 	theRenderContext.CSSetConstantBuffer(mFluxConstantBuffer, 0);
-	num_threads = (mFluxRenderTarget->GetTexture()->GetResolution() + 31) / 32;
-	theRenderContext.Dispatch(num_threads.x, 0, 1); // assumes square texture
+	num_threads = (mResolution + 31) / 32;
+	theRenderContext.Dispatch(num_threads.x, 1, 1); // assumes square texture
 	theRenderContext.CSSetConstantBuffer(NULL, 0);
 	theRenderContext.CSSetRWTexture(NULL, 0);
 	theRenderContext.CSSetTexture(NULL, 0);
@@ -145,7 +145,7 @@ void WaterTile::UpdateWater(pWaterTile inNorthNeighbor, pWaterTile inEastNeighbo
 	theRenderContext.CSSetTexture(mTerrainHeightTexture, 0);
 	theRenderContext.CSSetTexture(mFluxRenderTarget->GetTexture(), 1);
 	theRenderContext.CSSetConstantBuffer(mWaterConstantBuffer, 0);
-	int2 num_threads = (mWaterDepthTarget->GetTexture()->GetResolution() + 7) / 8;
+	int2 num_threads = (mResolution + 7) / 8;
 	theRenderContext.Dispatch(num_threads.x, num_threads.y, 1);
 	theRenderContext.CSSetConstantBuffer(NULL, 0);
 	theRenderContext.CSSetRWTexture(NULL, 0);
@@ -168,7 +168,7 @@ void WaterTile::UpdateWater(pWaterTile inNorthNeighbor, pWaterTile inEastNeighbo
 	theRenderContext.CSSetTexture(inWestNeighbor->GetWaterDepthTexture(), 5);
 	theRenderContext.CSSetTexture(inWestNeighbor->GetWaterHeightTexture(), 7);
 	theRenderContext.CSSetConstantBuffer(mWaterConstantBuffer, 0);
-	num_threads = (mWaterDepthTarget->GetTexture()->GetResolution() + 31) / 32;
+	num_threads = (mResolution + 31) / 32;
 	theRenderContext.Dispatch(num_threads.x, 1, 1); // assumes square texture
 	theRenderContext.CSSetConstantBuffer(NULL, 0);
 	theRenderContext.CSSetRWTexture(NULL, 0);

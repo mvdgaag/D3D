@@ -1,7 +1,7 @@
-#include "TerrainTile.h"
+#include "HeightFieldTile.h"
 
 
-void TerrainTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments, pMaterial inMaterial, pTexture inHeightTexture)
+void HeightFieldTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments, pMaterial inMaterial, pTexture inHeightTexture)
 {
 	CleanUp();
 
@@ -35,9 +35,9 @@ void TerrainTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments, pM
 	}
 
 	int row_offset = inNumSegments.x + 1;
-	for (int y = 0; y < inNumSegments.y; y++)
+	for (int y = 0; y < inNumSegments.y - 1; y++)
 	{
-		for (int x = 0; x < inNumSegments.x; x++)
+		for (int x = 0; x < inNumSegments.x - 1; x++)
 		{
 			int idx = y * row_offset + x;
 			indices.push_back(idx);
@@ -65,7 +65,7 @@ void TerrainTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments, pM
 }
 
 
-void TerrainTile::CleanUp()
+void HeightFieldTile::CleanUp()
 {
 	DrawableObject::CleanUp();
 	mHeightMapTexture = nullptr;
@@ -75,20 +75,20 @@ void TerrainTile::CleanUp()
 }
 
 
-void TerrainTile::SetTexture(pTexture inTexture)
+void HeightFieldTile::SetTexture(pTexture inTexture)
 {
 
 }
 
 
-void TerrainTile::PrepareToDraw()
+void HeightFieldTile::PrepareToDraw()
 {
 	theRenderContext.VSSetConstantBuffer(mConstantBuffer, 2);
 	theRenderContext.VSSetTextureAndSampler(mHeightMapTexture, Gaag.GetPointSampler(), 0);
 }
 
 
-void TerrainTile::FinalizeAfterDraw()
+void HeightFieldTile::FinalizeAfterDraw()
 {
 	theRenderContext.VSSetConstantBuffer(NULL, 2);
 	theRenderContext.VSSetTextureAndSampler(NULL, NULL, 0);

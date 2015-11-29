@@ -30,6 +30,7 @@ private:
 	float mHeightScale;			// meters / pixelvalue
 	float mFriction;			// unitless
 	float mMaxFrictionDepth;	// meters depth where fluidity is constant (0..mMaxfrictionDepth is mapped to 0..1 in dFlux)
+	int2 mResolution;
 
 	pComputeShader	mUpdateFluxShader;
 	pComputeShader	mUpdateFluxBorderShader;

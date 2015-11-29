@@ -136,7 +136,7 @@ void DeferredRenderer::GeometryPass(std::vector<pDrawableObject> inDrawList)
 	theRenderContext.BeginEvent("Geometry Pass");
 	
 	for (int i = 0; i < GBuffer::NUM_RENDER_TARGETS; i++)
-		theRenderContext.ClearRenderTarget(mGBuffer->GetRenderTarget(GBuffer::GBufferType(i)), float4(0, 0, 0, 0));
+		theRenderContext.ClearRenderTarget(mGBuffer->GetRenderTarget(GBuffer::GBufferType(i)), mGBuffer->GetClearColor(GBuffer::GBufferType(i)));
 	
 	theRenderContext.ClearDepthStencil(mGBuffer->GetDepthStencilTarget(), 1.0, 0);
 	

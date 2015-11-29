@@ -3,6 +3,40 @@
 #include "ConstantBuffer.h"
 
 
+Material::Material(Material const& inOther)
+{
+	Init();
+	mConstantData = inOther.mConstantData;
+	mDiffuseTexture = inOther.mDiffuseTexture;
+	mDiffuseSampler = inOther.mDiffuseSampler;
+	mEmissiveTexture = inOther.mEmissiveTexture;
+	mEmissiveSampler = inOther.mEmissiveSampler;
+	mNormalTexture = inOther.mNormalTexture;
+	mNormalSampler = inOther.mNormalSampler;
+	mSurfaceTexture = inOther.mSurfaceTexture;
+	mSurfaceSampler = inOther.mSurfaceSampler;
+	mPixelShader = inOther.mPixelShader;
+	mVertexShader = inOther.mVertexShader;
+}
+
+
+void Material::operator=(Material const& inOther)
+{
+	Init();
+	mConstantData = inOther.mConstantData;
+	mDiffuseTexture = inOther.mDiffuseTexture;
+	mDiffuseSampler = inOther.mDiffuseSampler;
+	mEmissiveTexture = inOther.mEmissiveTexture;
+	mEmissiveSampler = inOther.mEmissiveSampler;
+	mNormalTexture = inOther.mNormalTexture;
+	mNormalSampler = inOther.mNormalSampler;
+	mSurfaceTexture = inOther.mSurfaceTexture;
+	mSurfaceSampler = inOther.mSurfaceSampler;
+	mPixelShader = inOther.mPixelShader;
+	mVertexShader = inOther.mVertexShader;
+}
+
+
 void Material::Init()
 {
 	mConstantBuffer = MAKE_NEW(ConstantBuffer);

@@ -1,14 +1,14 @@
 #pragma once
 #include "Gaag.h"
-#include "TerrainTile.h"
+#include "HeightFieldTile.h"
 
-PREDEFINE(Terrain, pTerrain);
+PREDEFINE(HeightField, pHeightField);
 
-class Terrain
+class HeightField
 {
 public:
-	Terrain() {};
-	~Terrain() {};
+	HeightField() {};
+	~HeightField() {};
 	void Init(int2 inNumTiles, int2 inTileSegments, float3 inTileScale, pMaterial inMaterial);
 	void CleanUp();
 
@@ -25,7 +25,7 @@ public:
 	}
 
 
-	pTerrainTile GetTile(const int2& inTileIndex)	
+	pHeightFieldTile GetTile(const int2& inTileIndex)	
 	{ 
 		if (inTileIndex.x >= 0 && inTileIndex.x < mNumTiles.x && inTileIndex.y >= 0 && inTileIndex.y < mNumTiles.y)
 			return mTiles[inTileIndex.y * mNumTiles.x + inTileIndex.x];
@@ -34,7 +34,7 @@ public:
 	}
 
 	
-	pTerrainTile GetTile(const float2& inWorldCoord)
+	pHeightFieldTile GetTile(const float2& inWorldCoord)
 	{
 		int2 tile_index = WorldToTileSpace(inWorldCoord);
 		if (tile_index.x >= 0 && tile_index.x < mNumTiles.x && tile_index.y >= 0 && tile_index.y < mNumTiles.y)
@@ -63,6 +63,6 @@ private:
 	int2 mNumTiles;
 	int2 mTileSegments;
 	float3 mTileScale;
-	pTerrainTile* mTiles = nullptr;
+	pHeightFieldTile* mTiles = nullptr;
 };
 
