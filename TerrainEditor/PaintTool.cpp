@@ -87,22 +87,22 @@ void PaintTool::ApplyPaint(float2 inWorldCoord)
 	for each (int2 index in tile_indices)
 	{
 		pHeightFieldTile tile = mTargetHeightField->GetTile(index);
-		int2 pixel = (tile_coord - float2(index)) * float2(tile->GetTexture()->GetResolution());
+		int2 pixel = (tile_coord - float2(index)) * float2(tile->GetHeightTexture()->GetResolution());
 		int2 pixel_radius = int2(mCurrentBrush->GetRadius() * tile->GetPixelsPerMeter()) + 1;
 		rect paint_rect(pixel - pixel_radius, pixel + pixel_radius);
 
 		if (tile != nullptr)
-			mCurrentBrush->Apply(tile, paint_rect, tile_coord * float2(tile->GetTexture()->GetResolution()));
+			mCurrentBrush->Apply(tile, paint_rect, tile_coord * float2(tile->GetHeightTexture()->GetResolution()));
 	}
-
+	/* TODO: required?
 	for each (int2 index in tile_indices)
 	{
 		pHeightFieldTile tile = mTargetHeightField->GetTile(index);
 		pHeightFieldTile east = mTargetHeightField->GetTile(index + int2(1, 0));
 		pHeightFieldTile north = mTargetHeightField->GetTile(index + int2(0, 1));
 		if (east) 
-			TextureUtil::TextureStitchEast(tile->GetTexture(), east->GetTexture());
+			TextureUtil::TextureStitchEast(tile->GetHeightTexture(), east->GetHeightTexture());
 		if (north) 
-			TextureUtil::TextureStitchNorth(tile->GetTexture(), north->GetTexture());
-	}
+			TextureUtil::TextureStitchNorth(tile->GetHeightTexture(), north->GetHeightTexture());
+	}*/
 }

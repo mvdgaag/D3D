@@ -8,184 +8,135 @@
 
 namespace TextureUtil
 {
-	ComputeShader gTextureAddShader;
-	ComputeShader gTextureAddConstantShader;
+	pComputeShader gTextureAddShader;
+	pComputeShader gTextureAddConstantShader;
 
-	ComputeShader gTextureBlendShader;
-	ComputeShader gTextureBlendConstantShader;
+	pComputeShader gTextureBlendShader;
+	pComputeShader gTextureBlendConstantShader;
 
-	ComputeShader gTextureClampShader;
-	ComputeShader gTextureClampConstantShader;
+	pComputeShader gTextureClampShader;
+	pComputeShader gTextureClampConstantShader;
 
-	ComputeShader gTextureCopyShader;
+	pComputeShader gTextureCopyShader;
 	
-	ComputeShader gTextureDivShader;
-	ComputeShader gTextureDivConstantShader;
+	pComputeShader gTextureDivShader;
+	pComputeShader gTextureDivConstantShader;
 	
-	ComputeShader gTextureMinShader;
-	ComputeShader gTextureMinConstantShader;
+	pComputeShader gTextureMinShader;
+	pComputeShader gTextureMinConstantShader;
 
-	ComputeShader gTextureMaxShader;
-	ComputeShader gTextureMaxConstantShader;
+	pComputeShader gTextureMaxShader;
+	pComputeShader gTextureMaxConstantShader;
 
-	ComputeShader gTextureMulShader;
-	ComputeShader gTextureMulConstantShader;
+	pComputeShader gTextureMulShader;
+	pComputeShader gTextureMulConstantShader;
 
-	ComputeShader gTextureSetShader;
+	pComputeShader gTextureSetShader;
 	
-	ComputeShader gTextureSubShader;
-	ComputeShader gTextureSubConstantShader;
+	pComputeShader gTextureSubShader;
+	pComputeShader gTextureSubConstantShader;
 
-	ComputeShader gTextureTresholdShader;
-	ComputeShader gTextureTresholdConstantShader;
+	pComputeShader gTextureTresholdShader;
+	pComputeShader gTextureTresholdConstantShader;
 
-	ComputeShader gTextureStitchNorthShader;
-	ComputeShader gTextureStitchEastShader;
-	ComputeShader gTextureStitchSouthShader;
-	ComputeShader gTextureStitchWestShader;
+	pComputeShader gTextureStitchNorthShader;
+	pComputeShader gTextureStitchEastShader;
+	pComputeShader gTextureStitchSouthShader;
+	pComputeShader gTextureStitchWestShader;
 
 	void InitTextureUtil()
 	{
-		gTextureAddShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureAdd.hlsl");
-		gTextureAddConstantShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureAddConstant.hlsl");
+		gTextureAddShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureAdd.hlsl");
+		gTextureAddConstantShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureAddConstant.hlsl");
 
-		gTextureBlendShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureBlend.hlsl");
-		gTextureBlendConstantShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureBlendConstant.hlsl");
+		gTextureBlendShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureBlend.hlsl");
+		gTextureBlendConstantShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureBlendConstant.hlsl");
 
-		gTextureClampShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureClamp.hlsl");
-		gTextureClampConstantShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureClampConstant.hlsl");
+		gTextureClampShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureClamp.hlsl");
+		gTextureClampConstantShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureClampConstant.hlsl");
 
-		gTextureCopyShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureCopy.hlsl");
+		gTextureCopyShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureCopy.hlsl");
 		
-		gTextureDivShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureDiv.hlsl");
-		gTextureDivConstantShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureDivConstant.hlsl");
+		gTextureDivShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureDiv.hlsl");
+		gTextureDivConstantShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureDivConstant.hlsl");
 
-		gTextureMaxShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureMax.hlsl");
-		gTextureMaxConstantShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureMaxConstant.hlsl");
+		gTextureMaxShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureMax.hlsl");
+		gTextureMaxConstantShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureMaxConstant.hlsl");
 
-		gTextureMinShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureMin.hlsl");
-		gTextureMinConstantShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureMinConstant.hlsl");
+		gTextureMinShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureMin.hlsl");
+		gTextureMinConstantShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureMinConstant.hlsl");
 
-		gTextureMulShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureMul.hlsl");
-		gTextureMulConstantShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureMulConstant.hlsl");
+		gTextureMulShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureMul.hlsl");
+		gTextureMulConstantShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureMulConstant.hlsl");
 
-		gTextureSetShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureSet.hlsl");
+		gTextureSetShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureSet.hlsl");
 		
-		gTextureSubShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureSub.hlsl");
-		gTextureSubConstantShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureSubConstant.hlsl");
+		gTextureSubShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureSub.hlsl");
+		gTextureSubConstantShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureSubConstant.hlsl");
 		
-		gTextureTresholdShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureTreshold.hlsl");
-		gTextureTresholdConstantShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureTresholdConstant.hlsl");
+		gTextureTresholdShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureTreshold.hlsl");
+		gTextureTresholdConstantShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureTresholdConstant.hlsl");
 
-		gTextureStitchNorthShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureStitchNorth.hlsl");
-		gTextureStitchEastShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureStitchEast.hlsl");
-		gTextureStitchSouthShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureStitchSouth.hlsl");
-		gTextureStitchWestShader.InitFromFile("../md3dFramework/TextureFuncShaders/TextureStitchWest.hlsl");
+		gTextureStitchNorthShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureStitchNorth.hlsl");
+		gTextureStitchEastShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureStitchEast.hlsl");
+		gTextureStitchSouthShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureStitchSouth.hlsl");
+		gTextureStitchWestShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureStitchWest.hlsl");
 	}
 
 
 	void CleanUpTextureUtil()
 	{
-		gTextureAddShader.CleanUp();
-		gTextureAddConstantShader.CleanUp();
+		gTextureAddShader= nullptr;
+		gTextureAddConstantShader= nullptr;
 		
-		gTextureBlendShader.CleanUp();
-		gTextureBlendConstantShader.CleanUp();
+		gTextureBlendShader= nullptr;
+		gTextureBlendConstantShader= nullptr;
 		
-		gTextureClampShader.CleanUp();
-		gTextureClampConstantShader.CleanUp();
+		gTextureClampShader= nullptr;
+		gTextureClampConstantShader= nullptr;
 
-		gTextureCopyShader.CleanUp();
+		gTextureCopyShader= nullptr;
 
-		gTextureDivShader.CleanUp();
-		gTextureDivConstantShader.CleanUp();
+		gTextureDivShader= nullptr;
+		gTextureDivConstantShader= nullptr;
 
-		gTextureMaxShader.CleanUp();
-		gTextureMaxConstantShader.CleanUp();
+		gTextureMaxShader= nullptr;
+		gTextureMaxConstantShader= nullptr;
 
-		gTextureMinShader.CleanUp();
-		gTextureMinConstantShader.CleanUp();
+		gTextureMinShader= nullptr;
+		gTextureMinConstantShader= nullptr;
 
-		gTextureMulShader.CleanUp();
-		gTextureMulConstantShader.CleanUp();
+		gTextureMulShader= nullptr;
+		gTextureMulConstantShader= nullptr;
 
-		gTextureSetShader.CleanUp();
+		gTextureSetShader= nullptr;
 		
-		gTextureSubShader.CleanUp();
-		gTextureSubConstantShader.CleanUp();
+		gTextureSubShader= nullptr;
+		gTextureSubConstantShader= nullptr;
 		
-		gTextureTresholdShader.CleanUp();
-		gTextureTresholdConstantShader.CleanUp();
+		gTextureTresholdShader= nullptr;
+		gTextureTresholdConstantShader= nullptr;
 
-		gTextureStitchNorthShader.CleanUp();
-		gTextureStitchEastShader.CleanUp();
-		gTextureStitchSouthShader.CleanUp();
-		gTextureStitchWestShader.CleanUp();
+		gTextureStitchNorthShader= nullptr;
+		gTextureStitchEastShader= nullptr;
+		gTextureStitchSouthShader= nullptr;
+		gTextureStitchWestShader= nullptr;
 	}
 
 
-	void GPUTextureFunc(pTexture inDst, pTexture inSrc1, pTexture inSrc2, pTexture inSrc3, ComputeShader& inShader)
+	void GPUTextureFunc(pTexture inDst, apTexture inSources, float4 inValues, ComputeShader& inShader)
 	{
-		pRenderTarget rt = MAKE_NEW(RenderTarget);
-		rt->Init(inDst);
-
+		pRenderTarget rt = theResourceFactory.MakeRenderTarget(inDst);
+		pConstantBuffer cb = theResourceFactory.MakeConstantBuffer(sizeof(float4));
 		pComputeShader cs(&inShader);
 
 		theRenderContext.CSSetShader(cs);
 		theRenderContext.CSSetRWTexture(rt, 0);
-		theRenderContext.CSSetTexture(inSrc1, 0);
-		theRenderContext.CSSetTexture(inSrc2, 1);
-		theRenderContext.CSSetTexture(inSrc3, 2);
 
-		int threads_x = (inDst->GetWidth() + 7) / 8;
-		int threads_y = (inDst->GetHeight() + 7) / 8;
-		theRenderContext.Dispatch(threads_x, threads_y, 1);
+		for (int i = 0; i < inSources.size(); i++)
+			theRenderContext.CSSetTexture(inSources[i], i);
 
-		theRenderContext.CSSetTexture(nullptr, 0);
-		theRenderContext.CSSetTexture(nullptr, 1);
-		theRenderContext.CSSetTexture(nullptr, 2);
-		theRenderContext.CSSetRWTexture(nullptr, 0);
-		theRenderContext.CSSetShader(nullptr);
-	}
-
-
-	void GPUTextureFunc(pTexture inDst, pTexture inSrc1, pTexture inSrc2, ComputeShader& inShader)
-	{
-		pRenderTarget rt = MAKE_NEW(RenderTarget);
-		rt->Init(inDst);
-		
-		pComputeShader cs(&inShader);
-
-		theRenderContext.CSSetShader(cs);
-		theRenderContext.CSSetRWTexture(rt, 0);
-		theRenderContext.CSSetTexture(inSrc1, 0);
-		theRenderContext.CSSetTexture(inSrc2, 1);
-
-		int threads_x = (inDst->GetWidth() + 7) / 8;
-		int threads_y = (inDst->GetHeight() + 7) / 8;
-		theRenderContext.Dispatch(threads_x, threads_y, 1);
-
-		theRenderContext.CSSetTexture(nullptr, 0);
-		theRenderContext.CSSetTexture(nullptr, 1);
-		theRenderContext.CSSetRWTexture(nullptr, 0);
-		theRenderContext.CSSetShader(nullptr);
-	}
-
-
-	void GPUTextureFunc(pTexture inDst, pTexture inSrc, float4 inVal, ComputeShader& inShader)
-	{
-		pRenderTarget rt = MAKE_NEW(RenderTarget);
-		rt->Init(inDst);
-
-		pConstantBuffer cb = MAKE_NEW(ConstantBuffer);
-		cb->Init(sizeof(float4));
-
-		pComputeShader cs(&inShader);
-
-		theRenderContext.CSSetShader(cs);
-		theRenderContext.CSSetRWTexture(rt, 0);
-		theRenderContext.CSSetTexture(inSrc, 0);
-		theRenderContext.UpdateSubResource(*cb, &inVal);
+		theRenderContext.UpdateSubResource(*cb, &inValues);
 		theRenderContext.CSSetConstantBuffer(cb, 0);
 
 		int threads_x = (inDst->GetWidth() + 7) / 8;
@@ -193,195 +144,177 @@ namespace TextureUtil
 		theRenderContext.Dispatch(threads_x, threads_y, 1);
 
 		theRenderContext.CSSetConstantBuffer(nullptr, 0);
-		theRenderContext.CSSetTexture(nullptr, 0);
+
+		for (int i = 0; i < inSources.size(); i++)
+			theRenderContext.CSSetTexture(nullptr, i);
 		theRenderContext.CSSetRWTexture(nullptr, 0);
 		theRenderContext.CSSetShader(nullptr);
-	}
 
-
-	void GPUTextureFunc(pTexture inDst, pTexture inSrc, ComputeShader& inShader)
-	{
-		pRenderTarget rt = MAKE_NEW(RenderTarget);
-		rt->Init(inDst);
-
-		pComputeShader cs(&inShader);
-
-		theRenderContext.CSSetShader(cs);
-		theRenderContext.CSSetRWTexture(rt, 0);
-		theRenderContext.CSSetTexture(inSrc, 0);
-
-		int threads_x = (inDst->GetWidth() + 7) / 8;
-		int threads_y = (inDst->GetHeight() + 7) / 8;
-		theRenderContext.Dispatch(threads_x, threads_y, 1);
-
-		theRenderContext.CSSetTexture(nullptr, 0);
-		theRenderContext.CSSetRWTexture(nullptr, 0);
-		theRenderContext.CSSetShader(nullptr);
-	}
-
-
-	void GPUTextureFunc(pTexture inDst, float4 inVal, ComputeShader& inShader)
-	{
-		pRenderTarget rt = MAKE_NEW(RenderTarget);
-		rt->Init(inDst);
-
-		pConstantBuffer cb = MAKE_NEW(ConstantBuffer);
-		cb->Init(sizeof(float4));
-
-		pComputeShader cs(&inShader);
-
-		theRenderContext.CSSetShader(cs);
-		theRenderContext.CSSetRWTexture(rt, 0);
-		theRenderContext.UpdateSubResource(*cb, &inVal);
-		theRenderContext.CSSetConstantBuffer(cb, 0);
-
-		int threads_x = (inDst->GetWidth() + 7) / 8;
-		int threads_y = (inDst->GetHeight() + 7) / 8;
-		theRenderContext.Dispatch(threads_x, threads_y, 1);
-
-		theRenderContext.CSSetConstantBuffer(nullptr, 0);
-		theRenderContext.CSSetRWTexture(nullptr, 0);
-		theRenderContext.CSSetShader(nullptr);
-	}
-
-
-	void GPUTextureFunc(pTexture inDst, pTexture inSource, float4 inVal1, float4 inVal2, ComputeShader& inShader)
-	{
-		pRenderTarget rt = MAKE_NEW(RenderTarget);
-		rt->Init(inDst);
-
-		pConstantBuffer cb = MAKE_NEW(ConstantBuffer);
-		cb->Init(sizeof(float4) * 2);
-
-		float4 cb_data[2] = { inVal1, inVal2 };
-		pComputeShader cs(&inShader);
-
-		theRenderContext.CSSetShader(cs);
-		theRenderContext.CSSetRWTexture(rt, 0);
-		theRenderContext.UpdateSubResource(*cb, &cb_data);
-		theRenderContext.CSSetConstantBuffer(cb, 0);
-
-		int threads_x = (inDst->GetWidth() + 7) / 8;
-		int threads_y = (inDst->GetHeight() + 7) / 8;
-		theRenderContext.Dispatch(threads_x, threads_y, 1);
-
-		theRenderContext.CSSetConstantBuffer(nullptr, 0);
-		theRenderContext.CSSetRWTexture(nullptr, 0);
-		theRenderContext.CSSetShader(nullptr);
+		theResourceFactory.DestroyItem(cb);
+		theResourceFactory.DestroyItem(rt);
 	}
 
 
 	void TextureBlend(pTexture inDst, pTexture inTop, pTexture inBottom, pTexture inOpacity)
 	{
-		GPUTextureFunc(inDst, inTop, inBottom, inOpacity, gTextureBlendShader);
+		apTexture sources;
+		sources.push_back(inTop);
+		sources.push_back(inBottom);
+		sources.push_back(inOpacity);
+		GPUTextureFunc(inDst, sources, float4(), *gTextureBlendShader);
 	}
 
 	
 	void TextureCopy(pTexture inDst, pTexture inSrc)
 	{
-		GPUTextureFunc(inDst, inSrc, gTextureCopyShader);
+		apTexture sources;
+		sources.push_back(inSrc);
+		GPUTextureFunc(inDst, sources, float4(), *gTextureCopyShader);
 	}
 	
 	
 	void TextureSet(pTexture inDst, float4 inVal)
 	{
-		GPUTextureFunc(inDst, inVal, gTextureSetShader);
+		apTexture sources;
+		GPUTextureFunc(inDst, sources, inVal, *gTextureSetShader);
 	}
 
 	
 	void TextureMul(pTexture inDst, pTexture inSrc1, pTexture inSrc2)
 	{
-		GPUTextureFunc(inDst, inSrc1, inSrc2, gTextureMulShader);
+		apTexture sources;
+		sources.push_back(inSrc1);
+		sources.push_back(inSrc2);
+		GPUTextureFunc(inDst, sources, float4(), *gTextureMulShader);
 	}
 	
 	
 	void TextureMul(pTexture inDst, pTexture inSrc, float4 inVal)
 	{
-		GPUTextureFunc(inDst, inSrc, inVal, gTextureMulShader);
+		apTexture sources;
+		sources.push_back(inSrc);
+		GPUTextureFunc(inDst, sources, inVal, *gTextureMulShader);
 	}
 
 	
 	void TextureDiv(pTexture inDst, pTexture inSrc1, pTexture inSrc2)
 	{
-		GPUTextureFunc(inDst, inSrc1, inSrc2, gTextureDivShader);
+		apTexture sources;
+		sources.push_back(inSrc1);
+		sources.push_back(inSrc2);
+		GPUTextureFunc(inDst, sources, float4(), *gTextureDivShader);
 	}
 	
 	
 	void TextureDiv(pTexture inDst, pTexture inSrc, float4 inVal)
 	{
-		GPUTextureFunc(inDst, inSrc, inVal, gTextureDivShader);
+		apTexture sources;
+		sources.push_back(inSrc);
+		GPUTextureFunc(inDst, sources, inVal, *gTextureDivShader);
 	}
 
 	
 	void TextureAdd(pTexture inDst, pTexture inSrc1, pTexture inSrc2)
 	{
-		GPUTextureFunc(inDst, inSrc1, inSrc2, gTextureAddShader);
+		apTexture sources;
+		sources.push_back(inSrc1);
+		sources.push_back(inSrc2);
+		GPUTextureFunc(inDst, sources, float4(), *gTextureAddShader);
 	}
 	
 	
 	void TextureAdd(pTexture inDst, pTexture inSrc, float4 inVal)
 	{
-		GPUTextureFunc(inDst, inSrc, inVal, gTextureAddShader);
+		apTexture sources;
+		sources.push_back(inSrc);
+		GPUTextureFunc(inDst, sources, inVal, *gTextureAddShader);
 	}
 
 	
 	void TextureSub(pTexture inDst, pTexture inSrc1, pTexture inSrc2)
 	{
-		GPUTextureFunc(inDst, inSrc1, inSrc2, gTextureSubShader);
+		apTexture sources;
+		sources.push_back(inSrc1);
+		sources.push_back(inSrc2);
+		GPUTextureFunc(inDst, sources, float4(), *gTextureSubShader);
 	}
 	
 	
 	void TextureSub(pTexture inDst, pTexture inSrc, float4 inVal)
 	{
-		GPUTextureFunc(inDst, inSrc, inVal, gTextureSubShader);
+		apTexture sources;
+		sources.push_back(inSrc);
+		GPUTextureFunc(inDst, sources, inVal, *gTextureSubShader);
 	}
 
 	
 	void TextureMax(pTexture inDst, pTexture inSrc1, pTexture inSrc2)
 	{
-		GPUTextureFunc(inDst, inSrc1, inSrc2, gTextureMaxShader);
+		apTexture sources;
+		sources.push_back(inSrc1);
+		sources.push_back(inSrc2);
+		GPUTextureFunc(inDst, sources, float4(), *gTextureMaxShader);
 	}
 	
 	
 	void TextureMax(pTexture inDst, pTexture inSrc, float4 inVal)
 	{
-		GPUTextureFunc(inDst, inSrc, inVal, gTextureMaxShader);
+		apTexture sources;
+		sources.push_back(inSrc);
+		GPUTextureFunc(inDst, sources, float4(), *gTextureMaxShader);
 	}
 
 	
 	void TextureMin(pTexture inDst, pTexture inSrc1, pTexture inSrc2)
 	{
-		GPUTextureFunc(inDst, inSrc1, inSrc2, gTextureMinShader);
+		apTexture sources;
+		sources.push_back(inSrc1);
+		sources.push_back(inSrc2);
+		GPUTextureFunc(inDst, sources, float4(), *gTextureMinShader);
 	}
 	
 	
 	void TextureMin(pTexture inDst, pTexture inSrc, float4 inVal)
 	{
-		GPUTextureFunc(inDst, inSrc, inVal, gTextureMinShader);
+		apTexture sources;
+		sources.push_back(inSrc);
+		GPUTextureFunc(inDst, sources, inVal, *gTextureMinShader);
 	}
 
 	
 	void TextureClamp(pTexture inDst, pTexture inSrc, pTexture inLoVal, pTexture inHiVal)
 	{
-		GPUTextureFunc(inDst, inSrc, inLoVal, inHiVal, gTextureClampShader);
+		apTexture sources;
+		sources.push_back(inSrc);
+		sources.push_back(inLoVal);
+		sources.push_back(inHiVal);
+		GPUTextureFunc(inDst, sources, float4(), *gTextureClampShader);
 	}
 	
 	
 	void TextureClamp(pTexture inDst, pTexture inSource, float4 inLoVal, float4 inHiVal)
 	{
-		GPUTextureFunc(inDst, inSource, inLoVal, inHiVal, gTextureClampShader);
+		apTexture sources;
+		sources.push_back(inSource);
+		// TODO: hival 
+		GPUTextureFunc(inDst, sources, inHiVal, *gTextureClampShader);
 	}
 
 
 	void TextureTreshold(pTexture inDst, pTexture inSrc1, pTexture inSrc2)
 	{
-		GPUTextureFunc(inDst, inSrc1, inSrc2, gTextureTresholdShader);
+		apTexture sources;
+		sources.push_back(inSrc1);
+		sources.push_back(inSrc2);
+		GPUTextureFunc(inDst, sources, float4(), *gTextureTresholdShader);
 	}
 
 
 	void TextureTreshold(pTexture inDst, pTexture inSrc, float4 inVal)
 	{
-		GPUTextureFunc(inDst, inSrc, inVal, gTextureTresholdShader);
+		apTexture sources;
+		sources.push_back(inSrc);
+		GPUTextureFunc(inDst, sources, inVal, *gTextureTresholdShader);
 	}
 
 
@@ -390,11 +323,8 @@ namespace TextureUtil
 		float4 params(inSrc->GetWidth() - 1, inSrc->GetHeight() - 1, 0, 0);
 		assert(params.x == inDst->GetWidth() - 1);
 
-		pRenderTarget rt = MAKE_NEW(RenderTarget);
-		rt->Init(inDst);
-
-		pConstantBuffer cb = MAKE_NEW(ConstantBuffer);
-		cb->Init(sizeof(float4));
+		pRenderTarget rt = theResourceFactory.MakeRenderTarget(inDst);
+		pConstantBuffer cb = theResourceFactory.MakeConstantBuffer(sizeof(float4));
 
 		theRenderContext.CSSetShader(gTextureStitchNorthShader);
 		theRenderContext.CSSetRWTexture(rt, 0);
@@ -409,6 +339,9 @@ namespace TextureUtil
 		theRenderContext.CSSetTexture(nullptr, 0);
 		theRenderContext.CSSetRWTexture(nullptr, 0);
 		theRenderContext.CSSetShader(nullptr);
+
+		theResourceFactory.DestroyItem(rt);
+		theResourceFactory.DestroyItem(cb);
 	}
 
 
@@ -417,11 +350,8 @@ namespace TextureUtil
 		float4 params(inSrc->GetWidth() - 1, inSrc->GetHeight() - 1, 0, 0);
 		assert(params.x == inDst->GetWidth() - 1);
 
-		pRenderTarget rt = MAKE_NEW(RenderTarget);
-		rt->Init(inDst);
-
-		pConstantBuffer cb = MAKE_NEW(ConstantBuffer);
-		cb->Init(sizeof(float4));
+		pRenderTarget rt = theResourceFactory.MakeRenderTarget(inDst);
+		pConstantBuffer cb = theResourceFactory.MakeConstantBuffer(sizeof(float4));
 
 		theRenderContext.CSSetShader(gTextureStitchSouthShader);
 		theRenderContext.CSSetRWTexture(rt, 0);
@@ -436,6 +366,9 @@ namespace TextureUtil
 		theRenderContext.CSSetTexture(nullptr, 0);
 		theRenderContext.CSSetRWTexture(nullptr, 0);
 		theRenderContext.CSSetShader(nullptr);
+
+		theResourceFactory.DestroyItem(rt);
+		theResourceFactory.DestroyItem(cb);
 	}
 
 
@@ -444,11 +377,8 @@ namespace TextureUtil
 		float4 params(inSrc->GetWidth() - 1, inSrc->GetHeight() - 1, 0, 0);
 		assert(params.y == inDst->GetHeight() - 1);
 
-		pRenderTarget rt = MAKE_NEW(RenderTarget);
-		rt->Init(inDst);
-
-		pConstantBuffer cb = MAKE_NEW(ConstantBuffer);
-		cb->Init(sizeof(float4));
+		pRenderTarget rt = theResourceFactory.MakeRenderTarget(inDst);
+		pConstantBuffer cb = theResourceFactory.MakeConstantBuffer(sizeof(float4));
 
 		theRenderContext.CSSetShader(gTextureStitchEastShader);
 		theRenderContext.CSSetRWTexture(rt, 0);
@@ -463,6 +393,9 @@ namespace TextureUtil
 		theRenderContext.CSSetTexture(nullptr, 0);
 		theRenderContext.CSSetRWTexture(nullptr, 0);
 		theRenderContext.CSSetShader(nullptr);
+
+		theResourceFactory.DestroyItem(rt);
+		theResourceFactory.DestroyItem(cb);
 	}
 
 
@@ -471,11 +404,8 @@ namespace TextureUtil
 		float4 params(inSrc->GetWidth() - 1, inSrc->GetHeight() - 1, 0, 0);
 		assert(params.y == inDst->GetHeight() - 1);
 
-		pRenderTarget rt = MAKE_NEW(RenderTarget);
-		rt->Init(inDst);
-
-		pConstantBuffer cb = MAKE_NEW(ConstantBuffer);
-		cb->Init(sizeof(float4));
+		pRenderTarget rt = theResourceFactory.MakeRenderTarget(inDst);
+		pConstantBuffer cb = theResourceFactory.MakeConstantBuffer(sizeof(float4));
 
 		theRenderContext.CSSetShader(gTextureStitchWestShader);
 		theRenderContext.CSSetRWTexture(rt, 0);
@@ -490,5 +420,8 @@ namespace TextureUtil
 		theRenderContext.CSSetTexture(nullptr, 0);
 		theRenderContext.CSSetRWTexture(nullptr, 0);
 		theRenderContext.CSSetShader(nullptr);
+
+		theResourceFactory.DestroyItem(rt);
+		theResourceFactory.DestroyItem(cb);
 	}
 }

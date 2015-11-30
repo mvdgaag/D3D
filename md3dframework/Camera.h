@@ -1,7 +1,7 @@
 #pragma once
 #include "GaagCommon.h"
 
-PREDEFINE(Camera, pCamera)
+REGISTERCLASS(Camera)
 
 class Camera
 {

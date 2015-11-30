@@ -3,10 +3,10 @@
 
 
 // predeclarations
-PREDEFINE(ComputeShader, pComputeShader);
-PREDEFINE(RenderTarget, pRenderTarget);
-PREDEFINE(Texture, pTexture);
-PREDEFINE(ConstantBuffer, pConstantBuffer);
+REGISTERCLASS(ComputeShader);
+REGISTERCLASS(RenderTarget);
+REGISTERCLASS(Texture);
+REGISTERCLASS(ConstantBuffer);
 
 
 class PostProcessRenderer

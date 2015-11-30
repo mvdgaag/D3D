@@ -4,7 +4,7 @@
 
 struct ID3D11Buffer;
 
-PREDEFINE(Mesh, pMesh);
+REGISTERCLASS(Mesh);
 
 
 struct SimpleVertex
@@ -18,12 +18,10 @@ struct SimpleVertex
 
 class Mesh : public BaseResource
 {
+	friend class ResourceFactory;
 	friend class RenderContext;
 
 public:
-	Mesh() : BaseResource() {}
-	~Mesh() { CleanUp(); }
-
 	void InitFromData(SimpleVertex* inVertexData, int inNumVerts, unsigned short* inIndexData, int inNumIndices);
 	void InitCube(float3 inScale = { 1, 1, 1 });
 	void InitPlane(int2 inNumSegments, float2 inScale = { 1, 1 });
@@ -32,7 +30,7 @@ public:
 
 	void CleanUp() override;
 	
-	ResourceType GetResourceType() const override { return ResourceType::MESH; };
+	ResourceType GetResourceType() const override { return ResourceType::MESH; }
 
 protected:
 
@@ -44,6 +42,9 @@ protected:
 	unsigned int mNumIndices = 0;
 
 private:
+	Mesh() : BaseResource() {}
+	~Mesh() { CleanUp(); }
+
 	Mesh(Mesh const&) = delete;
 	void operator=(Mesh const&) = delete;
 };

@@ -22,13 +22,10 @@ void HeightField::Init(int2 inNumTiles, int2 inTileSegments, float3 inTileScale,
 			tile_pos.y = 0.0;
 			tile_pos.z = (float(y) - float(mNumTiles.y - 1) / 2.0) * mTileScale.y;
 
-			pTexture heightmap = MAKE_NEW(Texture);
-			// TODO: set proper access flags for render target
-			heightmap->Init(mTileSegments.x + 1, mTileSegments.y + 1, 1, FORMAT_R32_FLOAT, CPU_ACCESS_DEFAULT, BIND_SHADER_RESOURCE | BIND_RENDER_TARGET | BIND_UNORDERED_ACCESS);
+			pTexture heightmap = theResourceFactory.MakeTexture(int2(mTileSegments.x + 1, mTileSegments.y + 1), 1, FORMAT_R32_FLOAT, BIND_COMPUTE_TARGET);
 
 			mTiles[idx] = MAKE_NEW(HeightFieldTile);
-			pMaterial material = MAKE_NEW(Material);
-			*material = *inMaterial;
+			pMaterial material = theResourceFactory.CloneMaterial(inMaterial);
 			material->SetDiffuseValue(float4(1, 0, 0, 0));
 			mTiles[idx]->Init(tile_pos, mTileScale, mTileSegments, material, heightmap);
 			

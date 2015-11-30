@@ -14,6 +14,8 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 {
 	assert(mInitialized == true);
 
+	pSampler point_sampler = theResourceFactory.GetDefaultPointSampler();
+
 	assert(inSource != nullptr);
 	assert(inTargetDiffuse != nullptr);
 	assert(inTargetSpecular != nullptr);
@@ -21,10 +23,10 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 		inTargetDiffuse->GetTexture()->GetHeight() == inTargetDiffuse->GetTexture()->GetHeight());
 
 	theRenderContext.CSSetShader(mShader);
-	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::LINEAR_DEPTH), Gaag.GetPointSampler(), 0);
-	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::NORMAL), Gaag.GetPointSampler(), 1);
-	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::DIFFUSE), Gaag.GetPointSampler(), 2);
-	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::MATERIAL), Gaag.GetPointSampler(), 3);
+	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::LINEAR_DEPTH), point_sampler, 0);
+	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::NORMAL), point_sampler, 1);
+	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::DIFFUSE), point_sampler, 2);
+	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::MATERIAL), point_sampler, 3);
 	theRenderContext.CSSetRWTexture(inTargetDiffuse, 0);
 	theRenderContext.CSSetRWTexture(inTargetSpecular, 1);
 
@@ -57,10 +59,8 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 void DirectLightingRenderer::Init()
 {
 	CleanUp();
-	mShader = MAKE_NEW(ComputeShader);
-	mShader->InitFromFile("../md3dFramework/Shaders/DirectLightingCompute.hlsl");
-	mConstantBuffer = MAKE_NEW(ConstantBuffer);
-	mConstantBuffer->Init(sizeof(ConstantBufferData));
+	mShader = theResourceFactory.LoadComputeShader("../md3dFramework/Shaders/DirectLightingCompute.hlsl");
+	mConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(ConstantBufferData));
 	mInitialized = true;
 }
 

@@ -4,7 +4,7 @@
 #include "GaagCommon.h"
 #include "Input.h"
 
-PREDEFINE(Window, pWindow);
+REGISTERCLASS(Window);
 
 class Window
 {

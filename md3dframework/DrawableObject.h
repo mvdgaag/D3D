@@ -3,10 +3,10 @@
 #include "GaagCommon.h"
 
 // predefinitions
-PREDEFINE(DrawableObject, pDrawableObject);
-PREDEFINE(Mesh, pMesh);
-PREDEFINE(Material, pMaterial);
-PREDEFINE(ConstantBuffer, pConstantBuffer);
+REGISTERCLASS(DrawableObject);
+REGISTERCLASS(Mesh);
+REGISTERCLASS(Material);
+REGISTERCLASS(ConstantBuffer);
 
 
 class DrawableObject : public BaseDrawable

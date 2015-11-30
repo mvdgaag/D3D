@@ -39,8 +39,7 @@ void Material::operator=(Material const& inOther)
 
 void Material::Init()
 {
-	mConstantBuffer = MAKE_NEW(ConstantBuffer);
-	mConstantBuffer->Init(sizeof(mConstantData));
+	mConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(mConstantData));
 }
 
 

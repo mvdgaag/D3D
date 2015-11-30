@@ -2,8 +2,8 @@
 #include "GaagCommon.h"
 #include "InputListener.h"
 
-PREDEFINE(CameraController, pCameraController);
-PREDEFINE(Camera, pCamera);
+REGISTERCLASS(CameraController);
+REGISTERCLASS(Camera);
 
 class CameraController : public InputListener
 {

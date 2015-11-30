@@ -11,15 +11,18 @@ void TAARenderer::Render(pTexture inSource, pRenderTarget inHistory, pTexture in
 {
 	assert(mInitialized == true);
 
+	pSampler linear_sampler = theResourceFactory.GetDefaultLinearSampler();
+	pSampler point_sampler = theResourceFactory.GetDefaultPointSampler();
+
 	assert(inSource != nullptr);
 	assert(inMotionVectors != nullptr);
 	assert(inHistory != nullptr);
 	assert(inTarget != nullptr);
 
 	theRenderContext.CSSetShader(mShader);
-	theRenderContext.CSSetTextureAndSampler(inSource, Gaag.GetPointSampler(), 0);
-	theRenderContext.CSSetTextureAndSampler(inHistory->GetTexture(), Gaag.GetLinearSampler(), 1);
-	theRenderContext.CSSetTextureAndSampler(inMotionVectors, Gaag.GetPointSampler(), 2);
+	theRenderContext.CSSetTextureAndSampler(inSource, point_sampler, 0);
+	theRenderContext.CSSetTextureAndSampler(inHistory->GetTexture(), linear_sampler, 1);
+	theRenderContext.CSSetTextureAndSampler(inMotionVectors, point_sampler, 2);
 	theRenderContext.CSSetRWTexture(inTarget, 0);
 	
 	mConstantBufferData.mJitterOffset = GetJitterOffset(Gaag.GetFrameID());
@@ -47,10 +50,8 @@ void TAARenderer::Render(pTexture inSource, pRenderTarget inHistory, pTexture in
 void TAARenderer::Init()
 {
 	CleanUp();
-	mShader = MAKE_NEW(ComputeShader);
-	mShader->InitFromFile("../md3dFramework/Shaders/TemporalAACompute.hlsl");
-	mConstantBuffer = MAKE_NEW(ConstantBuffer);
-	mConstantBuffer->Init(sizeof(ConstantBufferData));
+	mShader = theResourceFactory.LoadComputeShader("../md3dFramework/Shaders/TemporalAACompute.hlsl");
+	mConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(ConstantBufferData));
 	mInitialized = true;
 }
 

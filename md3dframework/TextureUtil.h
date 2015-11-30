@@ -4,7 +4,7 @@
 #include "GaagCommon.h"
 
 
-PREDEFINE(Texture, pTexture);
+REGISTERCLASS(Texture);
 
 
 namespace TextureUtil

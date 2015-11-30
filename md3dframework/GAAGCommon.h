@@ -26,10 +26,10 @@
 #endif
 #endif
 
-#ifndef PREDEFINE
-#define PREDEFINE(x, px) class x; typedef std::shared_ptr<x> px;
+#ifndef REGISTERCLASS
+#define REGISTERCLASS(x) class x; typedef x* p##x; typedef std::vector<x> a##x; typedef std::vector<x*> ap##x; typedef x& r##x;
 #endif
 
 #ifndef MAKE_NEW
-#define MAKE_NEW(x) std::make_shared<x>();
+#define MAKE_NEW(x) new x();
 #endif

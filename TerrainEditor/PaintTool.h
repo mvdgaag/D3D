@@ -3,8 +3,8 @@
 #include "HeightField.h"
 #include "Brush.h"
 
-PREDEFINE(PaintTool, pPaintTool);
-PREDEFINE(BrushLibrary, pBrushLibrary);
+REGISTERCLASS(PaintTool);
+REGISTERCLASS(BrushLibrary);
 
 class PaintTool : public InputListener
 {

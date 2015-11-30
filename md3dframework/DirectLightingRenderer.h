@@ -4,10 +4,10 @@
 
 
 // predeclarations
-PREDEFINE(ComputeShader, pComputeShader);
-PREDEFINE(RenderTarget, pRenderTarget);
-PREDEFINE(ConstantBuffer, pConstantBuffer);
-PREDEFINE(GBuffer, pGBuffer);
+REGISTERCLASS(ComputeShader);
+REGISTERCLASS(RenderTarget);
+REGISTERCLASS(ConstantBuffer);
+REGISTERCLASS(GBuffer);
 
 
 class DirectLightingRenderer

@@ -5,20 +5,17 @@ void BrushLibrary::Init()
 {
 	CleanUp();
 
-	pComputeShader basic_brush_shader = MAKE_NEW(ComputeShader);
-	basic_brush_shader->InitFromFile("Shaders/BrushBasicShader.hlsl");
+	pComputeShader basic_brush_shader = theResourceFactory.LoadComputeShader("Shaders/BrushBasicShader.hlsl");
 	pBrush basic_brush = MAKE_NEW(Brush);
 	basic_brush->Init(basic_brush_shader);
 	AddBrush("Basic", basic_brush);
 
-	pComputeShader noise_brush_shader = MAKE_NEW(ComputeShader);
-	noise_brush_shader->InitFromFile("Shaders/BrushNoiseShader.hlsl");
+	pComputeShader noise_brush_shader = theResourceFactory.LoadComputeShader("Shaders/BrushNoiseShader.hlsl");
 	pBrush noise_brush = MAKE_NEW(Brush);
 	noise_brush->Init(noise_brush_shader);
 	AddBrush("Noise", noise_brush);
 
-	pComputeShader smooth_brush_shader = MAKE_NEW(ComputeShader);
-	smooth_brush_shader->InitFromFile("Shaders/BrushSmoothShader.hlsl");
+	pComputeShader smooth_brush_shader = theResourceFactory.LoadComputeShader("Shaders/BrushSmoothShader.hlsl");
 	pBrush smooth_brush = MAKE_NEW(Brush);
 	smooth_brush->Init(smooth_brush_shader);
 	AddBrush("Smooth", smooth_brush);

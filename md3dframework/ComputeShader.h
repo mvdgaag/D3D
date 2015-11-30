@@ -4,16 +4,14 @@
 
 struct ID3D11ComputeShader;
 
-PREDEFINE(ComputeShader, pComputeShader);
+REGISTERCLASS(ComputeShader);
 
 class ComputeShader : public BaseResource
 {
 	friend class RenderContext;
+	friend class ResourceFactory;
 
 public:
-	ComputeShader() : BaseResource() {}
-	~ComputeShader() { CleanUp(); }
-
 	void InitFromFile(std::string inFileName);
 	
 	void CleanUp() override;
@@ -23,6 +21,9 @@ protected:
 	ID3D11ComputeShader* mHandle = nullptr;
 	
 private:
+	ComputeShader() : BaseResource() {}
+	~ComputeShader() { CleanUp(); }
+
 	ComputeShader(ComputeShader const&) = delete;
 	void operator=(ComputeShader const&) = delete;
 };

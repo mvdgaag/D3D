@@ -1,16 +1,20 @@
 #pragma once
 #include "GaagCommon.h"
+#include "BaseResource.h"
 
-PREDEFINE(Texture, pTexture);
-PREDEFINE(Sampler, pSampler);
-PREDEFINE(PixelShader, pPixelShader);
-PREDEFINE(VertexShader, pVertexShader);
-PREDEFINE(ConstantBuffer, pConstantBuffer);
-PREDEFINE(Material, pMaterial);
+REGISTERCLASS(Texture);
+REGISTERCLASS(Sampler);
+REGISTERCLASS(PixelShader);
+REGISTERCLASS(VertexShader);
+REGISTERCLASS(ConstantBuffer);
+REGISTERCLASS(Material);
 
 
-class Material
+class Material : public BaseResource
 {
+	friend class ResourceFactory;
+	friend class RenderContext;
+
 public:
 	enum MaterialFlags
 	{
@@ -19,13 +23,8 @@ public:
 		SurfaceMap	= 1 << 2,
 	};
 
-	Material() {};
-	~Material() {};
-	Material(Material const& inOther);
-	void operator=(Material const& inOther);
-
 	void Init();
-	void CleanUp();
+	void CleanUp() override;
 
 	void SetPixelShader(pPixelShader inPixelShader)  { mPixelShader = inPixelShader; }
 	pPixelShader GetPixelShader() { return mPixelShader; }
@@ -65,6 +64,8 @@ public:
 
 	pConstantBuffer GetConstantBuffer() { return mConstantBuffer; }
 
+	ResourceType GetResourceType() const override { return ResourceType::MATERIAL; }
+
 protected:
 	void UpdateConstantBuffer();
 
@@ -94,4 +95,9 @@ protected:
 	pConstantBuffer mConstantBuffer = nullptr;
 
 private:
+	Material() : BaseResource() {}
+	~Material() { CleanUp(); }
+	Material(Material const& inOther);
+	void operator=(Material const& inOther);
+
 };

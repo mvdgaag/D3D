@@ -4,17 +4,15 @@
 
 struct ID3D11DepthStencilView;
 
-PREDEFINE(Texture, pTexture);
-PREDEFINE(DepthStencilTarget, pDepthStencilTarget);
+REGISTERCLASS(Texture);
+REGISTERCLASS(DepthStencilTarget);
 
 class DepthStencilTarget : public BaseResource
 {
+	friend class ResourceFactory;
 	friend class RenderContext;
 
 public:
-	DepthStencilTarget() : BaseResource() {};
-	~DepthStencilTarget() { CleanUp(); }
-
 	void Init(int inWidth, int inHeight);
 	void CleanUp() override;
 	
@@ -25,6 +23,9 @@ protected:
 	ID3D11DepthStencilView*	mDepthStencilView = nullptr;
 
 private:
+	DepthStencilTarget() : BaseResource() {};
+	~DepthStencilTarget() { CleanUp(); }
+
 	DepthStencilTarget(DepthStencilTarget const&) = delete;
 	void operator=(DepthStencilTarget const&) = delete;
 };

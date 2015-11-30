@@ -1,5 +1,6 @@
 #pragma once
 #include "GaagCommon.h"
+#include "ResourceFactory.h"
 
 struct ID3D11Device;
 struct ID3D11Device1;
@@ -11,16 +12,16 @@ struct ID3D11RasterizerState;
 struct ID3D11RasterizerState1;
 struct ID3DUserDefinedAnnotation;
 
-PREDEFINE(Window, pWindow);
-PREDEFINE(PixelShader, pPixelShader);
-PREDEFINE(VertexShader, pVertexShader);
-PREDEFINE(ComputeShader, pComputeShader);
-PREDEFINE(Texture, pTexture);
-PREDEFINE(Sampler, pSampler);
-PREDEFINE(Mesh, pMesh);
-PREDEFINE(ConstantBuffer, pConstantBuffer);
-PREDEFINE(RenderTarget, pRenderTarget);
-PREDEFINE(DepthStencilTarget, pDepthStencilTarget);
+REGISTERCLASS(Window);
+REGISTERCLASS(PixelShader);
+REGISTERCLASS(VertexShader);
+REGISTERCLASS(ComputeShader);
+REGISTERCLASS(Texture);
+REGISTERCLASS(Sampler);
+REGISTERCLASS(Mesh);
+REGISTERCLASS(ConstantBuffer);
+REGISTERCLASS(RenderTarget);
+REGISTERCLASS(DepthStencilTarget);
 
 class Window;
 

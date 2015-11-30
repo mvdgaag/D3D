@@ -12,13 +12,15 @@ void IndirectLightingRenderer::Render(pTexture inSource, pTexture inNormal, pTex
 {
 	assert(mInitialized == true);
 
+	pSampler point_sampler = theResourceFactory.GetDefaultPointSampler();
+
 	assert(inSource != nullptr);
 	assert(inTarget != nullptr);
 
 	theRenderContext.CSSetShader(mShader);
-	theRenderContext.CSSetTextureAndSampler(inSource, Gaag.GetPointSampler(), 0);
-	theRenderContext.CSSetTextureAndSampler(inNormal, Gaag.GetPointSampler(), 1);
-	theRenderContext.CSSetTextureAndSampler(inLinearDepth, Gaag.GetPointSampler(), 2);
+	theRenderContext.CSSetTextureAndSampler(inSource, point_sampler, 0);
+	theRenderContext.CSSetTextureAndSampler(inNormal, point_sampler, 1);
+	theRenderContext.CSSetTextureAndSampler(inLinearDepth, point_sampler, 2);
 	theRenderContext.CSSetRWTexture(inTarget, 0);
 
 	pCamera cam = Gaag.GetCamera();
@@ -48,10 +50,8 @@ void IndirectLightingRenderer::Render(pTexture inSource, pTexture inNormal, pTex
 void IndirectLightingRenderer::Init()
 {
 	CleanUp();
-	mShader = MAKE_NEW(ComputeShader);
-	mShader->InitFromFile("../md3dFramework/Shaders/IndirectLightingCompute.hlsl");
-	mConstantBuffer = MAKE_NEW(ConstantBuffer);
-	mConstantBuffer->Init(sizeof(ConstantBufferData));
+	mShader = theResourceFactory.LoadComputeShader("../md3dFramework/Shaders/IndirectLightingCompute.hlsl");
+	mConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(ConstantBufferData));
 	mInitialized = true;
 }
 

@@ -12,15 +12,14 @@ void Brush::Init(pComputeShader inShader, float inRadius, float inFalloff, float
 
 void Brush::Apply(pHeightFieldTile inTile, const rect& inPixelRect, const float2& inWorldPosition)
 {
-	int2 resolution = inTile->GetTexture()->GetResolution();
+	int2 resolution = inTile->GetHeightTexture()->GetResolution();
 	if (inPixelRect.GetArea() <= 0)
 		return;
 
 	mConstantBuffer.rect = int4(inPixelRect.topLeft, inPixelRect.bottomRight);
 	mConstantBuffer.paintData = float4(mStrength, mFalloffFraction, inWorldPosition);
 
-	pConstantBuffer cbuf = MAKE_NEW(ConstantBuffer);
-	cbuf->Init(sizeof(mConstantBuffer));
+	pConstantBuffer cbuf = theResourceFactory.MakeConstantBuffer(sizeof(mConstantBuffer));
 	theRenderContext.UpdateSubResource(*cbuf, &mConstantBuffer);
 
 	theRenderContext.CSSetShader(mShader);

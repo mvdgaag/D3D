@@ -5,7 +5,7 @@
 
 #define theInput Input::GetInstance()
 
-PREDEFINE(InputListener, pInputListener);
+REGISTERCLASS(InputListener);
 
 
 class Input

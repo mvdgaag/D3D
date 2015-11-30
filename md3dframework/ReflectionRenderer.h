@@ -2,9 +2,9 @@
 #include "GaagCommon.h"
 
 // predeclarations
-PREDEFINE(ComputeShader, pComputeShader);
-PREDEFINE(RenderTarget, pRenderTarget);
-PREDEFINE(Texture, pTexture);
+REGISTERCLASS(ComputeShader);
+REGISTERCLASS(RenderTarget);
+REGISTERCLASS(Texture);
 
 
 class ReflectionRenderer

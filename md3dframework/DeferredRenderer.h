@@ -11,12 +11,12 @@
 #include "TAARenderer.h"
 #include "PostProcessRenderer.h"
 
-PREDEFINE(DrawableObject, pDrawableObject);
-PREDEFINE(GBuffer, pGBuffer);
-PREDEFINE(DeferredRenderer, pDeferredRenderer);
-PREDEFINE(RenderTarget, pRenderTarget);
-PREDEFINE(Texture, pTexture);
-PREDEFINE(ConstantBuffer, pConstantBuffer);
+REGISTERCLASS(DrawableObject);
+REGISTERCLASS(GBuffer);
+REGISTERCLASS(DeferredRenderer);
+REGISTERCLASS(RenderTarget);
+REGISTERCLASS(Texture);
+REGISTERCLASS(ConstantBuffer);
 
 
 #define MAX_LIGHTS 64

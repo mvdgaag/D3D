@@ -2,9 +2,9 @@
 #include "GaagCommon.h"
 #include "RenderTarget.h"
 
-PREDEFINE(GBuffer, pGBuffer);
-PREDEFINE(Texture, pTexture);
-PREDEFINE(DepthStencilTarget, pDepthStencilTarget);
+REGISTERCLASS(GBuffer);
+REGISTERCLASS(Texture);
+REGISTERCLASS(DepthStencilTarget);
 
 
 class GBuffer

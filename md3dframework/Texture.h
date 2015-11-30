@@ -6,7 +6,7 @@ struct ID3D11Texture2D;
 struct ID3D11ShaderResourceView;
 struct D3D11_TEXTURE2D_DESC;
 
-PREDEFINE(Texture, pTexture);
+REGISTERCLASS(Texture);
 
 
 typedef enum Format
@@ -146,7 +146,10 @@ typedef enum BindFlag
 	BIND_DEPTH_STENCIL = 0x40L,
 	BIND_UNORDERED_ACCESS = 0x80L,
 	BIND_DECODER = 0x200L,
-	BIND_VIDEO_ENCODER = 0x400L
+	BIND_VIDEO_ENCODER = 0x400L,
+
+	// custom combined flags
+	BIND_COMPUTE_TARGET = ((int)BIND_SHADER_RESOURCE | (int)BIND_RENDER_TARGET | (int)BIND_UNORDERED_ACCESS)
 } BindFlag;
 inline BindFlag operator|(BindFlag a, BindFlag b) { return static_cast<BindFlag>(static_cast<int>(a) | static_cast<int>(b)); }
 
@@ -162,14 +165,13 @@ inline CPUAccessFlag operator|(CPUAccessFlag a, CPUAccessFlag b) { return static
 
 class Texture : public BaseResource
 {
+	friend class ResourceFactory;
 	friend class RenderContext;
-	friend PREDEFINE(RenderTarget, pRenderTarget);
-	friend PREDEFINE(DepthStencilTarget, pDepthStencilTarget);
+
+	friend REGISTERCLASS(RenderTarget);
+	friend REGISTERCLASS(DepthStencilTarget);
 
 public:
-	Texture() : BaseResource() {};
-	~Texture() { CleanUp(); }
-
 	virtual void Init(
 		int inWidth, 
 		int inHeight, 
@@ -190,8 +192,8 @@ public:
 	CPUAccessFlag			GetCPUAccessFlags()			{ return mCPUAccessFlags; }
 	float4					GetPixel(int2 inPixelCoordinate);
 	
-	virtual void			CleanUp() override;
-	virtual ResourceType	GetResourceType() const override { return ResourceType::TEXTURE; };
+	void					CleanUp() override;
+	ResourceType			GetResourceType() const override { return ResourceType::TEXTURE; };
 
 protected:
 	ID3D11Texture2D*			mTexture = nullptr;
@@ -205,6 +207,9 @@ protected:
 	CPUAccessFlag				mCPUAccessFlags;
 
 private:
+	Texture() : BaseResource() {};
+	~Texture() { CleanUp(); }
+
 	Texture(Texture const&) = delete;
 	void operator=(Texture const&) = delete;
 };

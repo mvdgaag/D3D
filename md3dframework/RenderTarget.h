@@ -6,17 +6,15 @@
 struct ID3D11RenderTargetView;
 struct ID3D11UnorderedAccessView;
 
-PREDEFINE(RenderTarget, pRenderTarget);
+REGISTERCLASS(RenderTarget);
 
 
 class RenderTarget : public BaseResource
 {
+	friend class ResourceFactory;
 	friend class RenderContext;
 
 public:
-	RenderTarget() : BaseResource() {};
-	~RenderTarget() { CleanUp(); }
-
 	pTexture					GetTexture() { return mTexture; }
 	void						Init(int inWidth, int inHeight, int inMipLevels, Format inFormat);
 	void						Init(pTexture inTexture);
@@ -29,6 +27,9 @@ protected:
 	ID3D11UnorderedAccessView** mUnorderedAccessViews = nullptr;
 
 private:
+	RenderTarget() : BaseResource() {};
+	~RenderTarget() { CleanUp(); }
+
 	RenderTarget(RenderTarget const&) = delete;
 	void operator=(RenderTarget const&) = delete;
 };

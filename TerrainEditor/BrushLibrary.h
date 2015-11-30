@@ -2,7 +2,7 @@
 #include "Gaag.h"
 #include "Brush.h"
 
-PREDEFINE(BrushLibrary, pBrushLibrary);
+REGISTERCLASS(BrushLibrary);
 
 class BrushLibrary
 {

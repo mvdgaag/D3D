@@ -10,6 +10,8 @@ void LightComposeRenderer::Render(pTexture inDirectDiffuse, pTexture inDirectSpe
 {
 	assert(mInitialized == true);
 
+	pSampler point_sampler = theResourceFactory.GetDefaultPointSampler();
+
 	assert(inDirectDiffuse != nullptr);
 	assert(inDirectSpecular != nullptr);
 	assert(inIndirect != nullptr);
@@ -17,10 +19,10 @@ void LightComposeRenderer::Render(pTexture inDirectDiffuse, pTexture inDirectSpe
 	assert(inTarget != nullptr);
 
 	theRenderContext.CSSetShader(mShader);
-	theRenderContext.CSSetTextureAndSampler(inDirectDiffuse, Gaag.GetPointSampler(), 0);
-	theRenderContext.CSSetTextureAndSampler(inDirectSpecular, Gaag.GetPointSampler(), 1);
-	theRenderContext.CSSetTextureAndSampler(inIndirect, Gaag.GetPointSampler(), 2);
-	theRenderContext.CSSetTextureAndSampler(inReflections, Gaag.GetPointSampler(), 3);
+	theRenderContext.CSSetTextureAndSampler(inDirectDiffuse, point_sampler, 0);
+	theRenderContext.CSSetTextureAndSampler(inDirectSpecular, point_sampler, 1);
+	theRenderContext.CSSetTextureAndSampler(inIndirect, point_sampler, 2);
+	theRenderContext.CSSetTextureAndSampler(inReflections, point_sampler, 3);
 	theRenderContext.CSSetRWTexture(inTarget, 0);
 
 	int groups_x = (inTarget->GetTexture()->GetWidth() + 7) / 8;
@@ -40,8 +42,7 @@ void LightComposeRenderer::Render(pTexture inDirectDiffuse, pTexture inDirectSpe
 void LightComposeRenderer::Init()
 {
 	CleanUp();
-	mShader = MAKE_NEW(ComputeShader);
-	mShader->InitFromFile("../md3dFramework/Shaders/LightComposeCompute.hlsl");
+	mShader = theResourceFactory.LoadComputeShader("../md3dFramework/Shaders/LightComposeCompute.hlsl");
 	mInitialized = true;
 }
 

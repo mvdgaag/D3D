@@ -29,32 +29,15 @@ void DeferredRenderer::Init(int inWidth, int inHeight)
 	mGBuffer = MAKE_NEW(GBuffer);
 	mGBuffer->Init(inWidth, inHeight);
 
-	mDepthPyramid = MAKE_NEW(RenderTarget);
-	mDepthPyramid->Init(inWidth / 2, inHeight / 2, 3, FORMAT_R16G16_FLOAT);
-	
-	mDirectLightingDiffuse = MAKE_NEW(RenderTarget);
-	mDirectLightingDiffuse->Init(inWidth, inHeight, 1, FORMAT_R16G16B16A16_FLOAT);
-
-	mDirectLightingSpecular = MAKE_NEW(RenderTarget);
-	mDirectLightingSpecular->Init(inWidth, inHeight, 1, FORMAT_R16G16B16A16_FLOAT);
-
-	mIndirectLighting = MAKE_NEW(RenderTarget);
-	mIndirectLighting->Init(inWidth, inHeight, 1, FORMAT_R16G16B16A16_FLOAT);
-
-	mReflections = MAKE_NEW(RenderTarget);
-	mReflections->Init(inWidth, inHeight, 1, FORMAT_R16G16B16A16_FLOAT);
-
-	mLightComposed = MAKE_NEW(RenderTarget);
-	mLightComposed->Init(inWidth, inHeight, 1, FORMAT_R16G16B16A16_FLOAT);
-
-	mAntiAliased = MAKE_NEW(RenderTarget);
-	mAntiAliased->Init(inWidth, inHeight, 1, FORMAT_R16G16B16A16_FLOAT);
-
-	mAAHistoryFrame = MAKE_NEW(RenderTarget);
-	mAAHistoryFrame->Init(inWidth, inHeight, 1, FORMAT_R16G16B16A16_FLOAT);
-
-	mPostProcessed = MAKE_NEW(RenderTarget);
-	mPostProcessed->Init(inWidth, inHeight, 1, FORMAT_R16G16B16A16_FLOAT);
+	mDepthPyramid = theResourceFactory.MakeRenderTarget(int2(inWidth / 2, inHeight / 2), 3, FORMAT_R16G16_FLOAT);
+	mDirectLightingDiffuse = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
+	mDirectLightingSpecular = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
+	mIndirectLighting = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
+	mReflections = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
+	mLightComposed = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
+	mAntiAliased = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
+	mAAHistoryFrame = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
+	mPostProcessed = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
 
 	mShadowRenderer.Init();
 	mDirectLightingRenderer.Init();
@@ -65,14 +48,9 @@ void DeferredRenderer::Init(int inWidth, int inHeight)
 	mTAARenderer.Init();
 	mPostProcessRenderer.Init();
 	
-	mConstantBufferEveryFrame = MAKE_NEW(ConstantBuffer);
-	mConstantBufferEveryFrame->Init(sizeof(ConstantDataEveryFrame));
-
-	mConstantBufferEveryObject = MAKE_NEW(ConstantBuffer);
-	mConstantBufferEveryObject->Init(sizeof(ConstantDataEveryObject));
-
-	mConstantBufferOnDemand = MAKE_NEW(ConstantBuffer);
-	mConstantBufferOnDemand->Init(sizeof(ConstantDataOnDemand));
+	mConstantBufferEveryFrame = theResourceFactory.MakeConstantBuffer(sizeof(ConstantDataEveryFrame));
+	mConstantBufferEveryObject = theResourceFactory.MakeConstantBuffer(sizeof(ConstantDataEveryObject));
+	mConstantBufferOnDemand = theResourceFactory.MakeConstantBuffer(sizeof(ConstantDataOnDemand));
 
 	//mPrevViewMatrix = Gaag.GetCamera()->GetViewMatrix();
 

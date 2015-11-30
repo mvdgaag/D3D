@@ -1,7 +1,7 @@
 #pragma once
 #include "Gaag.h"
 
-PREDEFINE(HeightFieldTile, pHeightFieldTile);
+REGISTERCLASS(HeightFieldTile);
 
 class HeightFieldTile : public DrawableObject
 {
@@ -10,13 +10,13 @@ public:
 	~HeightFieldTile() {};
 
 	void Init(float3 inPosition, float3 inScale, int2 inNumSegments, pMaterial inMaterial, pTexture inHeightTexture);
+	void CleanUp();
+	void UpdateNormals();
 	void PrepareToDraw() override;
 	void FinalizeAfterDraw() override;
-	void CleanUp();
 
-	void			SetTexture(pTexture inTexture);
-
-	pTexture		GetTexture()					{ return mHeightMapTexture; }
+	pTexture		GetHeightTexture()				{ return mHeightMapTexture; }
+	pTexture		GetNormalTexture()				{ return mNormalTexture; }
 	pRenderTarget	GetRenderTarget()				{ return mHeightMapRenderTarget; }
 	float2			GetPixelsPerMeter()				{ return mPixelsPerMeter; }
 	float			GetHeightScale()				{ return mHeightScale; }
@@ -35,6 +35,9 @@ private:
 	pConstantBuffer		mConstantBuffer			= nullptr;
 	pRenderTarget		mHeightMapRenderTarget	= nullptr;
 	pTexture			mHeightMapTexture		= nullptr;
+	pRenderTarget		mNormalRenderTarget		= nullptr;
+	pTexture			mNormalTexture			= nullptr;
+	pComputeShader		mUpdateNormalShader		= nullptr;
 	bool				mInitialized			= false;
 };
 

@@ -2,7 +2,7 @@
 #include "GaagCommon.h"
 #include "Input.h"
 
-PREDEFINE(InputListener, pInputListener);
+REGISTERCLASS(InputListener);
 
 class InputListener
 {

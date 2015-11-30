@@ -10,11 +10,13 @@ void ReflectionRenderer::Render(pTexture inSource, pRenderTarget inTarget)
 {
 	assert(mInitialized == true);
 
+	pSampler point_sampler = theResourceFactory.GetDefaultPointSampler();
+
 	assert(inSource != nullptr);
 	assert(inTarget != nullptr);
 
 	theRenderContext.CSSetShader(mShader);
-	theRenderContext.CSSetTextureAndSampler(inSource, Gaag.GetPointSampler(), 0);
+	theRenderContext.CSSetTextureAndSampler(inSource, point_sampler, 0);
 	theRenderContext.CSSetRWTexture(inTarget, 0);
 
 	int groups_x = (inTarget->GetTexture()->GetWidth() + 7) / 8;
@@ -32,8 +34,7 @@ void ReflectionRenderer::Render(pTexture inSource, pRenderTarget inTarget)
 void ReflectionRenderer::Init()
 {
 	CleanUp();
-	mShader = MAKE_NEW(ComputeShader);
-	mShader->InitFromFile("../md3dFramework/Shaders/ReflectionCompute.hlsl");
+	mShader = theResourceFactory.LoadComputeShader("../md3dFramework/Shaders/ReflectionCompute.hlsl");
 	mInitialized = true;
 }
 

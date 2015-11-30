@@ -2,7 +2,7 @@
 #include "Gaag.h"
 #include "HeightFieldTile.h"
 
-PREDEFINE(HeightField, pHeightField);
+REGISTERCLASS(HeightField);
 
 class HeightField
 {

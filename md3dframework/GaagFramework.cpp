@@ -1,5 +1,6 @@
 #include "GaagFramework.h"
 #include "RenderContext.h"
+#include "ResourceFactory.h"
 #include "TextureUtil.h"
 #include "DeferredRenderer.h"
 #include "RenderTarget.h"
@@ -29,6 +30,7 @@ HRESULT GaagFramework::Init(HINSTANCE hInstance)
 	mWindow = MAKE_NEW(Window);
 	mWindow->Init(hInstance);
 	theRenderContext.Init(mWindow);
+	theResourceFactory.Init();
 	theTime.Init();
 	theInput.Init();
 	TextureUtil::InitTextureUtil();
@@ -36,34 +38,9 @@ HRESULT GaagFramework::Init(HINSTANCE hInstance)
 	mDeferredRenderer = MAKE_NEW(DeferredRenderer);
 	mDeferredRenderer->Init(theRenderContext.GetWidth(), theRenderContext.GetHeight());
 
-	mFullScreenTriangle = MAKE_NEW(Mesh);
-	mFullScreenTriangle->InitFullscreenTriangle();
-
-	mCopyShader = MAKE_NEW(ComputeShader);
-	mCopyShader->InitFromFile("../md3dFramework/Shaders/CopyCompute.hlsl");
-
-	mDefaultPointSampler = MAKE_NEW(Sampler);
-	mDefaultPointSampler->Init(0); // D3D11_FILTER_MIN_MAG_MIP_POINT
-
-	mDefaultLinearSampler = MAKE_NEW(Sampler);
-	mDefaultLinearSampler->Init(21); // D3D11_FILTER_MIN_MAG_MIP_LINEAR
-
-	pPixelShader default_pixel_shader = MAKE_NEW(PixelShader);
-	default_pixel_shader->InitFromFile("../md3dFramework/Shaders/BasicFragmentShader.hlsl");
-
-	pVertexShader default_vertex_shader = MAKE_NEW(VertexShader);
-	default_vertex_shader->InitFromFile("../md3dFramework/Shaders/BasicVertexShader.hlsl");
-
-	mDefaultMaterial = MAKE_NEW(Material);
-	mDefaultMaterial->Init();
-	mDefaultMaterial->SetPixelShader(default_pixel_shader);
-	mDefaultMaterial->SetVertexShader(default_vertex_shader);
-	mDefaultMaterial->SetDiffuseValue(float4(0.7, 0.7, 0.7, 1.0));
-	mDefaultMaterial->SetReflectivityValue(0.5f);
-	mDefaultMaterial->SetRoughnessValue(0.5f);
-	mDefaultMaterial->SetMetalicityValue(0.0f);
-	mDefaultMaterial->SetEmissivenessValue(0.0f);
-	mDefaultMaterial->SetFlags(Material::MaterialFlags(0));
+	mFullScreenTriangle = theResourceFactory.GetFullScreenTriangleMesh();
+	mDefaultSampler = theResourceFactory.GetDefaultLinearSampler();
+	mCopyShader = theResourceFactory.GetCopyShader();
 
 	mCamera = MAKE_NEW(Camera);
 	mCamera->SetPosition(1.0, 1.0, 1.0);
@@ -83,17 +60,14 @@ void GaagFramework::CleanUp()
 	mCamera = nullptr;
 	mDeferredRenderer = nullptr;
 	mFullScreenTriangle = nullptr;
+	mDefaultSampler = nullptr;
 	mCopyShader = nullptr;
-	mDefaultPointSampler = nullptr;
-	mDefaultLinearSampler = nullptr;
-	mDefaultMaterial = nullptr;
 
 	TextureUtil::CleanUpTextureUtil();
 	theInput.CleanUp();
 	theTime.CleanUp();
 	theRenderContext.CleanUp();
 	mWindow = nullptr;
-	
 
 	mInitialized = false;
 }
@@ -157,11 +131,11 @@ void GaagFramework::SetMaterial(pMaterial inMaterial)
 	pTexture surface_texture = inMaterial->GetSurfaceTexture();
 	
 	if (diffuse_texture != nullptr)
-		theRenderContext.PSSetTextureAndSampler(diffuse_texture, mDefaultLinearSampler, 0);
+		theRenderContext.PSSetTextureAndSampler(diffuse_texture, mDefaultSampler, 0);
 	if (normal_texture != nullptr)
-		theRenderContext.PSSetTextureAndSampler(normal_texture, mDefaultLinearSampler, 1);
+		theRenderContext.PSSetTextureAndSampler(normal_texture, mDefaultSampler, 1);
 	if (surface_texture != nullptr)
-		theRenderContext.PSSetTextureAndSampler(surface_texture, mDefaultLinearSampler, 2);
+		theRenderContext.PSSetTextureAndSampler(surface_texture, mDefaultSampler, 2);
 	
 	theRenderContext.PSSetConstantBuffer(inMaterial->GetConstantBuffer(), 0);
 }

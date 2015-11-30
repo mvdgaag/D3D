@@ -2,24 +2,25 @@
 #include "GaagCommon.h"
 
 #include "RenderContext.h"
+#include "ResourceFactory.h"
 #include "Input.h"
 #include "Time.h"
 
 #include "InputListener.h"
 #include "Window.h"
 			
-PREDEFINE(PixelShader, pPixelShader);
-PREDEFINE(VertexShader, pVertexShader);
-PREDEFINE(ComputeShader, pComputeShader);
-PREDEFINE(Texture, pTexture);
-PREDEFINE(Sampler, pSampler);
-PREDEFINE(RenderTarget, pRenderTarget);
-PREDEFINE(Mesh, pMesh);
-PREDEFINE(ConstantBuffer, pConstantBuffer);
-PREDEFINE(Material, pMaterial);
-PREDEFINE(DeferredRenderer, pDeferredRenderer);
-PREDEFINE(DrawableObject, pDrawableObject);
-PREDEFINE(Camera, pCamera);
+REGISTERCLASS(PixelShader);
+REGISTERCLASS(VertexShader);
+REGISTERCLASS(ComputeShader);
+REGISTERCLASS(Texture);
+REGISTERCLASS(Sampler);
+REGISTERCLASS(RenderTarget);
+REGISTERCLASS(Mesh);
+REGISTERCLASS(ConstantBuffer);
+REGISTERCLASS(Material);
+REGISTERCLASS(DeferredRenderer);
+REGISTERCLASS(DrawableObject);
+REGISTERCLASS(Camera);
 
 #define Gaag GaagFramework::GetInstance()
 
@@ -49,11 +50,6 @@ public:
 	double		GetFrameTime()													{ return mFrameTime; }
 	double		GetFrameDeltaTime()												{ return mDeltaTime; }
 	void		SetMaterial(pMaterial inMaterial);
-
-	// helper functions
-	pSampler	GetPointSampler()												{ return mDefaultPointSampler; }
-	pSampler	GetLinearSampler()												{ return mDefaultLinearSampler; }
-	pMaterial	GetDefaultMaterial()											{ return mDefaultMaterial; }
 	void		CopyToRenderTarget(pRenderTarget inTarget, pTexture inSource);
 
 private:
@@ -63,12 +59,8 @@ private:
 	void operator=(GaagFramework const&) = delete;
 
 	pMesh							mFullScreenTriangle = nullptr;
+	pSampler						mDefaultSampler = nullptr;
 	pComputeShader					mCopyShader = nullptr;
-	
-	pSampler						mDefaultPointSampler = nullptr;
-	pSampler						mDefaultLinearSampler = nullptr;
-	pMaterial						mDefaultMaterial = nullptr;
-
 	pWindow							mWindow;
 	pCamera							mCamera = nullptr;
 	pDeferredRenderer				mDeferredRenderer = nullptr;

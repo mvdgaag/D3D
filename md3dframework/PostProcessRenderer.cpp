@@ -11,12 +11,14 @@ void PostProcessRenderer::Render(pTexture inSource, pTexture inMotionVectors, pR
 {
 	assert(mInitialized == true);
 
+	pSampler linear_sampler = theResourceFactory.GetDefaultLinearSampler();
+
 	assert(inSource != nullptr);
 	assert(inTarget != nullptr);
 
 	theRenderContext.CSSetShader(mShader);
-	theRenderContext.CSSetTextureAndSampler(inSource, Gaag.GetLinearSampler(), 0);
-	theRenderContext.CSSetTextureAndSampler(inMotionVectors, Gaag.GetLinearSampler(), 1);
+	theRenderContext.CSSetTextureAndSampler(inSource, linear_sampler, 0);
+	theRenderContext.CSSetTextureAndSampler(inMotionVectors, linear_sampler, 1);
 	theRenderContext.CSSetRWTexture(inTarget, 0);
 
 	mConstantBufferData.mTargetSize = float4(theRenderContext.GetWidth(), theRenderContext.GetHeight(),0,0);
@@ -39,13 +41,8 @@ void PostProcessRenderer::Render(pTexture inSource, pTexture inMotionVectors, pR
 void PostProcessRenderer::Init()
 {
 	CleanUp();
-	
-	mShader = MAKE_NEW(ComputeShader);
-	mShader->InitFromFile("../md3dFramework/Shaders/PostProcessCompute.hlsl");
-
-	mConstantBuffer = MAKE_NEW(ConstantBuffer);
-	mConstantBuffer->Init(sizeof(ConstantBufferData));
-
+	mShader = theResourceFactory.LoadComputeShader("../md3dFramework/Shaders/PostProcessCompute.hlsl");
+	mConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(ConstantBufferData));
 	mInitialized = true;
 }
 

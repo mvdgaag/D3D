@@ -1,7 +1,7 @@
 #pragma once
 #include "Gaag.h"
 
-PREDEFINE(WaterTile, pWaterTile);
+REGISTERCLASS(WaterTile);
 
 class WaterTile
 {

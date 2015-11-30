@@ -1,10 +1,10 @@
 #pragma once
 #include "Gaag.h"
 
-PREDEFINE(Water, pWater);
-PREDEFINE(HeightField, pHeightField);
-PREDEFINE(WaterTile, pWaterTile);
-PREDEFINE(Material, pMaterial);
+REGISTERCLASS(Water);
+REGISTERCLASS(HeightField);
+REGISTERCLASS(WaterTile);
+REGISTERCLASS(Material);
 
 class Water
 {

@@ -7,6 +7,7 @@ SamplerState motionSampler : register(s1);
 
 
 #define MOTION_BLUR_STRENGTH (1.0)
+#define MOTION_BLUR_STEPS (12)
 
 
 cbuffer cPostProcessConstants : register(b0)
@@ -24,12 +25,12 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	float2 history_uv = saturate(uv + mv * MOTION_BLUR_STRENGTH);
 
 	float4 result = 0;
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < MOTION_BLUR_STEPS; i++)
 	{
-		float2 samp_uv = lerp(uv, history_uv, float(i) / 8.0);
+		float2 samp_uv = lerp(uv, history_uv, float(i) / MOTION_BLUR_STEPS);
 		result += source.SampleLevel(sourceSampler, samp_uv, 0);
 	}
 
-	dst[coord] = result / 8.0;
+	dst[coord] = result / MOTION_BLUR_STEPS;
 	//dst[coord] = source[coord];
 }

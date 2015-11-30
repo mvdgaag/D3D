@@ -13,7 +13,7 @@ Window* g_window = nullptr;
 pDrawableObject g_obj;
 pMesh g_mesh;
 
-pMaterial g_HeightField_material;
+pMaterial g_BricksMaterial;
 pPixelShader g_HeightField_pixel_shader;
 pVertexShader g_HeightField_vertex_shader;
 
@@ -79,45 +79,32 @@ void InitContent()
 {
 	g_obj = MAKE_NEW(DrawableObject);
 
-	g_mesh = MAKE_NEW(Mesh);
-	g_mesh->InitFromFile("Models/sphere.obj");
-
-	g_HeightField_pixel_shader = MAKE_NEW(PixelShader);
-	g_HeightField_pixel_shader->InitFromFile("Shaders/TerrainFragmentShader.hlsl");
-
-	g_HeightField_vertex_shader = MAKE_NEW(VertexShader);
-	g_HeightField_vertex_shader->InitFromFile("Shaders/TerrainVertexShader.hlsl");
-
-	g_diffuse_texture = MAKE_NEW(Texture);
-	g_diffuse_texture->InitFromFile("Textures/photosculpt-squarebricks-diffuse.dds");
-
-	g_normal_texture = MAKE_NEW(Texture);
-	g_normal_texture->InitFromFile("Textures/photosculpt-squarebricks-normal.dds");
-
-	g_surface_texture = MAKE_NEW(Texture);
-	g_surface_texture->InitFromFile("Textures/photosculpt-squarebricks-specular.dds");
-
-	g_HeightField_material = MAKE_NEW(Material);
-	g_HeightField_material->Init();
-	g_HeightField_material->SetDiffuseTexture(g_diffuse_texture);
-	g_HeightField_material->SetNormalTexture(g_normal_texture);
-	g_HeightField_material->SetSurfaceTexture(g_surface_texture);
-	g_HeightField_material->SetDiffuseValue(float4(0.6f, 0.6f, 0.6f, 0.0f));
-	g_HeightField_material->SetReflectivityValue(0.5f);
-	g_HeightField_material->SetRoughnessValue(0.25f);
-	g_HeightField_material->SetMetalicityValue(0.0f);
-	g_HeightField_material->SetEmissivenessValue(0.0f);
-	g_HeightField_material->SetPixelShader(g_HeightField_pixel_shader);
-	g_HeightField_material->SetVertexShader(g_HeightField_vertex_shader);
+	g_mesh = theResourceFactory.LoadMesh("Models/sphere.obj");
+	g_HeightField_pixel_shader = theResourceFactory.LoadPixelShader("Shaders/TerrainFragmentShader.hlsl");
+	g_HeightField_vertex_shader = theResourceFactory.LoadVertexShader("Shaders/TerrainVertexShader.hlsl");
+	g_diffuse_texture = theResourceFactory.LoadTexture("Textures/photosculpt-squarebricks-diffuse.dds");
+	g_normal_texture = theResourceFactory.LoadTexture("Textures/photosculpt-squarebricks-normal.dds");
+	g_surface_texture = theResourceFactory.LoadTexture("Textures/photosculpt-squarebricks-specular.dds");
+	g_BricksMaterial = theResourceFactory.MakeMaterial();
+	g_BricksMaterial->SetDiffuseTexture(g_diffuse_texture);
+	g_BricksMaterial->SetNormalTexture(g_normal_texture);
+	g_BricksMaterial->SetSurfaceTexture(g_surface_texture);
+	g_BricksMaterial->SetDiffuseValue(float4(0.6f, 0.6f, 0.6f, 0.0f));
+	g_BricksMaterial->SetReflectivityValue(0.5f);
+	g_BricksMaterial->SetRoughnessValue(0.25f);
+	g_BricksMaterial->SetMetalicityValue(0.0f);
+	g_BricksMaterial->SetEmissivenessValue(0.0f);
+	g_BricksMaterial->SetPixelShader(g_HeightField_pixel_shader);
+	g_BricksMaterial->SetVertexShader(g_HeightField_vertex_shader);
 	
-	g_obj->Init(g_mesh, Gaag.GetDefaultMaterial());
+	g_obj->Init(g_mesh, theResourceFactory.GetDefaultMaterial());
 	Gaag.RegisterObject(g_obj);
 
 	g_HeightField = MAKE_NEW(HeightField);
-	g_HeightField->Init(int2(3), int2(63), float3(50,50,5), g_HeightField_material);
+	g_HeightField->Init(int2(3), int2(63), float3(50,50,5), g_BricksMaterial);
 
 	g_water = MAKE_NEW(Water);
-	g_water->Init(g_HeightField, g_HeightField_material);
+	g_water->Init(g_HeightField, g_BricksMaterial);
 
 	int2 num_tiles = g_water->GetTerrainHeightField()->GetNumTiles();
 	for (int x = 0; x < num_tiles.x; x++)
@@ -127,7 +114,8 @@ void InitContent()
 			int2 coord(x, y);
 			pTexture texture = g_water->GetTile(coord)->GetFluxTexture();
 			Material& material = *g_water->GetWaterHeightField()->GetTile(coord)->GetMaterial();
-			material.SetDiffuseTexture(texture);
+			//material.SetDiffuseTexture(texture);
+			material.SetDiffuseTexture(NULL);
 			material.SetNormalTexture(NULL);
 			material.SetSurfaceTexture(NULL);
 		}
@@ -149,7 +137,7 @@ void CleanUpContent()
 {
 	g_obj = nullptr;
 	g_mesh = nullptr;
-	g_HeightField_material = nullptr;
+	g_BricksMaterial = nullptr;
 	g_HeightField_pixel_shader = nullptr;
 	g_HeightField_vertex_shader = nullptr;
 	g_diffuse_texture = nullptr;

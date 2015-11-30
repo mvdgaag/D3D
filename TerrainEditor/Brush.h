@@ -2,7 +2,7 @@
 #include "Gaag.h"
 #include "HeightFieldTile.h"
 
-PREDEFINE(Brush, pBrush);
+REGISTERCLASS(Brush);
 
 class Brush
 {

@@ -1,5 +1,6 @@
 #include "DepthStencilTarget.h"
 #include "RenderContext.h"
+#include "ResourceFactory.h"
 #include "Texture.h"
 #include <d3d11_1.h>
 
@@ -8,8 +9,10 @@ void DepthStencilTarget::Init(int inWidth, int inHeight)
 {
 	CleanUp();
 
-	mTexture = MAKE_NEW(Texture);
-	mTexture->Init(inWidth, inHeight, 1, FORMAT_R24G8_TYPELESS, 0, BIND_DEPTH_STENCIL | BIND_SHADER_RESOURCE);
+	//mTexture = MAKE_NEW(Texture);
+	//mTexture->Init(inWidth, inHeight, 1, FORMAT_R24G8_TYPELESS, 0, BIND_DEPTH_STENCIL | BIND_SHADER_RESOURCE);
+
+	mTexture = theResourceFactory.MakeTexture(int2(inWidth, inHeight), 1, FORMAT_R24G8_TYPELESS, BIND_DEPTH_STENCIL | BIND_SHADER_RESOURCE);
 
 	// Create the depth stencil view
 	D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;

@@ -61,14 +61,17 @@
     <Filter Include="Resource Files\SystemShaders">
       <UniqueIdentifier>{68315d72-dfc3-4bab-afb0-e2c2f0d47ba1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Resource">
+      <UniqueIdentifier>{5434a6a5-5604-4c15-9b55-e2f6e0ec7282}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Resource">
+      <UniqueIdentifier>{47704be3-2c9a-4ef7-9882-2d0e37d377c5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BaseResource.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="Camera.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
@@ -183,6 +186,12 @@
     <ClInclude Include="CameraController.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
+    <ClInclude Include="ResourceFactory.h">
+      <Filter>Header Files\Resource</Filter>
+    </ClInclude>
+    <ClInclude Include="BaseResource.h">
+      <Filter>Header Files\Resource</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DrawableObject.cpp">
@@ -281,6 +290,9 @@
     <ClCompile Include="GaagFramework.cpp" />
     <ClCompile Include="CameraController.cpp">
       <Filter>Source Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceFactory.cpp">
+      <Filter>Source Files\Resource</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -2,10 +2,10 @@
 #include "GaagCommon.h"
 
 // predeclarations
-PREDEFINE(ConstantBuffer, pConstantBuffer);
-PREDEFINE(ComputeShader, pComputeShader);
-PREDEFINE(RenderTarget, pRenderTarget);
-PREDEFINE(Texture, pTexture);
+REGISTERCLASS(ConstantBuffer);
+REGISTERCLASS(ComputeShader);
+REGISTERCLASS(RenderTarget);
+REGISTERCLASS(Texture);
 
 
 class TAARenderer

@@ -222,6 +222,7 @@
     <ClInclude Include="RenderContext.h" />
     <ClInclude Include="RenderTarget.h" />
     <ClInclude Include="PixelShader.h" />
+    <ClInclude Include="ResourceFactory.h" />
     <ClInclude Include="Sampler.h" />
     <ClInclude Include="ShadowRenderer.h" />
     <ClInclude Include="TAARenderer.h" />
@@ -257,6 +258,7 @@
     <ClCompile Include="ReflectionRenderer.cpp" />
     <ClCompile Include="RenderContext.cpp" />
     <ClCompile Include="RenderTarget.cpp" />
+    <ClCompile Include="ResourceFactory.cpp" />
     <ClCompile Include="Sampler.cpp" />
     <ClCompile Include="ShadowRenderer.cpp" />
     <ClCompile Include="TAARenderer.cpp" />

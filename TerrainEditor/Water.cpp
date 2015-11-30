@@ -19,8 +19,8 @@ void Water::Init(pHeightField inTerrainHeightField, pMaterial inMaterial)
 		for (int y = 0; y < mNumTiles.y; y++)
 		{
 			int2 tile_coord(x, y);
-			pTexture terrain_height_texture = mTerrainHeightField->GetTile(tile_coord)->GetTexture();
-			pTexture water_height_texture = mWaterHeightField->GetTile(tile_coord)->GetTexture();
+			pTexture terrain_height_texture = mTerrainHeightField->GetTile(tile_coord)->GetHeightTexture();
+			pTexture water_height_texture = mWaterHeightField->GetTile(tile_coord)->GetHeightTexture();
 			
 			pWaterTile water_tile = MAKE_NEW(WaterTile);
 			water_tile->Init(terrain_height_texture, water_height_texture, 

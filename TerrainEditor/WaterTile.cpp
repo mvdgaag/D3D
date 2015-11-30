@@ -14,39 +14,28 @@ void WaterTile::Init(pTexture inTerrainHeightTexture, pTexture inWaterHeightText
 	mTerrainHeightTexture = inTerrainHeightTexture;
 
 	// create waterheight render target
-	mWaterHeightTarget = MAKE_NEW(RenderTarget);
-	mWaterHeightTarget->Init(inWaterHeightTexture);
+	mWaterHeightTarget = theResourceFactory.MakeRenderTarget(inWaterHeightTexture);
 
 	// collect data for creating the other textures/rendertargets
 	mResolution.x = inWaterHeightTexture->GetWidth();
 	mResolution.y = inWaterHeightTexture->GetHeight();
 	Format format = inWaterHeightTexture->GetFormat();
 	BindFlag bind_flags = required_flags;
-	CPUAccessFlag cpu_access_flags = CPUAccessFlag::CPU_ACCESS_DEFAULT;
 
 	// flux has four components, but dx11 does not allow writing both from compute
 	// to they are interleaved in an R32 texture of four times the width
-	pTexture flux_texture = MAKE_NEW(Texture);
-	flux_texture->Init(mResolution.x * 4, mResolution.y, 1, FORMAT_R32_FLOAT, 0, bind_flags, cpu_access_flags);
-	mFluxRenderTarget = MAKE_NEW(RenderTarget);
-	mFluxRenderTarget->Init(flux_texture);
+	pTexture flux_texture = theResourceFactory.MakeTexture(int2(mResolution.x * 4, mResolution.y), 1, FORMAT_R32_FLOAT, bind_flags);
+	mFluxRenderTarget = theResourceFactory.MakeRenderTarget(flux_texture);
 
 	// create the water height rendertarget for drawing (this will total height plus water)
-	mWaterDepthTarget = MAKE_NEW(RenderTarget);
-	mWaterDepthTarget->Init(mResolution.x, mResolution.y, 1, FORMAT_R32_FLOAT);
+	mWaterDepthTarget = theResourceFactory.MakeRenderTarget(int2(mResolution.x, mResolution.y), 1, FORMAT_R32_FLOAT);
 
 	// create the compute shaders for the sim
-	mUpdateFluxShader = MAKE_NEW(ComputeShader);
-	mUpdateFluxShader->InitFromFile("Shaders/UpdateFlux.hlsl");
-
-	mUpdateFluxBorderShader = MAKE_NEW(ComputeShader);
-	mUpdateFluxBorderShader->InitFromFile("Shaders/UpdateFluxBorder.hlsl");
-
-	mUpdateWaterShader = MAKE_NEW(ComputeShader);
-	mUpdateWaterShader->InitFromFile("Shaders/UpdateWater.hlsl");
-
-	mUpdateWaterBorderShader = MAKE_NEW(ComputeShader);
-	mUpdateWaterBorderShader->InitFromFile("Shaders/UpdateWaterBorder.hlsl");
+	// TODO get instead of load. Load should be unique in init somewhere
+	mUpdateFluxShader = theResourceFactory.LoadComputeShader("Shaders/UpdateFlux.hlsl");
+	mUpdateFluxBorderShader = theResourceFactory.LoadComputeShader("Shaders/UpdateFluxBorder.hlsl");
+	mUpdateWaterShader = theResourceFactory.LoadComputeShader("Shaders/UpdateWater.hlsl");
+	mUpdateWaterBorderShader = theResourceFactory.LoadComputeShader("Shaders/UpdateWaterBorder.hlsl");
 
 	mTimeStep = 0.01;
 	mFluidity = 10.0;
@@ -55,11 +44,8 @@ void WaterTile::Init(pTexture inTerrainHeightTexture, pTexture inWaterHeightText
 	mHeightScale = inHeightScale;
 	mFriction = 0.9;
 
-	mFluxConstantBuffer = MAKE_NEW(ConstantBuffer);
-	mFluxConstantBuffer->Init(sizeof(float4));
-
-	mWaterConstantBuffer = MAKE_NEW(ConstantBuffer);
-	mWaterConstantBuffer->Init(sizeof(float4));
+	mFluxConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(float4));
+	mWaterConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(float4));
 }
 
 

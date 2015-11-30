@@ -7,9 +7,16 @@ void HeightFieldTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments
 
 	mNumSegments = inNumSegments;
 
-	mHeightMapRenderTarget = MAKE_NEW(RenderTarget);
-	mHeightMapRenderTarget->Init(inHeightTexture);
+	mHeightMapRenderTarget = theResourceFactory.MakeRenderTarget(inHeightTexture);
 	mHeightMapTexture = mHeightMapRenderTarget->GetTexture();
+	
+	mNormalTexture = theResourceFactory.MakeTexture(int2(mHeightMapTexture->GetWidth(), mHeightMapTexture->GetHeight()),
+		1, Format::FORMAT_R8G8B8A8_SNORM, BindFlag::BIND_COMPUTE_TARGET);
+	mNormalRenderTarget = theResourceFactory.MakeRenderTarget(mNormalTexture);
+
+	// TODO:
+	//mUpdateNormalShader = theResourceFactory.Get("HeightFieldUpdateNormalShader");
+	//UpdateNormals();
 
 	mHeightScale = inScale.z;
 	mPixelsPerMeter = float2(mHeightMapTexture->GetWidth(), mHeightMapTexture->GetHeight()) / float2(inScale);
@@ -35,9 +42,9 @@ void HeightFieldTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments
 	}
 
 	int row_offset = inNumSegments.x + 1;
-	for (int y = 0; y < inNumSegments.y - 1; y++)
+	for (int y = 0; y < inNumSegments.y; y++)
 	{
-		for (int x = 0; x < inNumSegments.x - 1; x++)
+		for (int x = 0; x < inNumSegments.x; x++)
 		{
 			int idx = y * row_offset + x;
 			indices.push_back(idx);
@@ -49,14 +56,13 @@ void HeightFieldTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments
 		}
 	}
 
-	pMesh mesh = MAKE_NEW(Mesh);
+	pMesh mesh = theResourceFactory.MakeMesh();
 	mesh->InitFromData(vertices.data(), vertices.size(), indices.data(), indices.size());
 	
 	DrawableObject::Init(mesh, inMaterial);
 	Translate(inPosition);
 
-	mConstantBuffer = MAKE_NEW(ConstantBuffer);
-	mConstantBuffer->Init(sizeof(mConstantBufferData));
+	mConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(mConstantBufferData));
 	
 	mConstantBufferData.scale = float4(inScale, 0);
 	theRenderContext.UpdateSubResource(*mConstantBuffer, &mConstantBufferData);
@@ -75,16 +81,18 @@ void HeightFieldTile::CleanUp()
 }
 
 
-void HeightFieldTile::SetTexture(pTexture inTexture)
+void HeightFieldTile::UpdateNormals()
 {
-
+	theRenderContext.CSSetShader(mUpdateNormalShader);
 }
+
 
 
 void HeightFieldTile::PrepareToDraw()
 {
+	pSampler point_sampler = theResourceFactory.GetDefaultPointSampler();
 	theRenderContext.VSSetConstantBuffer(mConstantBuffer, 2);
-	theRenderContext.VSSetTextureAndSampler(mHeightMapTexture, Gaag.GetPointSampler(), 0);
+	theRenderContext.VSSetTextureAndSampler(mHeightMapTexture, point_sampler, 0);
 }
 
 
