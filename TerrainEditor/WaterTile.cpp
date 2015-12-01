@@ -96,8 +96,8 @@ void WaterTile::UpdateFlux(pWaterTile inNorthNeighbor, pWaterTile inEastNeighbor
 	theRenderContext.CSSetTexture(mWaterDepthTarget->GetTexture(), 1);
 	theRenderContext.CSSetTexture(inNorthNeighbor->GetWaterHeightTexture(), 2);
 	theRenderContext.CSSetTexture(inEastNeighbor->GetWaterHeightTexture(), 3);
-	theRenderContext.CSSetTexture(inSouthNeighbor->GetFluxTexture(), 4);
-	theRenderContext.CSSetTexture(inWestNeighbor->GetFluxTexture(), 5);
+	theRenderContext.CSSetTexture(inSouthNeighbor->GetWaterHeightTexture(), 4);
+	theRenderContext.CSSetTexture(inWestNeighbor->GetWaterHeightTexture(), 5);
 	theRenderContext.CSSetConstantBuffer(mFluxConstantBuffer, 0);
 	num_threads = (mResolution + 31) / 32;
 	theRenderContext.Dispatch(num_threads.x, 1, 1); // assumes square texture
@@ -149,10 +149,8 @@ void WaterTile::UpdateWater(pWaterTile inNorthNeighbor, pWaterTile inEastNeighbo
 	theRenderContext.CSSetTexture(mFluxRenderTarget->GetTexture(), 1);
 	theRenderContext.CSSetTexture(inNorthNeighbor->GetFluxTexture(), 2);
 	theRenderContext.CSSetTexture(inEastNeighbor->GetFluxTexture(), 3);
-	theRenderContext.CSSetTexture(inSouthNeighbor->GetWaterDepthTexture(), 4);
-	theRenderContext.CSSetTexture(inSouthNeighbor->GetWaterHeightTexture(), 6);
-	theRenderContext.CSSetTexture(inWestNeighbor->GetWaterDepthTexture(), 5);
-	theRenderContext.CSSetTexture(inWestNeighbor->GetWaterHeightTexture(), 7);
+	theRenderContext.CSSetTexture(inSouthNeighbor->GetFluxTexture(), 4);
+	theRenderContext.CSSetTexture(inWestNeighbor->GetFluxTexture(), 5);
 	theRenderContext.CSSetConstantBuffer(mWaterConstantBuffer, 0);
 	num_threads = (mResolution + 31) / 32;
 	theRenderContext.Dispatch(num_threads.x, 1, 1); // assumes square texture
@@ -165,7 +163,5 @@ void WaterTile::UpdateWater(pWaterTile inNorthNeighbor, pWaterTile inEastNeighbo
 	theRenderContext.CSSetTexture(NULL, 3);
 	theRenderContext.CSSetTexture(NULL, 4);
 	theRenderContext.CSSetTexture(NULL, 5);
-	theRenderContext.CSSetTexture(NULL, 6);
-	theRenderContext.CSSetTexture(NULL, 7);
 	theRenderContext.CSSetShader(NULL);
 }
