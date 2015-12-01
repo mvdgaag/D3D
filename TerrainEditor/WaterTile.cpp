@@ -100,7 +100,7 @@ void WaterTile::UpdateFlux(pWaterTile inNorthNeighbor, pWaterTile inEastNeighbor
 	theRenderContext.CSSetTexture(inWestNeighbor->GetWaterHeightTexture(), 5);
 	theRenderContext.CSSetConstantBuffer(mFluxConstantBuffer, 0);
 	num_threads = (mResolution + 31) / 32;
-	theRenderContext.Dispatch(num_threads.x, 1, 1); // assumes square texture
+	theRenderContext.Dispatch(num_threads.x, 4, 1); // assumes square texture
 	theRenderContext.CSSetConstantBuffer(NULL, 0);
 	theRenderContext.CSSetRWTexture(NULL, 0);
 	theRenderContext.CSSetTexture(NULL, 0);
@@ -153,7 +153,7 @@ void WaterTile::UpdateWater(pWaterTile inNorthNeighbor, pWaterTile inEastNeighbo
 	theRenderContext.CSSetTexture(inWestNeighbor->GetFluxTexture(), 5);
 	theRenderContext.CSSetConstantBuffer(mWaterConstantBuffer, 0);
 	num_threads = (mResolution + 31) / 32;
-	theRenderContext.Dispatch(num_threads.x, 1, 1); // assumes square texture
+	theRenderContext.Dispatch(num_threads.x, 4, 1); // assumes square texture
 	theRenderContext.CSSetConstantBuffer(NULL, 0);
 	theRenderContext.CSSetRWTexture(NULL, 0);
 	theRenderContext.CSSetRWTexture(NULL, 1);

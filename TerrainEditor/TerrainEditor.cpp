@@ -118,6 +118,7 @@ void InitContent()
 			material.SetDiffuseTexture(NULL);
 			material.SetNormalTexture(NULL);
 			material.SetSurfaceTexture(NULL);
+			material.SetDiffuseValue(float4(1.0, 0.4, 0.0, 0.0));
 		}
 	}
 
