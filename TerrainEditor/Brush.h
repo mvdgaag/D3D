@@ -10,7 +10,7 @@ public:
 	Brush() {};
 	~Brush() {};
 	
-	void			Init(pComputeShader inShader, float inRadius = 10.0, float inFalloff = 0.5, float inStrength = 1.0);
+	void			Init(pComputeShader inShader, float inRadius = 10.0, float inFalloff = 0.5, float inStrength = 0.1);
 	void			Apply(pHeightFieldTile inTile, const rect& inPixelRect, const float2& inWorldPosition);
 	
 	void			SetRadius(float inRadius)					{ mRadius = inRadius; }

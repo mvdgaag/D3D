@@ -89,8 +89,11 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 		flux *= water_depth / delta_height;
 
 	// friction based on the wave height per water depth
-	float fric = friction * water_depth / (water_depth + delta_height);
-	flux *= pow(abs(fric), time_step);
+	// note that delta height is time dependent again
+	float fric = friction * saturate(3 * water_depth / (water_depth + delta_height / time_step));
+
+	// friction
+	flux *= pow(fric, time_step);
 	
 	SetFlux(coord, flux);
 }
