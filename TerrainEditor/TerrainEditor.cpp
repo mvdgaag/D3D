@@ -7,11 +7,13 @@
 #include "CameraController.h"
 #include "Water.h"
 #include "WaterTile.h"
+#include "PointLight.h"
 
 Window* g_window = nullptr;
 
 pDrawableObject g_obj;
 pMesh g_mesh;
+pPointLight g_lights[100];
 
 pMaterial g_BricksMaterial;
 pPixelShader g_HeightField_pixel_shader;
@@ -78,6 +80,12 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 void InitContent()
 {
 	g_obj = MAKE_NEW(DrawableObject);
+
+	for (int i = 0; i < 100; i++)
+	{
+		g_lights[i] = theResourceFactory.MakePointLight(float3((i/10 - 5) * 20.0f, 50.0f, (i%10 - 5) * 20.0f), 50.0, float4(0.1));
+		Gaag.RegisterLight(g_lights[i]);
+	}
 
 	g_mesh = theResourceFactory.LoadMesh("Models/sphere.obj");
 	g_HeightField_pixel_shader = theResourceFactory.LoadPixelShader("Shaders/TerrainFragmentShader.hlsl");

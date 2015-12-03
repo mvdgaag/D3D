@@ -164,6 +164,16 @@ pDepthStencilTarget ResourceFactory::MakeDepthStencilTarget(int2 inSize)
 };
 
 
+pPointLight ResourceFactory::MakePointLight(float3 inPosition, float inRadius, float4 inColor)
+{
+	pPointLight light = MAKE_NEW(PointLight);
+	light->Init(inPosition, inRadius, inColor);
+	RPC_STATUS status;
+	mResources[UuidHash(&light->mUUID, &status)] = light;
+	return light;
+};
+
+
 pMaterial ResourceFactory::CloneMaterial(pMaterial inOther)
 {
 	pMaterial result = MakeMaterial();

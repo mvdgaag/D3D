@@ -52,8 +52,12 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 
 	// skip border pixels
 	int2 coord = DTid.xy;
-	if ((coord.x <= 0) || (coord.x >= tex_size.x - 1) || (coord.y <= 0) || (coord.y >= tex_size.y - 1))
-		return;
+		if ((coord.x <= 0) || (coord.x >= tex_size.x - 1) || (coord.y <= 0) || (coord.y >= tex_size.y - 1))
+			return;
+	// asuint makes negative numbers very large and asuint is free, so optimises out two conditionals
+	// seems to make instabilities around the edges!
+	//if ((asuint(coord.x - 1) >= tex_size.x) || (asuint(coord.y - 1) >= tex_size.y))
+		//return;
 
 	// only run the sim if there's water
 	float water_depth = tWaterDepth[coord];

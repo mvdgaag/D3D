@@ -3,21 +3,13 @@
 
 #include "RenderContext.h"
 #include "ResourceFactory.h"
+#include "DeferredRenderer.h"
 #include "Input.h"
 #include "Time.h"
 
 #include "InputListener.h"
 #include "Window.h"
 			
-REGISTERCLASS(PixelShader);
-REGISTERCLASS(VertexShader);
-REGISTERCLASS(ComputeShader);
-REGISTERCLASS(Texture);
-REGISTERCLASS(Sampler);
-REGISTERCLASS(RenderTarget);
-REGISTERCLASS(Mesh);
-REGISTERCLASS(ConstantBuffer);
-REGISTERCLASS(Material);
 REGISTERCLASS(DeferredRenderer);
 REGISTERCLASS(DrawableObject);
 REGISTERCLASS(Camera);
@@ -40,8 +32,12 @@ public:
 
 	void Render();
 	void SetFrameCallback(void(*inCallBack)(void)) { mFrameCallback = inCallBack; }
-	void RegisterObject(pDrawableObject obj) { mObjectList.push_back(obj); }
+	
+	void RegisterObject(pDrawableObject inObject) { mObjectList.push_back(inObject); }
+	void RegisterLight(pPointLight inLight) { mDeferredRenderer->RegisterLight(inLight); }
+
 	float3 ScreenToCameraPos(int2 inScreenPos);
+	float3 WorldToCameraPos(float3 inCameraPos);
 	float3 CameraToWorldPos(float3 inCameraPos);
 	float3 ScreenToWorldPos(int2 inScreenPos);
 

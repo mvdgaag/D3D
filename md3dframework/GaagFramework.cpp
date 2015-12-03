@@ -86,7 +86,6 @@ void GaagFramework::Render()
 		mFrameCallback();
 
 	mDeferredRenderer->Render(mObjectList);
-	//CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetGBuffer()->GetTexture(GBuffer::NORMAL));
 	CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetPostProcessed()->GetTexture());
 	theRenderContext.SwapBuffers();
 }
@@ -102,6 +101,14 @@ float3 GaagFramework::ScreenToCameraPos(int2 inScreenPos)
 	float2 xy = view_reconstruct * NDC * linear_depth;
 	float3 cam_pos = float3(xy.x, xy.y, -linear_depth);
 	return cam_pos;
+}
+
+
+float3 GaagFramework::WorldToCameraPos(float3 inCameraPos)
+{
+	float4x4 view = mCamera->GetViewMatrix();
+	float4 camera_pos = view * float4(inCameraPos, 1.0);
+	return float3(camera_pos);
 }
 
 

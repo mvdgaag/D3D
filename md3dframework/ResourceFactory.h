@@ -11,6 +11,7 @@
 #include "ConstantBuffer.h"
 #include "RenderTarget.h"
 #include "DepthStencilTarget.h"
+#include "PointLight.h"
 
 
 #define theResourceFactory ResourceFactory::GetInstance()
@@ -44,6 +45,7 @@ public:
 	pMaterial			MakeMaterial();
 	pSampler			MakeSampler(SamplerFilter inFilter, SamplerAddressMode inAddressModeU, SamplerAddressMode inAddressModeV);
 	pDepthStencilTarget MakeDepthStencilTarget(int2 inSize);
+	pPointLight			MakePointLight(float3 inPosition, float inRadius, float4 inColor);
 
 	pMaterial			CloneMaterial(pMaterial inOther);
 

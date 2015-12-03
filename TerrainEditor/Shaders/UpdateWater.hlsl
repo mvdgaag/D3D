@@ -39,7 +39,11 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	int2 coord = DTid.xy;
 	if ((coord.x <= 0) || (coord.x >= tex_size.x - 1) || (coord.y <= 0) || (coord.y >= tex_size.y - 1))
 		return;
-		
+	// asuint makes negative numbers very large and asuint is free, so optimises out two conditionals
+	// seems to make instabilities around the edges!
+	//if ((asuint(coord.x - 1) >= tex_size.x) || (asuint(coord.y - 1) >= tex_size.y))
+		//return;
+
 	// gather parameters
 	const float height_scale = cParams.x;
 	const float pixel_area = cParams.y;

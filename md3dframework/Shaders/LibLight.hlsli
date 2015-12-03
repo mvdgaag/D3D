@@ -1,5 +1,5 @@
 
-struct myMaterial
+struct Material
 {
 	float Roughness;
 	float Reflectivity; // float R0 = ((1.0 - inIOR) / (1.0 + inIOR));
@@ -7,7 +7,7 @@ struct myMaterial
 };
 
 
-struct myLight
+struct PointLight
 {
 	float3 Position;
 	float3 Color;
@@ -51,16 +51,14 @@ float OrenNayarDiffuse(float inNdL, float inNdV, float3 inNormal, float inViewVe
 }
 
 
-void CalculateLight(myMaterial inMaterial, float3 inPosition, float3 inNormal, myLight inLight, out float3 outDiffuse, out float3 outSpecular)
+void AccumulateLight(Material inMaterial, float3 inPosition, float3 inNormal, PointLight inLight, inout float3 ioDiffuseAccum, inout float3 ioSpecularAccum)
 {
-	float3 light_vec = normalize(inLight.Position - inPosition);
+	float3 light_vec = inLight.Position - inPosition;
 	float range_sqr = (inLight.Range * inLight.Range);
-	float falloff = 1.0 - (dot(light_vec, light_vec) - range_sqr) / range_sqr;
-	if (falloff < 0.0)
-	{
-		outSpecular = outDiffuse = 0;
+	float falloff = 1.0 - saturate( (dot(light_vec, light_vec) - range_sqr) / range_sqr );
+	light_vec = normalize(light_vec);
+	if (falloff <= 0.0)
 		return;
-	}
 
 	float3 normal = inNormal;
 	float3 view_vec = normalize(-inPosition);
@@ -79,12 +77,10 @@ void CalculateLight(myMaterial inMaterial, float3 inPosition, float3 inNormal, m
 	float G = GeometryFactor(ndv, ndl, alpha2);
 	float D = DistributionFactor(ndh, alpha2);
 
-	float spec = F * G * D;
-
-	// HACK
-	//spec *= ndh > 0;
+	// todo: fix specular falloff, should be next to none
+	float spec = F * G * D * falloff;
 
 	float3 diff = inMaterial.Diffuse * falloff * OrenNayarDiffuse(ndl, ndv, normal, view_vec, alpha);
-	outSpecular = inLight.Color * spec;
-	outDiffuse = inLight.Color * diff * (1.0 - inMaterial.Reflectivity);// / 3.1415;
+	ioSpecularAccum += inLight.Color * spec;
+	ioDiffuseAccum += inLight.Color * diff * (1.0 - inMaterial.Reflectivity);// / 3.1415;
 }

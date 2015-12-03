@@ -15,6 +15,7 @@
 #include "TAARenderer.h"
 #include "PostProcessRenderer.h"
 #include "DrawableObject.h"
+#include "PointLight.h"
 #include <assert.h>
 #include <d3d11_1.h>
 
@@ -109,6 +110,19 @@ void DeferredRenderer::Render(std::vector<pDrawableObject> inDrawList)
 }
 
 
+void DeferredRenderer::RegisterLight(pPointLight inLight)
+{
+	assert(mLights.size() < MAX_LIGHTS);
+	mLights.push_back(inLight);
+}
+
+
+void DeferredRenderer::ClearLights()
+{
+	mLights.clear(); 
+}
+
+
 void DeferredRenderer::GeometryPass(std::vector<pDrawableObject> inDrawList)
 {
 	theRenderContext.BeginEvent("Geometry Pass");
@@ -170,7 +184,7 @@ void DeferredRenderer::LightingPass()
 	//mShadowRenderer.Render();
 	
 	theRenderContext.SetMarker("Direct Lighting Renderer");
-	mDirectLightingRenderer.Render(mGBuffer, mDirectLightingDiffuse, mDirectLightingSpecular);
+	mDirectLightingRenderer.Render(mGBuffer, mDirectLightingDiffuse, mDirectLightingSpecular, mLights);
 	
 	theRenderContext.SetMarker("Depth Pyramid Renderer");
 	//mDepthPyramidRenderer.Render(mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), mDepthPyramid);

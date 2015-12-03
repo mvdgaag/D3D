@@ -211,6 +211,7 @@
     <ClInclude Include="GBuffer.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="InputListener.h" />
+    <ClInclude Include="PointLight.h" />
     <ClInclude Include="LightComposeRenderer.h" />
     <ClInclude Include="GaagMath.h" />
     <ClInclude Include="IndirectLightingRenderer.h" />
@@ -250,6 +251,7 @@
     <ClCompile Include="IndirectLightingRenderer.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="InputListener.cpp" />
+    <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="LightComposeRenderer.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Mesh.cpp" />

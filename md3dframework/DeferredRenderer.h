@@ -17,9 +17,9 @@ REGISTERCLASS(DeferredRenderer);
 REGISTERCLASS(RenderTarget);
 REGISTERCLASS(Texture);
 REGISTERCLASS(ConstantBuffer);
+REGISTERCLASS(PointLight);
 
-
-#define MAX_LIGHTS 64
+#define MAX_LIGHTS 256
 
 
 class DeferredRenderer
@@ -31,23 +31,23 @@ public:
 	void Init(int inWidth, int inHeight);
 	void CleanUp();
 	void Render(std::vector<pDrawableObject> inDrawList);
+	void RegisterLight(pPointLight inLight);
+	void ClearLights();
 
-	pGBuffer GetGBuffer() { return mGBuffer; }
-	pRenderTarget GetDepthPyramid() { return mDepthPyramid; }
-	pRenderTarget GetDirectLightingDiffuse() { return mDirectLightingDiffuse; }
-	pRenderTarget GetDirectLightingSpecular() { return mDirectLightingSpecular; }
-	pRenderTarget GetIndirectLighting() { return mIndirectLighting; }
-	pRenderTarget GetReflections() { return mReflections; }
-	pRenderTarget GetLightComposed() { return mLightComposed; }
-	pRenderTarget GetAntiAliased() { return mAntiAliased; }
-	pRenderTarget GetPostProcessed() { return mPostProcessed; }
+	pGBuffer		GetGBuffer()				{ return mGBuffer; }
+	pRenderTarget	GetDepthPyramid()			{ return mDepthPyramid; }
+	pRenderTarget	GetDirectLightingDiffuse()	{ return mDirectLightingDiffuse; }
+	pRenderTarget	GetDirectLightingSpecular() { return mDirectLightingSpecular; }
+	pRenderTarget	GetIndirectLighting()		{ return mIndirectLighting; }
+	pRenderTarget	GetReflections()			{ return mReflections; }
+	pRenderTarget	GetLightComposed()			{ return mLightComposed; }
+	pRenderTarget	GetAntiAliased()			{ return mAntiAliased; }
+	pRenderTarget	GetPostProcessed()			{ return mPostProcessed; }
 
-	pConstantBuffer GetConstantBufferEveryFrame() { return mConstantBufferEveryFrame; }
-	pConstantBuffer GetConstantBufferOnDemand() { return mConstantBufferOnDemand; }
+	pConstantBuffer	GetConstantBufferEveryFrame()	{ return mConstantBufferEveryFrame; }
+	pConstantBuffer	GetConstantBufferOnDemand()		{ return mConstantBufferOnDemand; }
 
-	// TODO:
-	void AddLights() {}
-	void RemoveLights() {}
+
 
 private:
 	DeferredRenderer(DeferredRenderer const&) = delete;
@@ -86,7 +86,11 @@ private:
 	{
 		float4 lightPositions[MAX_LIGHTS];
 		float4 lightColors[MAX_LIGHTS];
+		float4 lightData; // x = count
 	};
+	
+	ConstantDataOnDemand	mConstantDataOnDemand;
+	apPointLight			mLights;
 	
 	pGBuffer			mGBuffer = nullptr;
 	pRenderTarget		mDepthPyramid = nullptr;
