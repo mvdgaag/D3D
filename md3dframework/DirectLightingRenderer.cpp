@@ -44,10 +44,9 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 
 	for (int i = 0; i < inLights.size(); i++)
 	{
-		float4 pos = inLights[i]->GetPosition();
-		float radius = pos.w;
-		pos = float4(Gaag.WorldToCameraPos(float3(pos)), radius);
-		mConstantBufferLightData.lightPositions[i] = pos;
+		float3 pos = inLights[i]->GetPosition();
+		float radius = inLights[i]->GetRadius();
+		mConstantBufferLightData.lightPositions[i] = float4(Gaag.WorldToCameraPos(float3(pos)), radius);
 		mConstantBufferLightData.lightColors[i] = inLights[i]->GetColor();
 	}
 	mConstantBufferLightData.lightData = float4(inLights.size(), 0, 0, 0);

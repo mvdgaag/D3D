@@ -14,11 +14,11 @@ public:
 	void Init(float3 inPosition, float inRadius, float4 inColor) { mPosition = float4(inPosition, inRadius); mColor = inColor; }
 	void CleanUp() override {}
 
-	float4	GetPosition()					{ return mPosition; }
+	float3	GetPosition()					{ return float3(mPosition); }
 	float	GetRadius()						{ return mPosition.w; }
 	float4	GetColor()						{ return mColor; }
 
-	void	SetPosition(float4 inPosition)	{ mPosition = inPosition; }
+	void	SetPosition(float3 inPosition)	{ mPosition = float4(inPosition, mPosition.w); }
 	void	SetRadius(float inRadius)		{ mPosition.w = inRadius; }
 	void	SetColor(float4 inColor)		{ mColor = inColor; }
 

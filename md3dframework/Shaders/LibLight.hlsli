@@ -55,11 +55,11 @@ void AccumulateLight(Material inMaterial, float3 inPosition, float3 inNormal, Po
 {
 	float3 light_vec = inLight.Position - inPosition;
 	float range_sqr = (inLight.Range * inLight.Range);
-	float falloff = 1.0 - saturate( (dot(light_vec, light_vec) - range_sqr) / range_sqr );
-	light_vec = normalize(light_vec);
+	float falloff = saturate((range_sqr - dot(light_vec, light_vec)) / range_sqr);
 	if (falloff <= 0.0)
 		return;
 
+	light_vec = normalize(light_vec);
 	float3 normal = inNormal;
 	float3 view_vec = normalize(-inPosition);
 	float3 half_vec = normalize(view_vec + light_vec);
@@ -77,8 +77,7 @@ void AccumulateLight(Material inMaterial, float3 inPosition, float3 inNormal, Po
 	float G = GeometryFactor(ndv, ndl, alpha2);
 	float D = DistributionFactor(ndh, alpha2);
 
-	// todo: fix specular falloff, should be next to none
-	float spec = F * G * D * falloff;
+	float spec = F * G * D;
 
 	float3 diff = inMaterial.Diffuse * falloff * OrenNayarDiffuse(ndl, ndv, normal, view_vec, alpha);
 	ioSpecularAccum += inLight.Color * spec;

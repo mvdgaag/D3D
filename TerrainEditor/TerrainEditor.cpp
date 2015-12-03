@@ -38,10 +38,13 @@ void CleanUpContent();
 static void FrameFunc()
 {
 	float time_step = (float)Gaag.GetFrameDeltaTime();
+	g_water->Update(time_step);
+	
 	float angle = 0.1f * 2.0f * 3.1415f * time_step;
 	g_obj->Rotate(float3(0.0f, 1.0f, 0.0f), angle);
 
-	g_water->Update(time_step);
+	angle = 6.283f * glm::fract(theTime.GetTime() / 5.0);
+	g_lights[0]->SetPosition(float3(sin(angle), 1.0, cos(angle)) * 20.0f);
 }
 
 
@@ -83,8 +86,8 @@ void InitContent()
 
 	for (int i = 0; i < 100; i++)
 	{
-		g_lights[i] = theResourceFactory.MakePointLight(float3((i/10 - 5) * 20.0f, 50.0f, (i%10 - 5) * 20.0f), 50.0, float4(0.1));
-		Gaag.RegisterLight(g_lights[i]);
+		g_lights[i] = theResourceFactory.MakePointLight(float3((i/10 - 5) * 20.0f, 20.0f, (i%10 - 5) * 20.0f), 20.0f, float4(1.0));
+			Gaag.RegisterLight(g_lights[i]);
 	}
 
 	g_mesh = theResourceFactory.LoadMesh("Models/sphere.obj");

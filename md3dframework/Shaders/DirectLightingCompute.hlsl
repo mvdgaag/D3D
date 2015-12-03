@@ -54,7 +54,7 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 
 	// TODO: read these values from depth pyramid
 	float min_tile_z = 0.0;
-	float max_tile_z = 10000.0;
+	float max_tile_z = 1000.0;
 
 	// first thread initializes shared memory
 	if (inGroupIndex == 0)
@@ -66,8 +66,8 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 	float2 tile_scale = cTargetSize.xy / float(2 * TILE_SIZE);	// tiles per half screen
 	float2 tile_bias = tile_scale - float2(inGroupID.xy);		// the tile offset in tile sizes, relative to middle of screen
 	
-	float4 horizontal =	float4(cProjectionMatrix._11 * tile_scale.x, 0.0f, tile_bias.x, 0.0f);
-	float4 vertical =	float4(0.0f, -cProjectionMatrix._22 * tile_scale.y, tile_bias.y, 0.0f);
+	float4 horizontal =	float4(-cProjectionMatrix._11 * tile_scale.x, 0.0f, tile_bias.x, 0.0f);
+	float4 vertical =	float4(0.0f, cProjectionMatrix._22 * tile_scale.y, tile_bias.y, 0.0f);
 	float4 forward =	float4(0.0f, 0.0f, 1.0f, 0.0f);
 
 	float4 frustum[6];
@@ -75,8 +75,8 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 	frustum[1] = normalize(forward + horizontal);		// right
 	frustum[2] = normalize(forward - vertical);			// bottom
 	frustum[3] = normalize(forward + vertical);			// top
-	frustum[4] = float4(0.0f, 0.0f, 1.0f, -min_tile_z);	// near
-	frustum[5] = float4(0.0f, 0.0f, -1.0f, max_tile_z);	// far
+	frustum[4] = float4(0.0f, 0.0f, -1.0f, min_tile_z);	// near
+	frustum[5] = float4(0.0f, 0.0f, 1.0f, max_tile_z);	// far
 
 	// each thread tests a number of lights against the frustrum
 	int num_lights = cLightData.x;
@@ -89,7 +89,7 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 		for (uint i = 0; i < 6; ++i)
 		{
 			float distance = dot(frustum[i], float4(light_pos.xyz, 1.0f));
-			in_frustum = in_frustum && (distance >= -light_pos.w * 2);
+			in_frustum = in_frustum && (distance >= -light_pos.w);
 		}
 
 		// add to list if in frustum
@@ -106,6 +106,7 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 	// each thread now accumulates the light for one texel
 	float3 diffuse_accum = 0;
 	float3 specular_accum = 0;
+	float debug_val = 0;
 
 	// only light pixels in the render target	
 	if (all(coord < cTargetSize.xy) && (sTileNumLights > 0))
@@ -133,9 +134,11 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 
 			// apply BRDF
 			AccumulateLight(material, position, normal, light, diffuse_accum, specular_accum);
+
+			debug_val++;
 		}
 	}
 
-	OutDiffuse[coord] = float4(diffuse_accum, 1);
+	OutDiffuse[coord] = float4(diffuse_accum, 1);// +debug_val / 20.0;
 	OutSpecular[coord] = float4(specular_accum, 1);
 }
