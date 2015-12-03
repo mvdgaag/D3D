@@ -101,7 +101,7 @@ void InitContent()
 	g_BricksMaterial->SetNormalTexture(g_normal_texture);
 	g_BricksMaterial->SetSurfaceTexture(g_surface_texture);
 	g_BricksMaterial->SetDiffuseValue(float4(0.6f, 0.6f, 0.6f, 0.0f));
-	g_BricksMaterial->SetReflectivityValue(0.5f);
+	g_BricksMaterial->SetReflectivityValue(0.1f);
 	g_BricksMaterial->SetRoughnessValue(0.25f);
 	g_BricksMaterial->SetMetalicityValue(0.0f);
 	g_BricksMaterial->SetEmissivenessValue(0.0f);
@@ -130,6 +130,8 @@ void InitContent()
 			material.SetNormalTexture(NULL);
 			material.SetSurfaceTexture(NULL);
 			material.SetDiffuseValue(float4(1.0, 0.4, 0.0, 0.0));
+			material.SetReflectivityValue(0.5);
+			material.SetRoughnessValue(0.2);
 		}
 	}
 

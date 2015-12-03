@@ -104,7 +104,7 @@ void CS(uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID)
 
 	// SKIP
 	//AccumulateSamples(uv, start_angle, threadIdx);
-	//dst[coord] = float4(IntegrateLighting(GTid), 0);
+	//dst[coord] = float4(IntegrateLighting(GTid), 0) * 5;
 	
-	dst[coord] = 0;
+	//dst[coord] = 0;
 }

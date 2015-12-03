@@ -43,9 +43,66 @@ SamplerState LinearSampler
 };
 
 
+
+
+float3 CalculateDiffuse(Material inMaterial, float3 inPosition, float3 inNormal, PointLight inLight)
+{
+	float3 light_vec = inLight.Position - inPosition;
+	float range_sqr = (inLight.Range * inLight.Range);
+	float falloff = saturate((range_sqr - dot(light_vec, light_vec)) / range_sqr);
+	if (falloff <= 0.0)
+		return 0;
+
+	light_vec = normalize(light_vec);
+	float3 normal = inNormal;
+	float3 view_vec = normalize(-inPosition);
+
+	float ndl = saturate(dot(normal, light_vec));
+	float ndv = saturate(dot(normal, view_vec));
+
+	float alpha = inMaterial.Roughness * inMaterial.Roughness;
+
+	float3 diff = inMaterial.Diffuse * falloff * OrenNayarDiffuse(ndl, ndv, normal, view_vec, alpha);
+	return inLight.Color * diff * (1.0 - inMaterial.Reflectivity);
+}
+
+
+
+float3 CalculateSpecular(Material inMaterial, float3 inPosition, float3 inNormal, PointLight inLight)
+{
+	float3 light_vec = inLight.Position - inPosition;
+	light_vec = normalize(light_vec);
+
+	float3 normal = inNormal;
+	float3 view_vec = normalize(-inPosition);
+	float3 half_vec = normalize(view_vec + light_vec);
+
+	float ndl = saturate(dot(normal, light_vec));
+	float ndv = saturate(dot(normal, view_vec));
+	float ndh = saturate(dot(normal, half_vec));
+
+	float alpha = inMaterial.Roughness * inMaterial.Roughness;
+	float alpha2 = alpha * alpha;
+
+	float F = FresnelFactor(ndv, inMaterial.Reflectivity);
+	float G = GeometryFactor(ndv, ndl, alpha2);
+	float D = DistributionFactor(ndh, alpha2);
+
+	float spec = F * G * D;
+
+	return inLight.Color * spec;
+}
+
+
 [numthreads(TILE_SIZE, TILE_SIZE, 1)]
 void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThreadID, uint inGroupIndex : SV_GroupIndex)
 {
+	// first thread initializes shared memory
+	if (inGroupIndex == 0)
+		sTileNumLights = 0;
+
+	GroupMemoryBarrierWithGroupSync();
+
 	int2	coord =			inDispatchThreadID.xy;
 	float	linear_depth =	LinearDepth[coord];
 	half3	normal =		DecodeNormal(Normal[coord].xy);
@@ -55,12 +112,6 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 	// TODO: read these values from depth pyramid
 	float min_tile_z = 0.0;
 	float max_tile_z = 1000.0;
-
-	// first thread initializes shared memory
-	if (inGroupIndex == 0)
-		sTileNumLights = 0;
-
-	GroupMemoryBarrierWithGroupSync();
 
 	// generate the frustum planes to test against
 	float2 tile_scale = cTargetSize.xy / float(2 * TILE_SIZE);	// tiles per half screen
@@ -106,10 +157,9 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 	// each thread now accumulates the light for one texel
 	float3 diffuse_accum = 0;
 	float3 specular_accum = 0;
-	float debug_val = 0;
 
 	// only light pixels in the render target	
-	if (all(coord < cTargetSize.xy) && (sTileNumLights > 0))
+	if (all(coord < cTargetSize.xy))
 	{
 		// setup material
 		Material material;
@@ -117,9 +167,9 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 		material.Reflectivity = surface.y;
 		material.Diffuse = diffuse;
 
-		// reconstruct camera space position of the texel
+		// reconstruct camera space texel_position of the texel
 		float2 uv = (float2(coord) + 0.5) / cTargetSize.xy;
-		float3 position = ReconstructCSPosition(uv, linear_depth, cViewReconstructionVector);
+		float3 texel_position = ReconstructCSPosition(uv, linear_depth, cViewReconstructionVector);
 		
 		// accumulate light from all sources
 		for (int list_index = 0; list_index < sTileNumLights; list_index++)
@@ -132,13 +182,31 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 			light.Color = cLightColors[light_index].xyz;
 			light.Range = cLightPositions[light_index].w;
 
-			// apply BRDF
-			AccumulateLight(material, position, normal, light, diffuse_accum, specular_accum);
+			diffuse_accum += CalculateDiffuse(material, texel_position, normal, light);
+		}
 
-			debug_val++;
+		// test all lights against specular cone
+		float3 spec_cone_dir = normalize(reflect(texel_position, normal));
+		// todo: make exact angle for roughness
+		float spec_cone_cos = 0.95;
+		for (int light_index = 0; light_index < cLightData.x; light_index++)
+		{
+			float3 light_dir = normalize(cLightPositions[light_index].xyz - texel_position);
+			float light_cone_cos = dot(spec_cone_dir, light_dir);
+			if (light_cone_cos > spec_cone_cos)
+			{
+				PointLight light;
+				light.Position = cLightPositions[light_index].xyz;
+				light.Color = cLightColors[light_index].xyz;
+				light.Range = cLightPositions[light_index].w;
+
+				// hide cone cutoff with weighting
+				float weight = (light_cone_cos - spec_cone_cos) / (1.0 - spec_cone_cos);
+				specular_accum += weight * CalculateSpecular(material, texel_position, normal, light);
+			}
 		}
 	}
 
-	OutDiffuse[coord] = float4(diffuse_accum, 1);// +debug_val / 20.0;
-	OutSpecular[coord] = float4(specular_accum, 1);
+	OutDiffuse[coord] = float4(diffuse_accum, 1);
+	OutSpecular[coord] = float4(specular_accum, 1) * 0.1;
 }

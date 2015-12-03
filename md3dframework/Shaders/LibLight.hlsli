@@ -67,8 +67,6 @@ void AccumulateLight(Material inMaterial, float3 inPosition, float3 inNormal, Po
 	float ndl = saturate(dot(normal, light_vec));
 	float ndv = saturate(dot(normal, view_vec));
 	float ndh = saturate(dot(normal, half_vec));
-	float ldh = saturate(dot(light_vec, half_vec));
-	float vdh = saturate(dot(view_vec, half_vec));
 
 	float alpha = inMaterial.Roughness * inMaterial.Roughness;
 	float alpha2 = alpha * alpha;
