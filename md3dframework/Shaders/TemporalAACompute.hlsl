@@ -57,5 +57,5 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	history_val = clamp(history_val, min_val, max_val);
 	
 	// blend
-	dst[coord] = lerp(val, history_val, blend_strength);
+	dst[coord] = saturate(lerp(val, history_val, blend_strength));
 }

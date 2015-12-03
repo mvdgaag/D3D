@@ -86,7 +86,7 @@ void InitContent()
 
 	for (int i = 0; i < 100; i++)
 	{
-		g_lights[i] = theResourceFactory.MakePointLight(float3((i/10 - 5) * 20.0f, 20.0f, (i%10 - 5) * 20.0f), 20.0f, float4(1.0));
+		g_lights[i] = theResourceFactory.MakePointLight(float3((i/10 - 5) * 20.0f, 20.0f, (i%10 - 5) * 20.0f), 30.0f, float4(1.0));
 			Gaag.RegisterLight(g_lights[i]);
 	}
 
@@ -112,7 +112,7 @@ void InitContent()
 	Gaag.RegisterObject(g_obj);
 
 	g_HeightField = MAKE_NEW(HeightField);
-	g_HeightField->Init(int2(3), int2(63), float3(50,50,5), g_BricksMaterial);
+	g_HeightField->Init(int2(3), int2(128), float3(50,50,5), g_BricksMaterial);
 
 	g_water = MAKE_NEW(Water);
 	g_water->Init(g_HeightField, g_BricksMaterial);
