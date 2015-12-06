@@ -55,9 +55,12 @@ void AccumulateLight(Material inMaterial, float3 inPosition, float3 inNormal, Po
 {
 	float3 light_vec = inLight.Position - inPosition;
 	float range_sqr = (inLight.Range * inLight.Range);
-	float falloff = saturate((range_sqr - dot(light_vec, light_vec)) / range_sqr);
-	if (falloff <= 0.0)
+	float sqr_dist = dot(light_vec, light_vec);
+	float attenuation = max(0, 1 - sqr_dist / range_sqr);
+	if (attenuation <= 0.0)
 		return;
+
+	attenuation *= attenuation;
 
 	light_vec = normalize(light_vec);
 	float3 normal = inNormal;
@@ -76,8 +79,8 @@ void AccumulateLight(Material inMaterial, float3 inPosition, float3 inNormal, Po
 	float D = DistributionFactor(ndh, alpha2);
 
 	float spec = F * G * D;
-
-	float3 diff = inMaterial.Diffuse * falloff * OrenNayarDiffuse(ndl, ndv, normal, view_vec, alpha);
-	ioSpecularAccum += inLight.Color * spec;
-	ioDiffuseAccum += inLight.Color * diff * (1.0 - inMaterial.Reflectivity);// / 3.1415;
+	float3 diff = inMaterial.Diffuse * OrenNayarDiffuse(ndl, ndv, normal, view_vec, alpha);
+	
+	ioSpecularAccum += inLight.Color * spec * attenuation;
+	ioDiffuseAccum += inLight.Color * diff * attenuation * (1.0 - inMaterial.Reflectivity);// / 3.1415;
 }
