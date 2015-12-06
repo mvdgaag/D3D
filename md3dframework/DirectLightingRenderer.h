@@ -8,9 +8,11 @@ REGISTERCLASS(RenderTarget);
 REGISTERCLASS(ConstantBuffer);
 REGISTERCLASS(GBuffer);
 REGISTERCLASS(PointLight);
+REGISTERCLASS(SpotLight);
 REGISTERCLASS(Camera);
 
-#define MAX_LIGHTS 256
+#define MAX_POINT_LIGHTS 256 // needs to match DirectLightingCompute.hlsl
+#define MAX_SPOT_LIGHTS 256 // needs to match DirectLightingCompute.hlsl
 
 
 class DirectLightingRenderer
@@ -21,7 +23,7 @@ public:
 
 	void Init();
 	void CleanUp();
-	void Render(pGBuffer inSource, pRenderTarget inTargetDiffuse, pRenderTarget inTargetSpecular, apPointLight inLights);
+	void Render(pGBuffer inSource, pRenderTarget inTargetDiffuse, pRenderTarget inTargetSpecular, apPointLight inPointLights, apSpotLight inSpotLights);
 
 private:
 	DirectLightingRenderer(DirectLightingRenderer const&) = delete;
@@ -35,19 +37,32 @@ private:
 		float4 frameData;
 	};
 
-	struct ConstantBufferLightData
+	struct ConstantBufferPointLightData
 	{
-		float4 lightPositions[MAX_LIGHTS];
-		float4 lightColors[MAX_LIGHTS];
+		float4 lightPositions[MAX_POINT_LIGHTS];
+		float4 lightColors[MAX_POINT_LIGHTS];
 		float4 lightData;
 	};
 
-	struct 
+	struct ConstantBufferSpotLightData
+	{
+		float4 lightPositions[MAX_SPOT_LIGHTS];
+		float4 lightDirections[MAX_SPOT_LIGHTS];
+		float4 lightColors[MAX_SPOT_LIGHTS];
+		float4 lightData;
+	};
+
 	ConstantBufferData mConstantBufferData;
 	pConstantBuffer mConstantBuffer = nullptr;
-	ConstantBufferLightData mConstantBufferLightData;
-	pConstantBuffer mConstantBufferLight = nullptr;
+	
+	ConstantBufferPointLightData mConstantBufferPointLightData;
+	pConstantBuffer mConstantBufferPointLights = nullptr;
+
+	ConstantBufferSpotLightData mConstantBufferSpotLightData;
+	pConstantBuffer mConstantBufferSpotLights = nullptr;
+
 	pComputeShader mShader = nullptr;
 	bool mInitialized = false;
 };
+
 

@@ -18,8 +18,7 @@ REGISTERCLASS(RenderTarget);
 REGISTERCLASS(Texture);
 REGISTERCLASS(ConstantBuffer);
 REGISTERCLASS(PointLight);
-
-#define MAX_LIGHTS 256
+REGISTERCLASS(SpotLight);
 
 
 class DeferredRenderer
@@ -32,6 +31,7 @@ public:
 	void CleanUp();
 	void Render(std::vector<pDrawableObject> inDrawList);
 	void RegisterLight(pPointLight inLight);
+	void RegisterLight(pSpotLight inLight);
 	void ClearLights();
 
 	pGBuffer		GetGBuffer()				{ return mGBuffer; }
@@ -84,13 +84,12 @@ private:
 
 	struct ConstantDataOnDemand
 	{
-		float4 lightPositions[MAX_LIGHTS];
-		float4 lightColors[MAX_LIGHTS];
-		float4 lightData; // x = count
+		float4 Data;
 	};
 	
 	ConstantDataOnDemand	mConstantDataOnDemand;
-	apPointLight			mLights;
+	apPointLight			mPointLights;
+	apSpotLight			mSpotLights;
 	
 	pGBuffer			mGBuffer = nullptr;
 	pRenderTarget		mDepthPyramid = nullptr;

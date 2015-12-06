@@ -15,6 +15,16 @@ struct PointLight
 };
 
 
+struct SpotLight
+{
+	float3 Position;
+	float3 Direction;
+	float3 Color;
+	float Range;
+	float ConeCos;
+};
+
+
 // Schlick
 float FresnelFactor(float inNdV, float inReflectivity)
 {

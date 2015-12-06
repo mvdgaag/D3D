@@ -112,14 +112,20 @@ void DeferredRenderer::Render(std::vector<pDrawableObject> inDrawList)
 
 void DeferredRenderer::RegisterLight(pPointLight inLight)
 {
-	assert(mLights.size() < MAX_LIGHTS);
-	mLights.push_back(inLight);
+	mPointLights.push_back(inLight);
+}
+
+
+void DeferredRenderer::RegisterLight(pSpotLight inLight)
+{
+	mSpotLights.push_back(inLight);
 }
 
 
 void DeferredRenderer::ClearLights()
 {
-	mLights.clear(); 
+	mPointLights.clear(); 
+	mSpotLights.clear();
 }
 
 
@@ -184,14 +190,13 @@ void DeferredRenderer::LightingPass()
 	//mShadowRenderer.Render();
 	
 	theRenderContext.SetMarker("Direct Lighting Renderer");
-	mDirectLightingRenderer.Render(mGBuffer, mDirectLightingDiffuse, mDirectLightingSpecular, mLights);
+	mDirectLightingRenderer.Render(mGBuffer, mDirectLightingDiffuse, mDirectLightingSpecular, mPointLights, mSpotLights);
 	
 	theRenderContext.SetMarker("Depth Pyramid Renderer");
 	//mDepthPyramidRenderer.Render(mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), mDepthPyramid);
 	
 	theRenderContext.SetMarker("Indirect Lighting Renderer");
-	mIndirectLightingRenderer.Render(mDirectLightingDiffuse->GetTexture(), mGBuffer->GetTexture(GBuffer::NORMAL), 
-		mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), mIndirectLighting);
+	//mIndirectLightingRenderer.Render(mDirectLightingDiffuse->GetTexture(), mGBuffer->GetTexture(GBuffer::NORMAL), mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), mIndirectLighting);
 	
 	theRenderContext.SetMarker("Reflection Renderer");
 	mReflectionRenderer.Render(mIndirectLighting->GetTexture(), mReflections);

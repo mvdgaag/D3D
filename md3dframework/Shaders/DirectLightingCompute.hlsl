@@ -1,9 +1,10 @@
 #include "LibHelper.hlsli"
 #include "LibLight.hlsli"
 
-#define TILE_SIZE	(8)
-#define GROUP_SIZE	(TILE_SIZE * TILE_SIZE)
-#define MAX_LIGHTS	256
+#define TILE_SIZE			(8)
+#define GROUP_SIZE			(TILE_SIZE * TILE_SIZE)
+#define MAX_POINT_LIGHTS	256
+#define MAX_SPOT_LIGHTS	256
 
 
 RWTexture2D<float4> OutDiffuse : register(u0);
@@ -14,7 +15,7 @@ Texture2D<float4> Diffuse : register(t2);
 Texture2D<float4> Surface : register(t3);
 
 
-groupshared uint sTileLightIndices[MAX_LIGHTS];
+groupshared uint sTileLightIndices[MAX_POINT_LIGHTS];
 groupshared uint sTileNumLights;
 groupshared uint sMaxTileDepth;
 groupshared uint sMinTileDepth;
@@ -31,9 +32,18 @@ cbuffer cLightingShaderConstants : register(b0)
 
 cbuffer cLightConstants : register(b1)
 {
-	float4	cLightPositions[MAX_LIGHTS];
-	float4	cLightColors[MAX_LIGHTS];
+	float4	cLightPositions[MAX_POINT_LIGHTS];
+	float4	cLightColors[MAX_POINT_LIGHTS];
 	float4	cLightData; // x = count
+};
+
+
+cbuffer cSpotLightConstants : register(b2)
+{
+	float4	cSpotLightPositions[MAX_SPOT_LIGHTS];
+	float4	cSpotLightDirections[MAX_SPOT_LIGHTS];
+	float4	cSpotLightColors[MAX_SPOT_LIGHTS];
+	float4	cSpotLightData; // x = count
 };
 
 
@@ -43,8 +53,6 @@ SamplerState LinearSampler
 	AddressU = Clamp;
 	AddressV = Clamp;
 };
-
-
 
 
 void CalculateLight(Material inMaterial, float3 inPosition, float3 inNormal, PointLight inLight, inout float3 ioDiffuse, inout float3 ioSpecular)
@@ -105,7 +113,7 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 	float	linear_depth =	LinearDepth[coord];
 	InterlockedMin(sMinTileDepth, uint(linear_depth));
 	InterlockedMax(sMaxTileDepth, uint(linear_depth + 1));
-
+	
 	GroupMemoryBarrierWithGroupSync();
 
 	float min_tile_depth = sMinTileDepth;
@@ -120,11 +128,11 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 	float4 forward =	float4(0.0f, 0.0f, 1.0f, 0.0f);
 
 	float4 frustum[6];
-	frustum[0] = normalize(forward + horizontal);		// left
-	frustum[1] = normalize(forward - horizontal);		// right
-	frustum[2] = normalize(forward + vertical);			// bottom
-	frustum[3] = normalize(forward - vertical);			// top
-	frustum[4] = float4(0.0f, 0.0f, 1.0f, min_tile_depth);	// near
+	frustum[0] = normalize(forward + horizontal);				// left
+	frustum[1] = normalize(forward - horizontal);				// right
+	frustum[2] = normalize(forward + vertical);					// bottom
+	frustum[3] = normalize(forward - vertical);					// top
+	frustum[4] = float4(0.0f, 0.0f, 1.0f, min_tile_depth);		// near
 	frustum[5] = float4(0.0f, 0.0f, -1.0f, -max_tile_depth);	// far
 
 	// each thread tests a number of lights against the frustrum
@@ -187,29 +195,6 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 
 			CalculateLight(material, texel_position, normal, light, diffuse_accum, specular_accum);
 		}
-
-		/*
-		// test all lights against specular cone
-		float3 spec_cone_dir = normalize(reflect(texel_position, normal));
-		// todo: make exact angle for roughness
-		float spec_cone_cos = 0.95;
-		for (int light_index = 0; light_index < cLightData.x; light_index++)
-		{
-			float3 light_dir = normalize(cLightPositions[light_index].xyz - texel_position);
-			float light_cone_cos = dot(spec_cone_dir, light_dir);
-			if (light_cone_cos > spec_cone_cos)
-			{
-				PointLight light;
-				light.Position = cLightPositions[light_index].xyz;
-				light.Color = cLightColors[light_index].xyz;
-				light.Range = cLightPositions[light_index].w;
-
-				// hide cone cutoff with weighting
-				float weight = (light_cone_cos - spec_cone_cos) / (1.0 - spec_cone_cos);
-				specular_accum += weight * CalculateSpecular(material, texel_position, normal, light);
-			}
-		}
-		*/
 	}
 
 	OutDiffuse[coord] = float4(diffuse_accum, 1);

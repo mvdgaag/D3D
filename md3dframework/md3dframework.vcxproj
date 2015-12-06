@@ -226,6 +226,7 @@
     <ClInclude Include="ResourceFactory.h" />
     <ClInclude Include="Sampler.h" />
     <ClInclude Include="ShadowRenderer.h" />
+    <ClInclude Include="SpotLight.h" />
     <ClInclude Include="TAARenderer.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="TextureUtil.h" />
@@ -263,6 +264,7 @@
     <ClCompile Include="ResourceFactory.cpp" />
     <ClCompile Include="Sampler.cpp" />
     <ClCompile Include="ShadowRenderer.cpp" />
+    <ClCompile Include="SpotLight.cpp" />
     <ClCompile Include="TAARenderer.cpp" />
     <ClCompile Include="Texture.cpp" />
     <ClCompile Include="TextureUtil.cpp" />

@@ -8,10 +8,11 @@
 #include "ConstantBuffer.h"
 #include "Camera.h"
 #include "PointLight.h"
+#include "SpotLight.h"
 #include <assert.h>
 
 
-void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDiffuse, pRenderTarget inTargetSpecular, apPointLight inLights)
+void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDiffuse, pRenderTarget inTargetSpecular, apPointLight inPointLights, apSpotLight inSpotLights)
 {
 	assert(mInitialized == true);
 
@@ -31,6 +32,7 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 	theRenderContext.CSSetRWTexture(inTargetDiffuse, 0);
 	theRenderContext.CSSetRWTexture(inTargetSpecular, 1);
 
+	// set general constant buffer data
 	pCamera cam = Gaag.GetCamera();
 	mConstantBufferData.projectionMatrix = transpose(cam->GetProjectionMatrix());
 	mConstantBufferData.viewspaceReconstructionVector.x = tan(0.5f * cam->GetFovX());
@@ -38,22 +40,40 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 	mConstantBufferData.targetSize.x = (float)theRenderContext.GetWidth();
 	mConstantBufferData.targetSize.y = (float)theRenderContext.GetHeight();
 	mConstantBufferData.frameData.x = (float)Gaag.GetFrameID();
-
 	theRenderContext.UpdateSubResource(*mConstantBuffer, &mConstantBufferData);
 	theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);
 
-	for (int i = 0; i < inLights.size(); i++)
+	// set constant buffer data for pointlights
+	for (int i = 0; i < inPointLights.size(); i++)
 	{
-		float3 pos = inLights[i]->GetPosition();
-		float radius = inLights[i]->GetRadius();
-		mConstantBufferLightData.lightPositions[i] = float4(Gaag.WorldToCameraPos(float3(pos)), radius);
-		mConstantBufferLightData.lightColors[i] = inLights[i]->GetColor();
+		float3 pos = inPointLights[i]->GetPosition();
+		float radius = inPointLights[i]->GetRadius();
+		mConstantBufferPointLightData.lightPositions[i] = float4(Gaag.WorldToCameraPos(float3(pos)), radius);
+		mConstantBufferPointLightData.lightColors[i] = inPointLights[i]->GetColor();
 	}
-	mConstantBufferLightData.lightData = float4(inLights.size(), 0, 0, 0);
+	mConstantBufferPointLightData.lightData = float4(inPointLights.size(), 0, 0, 0);
+	theRenderContext.UpdateSubResource(*mConstantBufferPointLights, &mConstantBufferPointLightData);
+	theRenderContext.CSSetConstantBuffer(mConstantBufferPointLights, 1);
 
-	theRenderContext.UpdateSubResource(*mConstantBufferLight, &mConstantBufferLightData);
-	theRenderContext.CSSetConstantBuffer(mConstantBufferLight, 1);
+	// set constant buffer data for spotligths
+	// TODO: implement spotlights in shader
+	for (int i = 0; i < inSpotLights.size(); i++)
+	{
+		float3 pos = inSpotLights[i]->GetPosition();
+		float radius = inSpotLights[i]->GetRadius();
+		mConstantBufferSpotLightData.lightPositions[i] = float4(Gaag.WorldToCameraPos(float3(pos)), radius);
 
+		float3 dir = inSpotLights[i]->GetDirection();
+		float cone_cos = inSpotLights[i]->GetConeCosine();
+		mConstantBufferSpotLightData.lightDirections[i] = float4(dir, cone_cos);
+
+		mConstantBufferSpotLightData.lightColors[i] = inSpotLights[i]->GetColor();
+	}
+	mConstantBufferSpotLightData.lightData = float4(inSpotLights.size(), 0, 0, 0);
+	theRenderContext.UpdateSubResource(*mConstantBufferSpotLights, &mConstantBufferSpotLightData);
+	theRenderContext.CSSetConstantBuffer(mConstantBufferSpotLights, 2);
+
+	// dispatch
 	int groups_x = (inTargetDiffuse->GetTexture()->GetWidth() + 7) / 8;
 	int groups_y = (inTargetDiffuse->GetTexture()->GetHeight() + 7) / 8;
 	theRenderContext.Dispatch(groups_x, groups_y, 1);
@@ -77,7 +97,8 @@ void DirectLightingRenderer::Init()
 	CleanUp();
 	mShader = theResourceFactory.LoadComputeShader("../md3dFramework/Shaders/DirectLightingCompute.hlsl");
 	mConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(ConstantBufferData));
-	mConstantBufferLight = theResourceFactory.MakeConstantBuffer(sizeof(ConstantBufferLightData));
+	mConstantBufferPointLights = theResourceFactory.MakeConstantBuffer(sizeof(ConstantBufferPointLightData));
+	mConstantBufferSpotLights = theResourceFactory.MakeConstantBuffer(sizeof(ConstantBufferSpotLightData));
 	mInitialized = true;
 }
 
@@ -86,6 +107,7 @@ void DirectLightingRenderer::CleanUp()
 {
 	mShader = nullptr;
 	mConstantBuffer = nullptr;
-	mConstantBufferLight = nullptr;
+	mConstantBufferPointLights = nullptr;
+	mConstantBufferSpotLights = nullptr;
 	mInitialized = false;
 }
