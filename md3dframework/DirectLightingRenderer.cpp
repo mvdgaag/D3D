@@ -66,8 +66,7 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 	// set constant buffer data for directional ligths
 	for (int i = 0; i < inDirectionalLights.size(); i++)
 	{
-		//mConstantBufferDirectionalLightData.lightDirections[i] = float4(Gaag.WorldToCameraPos(float3(-inDirectionalLights[i]->GetDirection())), 1.0);
-		mConstantBufferDirectionalLightData.lightDirections[i] = float4(Gaag.WorldToCameraNormal(float3(1,1,1)), 1.0);
+		mConstantBufferDirectionalLightData.lightDirections[i] = float4(Gaag.WorldToCameraNormal(float3(-inDirectionalLights[i]->GetDirection())), 1.0);
 		mConstantBufferDirectionalLightData.lightColors[i] = inDirectionalLights[i]->GetColor();
 	}
 	mConstantBufferDirectionalLightData.lightData = float4(inDirectionalLights.size(), 0, 0, 0);

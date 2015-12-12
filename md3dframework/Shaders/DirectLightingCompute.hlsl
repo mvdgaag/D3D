@@ -111,7 +111,7 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 	frustum[4] = float4(0.0f, 0.0f, 1.0f, min_tile_depth);		// near
 	frustum[5] = float4(0.0f, 0.0f, -1.0f, -max_tile_depth);	// far
 
-	// test  lights against the frustrum
+	// test point lights against the frustrum
 	int num_lights = cPointLightData.x;
 	for (uint light_index = inGroupIndex; light_index < num_lights; light_index += GROUP_SIZE)
 	{
@@ -134,6 +134,7 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 		}
 	}
 
+	// test spot lights against the frustrum
 	int num_Spot_lights = cSpotLightData.x;
 	for (uint light_index = inGroupIndex; light_index < num_Spot_lights; light_index += GROUP_SIZE)
 	{
@@ -180,7 +181,7 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 		float2 uv = (float2(coord) + 0.5) / cTargetSize.xy;
 		float3 texel_position = ReconstructCSPosition(uv, linear_depth, cViewReconstructionVector);
 		
-		// accumulate light from all pointlight sources
+		// accumulate light from all point light sources
 		for (int list_index = 0; list_index < sTileNumPointLights; list_index++)
 		{
 			int light_index = sTilePointLightIndices[list_index];
@@ -203,7 +204,7 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 			AccumulateLight(material, texel_position, normal, light, diffuse_accum, specular_accum);
 		}
 
-		// accumulate light from all spotlight sources
+		// accumulate light from all spot light sources
 		for (int list_index = 0; list_index < sTileNumSpotLights; list_index++)
 		{
 			int light_index = sTileSpotLightIndices[list_index];
