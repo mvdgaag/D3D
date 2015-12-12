@@ -13,9 +13,11 @@ public:
 
 	void Init(float3 inPosition, float inRadius, float3 inDirection, float inConeCosine, float4 inColor) 
 	{ 
-		mPosition = float4(inPosition, inRadius); 
-		mDirection = float4(inDirection, inConeCosine); 
-		mColor = inColor; 
+		SetPosition(inPosition);
+		SetRadius(inRadius);
+		SetDirection(inDirection);
+		SetConeCosine(inConeCosine);
+		SetColor(inColor);
 	}
 	void CleanUp() override {}
 
@@ -27,10 +29,13 @@ public:
 	float4	GetColor()							{ return mColor; }
 
 	void	SetPosition(float3 inPosition)		{ mPosition = float4(inPosition, mPosition.w); }
-	float	SetDirection(float3 inDirection)	{ mDirection = float4(inDirection, 1.0); }
+	void	SetDirection(float3 inDirection)	{ mDirection = float4(normalize(inDirection), mDirection.w); }
 	void	SetRadius(float inRadius)			{ mPosition.w = inRadius; }
-	float	SetAngle(float inAngle)				{ mDirection.w = cos(inAngle / 2.0f); }
+	void	SetConeCosine(float inCosine)		{ mDirection.w = inCosine; }
+	void	SetAngle(float inAngle)				{ mDirection.w = cos(inAngle / 2.0f); }
 	void	SetColor(float4 inColor)			{ mColor = inColor; }
+
+	void	LookAt(float3 inLocation)			{ SetDirection(inLocation - float3(mPosition)); }
 
 	ResourceType GetResourceType() const override { return ResourceType::SPOT_LIGHT; }
 

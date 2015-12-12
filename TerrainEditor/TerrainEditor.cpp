@@ -8,12 +8,14 @@
 #include "Water.h"
 #include "WaterTile.h"
 #include "PointLight.h"
+#include "SpotLight.h"
 
 Window* g_window = nullptr;
 
 pDrawableObject g_obj;
 pMesh g_mesh;
 pPointLight g_lights[100];
+pSpotLight g_spot_light;
 pDirectionalLight g_directional_light;
 
 pMaterial g_BricksMaterial;
@@ -46,6 +48,8 @@ static void FrameFunc()
 
 	angle = 6.283f * glm::fract(theTime.GetTime() / 5.0);
 	g_lights[0]->SetPosition(float3(sin(angle), 1.0, cos(angle)) * 20.0f);
+
+	g_spot_light->LookAt(float3(sin(angle), 1.0, cos(angle)) * 20.0f);
 }
 
 
@@ -87,11 +91,15 @@ void InitContent()
 
 	for (int i = 0; i < 100; i++)
 	{
-		g_lights[i] = theResourceFactory.MakePointLight(float3((i/10 - 5) * 20.0f, 20.0f, (i%10 - 5) * 20.0f), 40.0, float4(1.0));
-			Gaag.RegisterLight(g_lights[i]);
+		g_lights[i] = theResourceFactory.MakePointLight(float3((i/10 - 5) * 20.0f, 20.0f, (i%10 - 5) * 20.0f), 40.0, float4(0.1));
+		Gaag.RegisterLight(g_lights[i]);
 	}
+
 	g_directional_light = theResourceFactory.MakeDirectionalLight(float3(1, -1, 1), float4(1, 1, 1, 1));
 	Gaag.RegisterLight(g_directional_light);
+
+	g_spot_light = theResourceFactory.MakeSpotLight(float3(0, 10, 0), 50.0, float3(0, 0, 1), 0.5, float4(1, 0, 0, 1));
+	Gaag.RegisterLight(g_spot_light);
 
 	g_mesh = theResourceFactory.LoadMesh("Models/sphere.obj");
 	g_HeightField_pixel_shader = theResourceFactory.LoadPixelShader("Shaders/TerrainFragmentShader.hlsl");

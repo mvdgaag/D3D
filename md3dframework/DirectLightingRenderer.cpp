@@ -54,7 +54,7 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 		float radius = inSpotLights[i]->GetRadius();
 		mConstantBufferSpotLightData.lightPositions[i] = float4(Gaag.WorldToCameraPos(float3(pos)), radius);
 
-		float3 dir = inSpotLights[i]->GetDirection();
+		float3 dir = Gaag.WorldToCameraNormal(inSpotLights[i]->GetDirection());
 		float cone_cos = inSpotLights[i]->GetConeCosine();
 		mConstantBufferSpotLightData.lightDirections[i] = float4(dir, cone_cos);
 
