@@ -44,6 +44,7 @@ namespace TextureUtil
 	pComputeShader gTextureStitchSouthShader;
 	pComputeShader gTextureStitchWestShader;
 
+
 	void InitTextureUtil()
 	{
 		gTextureAddShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureAdd.hlsl");
@@ -147,6 +148,7 @@ namespace TextureUtil
 
 		for (int i = 0; i < inSources.size(); i++)
 			theRenderContext.CSSetTexture(nullptr, i);
+
 		theRenderContext.CSSetRWTexture(nullptr, 0);
 		theRenderContext.CSSetShader(nullptr);
 

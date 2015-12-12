@@ -19,6 +19,7 @@ REGISTERCLASS(Texture);
 REGISTERCLASS(ConstantBuffer);
 REGISTERCLASS(PointLight);
 REGISTERCLASS(SpotLight);
+REGISTERCLASS(DirectionalLight);
 
 
 class DeferredRenderer
@@ -32,6 +33,7 @@ public:
 	void Render(std::vector<pDrawableObject> inDrawList);
 	void RegisterLight(pPointLight inLight);
 	void RegisterLight(pSpotLight inLight);
+	void RegisterLight(pDirectionalLight inLight);
 	void ClearLights();
 
 	pGBuffer		GetGBuffer()				{ return mGBuffer; }
@@ -89,7 +91,8 @@ private:
 	
 	ConstantDataOnDemand	mConstantDataOnDemand;
 	apPointLight			mPointLights;
-	apSpotLight			mSpotLights;
+	apSpotLight				mSpotLights;
+	apDirectionalLight		mDirectionalLights;
 	
 	pGBuffer			mGBuffer = nullptr;
 	pRenderTarget		mDepthPyramid = nullptr;

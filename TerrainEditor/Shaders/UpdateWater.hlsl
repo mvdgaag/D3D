@@ -67,7 +67,6 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 
 	// update the water depth
 	water_depth += time_step * volume_scale * sum_flux;
-	water_depth += 0.001; // rain
 	
 	// cannot be negative
 	water_depth = max(0.0, water_depth);

@@ -56,6 +56,9 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	float4 min_val = min(min(min(valn, vals), min(vale, valw)), min(min(valne, valse), min(valnw, valsw)));
 	history_val = clamp(history_val, min_val, max_val);
 	
+	val = saturate(val);
+	history_val = saturate(history_val);
+
 	// blend
 	dst[coord] = saturate(lerp(val, history_val, blend_strength));
 }

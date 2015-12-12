@@ -9,11 +9,12 @@ REGISTERCLASS(ConstantBuffer);
 REGISTERCLASS(GBuffer);
 REGISTERCLASS(PointLight);
 REGISTERCLASS(SpotLight);
+REGISTERCLASS(DirectionalLight);
 REGISTERCLASS(Camera);
 
-#define MAX_POINT_LIGHTS 256 // needs to match DirectLightingCompute.hlsl
-#define MAX_SPOT_LIGHTS 256 // needs to match DirectLightingCompute.hlsl
-
+#define MAX_POINT_LIGHTS 128		// needs to match DirectLightingCompute.hlsl
+#define MAX_SPOT_LIGHTS 128			// needs to match DirectLightingCompute.hlsl
+#define MAX_DIRECTIONAL_LIGHTS 4	// needs to match DirectLightingCompute.hlsl
 
 class DirectLightingRenderer
 {
@@ -23,7 +24,8 @@ public:
 
 	void Init();
 	void CleanUp();
-	void Render(pGBuffer inSource, pRenderTarget inTargetDiffuse, pRenderTarget inTargetSpecular, apPointLight inPointLights, apSpotLight inSpotLights);
+	void Render(pGBuffer inSource, pRenderTarget inTargetDiffuse, pRenderTarget inTargetSpecular,
+		apPointLight inPointLights, apSpotLight inSpotLights, apDirectionalLight inDirectionalLights);
 
 private:
 	DirectLightingRenderer(DirectLightingRenderer const&) = delete;
@@ -52,6 +54,13 @@ private:
 		float4 lightData;
 	};
 
+	struct ConstantBufferDirectionalLightData
+	{
+		float4 lightDirections[MAX_DIRECTIONAL_LIGHTS];
+		float4 lightColors[MAX_DIRECTIONAL_LIGHTS];
+		float4 lightData;
+	};
+
 	ConstantBufferData mConstantBufferData;
 	pConstantBuffer mConstantBuffer = nullptr;
 	
@@ -60,6 +69,9 @@ private:
 
 	ConstantBufferSpotLightData mConstantBufferSpotLightData;
 	pConstantBuffer mConstantBufferSpotLights = nullptr;
+
+	ConstantBufferDirectionalLightData mConstantBufferDirectionalLightData;
+	pConstantBuffer mConstantBufferDirectionalLights = nullptr;
 
 	pComputeShader mShader = nullptr;
 	bool mInitialized = false;

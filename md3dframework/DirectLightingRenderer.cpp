@@ -9,10 +9,12 @@
 #include "Camera.h"
 #include "PointLight.h"
 #include "SpotLight.h"
+#include "DirectionalLight.h"
 #include <assert.h>
 
 
-void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDiffuse, pRenderTarget inTargetSpecular, apPointLight inPointLights, apSpotLight inSpotLights)
+void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDiffuse, pRenderTarget inTargetSpecular, 
+	apPointLight inPointLights, apSpotLight inSpotLights, apDirectionalLight inDirectionalLights)
 {
 	assert(mInitialized == true);
 
@@ -24,14 +26,6 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 	assert(inTargetDiffuse->GetTexture()->GetWidth() == inTargetDiffuse->GetTexture()->GetWidth() &&
 		inTargetDiffuse->GetTexture()->GetHeight() == inTargetDiffuse->GetTexture()->GetHeight());
 
-	theRenderContext.CSSetShader(mShader);
-	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::LINEAR_DEPTH), point_sampler, 0);
-	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::NORMAL), point_sampler, 1);
-	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::DIFFUSE), point_sampler, 2);
-	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::MATERIAL), point_sampler, 3);
-	theRenderContext.CSSetRWTexture(inTargetDiffuse, 0);
-	theRenderContext.CSSetRWTexture(inTargetSpecular, 1);
-
 	// set general constant buffer data
 	pCamera cam = Gaag.GetCamera();
 	mConstantBufferData.projectionMatrix = transpose(cam->GetProjectionMatrix());
@@ -41,7 +35,6 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 	mConstantBufferData.targetSize.y = (float)theRenderContext.GetHeight();
 	mConstantBufferData.frameData.x = (float)Gaag.GetFrameID();
 	theRenderContext.UpdateSubResource(*mConstantBuffer, &mConstantBufferData);
-	theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);
 
 	// set constant buffer data for pointlights
 	for (int i = 0; i < inPointLights.size(); i++)
@@ -53,10 +46,8 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 	}
 	mConstantBufferPointLightData.lightData = float4(inPointLights.size(), 0, 0, 0);
 	theRenderContext.UpdateSubResource(*mConstantBufferPointLights, &mConstantBufferPointLightData);
-	theRenderContext.CSSetConstantBuffer(mConstantBufferPointLights, 1);
 
 	// set constant buffer data for spotligths
-	// TODO: implement spotlights in shader
 	for (int i = 0; i < inSpotLights.size(); i++)
 	{
 		float3 pos = inSpotLights[i]->GetPosition();
@@ -71,17 +62,44 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 	}
 	mConstantBufferSpotLightData.lightData = float4(inSpotLights.size(), 0, 0, 0);
 	theRenderContext.UpdateSubResource(*mConstantBufferSpotLights, &mConstantBufferSpotLightData);
-	theRenderContext.CSSetConstantBuffer(mConstantBufferSpotLights, 2);
+	
+	// set constant buffer data for directional ligths
+	for (int i = 0; i < inDirectionalLights.size(); i++)
+	{
+		//mConstantBufferDirectionalLightData.lightDirections[i] = float4(Gaag.WorldToCameraPos(float3(-inDirectionalLights[i]->GetDirection())), 1.0);
+		mConstantBufferDirectionalLightData.lightDirections[i] = float4(Gaag.WorldToCameraNormal(float3(1,1,1)), 1.0);
+		mConstantBufferDirectionalLightData.lightColors[i] = inDirectionalLights[i]->GetColor();
+	}
+	mConstantBufferDirectionalLightData.lightData = float4(inDirectionalLights.size(), 0, 0, 0);
+	theRenderContext.UpdateSubResource(*mConstantBufferDirectionalLights, &mConstantBufferDirectionalLightData);
+
+	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::LINEAR_DEPTH), point_sampler, 0);
+	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::NORMAL), point_sampler, 1);
+	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::DIFFUSE), point_sampler, 2);
+	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::MATERIAL), point_sampler, 3);
+	theRenderContext.CSSetRWTexture(inTargetDiffuse, 0);
+	theRenderContext.CSSetRWTexture(inTargetSpecular, 1);
+	theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);
 
 	// dispatch
 	int groups_x = (inTargetDiffuse->GetTexture()->GetWidth() + 7) / 8;
 	int groups_y = (inTargetDiffuse->GetTexture()->GetHeight() + 7) / 8;
-	theRenderContext.Dispatch(groups_x, groups_y, 1);
-	theRenderContext.Flush();
+
+	if (inPointLights.size() > 0 || inSpotLights.size() > 0 || inDirectionalLights.size() > 0)
+	{
+		theRenderContext.CSSetShader(mShader);
+		theRenderContext.CSSetConstantBuffer(mConstantBufferPointLights, 1);
+		theRenderContext.CSSetConstantBuffer(mConstantBufferSpotLights, 2);
+		theRenderContext.CSSetConstantBuffer(mConstantBufferDirectionalLights, 3);
+		theRenderContext.Dispatch(groups_x, groups_y, 1);
+		theRenderContext.Flush();
+	}
 
 	// clear state
 	theRenderContext.CSSetConstantBuffer(NULL, 0);
 	theRenderContext.CSSetConstantBuffer(NULL, 1);
+	theRenderContext.CSSetConstantBuffer(NULL, 2);
+	theRenderContext.CSSetConstantBuffer(NULL, 3);
 	theRenderContext.CSSetShader(NULL);
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 0);
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 1);
@@ -99,15 +117,23 @@ void DirectLightingRenderer::Init()
 	mConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(ConstantBufferData));
 	mConstantBufferPointLights = theResourceFactory.MakeConstantBuffer(sizeof(ConstantBufferPointLightData));
 	mConstantBufferSpotLights = theResourceFactory.MakeConstantBuffer(sizeof(ConstantBufferSpotLightData));
+	mConstantBufferDirectionalLights = theResourceFactory.MakeConstantBuffer(sizeof(ConstantBufferDirectionalLightData));
+	mConstantBufferPointLightData.lightData = float4(0.0f);
+	mConstantBufferSpotLightData.lightData = float4(0.0f);
+	mConstantBufferDirectionalLightData.lightData = float4(0.0f);
 	mInitialized = true;
 }
 
 
 void DirectLightingRenderer::CleanUp()
 {
+	// TODO: Unregister and clean up resources properly!
+	// also for other classes?
+
 	mShader = nullptr;
 	mConstantBuffer = nullptr;
 	mConstantBufferPointLights = nullptr;
 	mConstantBufferSpotLights = nullptr;
+	mConstantBufferDirectionalLights = nullptr;
 	mInitialized = false;
 }

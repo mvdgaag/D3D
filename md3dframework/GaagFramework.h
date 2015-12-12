@@ -34,12 +34,17 @@ public:
 	void SetFrameCallback(void(*inCallBack)(void)) { mFrameCallback = inCallBack; }
 	
 	void RegisterObject(pDrawableObject inObject) { mObjectList.push_back(inObject); }
+
 	void RegisterLight(pPointLight inLight) { mDeferredRenderer->RegisterLight(inLight); }
+	void RegisterLight(pSpotLight inLight) { mDeferredRenderer->RegisterLight(inLight); }
+	void RegisterLight(pDirectionalLight inLight) { mDeferredRenderer->RegisterLight(inLight); }
 
 	float3 ScreenToCameraPos(int2 inScreenPos);
 	float3 WorldToCameraPos(float3 inCameraPos);
 	float3 CameraToWorldPos(float3 inCameraPos);
 	float3 ScreenToWorldPos(int2 inScreenPos);
+	float3 WorldToCameraNormal(float3 inCameraNormal);
+	float3 CameraToWorldNormal(float3 inCameraNormal);
 
 	pCamera		GetCamera()														{ return mCamera; }
 	int			GetFrameID()													{ return mFrameID; }

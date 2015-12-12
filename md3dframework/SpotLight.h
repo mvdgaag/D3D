@@ -11,7 +11,12 @@ public:
 	SpotLight() {}
 	~SpotLight() {}
 
-	void Init(float3 inPosition, float inRadius, float4 inColor) { mPosition = float4(inPosition, inRadius); mColor = inColor; }
+	void Init(float3 inPosition, float inRadius, float3 inDirection, float inConeCosine, float4 inColor) 
+	{ 
+		mPosition = float4(inPosition, inRadius); 
+		mDirection = float4(inDirection, inConeCosine); 
+		mColor = inColor; 
+	}
 	void CleanUp() override {}
 
 	float3	GetPosition()						{ return float3(mPosition); }

@@ -42,10 +42,12 @@ void WaterTile::Init(pTexture inTerrainHeightTexture, pTexture inWaterHeightText
 	mGravity = 9.81;
 	mPixelScale = inPixelScale;
 	mHeightScale = inHeightScale;
-	mFriction = 0.9;
+	mFriction = 0.1;
 
 	mFluxConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(float4));
 	mWaterConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(float4));
+
+	TextureUtil::TextureSet(mWaterDepthTarget->GetTexture(), float4(0.5, 0.5, 0.5, 0.5));
 }
 
 

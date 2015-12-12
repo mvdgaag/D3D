@@ -1,10 +1,11 @@
 #include "LibHelper.hlsli"
 #include "LibLight.hlsli"
 
-#define TILE_SIZE			(8)
-#define GROUP_SIZE			(TILE_SIZE * TILE_SIZE)
-#define MAX_POINT_LIGHTS	256
-#define MAX_SPOT_LIGHTS	256
+#define TILE_SIZE				8
+#define GROUP_SIZE				(TILE_SIZE * TILE_SIZE)
+#define MAX_POINT_LIGHTS		128
+#define MAX_SPOT_LIGHTS			128
+#define MAX_DIRECTIONAL_LIGHTS	4
 
 
 RWTexture2D<float4> OutDiffuse : register(u0);
@@ -15,8 +16,12 @@ Texture2D<float4> Diffuse : register(t2);
 Texture2D<float4> Surface : register(t3);
 
 
-groupshared uint sTileLightIndices[MAX_POINT_LIGHTS];
-groupshared uint sTileNumLights;
+groupshared uint sTilePointLightIndices[MAX_POINT_LIGHTS];
+groupshared uint sTileNumPointLights;
+
+groupshared uint sTileSpotLightIndices[MAX_SPOT_LIGHTS];
+groupshared uint sTileNumSpotLights;
+
 groupshared uint sMaxTileDepth;
 groupshared uint sMinTileDepth;
 
@@ -30,11 +35,11 @@ cbuffer cLightingShaderConstants : register(b0)
 };
 
 
-cbuffer cLightConstants : register(b1)
+cbuffer cPointLightConstants : register(b1)
 {
-	float4	cLightPositions[MAX_POINT_LIGHTS];
-	float4	cLightColors[MAX_POINT_LIGHTS];
-	float4	cLightData; // x = count
+	float4	cPoinLightPositions[MAX_POINT_LIGHTS];
+	float4	cPointLightColors[MAX_POINT_LIGHTS];
+	float4	cPointLightData; // x = count
 };
 
 
@@ -47,6 +52,14 @@ cbuffer cSpotLightConstants : register(b2)
 };
 
 
+cbuffer cDirectionalLightConstants : register(b3)
+{
+	float4	cDirectionalLightDirections[MAX_DIRECTIONAL_LIGHTS];
+	float4	cDirectionalLightColors[MAX_DIRECTIONAL_LIGHTS];
+	float4	cDirectionalLightData; // x = count
+};
+
+
 SamplerState LinearSampler
 {
 	Filter = MIN_MAG_MIP_LINEAR;
@@ -55,51 +68,14 @@ SamplerState LinearSampler
 };
 
 
-void CalculateLight(Material inMaterial, float3 inPosition, float3 inNormal, PointLight inLight, inout float3 ioDiffuse, inout float3 ioSpecular)
-{
-	float3 light_vec = inLight.Position - inPosition;
-	float range_sqr = (inLight.Range * inLight.Range);
-	float sqr_dist = dot(light_vec, light_vec);
-	
-	float attenuation = max(0, 1 - sqr_dist / range_sqr);
-	if (attenuation <= 0)
-		return;
-
-	attenuation *= attenuation;
-
-	light_vec = normalize(light_vec);
-	float3 normal = inNormal;
-	float3 view_vec = normalize(-inPosition);
-	float3 half_vec = normalize(view_vec + light_vec);
-
-	float ndl = saturate(dot(normal, light_vec));
-	float ndv = saturate(dot(normal, view_vec));
-	float ndh = saturate(dot(normal, half_vec));
-
-	float alpha = inMaterial.Roughness * inMaterial.Roughness;
-	float alpha2 = alpha * alpha;
-
-	float3 diff = inMaterial.Diffuse * (1.0 - inMaterial.Reflectivity) * OrenNayarDiffuse(ndl, ndv, normal, view_vec, alpha);
-
-	float F = FresnelFactor(ndv, inMaterial.Reflectivity);
-	float G = GeometryFactor(ndv, ndl, alpha2);
-	float D = DistributionFactor(ndh, alpha2);
-
-	float spec = F * G * D;
-
-	ioSpecular += inLight.Color * attenuation * spec;
-	ioDiffuse += inLight.Color * attenuation * diff;
-}
-
-
-
 [numthreads(TILE_SIZE, TILE_SIZE, 1)]
 void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThreadID, uint inGroupIndex : SV_GroupIndex)
 {
 	// first thread initializes shared memory
 	if (inGroupIndex == 0)
 	{
-		sTileNumLights = 0;
+		sTileNumPointLights = 0;
+		sTileNumSpotLights = 0;
 
 		// TODO: read these values from depth pyramid
 		sMaxTileDepth = 0;
@@ -135,11 +111,11 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 	frustum[4] = float4(0.0f, 0.0f, 1.0f, min_tile_depth);		// near
 	frustum[5] = float4(0.0f, 0.0f, -1.0f, -max_tile_depth);	// far
 
-	// each thread tests a number of lights against the frustrum
-	int num_lights = cLightData.x;
+	// test  lights against the frustrum
+	int num_lights = cPointLightData.x;
 	for (uint light_index = inGroupIndex; light_index < num_lights; light_index += GROUP_SIZE)
 	{
-		float4 light_pos = cLightPositions[light_index];
+		float4 light_pos = cPoinLightPositions[light_index];
 
 		// test against all frustum planes
 		bool in_frustum = true;
@@ -153,8 +129,30 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 		if (in_frustum)
 		{
 			uint list_index;
-			InterlockedAdd(sTileNumLights, 1, list_index);
-			sTileLightIndices[list_index] = light_index;
+			InterlockedAdd(sTileNumPointLights, 1, list_index);
+			sTilePointLightIndices[list_index] = light_index;
+		}
+	}
+
+	int num_Spot_lights = cSpotLightData.x;
+	for (uint light_index = inGroupIndex; light_index < num_Spot_lights; light_index += GROUP_SIZE)
+	{
+		float4 light_pos = cSpotLightPositions[light_index];
+
+		// test against all frustum planes
+		bool in_frustum = true;
+		for (uint i = 0; i < 6; ++i)
+		{
+			float distance = dot(frustum[i], float4(light_pos.xyz, 1.0f));
+			in_frustum = in_frustum && (distance < light_pos.w);
+		}
+
+		// add to list if in frustum
+		if (in_frustum)
+		{
+			uint list_index;
+			InterlockedAdd(sTileNumSpotLights, 1, list_index);
+			sTileSpotLightIndices[list_index] = light_index;
 		}
 	}
 
@@ -174,26 +172,74 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 	{
 		// setup material
 		Material material;
-		material.Roughness = surface.x;
-		material.Reflectivity = surface.y;
-		material.Diffuse = diffuse;
+		material.mRoughness = surface.x;
+		material.mReflectivity = surface.y;
+		material.mDiffuse = diffuse;
 
 		// reconstruct camera space texel_position of the texel
 		float2 uv = (float2(coord) + 0.5) / cTargetSize.xy;
 		float3 texel_position = ReconstructCSPosition(uv, linear_depth, cViewReconstructionVector);
 		
-		// accumulate light from all sources
-		for (int list_index = 0; list_index < sTileNumLights; list_index++)
+		// accumulate light from all pointlight sources
+		for (int list_index = 0; list_index < sTileNumPointLights; list_index++)
 		{
-			int light_index = sTileLightIndices[list_index];
+			int light_index = sTilePointLightIndices[list_index];
 
-			// setup pointlight
-			PointLight light;
-			light.Position = cLightPositions[light_index].xyz;
-			light.Color = cLightColors[light_index].xyz;
-			light.Range = cLightPositions[light_index].w;
+			float3	light_position =	cPoinLightPositions[light_index].xyz;
+			float	light_range =		cPoinLightPositions[light_index].w;
+			float3	light_vec =			light_position - texel_position;
+			float	range_sqr =			light_range * light_range;
+			float	sqr_dist =			dot(light_vec, light_vec);
+			float	sqrt_attenuation =	max(0, 1 - sqr_dist / range_sqr);
+			
+			if (sqrt_attenuation <= 0)
+				continue;
+			
+			Light light;
+			light.mDirection = normalize(light_vec);
+			light.mColor = cPointLightColors[light_index].xyz;
+			light.mAttenuation = sqrt_attenuation * sqrt_attenuation;
 
-			CalculateLight(material, texel_position, normal, light, diffuse_accum, specular_accum);
+			AccumulateLight(material, texel_position, normal, light, diffuse_accum, specular_accum);
+		}
+
+		// accumulate light from all spotlight sources
+		for (int list_index = 0; list_index < sTileNumSpotLights; list_index++)
+		{
+			int light_index = sTileSpotLightIndices[list_index];
+
+			float3	light_position = cSpotLightPositions[light_index].xyz;
+			float	light_range = cSpotLightPositions[light_index].w;
+			float3	light_vec = light_position - texel_position;
+			float	range_sqr = light_range * light_range;
+			float	sqr_dist = dot(light_vec, light_vec);
+			float	sqrt_attenuation = max(0, 1 - sqr_dist / range_sqr);
+
+			light_vec = normalize(light_vec);
+
+			// attenuate by cone
+			sqrt_attenuation *= (dot(cSpotLightDirections[light_index].xyz, light_vec) > cSpotLightDirections[light_index].w) ? 1.0 : 0.0;
+
+			if (sqrt_attenuation <= 0)
+				continue;
+
+			Light light;
+			light.mDirection = light_vec;
+			light.mColor = cSpotLightColors[light_index].xyz;
+			light.mAttenuation = sqrt_attenuation * sqrt_attenuation;
+
+			AccumulateLight(material, texel_position, normal, light, diffuse_accum, specular_accum);
+		}
+
+		// accumulate light from all directional light sources
+		for (int i = 0; i < cDirectionalLightData.x; i++)
+		{
+			Light light;
+			light.mDirection = cDirectionalLightDirections[i];
+			light.mColor = cDirectionalLightColors[i].xyz;
+			light.mAttenuation = 1.0;
+
+			AccumulateLight(material, texel_position, normal, light, diffuse_accum, specular_accum);
 		}
 	}
 

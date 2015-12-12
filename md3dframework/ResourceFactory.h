@@ -12,6 +12,8 @@
 #include "RenderTarget.h"
 #include "DepthStencilTarget.h"
 #include "PointLight.h"
+#include "SpotLight.h"
+#include "DirectionalLight.h"
 
 
 #define theResourceFactory ResourceFactory::GetInstance()
@@ -46,6 +48,8 @@ public:
 	pSampler			MakeSampler(SamplerFilter inFilter, SamplerAddressMode inAddressModeU, SamplerAddressMode inAddressModeV);
 	pDepthStencilTarget MakeDepthStencilTarget(int2 inSize);
 	pPointLight			MakePointLight(float3 inPosition, float inRadius, float4 inColor);
+	pSpotLight			MakeSpotLight(float3 inPosition, float inRadius, float3 inDirection, float inConeCosine, float4 inColor);
+	pDirectionalLight	MakeDirectionalLight(float3 inDirection, float4 inColor);
 
 	pMaterial			CloneMaterial(pMaterial inOther);
 
@@ -56,17 +60,31 @@ public:
 	pMesh				GetFullScreenTriangleMesh()	{ return mFullScreenTriangleMesh; }
 
 private:
-	ResourceFactory() {}
-	~ResourceFactory() { CleanUp(); }
+	ResourceFactory()	{}
+	~ResourceFactory()	{ CleanUp(); }
+	
+	void RegisterResource(pBaseResource inResource)		
+	{ 
+		assert(inResource != nullptr); 
+		assert(mResources.find(inResource->mUUID) == mResources.end());
+		mResources[inResource->mUUID] = inResource;
+	}
+
+	void UnRegisterResource(pBaseResource inResource)	
+	{ 
+		assert(inResource != nullptr); 
+		assert(mResources.find(inResource->mUUID) != mResources.end());
+		mResources.erase(inResource->mUUID);
+	}
 
 	ResourceFactory(ResourceFactory const&) = delete;
 	void operator=(ResourceFactory const&) = delete;
 
-	pMaterial mDefaultMaterial;
-	pComputeShader mCopyShader;
-	pSampler mDefaultLinearSampler;
-	pSampler mDefaultPointSampler;
-	pMesh mFullScreenTriangleMesh;
+	pMaterial		mDefaultMaterial;
+	pComputeShader	mCopyShader;
+	pSampler		mDefaultLinearSampler;
+	pSampler		mDefaultPointSampler;
+	pMesh			mFullScreenTriangleMesh;
 
 	std::unordered_map<unsigned short, pBaseResource> mResources;
 };

@@ -198,6 +198,9 @@
     <ClInclude Include="SpotLight.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="DirectionalLight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DrawableObject.cpp">
@@ -306,6 +309,12 @@
     <ClCompile Include="SpotLight.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="BaseResource.cpp">
+      <Filter>Source Files\Resource</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectionalLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\BasicFragmentShader.hlsl">
@@ -315,9 +324,6 @@
       <Filter>Resource Files\SystemShaders</Filter>
     </FxCompile>
     <FxCompile Include="Shaders\DepthPyramidCompute.hlsl">
-      <Filter>Resource Files\SystemShaders</Filter>
-    </FxCompile>
-    <FxCompile Include="Shaders\DirectLightingCompute.hlsl">
       <Filter>Resource Files\SystemShaders</Filter>
     </FxCompile>
     <FxCompile Include="Shaders\FullScreenQuadPixelShader.hlsl">
@@ -415,6 +421,9 @@
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureStitchWest.hlsl">
       <Filter>Resource Files\TextureFuncShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\DirectLightingCompute.hlsl">
+      <Filter>Resource Files\SystemShaders</Filter>
     </FxCompile>
   </ItemGroup>
   <ItemGroup>

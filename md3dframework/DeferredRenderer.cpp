@@ -122,6 +122,12 @@ void DeferredRenderer::RegisterLight(pSpotLight inLight)
 }
 
 
+void DeferredRenderer::RegisterLight(pDirectionalLight inLight)
+{
+	mDirectionalLights.push_back(inLight);
+}
+
+
 void DeferredRenderer::ClearLights()
 {
 	mPointLights.clear(); 
@@ -190,7 +196,7 @@ void DeferredRenderer::LightingPass()
 	//mShadowRenderer.Render();
 	
 	theRenderContext.SetMarker("Direct Lighting Renderer");
-	mDirectLightingRenderer.Render(mGBuffer, mDirectLightingDiffuse, mDirectLightingSpecular, mPointLights, mSpotLights);
+	mDirectLightingRenderer.Render(mGBuffer, mDirectLightingDiffuse, mDirectLightingSpecular, mPointLights, mSpotLights, mDirectionalLights);
 	
 	theRenderContext.SetMarker("Depth Pyramid Renderer");
 	//mDepthPyramidRenderer.Render(mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), mDepthPyramid);
@@ -214,7 +220,9 @@ void DeferredRenderer::LightingPass()
 void DeferredRenderer::PostProcessPass()
 {
 	theRenderContext.BeginEvent("Post Process Pass");
-	mTAARenderer.Render(mLightComposed->GetTexture(), mAAHistoryFrame, mGBuffer->GetTexture(GBuffer::MOTION_VECTORS), mAntiAliased);
-	mPostProcessRenderer.Render(mAntiAliased->GetTexture(), mGBuffer->GetRenderTarget(GBuffer::MOTION_VECTORS)->GetTexture(), mPostProcessed);
+	mPostProcessRenderer.Render(mLightComposed->GetTexture(), mGBuffer->GetRenderTarget(GBuffer::MOTION_VECTORS)->GetTexture(), mPostProcessed);
+	
+	// temporal AA should be very last thing, because it clamps the values
+	mTAARenderer.Render(mPostProcessed->GetTexture(), mAAHistoryFrame, mGBuffer->GetTexture(GBuffer::MOTION_VECTORS), mAntiAliased);
 	theRenderContext.EndEvent();
 }

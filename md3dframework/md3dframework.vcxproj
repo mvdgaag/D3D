@@ -202,6 +202,7 @@
     <ClInclude Include="DeferredRenderer.h" />
     <ClInclude Include="DepthPyramidRenderer.h" />
     <ClInclude Include="DepthStencilTarget.h" />
+    <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="DirectLightingRenderer.h" />
     <ClInclude Include="DrawableObject.h" />
     <ClInclude Include="FileUtil.h" />
@@ -236,6 +237,7 @@
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BaseResource.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraController.cpp" />
     <ClCompile Include="ComputeShader.cpp" />
@@ -244,6 +246,7 @@
     <ClCompile Include="DeferredRenderer.cpp" />
     <ClCompile Include="DepthPyramidRenderer.cpp" />
     <ClCompile Include="DepthStencilTarget.cpp" />
+    <ClCompile Include="DirectionalLight.cpp" />
     <ClCompile Include="DirectLightingRenderer.cpp" />
     <ClCompile Include="DrawableObject.cpp" />
     <ClCompile Include="FileUtil.cpp" />
@@ -299,9 +302,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Shaders\DirectLightingCompute.hlsl">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Shaders\FullScreenQuadPixelShader.hlsl">

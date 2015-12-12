@@ -8,6 +8,7 @@ SamplerState motionSampler : register(s1);
 
 #define MOTION_BLUR_STRENGTH (1.0)
 #define MOTION_BLUR_STEPS (12)
+#define GAMMA (1.0)
 
 
 cbuffer cPostProcessConstants : register(b0)
@@ -31,6 +32,6 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 		result += source.SampleLevel(sourceSampler, samp_uv, 0);
 	}
 
-	dst[coord] = result / MOTION_BLUR_STEPS;
+	dst[coord] = pow(result / MOTION_BLUR_STEPS, GAMMA);
 	//dst[coord] = source[coord];
 }

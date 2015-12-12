@@ -1,27 +1,17 @@
 
 struct Material
 {
-	float Roughness;
-	float Reflectivity; // float R0 = ((1.0 - inIOR) / (1.0 + inIOR));
-	float3 Diffuse;
+	float	mRoughness;
+	float	mReflectivity; // float R0 = ((1.0 - inIOR) / (1.0 + inIOR));
+	float3	mDiffuse;
 };
 
 
-struct PointLight
+struct Light
 {
-	float3 Position;
-	float3 Color;
-	float Range;
-};
-
-
-struct SpotLight
-{
-	float3 Position;
-	float3 Direction;
-	float3 Color;
-	float Range;
-	float ConeCos;
+	float3	mDirection;
+	float3	mColor;
+	float	mAttenuation;
 };
 
 
@@ -61,36 +51,27 @@ float OrenNayarDiffuse(float inNdL, float inNdV, float3 inNormal, float inViewVe
 }
 
 
-void AccumulateLight(Material inMaterial, float3 inPosition, float3 inNormal, PointLight inLight, inout float3 ioDiffuseAccum, inout float3 ioSpecularAccum)
+void AccumulateLight(Material inMaterial, float3 inPosition, float3 inNormal, Light inLight, inout float3 ioDiffuse, inout float3 ioSpecular)
 {
-	float3 light_vec = inLight.Position - inPosition;
-	float range_sqr = (inLight.Range * inLight.Range);
-	float sqr_dist = dot(light_vec, light_vec);
-	float attenuation = max(0, 1 - sqr_dist / range_sqr);
-	if (attenuation <= 0.0)
-		return;
-
-	attenuation *= attenuation;
-
-	light_vec = normalize(light_vec);
 	float3 normal = inNormal;
 	float3 view_vec = normalize(-inPosition);
-	float3 half_vec = normalize(view_vec + light_vec);
+	float3 half_vec = normalize(view_vec + inLight.mDirection);
 
-	float ndl = saturate(dot(normal, light_vec));
+	float ndl = saturate(dot(normal, inLight.mDirection));
 	float ndv = saturate(dot(normal, view_vec));
 	float ndh = saturate(dot(normal, half_vec));
 
-	float alpha = inMaterial.Roughness * inMaterial.Roughness;
+	float alpha = inMaterial.mRoughness * inMaterial.mRoughness;
 	float alpha2 = alpha * alpha;
 
-	float F = FresnelFactor(ndv, inMaterial.Reflectivity);
+	float3 diff = inMaterial.mDiffuse * (1.0 - inMaterial.mReflectivity) * OrenNayarDiffuse(ndl, ndv, normal, view_vec, alpha);
+
+	float F = FresnelFactor(ndv, inMaterial.mReflectivity);
 	float G = GeometryFactor(ndv, ndl, alpha2);
 	float D = DistributionFactor(ndh, alpha2);
 
-	float spec = F * G * D;
-	float3 diff = inMaterial.Diffuse * OrenNayarDiffuse(ndl, ndv, normal, view_vec, alpha);
-	
-	ioSpecularAccum += inLight.Color * spec * attenuation;
-	ioDiffuseAccum += inLight.Color * diff * attenuation * (1.0 - inMaterial.Reflectivity);// / 3.1415;
+	float spec = ndl * F * G * D;
+
+	ioSpecular += inLight.mColor * inLight.mAttenuation * spec;
+	ioDiffuse += inLight.mColor * inLight.mAttenuation * diff;
 }

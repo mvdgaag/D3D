@@ -14,6 +14,7 @@ Window* g_window = nullptr;
 pDrawableObject g_obj;
 pMesh g_mesh;
 pPointLight g_lights[100];
+pDirectionalLight g_directional_light;
 
 pMaterial g_BricksMaterial;
 pPixelShader g_HeightField_pixel_shader;
@@ -56,7 +57,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	Gaag.Init(hInstance);
 	Gaag.SetFrameCallback(&FrameFunc);
 	pCamera cam = Gaag.GetCamera();
-	cam->SetPosition(15, 30, 15);
+	cam->SetPosition(50, 100, 50);
 	InitContent();
 
 	MSG msg = { 0 };
@@ -86,29 +87,32 @@ void InitContent()
 
 	for (int i = 0; i < 100; i++)
 	{
-		g_lights[i] = theResourceFactory.MakePointLight(float3((i/10 - 5) * 20.0f, 20.0f, (i%10 - 5) * 20.0f), 30.0f, float4(1.0));
+		g_lights[i] = theResourceFactory.MakePointLight(float3((i/10 - 5) * 20.0f, 20.0f, (i%10 - 5) * 20.0f), 40.0, float4(1.0));
 			Gaag.RegisterLight(g_lights[i]);
 	}
+	g_directional_light = theResourceFactory.MakeDirectionalLight(float3(1, -1, 1), float4(1, 1, 1, 1));
+	Gaag.RegisterLight(g_directional_light);
 
 	g_mesh = theResourceFactory.LoadMesh("Models/sphere.obj");
 	g_HeightField_pixel_shader = theResourceFactory.LoadPixelShader("Shaders/TerrainFragmentShader.hlsl");
 	g_HeightField_vertex_shader = theResourceFactory.LoadVertexShader("Shaders/TerrainVertexShader.hlsl");
-	g_diffuse_texture = theResourceFactory.LoadTexture("Textures/photosculpt-squarebricks-diffuse.dds");
-	g_normal_texture = theResourceFactory.LoadTexture("Textures/photosculpt-squarebricks-normal.dds");
-	g_surface_texture = theResourceFactory.LoadTexture("Textures/photosculpt-squarebricks-specular.dds");
+	//g_diffuse_texture = theResourceFactory.LoadTexture("Textures/photosculpt-squarebricks-diffuse.dds");
+	//g_normal_texture = theResourceFactory.LoadTexture("Textures/photosculpt-squarebricks-normal.dds");
+	//g_surface_texture = theResourceFactory.LoadTexture("Textures/photosculpt-squarebricks-specular.dds");
+
 	g_BricksMaterial = theResourceFactory.MakeMaterial();
-	g_BricksMaterial->SetDiffuseTexture(g_diffuse_texture);
-	g_BricksMaterial->SetNormalTexture(g_normal_texture);
-	g_BricksMaterial->SetSurfaceTexture(g_surface_texture);
+	//g_BricksMaterial->SetDiffuseTexture(g_diffuse_texture);
+	//g_BricksMaterial->SetNormalTexture(g_normal_texture);
+	//g_BricksMaterial->SetSurfaceTexture(g_surface_texture);
 	g_BricksMaterial->SetDiffuseValue(float4(0.6f, 0.6f, 0.6f, 0.0f));
-	g_BricksMaterial->SetReflectivityValue(0.1f);
-	g_BricksMaterial->SetRoughnessValue(0.25f);
+	g_BricksMaterial->SetReflectivityValue(0.5f);
+	g_BricksMaterial->SetRoughnessValue(0.8f);
 	g_BricksMaterial->SetMetalicityValue(0.0f);
 	g_BricksMaterial->SetEmissivenessValue(0.0f);
 	g_BricksMaterial->SetPixelShader(g_HeightField_pixel_shader);
 	g_BricksMaterial->SetVertexShader(g_HeightField_vertex_shader);
 	
-	g_obj->Init(g_mesh, theResourceFactory.GetDefaultMaterial());
+	g_obj->Init(g_mesh, g_BricksMaterial);
 	Gaag.RegisterObject(g_obj);
 
 	g_HeightField = MAKE_NEW(HeightField);
@@ -129,9 +133,9 @@ void InitContent()
 			material.SetDiffuseTexture(NULL);
 			material.SetNormalTexture(NULL);
 			material.SetSurfaceTexture(NULL);
-			material.SetDiffuseValue(float4(1.0, 0.4, 0.0, 0.0));
+			material.SetDiffuseValue(float4(0.5, 0.5, 0.5, 0.0));
 			material.SetReflectivityValue(0.5);
-			material.SetRoughnessValue(0.2);
+			material.SetRoughnessValue(0.1);
 		}
 	}
 

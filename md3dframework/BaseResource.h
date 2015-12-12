@@ -1,6 +1,4 @@
 #pragma once
-#pragma comment(lib, "rpcrt4.lib")  // UuidCreate - Minimum supported OS Win 2000
-
 #include "GaagCommon.h"
 #include <string>
 #include <unordered_map>
@@ -24,7 +22,8 @@ enum ResourceType
 	CONSTANT_BUFFER,
 	MATERIAL,
 	POINT_LIGHT,
-	SPOT_LIGHT
+	SPOT_LIGHT,
+	DIRECTIONAL_LIGHT
 };
 
 
@@ -33,17 +32,18 @@ class BaseResource
 	friend class ResourceFactory;
 
 public:
-	virtual ~BaseResource() { } //TODO: unregister from factory?
-	explicit BaseResource() { UuidCreate(&mUUID); }
+	virtual ~BaseResource() { }
+	explicit BaseResource() { mUUID = sCurrentID++; }
 
 	virtual void			CleanUp()					= 0;
 	virtual ResourceType	GetResourceType() const		= 0;
 	
-	UUID GetUUID() const	{ return mUUID; }
+	long GetUUID() const	{ return mUUID; }
 
 protected:
-	UUID mUUID;
+	long mUUID;
 
 private:
+	static long sCurrentID;
 };
 
