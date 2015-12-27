@@ -37,7 +37,8 @@ public:
 	void ClearLights();
 
 	pGBuffer		GetGBuffer()				{ return mGBuffer; }
-	pRenderTarget	GetDepthPyramid()			{ return mDepthPyramid; }
+	pRenderTarget	GetDepthMinPyramid()		{ return mDepthMinPyramid; }
+	pRenderTarget	GetDepthMaxPyramid()		{ return mDepthMaxPyramid; }
 	pRenderTarget	GetDirectLightingDiffuse()	{ return mDirectLightingDiffuse; }
 	pRenderTarget	GetDirectLightingSpecular() { return mDirectLightingSpecular; }
 	pRenderTarget	GetIndirectLighting()		{ return mIndirectLighting; }
@@ -95,7 +96,9 @@ private:
 	apDirectionalLight		mDirectionalLights;
 	
 	pGBuffer			mGBuffer = nullptr;
-	pRenderTarget		mDepthPyramid = nullptr;
+	pRenderTarget		mFullResRGBATemp = nullptr;
+	pRenderTarget		mDepthMaxPyramid = nullptr;
+	pRenderTarget		mDepthMinPyramid = nullptr;
 	pRenderTarget		mDirectLightingDiffuse = nullptr;
 	pRenderTarget		mDirectLightingSpecular = nullptr;
 	pRenderTarget		mIndirectLighting = nullptr;

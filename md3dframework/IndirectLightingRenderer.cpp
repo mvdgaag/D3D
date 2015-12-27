@@ -6,18 +6,30 @@
 #include "Texture.h"
 #include "Camera.h"
 #include "ConstantBuffer.h"
+#include "TextureUtil.h"
 
 
-void IndirectLightingRenderer::Render(pTexture inSource, pTexture inNormal, pTexture inLinearDepth, pRenderTarget inTarget)
+void IndirectLightingRenderer::Render(pTexture inSource, pTexture inNormal, pTexture inDiffuseColor, pTexture inLinearDepth, pTexture inMaxDepthPyramid, pRenderTarget inTarget, pRenderTarget inTempTarget)
 {
 	assert(mInitialized == true);
-
-	pSampler point_sampler = theResourceFactory.GetDefaultPointSampler();
-
 	assert(inSource != nullptr);
 	assert(inTarget != nullptr);
 
-	theRenderContext.CSSetShader(mShader);
+	ApplyIndirect(inSource, inNormal, inDiffuseColor, inLinearDepth, inMaxDepthPyramid, inTarget);
+
+	for (int i = 0; i < 3; i++)
+	{
+		ApplyBlur(inTarget->GetTexture(), inNormal, inLinearDepth, inTempTarget, true);
+		ApplyBlur(inTempTarget->GetTexture(), inNormal, inLinearDepth, inTarget, false);
+	}
+}
+
+
+void IndirectLightingRenderer::ApplyBlur(pTexture inSource, pTexture inNormal, pTexture inLinearDepth, pRenderTarget inTarget, bool inHorizontal)
+{
+	pSampler point_sampler = theResourceFactory.GetDefaultPointSampler();
+
+	theRenderContext.CSSetShader(mBlurShader);
 	theRenderContext.CSSetTextureAndSampler(inSource, point_sampler, 0);
 	theRenderContext.CSSetTextureAndSampler(inNormal, point_sampler, 1);
 	theRenderContext.CSSetTextureAndSampler(inLinearDepth, point_sampler, 2);
@@ -28,7 +40,8 @@ void IndirectLightingRenderer::Render(pTexture inSource, pTexture inNormal, pTex
 	mConstantBufferData.viewspaceReconstructionVector.y = tan(0.5f * cam->GetFovY());
 	mConstantBufferData.targetSize.x = (float)theRenderContext.GetWidth();
 	mConstantBufferData.targetSize.y = (float)theRenderContext.GetHeight();
-	mConstantBufferData.frameData.x = (float)Gaag.GetFrameID();
+	mConstantBufferData.frameData.x = inHorizontal ? 1 : 0;
+	mConstantBufferData.frameData.y = 4;
 
 	theRenderContext.UpdateSubResource(*mConstantBuffer, &mConstantBufferData);
 	theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);
@@ -39,6 +52,7 @@ void IndirectLightingRenderer::Render(pTexture inSource, pTexture inNormal, pTex
 	theRenderContext.Flush();
 
 	// clear state
+	theRenderContext.CSSetConstantBuffer(NULL, 0);
 	theRenderContext.CSSetShader(NULL);
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 0);
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 1);
@@ -47,10 +61,50 @@ void IndirectLightingRenderer::Render(pTexture inSource, pTexture inNormal, pTex
 }
 
 
+void IndirectLightingRenderer::ApplyIndirect(pTexture inSource, pTexture inNormal, pTexture inDiffuseColor, pTexture inLinearDepth, pTexture inMaxDepthPyramid, pRenderTarget inTarget)
+{
+	pSampler point_sampler = theResourceFactory.GetDefaultPointSampler();
+
+	theRenderContext.CSSetShader(mLightingShader);
+	theRenderContext.CSSetTextureAndSampler(inSource, point_sampler, 0);
+	theRenderContext.CSSetTextureAndSampler(inNormal, point_sampler, 1);
+	theRenderContext.CSSetTextureAndSampler(inLinearDepth, point_sampler, 2);
+	theRenderContext.CSSetTextureAndSampler(inMaxDepthPyramid, point_sampler, 3);
+	theRenderContext.CSSetTextureAndSampler(inDiffuseColor, point_sampler, 4);
+	theRenderContext.CSSetRWTexture(inTarget, 0);
+
+	pCamera cam = Gaag.GetCamera();
+	mConstantBufferData.viewspaceReconstructionVector.x = tan(0.5f * cam->GetFovX());
+	mConstantBufferData.viewspaceReconstructionVector.y = tan(0.5f * cam->GetFovY());
+	mConstantBufferData.targetSize.x = (float)theRenderContext.GetWidth();
+	mConstantBufferData.targetSize.y = (float)theRenderContext.GetHeight();
+	mConstantBufferData.frameData = float4(Gaag.WorldToCameraNormal(float3(0.0, 1.0, 0.0)), Gaag.GetRandom());
+
+	theRenderContext.UpdateSubResource(*mConstantBuffer, &mConstantBufferData);
+	theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);
+
+	int groups_x = (inTarget->GetTexture()->GetWidth() + 7) / 8;
+	int groups_y = (inTarget->GetTexture()->GetHeight() + 7) / 8;
+	theRenderContext.Dispatch(groups_x, groups_y, 1);
+	theRenderContext.Flush();
+
+	// clear state
+	theRenderContext.CSSetConstantBuffer(NULL, 0);
+	theRenderContext.CSSetShader(NULL);
+	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 0);
+	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 1);
+	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 2);
+	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 3);
+	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 4);
+	theRenderContext.CSSetRWTexture(NULL, 0);
+}
+
+
 void IndirectLightingRenderer::Init()
 {
 	CleanUp();
-	mShader = theResourceFactory.LoadComputeShader("../md3dFramework/Shaders/IndirectLightingCompute.hlsl");
+	mLightingShader = theResourceFactory.LoadComputeShader("../md3dFramework/Shaders/IndirectLightingCompute.hlsl");
+	mBlurShader = theResourceFactory.LoadComputeShader("../md3dFramework/Shaders/IndirectBlurCompute.hlsl");
 	mConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(ConstantBufferData));
 	mInitialized = true;
 }
@@ -58,8 +112,8 @@ void IndirectLightingRenderer::Init()
 
 void IndirectLightingRenderer::CleanUp()
 {
-	mShader = nullptr;
+	mLightingShader = nullptr;
+	mBlurShader = nullptr;
 	mConstantBuffer = nullptr;
-
 	mInitialized = false;
 }

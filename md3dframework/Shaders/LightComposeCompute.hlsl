@@ -20,5 +20,18 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	// coord from bottom left of brush rect
 	float2 coord = float2(DTid.x, DTid.y);
 
-	dst[coord] = DirectDiffuse[coord] + DirectSpecular[coord] + Indirect[coord] + Reflections[coord];
+		/*
+	float4 indirect = 0;
+	for (int x = -2; x < 2; x++)
+	{
+	for (int y = -2; y < 2; y++)
+	{
+	indirect += Indirect[coord + int2(x, y)];
+	}
+	}
+
+	indirect /= 16.0;
+	*/
+
+	dst[coord] = Indirect[coord] + DirectDiffuse[coord] + DirectSpecular[coord] + Reflections[coord];
 }

@@ -67,6 +67,12 @@
     <Filter Include="Source Files\Resource">
       <UniqueIdentifier>{47704be3-2c9a-4ef7-9882-2d0e37d377c5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Ai">
+      <UniqueIdentifier>{08c65221-afa3-4e49-88b4-46bdbc82c2f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Ai">
+      <UniqueIdentifier>{d768d7df-d9d7-42e4-a87d-0a327a47506f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -168,17 +174,11 @@
     <ClInclude Include="GaagCommon.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DeferredRenderer.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="GaagFramework.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Gaag.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="rect.h">
-      <Filter>Header Files\Math</Filter>
     </ClInclude>
     <ClInclude Include="GaagMath.h">
       <Filter>Header Files\Math</Filter>
@@ -198,8 +198,23 @@
     <ClInclude Include="SpotLight.h">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="AiManager.h">
+      <Filter>Header Files\Ai</Filter>
+    </ClInclude>
+    <ClInclude Include="AiAgent.h">
+      <Filter>Header Files\Ai</Filter>
+    </ClInclude>
+    <ClInclude Include="Rect.h">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="NavMeshNode.h">
+      <Filter>Header Files\Ai</Filter>
+    </ClInclude>
     <ClInclude Include="DirectionalLight.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="DeferredRenderer.h">
+      <Filter>Header Files\Rendering\Renderer Systems</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -312,8 +327,17 @@
     <ClCompile Include="BaseResource.cpp">
       <Filter>Source Files\Resource</Filter>
     </ClCompile>
+    <ClCompile Include="AiManager.cpp">
+      <Filter>Source Files\Ai</Filter>
+    </ClCompile>
+    <ClCompile Include="AiAgent.cpp">
+      <Filter>Source Files\Ai</Filter>
+    </ClCompile>
+    <ClCompile Include="NavMeshNode.cpp">
+      <Filter>Source Files\Ai</Filter>
+    </ClCompile>
     <ClCompile Include="DirectionalLight.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Rendering</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -423,6 +447,30 @@
       <Filter>Resource Files\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="Shaders\DirectLightingCompute.hlsl">
+      <Filter>Resource Files\SystemShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureFuncShaders\TextureMipAvg.hlsl">
+      <Filter>Resource Files\TextureFuncShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureFuncShaders\TextureMipAvgNormal.hlsl">
+      <Filter>Resource Files\TextureFuncShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureFuncShaders\TextureMipMax.hlsl">
+      <Filter>Resource Files\TextureFuncShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureFuncShaders\TextureMipMin.hlsl">
+      <Filter>Resource Files\TextureFuncShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureFuncShaders\TextureMipNearest.hlsl">
+      <Filter>Resource Files\TextureFuncShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureFuncShaders\TextureBoxBlur.hlsl">
+      <Filter>Resource Files\TextureFuncShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="TextureFuncShaders\TextureGaussianBlur.hlsl">
+      <Filter>Resource Files\TextureFuncShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\IndirectBlurCompute.hlsl">
       <Filter>Resource Files\SystemShaders</Filter>
     </FxCompile>
   </ItemGroup>

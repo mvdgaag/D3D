@@ -87,6 +87,7 @@ void GaagFramework::Render()
 
 	mDeferredRenderer->Render(mObjectList);
 	CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetAntiAliased()->GetTexture());
+	//CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetIndirectLighting()->GetTexture());
 	theRenderContext.SwapBuffers();
 }
 
@@ -106,7 +107,7 @@ float3 GaagFramework::ScreenToCameraPos(int2 inScreenPos)
 
 float3 GaagFramework::WorldToCameraPos(float3 inCameraPos)
 {
-	// TODO: makes it all 0
+	// TODO: makes it all 0?
 	float4x4 view = mCamera->GetViewMatrix();
 	float4 camera_pos = view * float4(inCameraPos, 1.0);
 	return float3(camera_pos);

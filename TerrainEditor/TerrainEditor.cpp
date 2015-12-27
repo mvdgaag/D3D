@@ -92,7 +92,7 @@ void InitContent()
 	for (int i = 0; i < 100; i++)
 	{
 		g_lights[i] = theResourceFactory.MakePointLight(float3((i/10 - 5) * 20.0f, 20.0f, (i%10 - 5) * 20.0f), 40.0, float4(0.1));
-		Gaag.RegisterLight(g_lights[i]);
+		//Gaag.RegisterLight(g_lights[i]);
 	}
 
 	g_directional_light = theResourceFactory.MakeDirectionalLight(float3(1, -1, 1), float4(1, 1, 1, 1));

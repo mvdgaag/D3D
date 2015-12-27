@@ -48,6 +48,7 @@ public:
 
 	pCamera		GetCamera()														{ return mCamera; }
 	int			GetFrameID()													{ return mFrameID; }
+	float		GetRandom()														{ return float(rand()) / RAND_MAX; }
 	double		GetFrameTime()													{ return mFrameTime; }
 	double		GetFrameDeltaTime()												{ return mDeltaTime; }
 	void		SetMaterial(pMaterial inMaterial);

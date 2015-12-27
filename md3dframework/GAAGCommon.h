@@ -31,6 +31,10 @@
 #define REGISTERCLASS(x) class x; typedef x* p##x; typedef std::vector<x> a##x; typedef std::vector<x*> ap##x; typedef x& r##x;
 #endif
 
+#ifndef REGISTERSTRUCT
+#define REGISTERSTRUCT(x) struct x; typedef x* p##x; typedef std::vector<x> a##x; typedef std::vector<x*> ap##x; typedef x& r##x;
+#endif
+
 #ifndef MAKE_NEW
 #define MAKE_NEW(x) new x();
 #endif

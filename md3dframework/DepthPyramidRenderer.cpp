@@ -4,49 +4,46 @@
 #include "Texture.h"
 #include "RenderTarget.h"
 #include "GaagCommon.h"
+#include "TextureUtil.h"
 #include <assert.h>
 
 
-void DepthPyramidRenderer::Render(pTexture inSource, pRenderTarget inTarget)
+void DepthPyramidRenderer::Render(pTexture inSource, pRenderTarget inMaxTarget, pRenderTarget inMinTarget)
 {
 	assert(mInitialized);
 	assert(inSource != nullptr);
-	assert(inTarget != nullptr);
-	assert(inTarget->GetTexture()->GetMipLevels() == kNumMipLevels);
+	assert(inMaxTarget != nullptr);
+	assert(inMinTarget != nullptr);
+	assert(inMaxTarget->GetTexture()->GetMipLevels() == kNumMipLevels);
+	assert(inMinTarget->GetTexture()->GetMipLevels() == kNumMipLevels);
+	assert(inMaxTarget->GetTexture()->GetWidth() == inSource->GetWidth() / 2);
+	assert(inMinTarget->GetTexture()->GetWidth() == inSource->GetWidth() / 2);
+	assert(inMaxTarget->GetTexture()->GetHeight() == inSource->GetHeight() / 2);
+	assert(inMinTarget->GetTexture()->GetHeight() == inSource->GetHeight() / 2);
 
-	// We now set up the shader and run it
-	theRenderContext.CSSetShader(mShader);
-	theRenderContext.CSSetTexture(inSource, 0);
+	// first mip from level 0 to 0 (target should be half_res)
+	TextureUtil::TextureGenerteMip(inMaxTarget, 0, inSource, 0, TextureUtil::TEXTURE_MIP_MAX);
+	TextureUtil::TextureGenerteMip(inMinTarget, 0, inSource, 0, TextureUtil::TEXTURE_MIP_MIN);
 
-	theRenderContext.CSSetRWTexture(inTarget, 0);
-	theRenderContext.CSSetRWTexture(inTarget, 1); // TODO mip
-	theRenderContext.CSSetRWTexture(inTarget, 2); // TODO mip
-
-	int groups_x = (inTarget->GetTexture()->GetWidth() + 7) / 8;
-	int groups_y = (inTarget->GetTexture()->GetHeight() + 7) / 8;
-	theRenderContext.Dispatch(groups_x, groups_y, 1);
-	theRenderContext.Flush();
-
-	// clear state
-	theRenderContext.CSSetTexture(NULL, 0);
-	theRenderContext.CSSetRWTexture(NULL, 0);
-	theRenderContext.CSSetRWTexture(NULL, 1);
-	theRenderContext.CSSetRWTexture(NULL, 2);
-	theRenderContext.CSSetShader(NULL);
+	// TODO: test. Are we allowed to write to a mip of the same texture?
+	// or do we require a ping/pong texture?
+	for (int dst_level = 1; dst_level < kNumMipLevels; dst_level++)
+	{
+		int src_level = dst_level - 1;
+		TextureUtil::TextureGenerteMip(inMaxTarget, dst_level, inMaxTarget->GetTexture(), src_level, TextureUtil::TEXTURE_MIP_MAX);
+		TextureUtil::TextureGenerteMip(inMinTarget, dst_level, inMinTarget->GetTexture(), src_level, TextureUtil::TEXTURE_MIP_MIN);
+	}
 }
 
 
 void DepthPyramidRenderer::Init()
 {
-	mShader = theResourceFactory.LoadComputeShader("../md3dFramework/Shaders/DepthPyramidCompute.hlsl");
-	assert(mShader != nullptr);
 	mInitialized = true;
 }
 
 
 void DepthPyramidRenderer::CleanUp()
 {
-	mShader = nullptr;
 	mInitialized = false;
 }
 

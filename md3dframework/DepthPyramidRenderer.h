@@ -14,14 +14,14 @@ public:
 
 	void Init();
 	void CleanUp();
-	void Render(pTexture inSource, pRenderTarget inTarget);
+	void Render(pTexture inSource, pRenderTarget inMaxTarget, pRenderTarget inMinTarget);
+	int GetNumMipLevels() { return kNumMipLevels; }
 
 private:
 	DepthPyramidRenderer(DepthPyramidRenderer const&) = delete;
 	void operator=(DepthPyramidRenderer const&) = delete;
 
-	pComputeShader				mShader = nullptr;
-	const int					kNumMipLevels = 3; // 1/2 .. 1/8
-	bool						mInitialized = false;
+	const int	kNumMipLevels = 5; // 1/2 .. 1/8
+	bool		mInitialized = false;
 };
 

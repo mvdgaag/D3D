@@ -39,11 +39,19 @@ namespace TextureUtil
 	pComputeShader gTextureTresholdShader;
 	pComputeShader gTextureTresholdConstantShader;
 
+	pComputeShader gTextureBoxBlurShader;
+	pComputeShader gTextureGaussianBlurShader;
+
 	pComputeShader gTextureStitchNorthShader;
 	pComputeShader gTextureStitchEastShader;
 	pComputeShader gTextureStitchSouthShader;
 	pComputeShader gTextureStitchWestShader;
 
+	pComputeShader gTextureMipNearestShader;
+	pComputeShader gTextureMipAvgShader;
+	pComputeShader gTextureMipAvgNormalShader;
+	pComputeShader gTextureMipMinShader;
+	pComputeShader gTextureMipMaxShader;
 
 	void InitTextureUtil()
 	{
@@ -78,10 +86,19 @@ namespace TextureUtil
 		gTextureTresholdShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureTreshold.hlsl");
 		gTextureTresholdConstantShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureTresholdConstant.hlsl");
 
+		gTextureBoxBlurShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureBoxBlur.hlsl");
+		gTextureGaussianBlurShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureGaussianBlur.hlsl");
+
 		gTextureStitchNorthShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureStitchNorth.hlsl");
 		gTextureStitchEastShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureStitchEast.hlsl");
 		gTextureStitchSouthShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureStitchSouth.hlsl");
 		gTextureStitchWestShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureStitchWest.hlsl");
+
+		gTextureMipAvgShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureMipAvg.hlsl");
+		gTextureMipAvgNormalShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureMipAvgNormal.hlsl");
+		gTextureMipNearestShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureMipNearest.hlsl");
+		gTextureMipMinShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureMipMin.hlsl");
+		gTextureMipMaxShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureMipMax.hlsl");
 	}
 
 
@@ -118,10 +135,19 @@ namespace TextureUtil
 		gTextureTresholdShader= nullptr;
 		gTextureTresholdConstantShader= nullptr;
 
+		gTextureBoxBlurShader = nullptr;
+		gTextureGaussianBlurShader = nullptr;
+
 		gTextureStitchNorthShader= nullptr;
 		gTextureStitchEastShader= nullptr;
 		gTextureStitchSouthShader= nullptr;
 		gTextureStitchWestShader= nullptr;
+
+		gTextureMipAvgShader = nullptr;
+		gTextureMipAvgNormalShader = nullptr;
+		gTextureMipNearestShader = nullptr;
+		gTextureMipMinShader = nullptr;
+		gTextureMipMaxShader = nullptr;
 	}
 
 
@@ -320,6 +346,22 @@ namespace TextureUtil
 	}
 
 
+	void TextureBoxBlur(pTexture inDst, pTexture inSrc, int inRadius)
+	{
+		apTexture sources;
+		sources.push_back(inSrc);
+		GPUTextureFunc(inDst, sources, float4(inRadius, 0,0,0), *gTextureBoxBlurShader);
+	}
+
+
+	void TextureGaussianBlur(pTexture inDst, pTexture inSrc, int inRadius)
+	{
+		apTexture sources;
+		sources.push_back(inSrc);
+		GPUTextureFunc(inDst, sources, float4(inRadius, 0, 0, 0), *gTextureGaussianBlurShader);
+	}
+
+
 	void TextureStitchNorth(pTexture inDst, pTexture inSrc)
 	{
 		float4 params(inSrc->GetWidth() - 1, inSrc->GetHeight() - 1, 0, 0);
@@ -424,6 +466,54 @@ namespace TextureUtil
 		theRenderContext.CSSetShader(nullptr);
 
 		theResourceFactory.DestroyItem(rt);
+		theResourceFactory.DestroyItem(cb);
+	}
+
+
+	void TextureGenerteMip(pRenderTarget inDst, int inDstLevel, pTexture inSrc, int inSrcLevel, TextureMipMode inMode)
+	{
+		assert(inDst->GetTexture()->GetWidth() >> (inDstLevel) == inSrc->GetWidth() >> (inSrcLevel + 1));
+		assert(inDst->GetTexture()->GetHeight() >> (inDstLevel) == inSrc->GetHeight() >> (inSrcLevel + 1));
+
+		switch (inMode)
+		{
+		case TextureUtil::TEXTURE_MIP_AVG:
+			theRenderContext.CSSetShader(gTextureMipAvgShader);
+			break;
+		case TextureUtil::TEXTURE_MIP_AVG_NORMAL:
+			theRenderContext.CSSetShader(gTextureMipAvgNormalShader);
+			break;
+		case TextureUtil::TEXTURE_MIP_NEAREST:
+			theRenderContext.CSSetShader(gTextureMipNearestShader);
+			break;
+		case TextureUtil::TEXTURE_MIP_MIN:
+			theRenderContext.CSSetShader(gTextureMipMinShader);
+			break;
+		case TextureUtil::TEXTURE_MIP_MAX:
+			theRenderContext.CSSetShader(gTextureMipMaxShader);
+			break;
+		default:
+			theRenderContext.CSSetShader(gTextureMipAvgShader);
+			break;
+		}
+		
+		theRenderContext.CSSetRWTexture(inDst, inDstLevel);
+		theRenderContext.CSSetTexture(inSrc, 0);
+
+		pConstantBuffer cb = theResourceFactory.MakeConstantBuffer(sizeof(float4));
+		float4 values(inSrcLevel, 0, 0, 0);
+		theRenderContext.UpdateSubResource(*cb, &values);
+		theRenderContext.CSSetConstantBuffer(cb, 0);
+
+		int threads_x = ((inDst->GetTexture()->GetWidth() >> inDstLevel) + 7) / 8;
+		int threads_y = ((inDst->GetTexture()->GetHeight() >> inDstLevel) + 7) / 8;
+		theRenderContext.Dispatch(threads_x, threads_y, 1);
+		
+		theRenderContext.CSSetConstantBuffer(nullptr, 0);
+		theRenderContext.CSSetTexture(nullptr, 0);
+		theRenderContext.CSSetRWTexture(nullptr, 0);
+		theRenderContext.CSSetShader(nullptr);
+
 		theResourceFactory.DestroyItem(cb);
 	}
 }

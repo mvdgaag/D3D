@@ -17,11 +17,14 @@ public:
 	
 	void Init();
 	void CleanUp();
-	void Render(pTexture inSource, pTexture inNormal, pTexture inLinearDepth, pRenderTarget inTarget);
+	void Render(pTexture inSource, pTexture inNormal, pTexture inDiffuseColor, pTexture inLinearDepth, pTexture inMaxDepthPyramid, pRenderTarget inTarget, pRenderTarget inTempTarget);
 
 private:
 	IndirectLightingRenderer(IndirectLightingRenderer const&) = delete;
 	void operator=(IndirectLightingRenderer const&) = delete;
+
+	void ApplyIndirect(pTexture inSource, pTexture inNormal, pTexture inDiffuseColor, pTexture inLinearDepth, pTexture inMaxDepthPyramid, pRenderTarget inTarget);
+	void ApplyBlur(pTexture inSource, pTexture inNormal, pTexture inLinearDepth, pRenderTarget inTarget, bool inHorizontal);
 
 	struct ConstantBufferData
 	{
@@ -31,6 +34,7 @@ private:
 	};
 	ConstantBufferData mConstantBufferData;
 	pConstantBuffer mConstantBuffer = nullptr;
-	pComputeShader mShader = nullptr;
+	pComputeShader mLightingShader = nullptr;
+	pComputeShader mBlurShader = nullptr;
 	bool mInitialized = false;
 };

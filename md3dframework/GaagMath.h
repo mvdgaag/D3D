@@ -9,17 +9,52 @@
 #include "glm\gtc\matrix_transform.hpp"
 
 typedef glm::vec2 float2;
+typedef float2* pFloat2; 
+typedef std::vector<float2> aFloat2;
+typedef std::vector<float2*> apFloat2; 
+typedef float2& rFloat2;
+
 typedef glm::vec3 float3;
+typedef float3* pFloat3;
+typedef std::vector<float3> aFloat3;
+typedef std::vector<float3*> apFloat3;
+typedef float3& rFloat3;
+
 typedef glm::vec4 float4;
+typedef float4* pFloat4;
+typedef std::vector<float4> aFloat4;
+typedef std::vector<float4*> apFloat4;
+typedef float4& rFloat4;
 
 typedef glm::ivec2 int2;
+typedef int2* pInt2;
+typedef std::vector<int2> aInt2;
+typedef std::vector<int2*> apInt2;
+typedef int2& rInt2;
+
 typedef glm::ivec3 int3;
+typedef int3* pInt3;
+typedef std::vector<int3> aInt3;
+typedef std::vector<int3*> apInt3;
+typedef int3& rInt3;
+
 typedef glm::ivec4 int4;
+typedef int4* pInt4;
+typedef std::vector<int4> aInt4;
+typedef std::vector<int4*> apInt4;
+typedef int4& rInt4;
 
 typedef glm::mat4 float4x4;
+typedef float4x4* pFloat4x4;
+typedef std::vector<float4x4> aFloat4x4;
+typedef std::vector<float4x4*> apFloat4x4;
+typedef float4x4& rFloat4x4;
 
 typedef glm::quat quat;
-
+typedef quat* pQuat;
+typedef std::vector<quat> aQuat;
+typedef std::vector<quat*> apQuat;
+typedef quat& rQuat;
 
 inline float4x4 rotate(const float4x4& inMatrix, float inRadians, const float3& inAxis)
 {
