@@ -20,7 +20,7 @@ cbuffer cIndirectLightingConstants : register(b0)
 	float4	cFrameData; // world_up.xyz, random
 };
 
-#define NUM_SAMPLES 13
+#define NUM_SAMPLES 16
 #define MAX_MIP_LEVEL 5
 #define GOLDEN_ANGLE (3.1415 * (3.0 - sqrt(5.0)))
 
@@ -59,7 +59,7 @@ void CS(uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID)
 	float running_weight_ao = 0.0001;
 	float running_weight_radiance = 1.0;
 
-	for (int i = 0; i < NUM_SAMPLES, radius < ss_radius; i++, radius *= 2.0)
+	for (int i = 0; i < NUM_SAMPLES, radius < ss_radius; i++, radius *= sqrt(2))
 	{
 		int2 samp_coord = clamp(coord + (unit_vec * radius), int2(0, 0), int2(cTargetSize.xy) - 1);
 		float samp_depth = linearDepthTexture[samp_coord];
@@ -90,7 +90,6 @@ void CS(uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID)
 	accum_radiance /= running_weight_radiance;
 	float3 up = cFrameData.xyz;
 	float3 sky_color = float3(0.5, 0.5, 0.5);
-	//accum_radiance += (0.5 * dot(normal, up) + 1.0) * accum_ao * sky_color;
 	accum_radiance += saturate(1.0 - acos(dot(normal, up) - 0.01) / 3.1415) * accum_ao * sky_color;
 	accum_radiance *= diffuseTexture[coord];
 
