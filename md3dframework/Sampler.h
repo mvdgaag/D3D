@@ -86,7 +86,7 @@ protected:
 
 private:
 	Sampler() : BaseResource() {};
-	~Sampler() {};
+	~Sampler() { CleanUp(); }
 
 	Sampler(Sampler const&) = delete;
 	void operator=(Sampler const&) = delete;

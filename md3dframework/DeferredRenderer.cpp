@@ -23,9 +23,8 @@
 void DeferredRenderer::Init(int inWidth, int inHeight)
 {
 	assert(theRenderContext.IsInitialized());
+	assert(mInitialized == false);
 	assert(inWidth > 0 && inHeight > 0);
-
-	CleanUp();
 
 	mGBuffer = MAKE_NEW(GBuffer);
 	mGBuffer->Init(inWidth, inHeight);
@@ -41,6 +40,10 @@ void DeferredRenderer::Init(int inWidth, int inHeight)
 	mAAHistoryFrame = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
 	mPostProcessed = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
 	mFullResRGBATemp = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
+	
+	mConstantBufferEveryFrame = theResourceFactory.MakeConstantBuffer(sizeof(ConstantDataEveryFrame));
+	mConstantBufferEveryObject = theResourceFactory.MakeConstantBuffer(sizeof(ConstantDataEveryObject));
+	mConstantBufferOnDemand = theResourceFactory.MakeConstantBuffer(sizeof(ConstantDataOnDemand));
 
 	mShadowRenderer.Init();
 	mDirectLightingRenderer.Init();
@@ -50,12 +53,6 @@ void DeferredRenderer::Init(int inWidth, int inHeight)
 	mLightComposeRenderer.Init();
 	mTAARenderer.Init();
 	mPostProcessRenderer.Init();
-	
-	mConstantBufferEveryFrame = theResourceFactory.MakeConstantBuffer(sizeof(ConstantDataEveryFrame));
-	mConstantBufferEveryObject = theResourceFactory.MakeConstantBuffer(sizeof(ConstantDataEveryObject));
-	mConstantBufferOnDemand = theResourceFactory.MakeConstantBuffer(sizeof(ConstantDataOnDemand));
-
-	//mPrevViewMatrix = Gaag.GetCamera()->GetViewMatrix();
 
 	mInitialized = true;	
 }
@@ -63,6 +60,22 @@ void DeferredRenderer::Init(int inWidth, int inHeight)
 
 void DeferredRenderer::CleanUp()
 {
+	delete mGBuffer;
+	theResourceFactory.DestroyItem(mDepthMinPyramid);
+	theResourceFactory.DestroyItem(mDepthMaxPyramid);
+	theResourceFactory.DestroyItem(mDirectLightingDiffuse);
+	theResourceFactory.DestroyItem(mDirectLightingSpecular);
+	theResourceFactory.DestroyItem(mIndirectLighting);
+	theResourceFactory.DestroyItem(mReflections);
+	theResourceFactory.DestroyItem(mLightComposed);
+	theResourceFactory.DestroyItem(mAntiAliased);
+	theResourceFactory.DestroyItem(mAAHistoryFrame);
+	theResourceFactory.DestroyItem(mPostProcessed);
+	theResourceFactory.DestroyItem(mFullResRGBATemp);
+	theResourceFactory.DestroyItem(mConstantBufferEveryFrame);
+	theResourceFactory.DestroyItem(mConstantBufferEveryObject);
+	theResourceFactory.DestroyItem(mConstantBufferOnDemand);
+
 	mGBuffer = nullptr;
 	mDepthMinPyramid = nullptr;
 	mDepthMaxPyramid = nullptr;
@@ -72,10 +85,14 @@ void DeferredRenderer::CleanUp()
 	mReflections = nullptr;
 	mLightComposed = nullptr;
 	mAntiAliased = nullptr;
+	mAAHistoryFrame = nullptr;
 	mPostProcessed = nullptr;
-	mConstantBufferEveryFrame = nullptr;
-	mConstantBufferOnDemand = nullptr;
 	mFullResRGBATemp = nullptr;
+
+	mConstantBufferEveryFrame = nullptr;
+	mConstantBufferEveryObject = nullptr;
+	mConstantBufferOnDemand = nullptr;
+
 
 	mShadowRenderer.CleanUp();
 	mDirectLightingRenderer.CleanUp();

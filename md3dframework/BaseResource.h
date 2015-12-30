@@ -44,6 +44,8 @@ protected:
 	long mUUID;
 
 private:
+	BaseResource(BaseResource const&) = delete;
+	void operator=(BaseResource const&) = delete;
 	static long sCurrentID;
 };
 

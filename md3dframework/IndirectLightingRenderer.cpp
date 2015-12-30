@@ -102,7 +102,7 @@ void IndirectLightingRenderer::ApplyIndirect(pTexture inSource, pTexture inNorma
 
 void IndirectLightingRenderer::Init()
 {
-	CleanUp();
+	assert(mInitialized == false);
 	mLightingShader = theResourceFactory.LoadComputeShader("../md3dFramework/Shaders/IndirectLightingCompute.hlsl");
 	mBlurShader = theResourceFactory.LoadComputeShader("../md3dFramework/Shaders/IndirectBlurCompute.hlsl");
 	mConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(ConstantBufferData));
@@ -112,6 +112,9 @@ void IndirectLightingRenderer::Init()
 
 void IndirectLightingRenderer::CleanUp()
 {
+	theResourceFactory.DestroyItem(mLightingShader);
+	theResourceFactory.DestroyItem(mBlurShader);
+	theResourceFactory.DestroyItem(mConstantBuffer);
 	mLightingShader = nullptr;
 	mBlurShader = nullptr;
 	mConstantBuffer = nullptr;

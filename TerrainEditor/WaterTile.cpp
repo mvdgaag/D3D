@@ -37,12 +37,12 @@ void WaterTile::Init(pTexture inTerrainHeightTexture, pTexture inWaterHeightText
 	mUpdateWaterShader = theResourceFactory.LoadComputeShader("Shaders/UpdateWater.hlsl");
 	mUpdateWaterBorderShader = theResourceFactory.LoadComputeShader("Shaders/UpdateWaterBorder.hlsl");
 
-	mTimeStep = 0.01;
-	mFluidity = 100.0;
-	mGravity = 9.81;
+	mTimeStep = 0.01f;
+	mFluidity = 100.0f;
+	mGravity = 9.81f;
 	mPixelScale = inPixelScale;
 	mHeightScale = inHeightScale;
-	mFriction = 0.1;
+	mFriction = 0.1f;
 
 	mFluxConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(float4));
 	mWaterConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(float4));

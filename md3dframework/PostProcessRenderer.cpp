@@ -40,7 +40,7 @@ void PostProcessRenderer::Render(pTexture inSource, pTexture inMotionVectors, pR
 
 void PostProcessRenderer::Init()
 {
-	CleanUp();
+	assert(mInitialized == false);
 	mShader = theResourceFactory.LoadComputeShader("../md3dFramework/Shaders/PostProcessCompute.hlsl");
 	mConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(ConstantBufferData));
 	mInitialized = true;
@@ -49,6 +49,8 @@ void PostProcessRenderer::Init()
 
 void PostProcessRenderer::CleanUp()
 {
+	theResourceFactory.DestroyItem(mShader);
+	theResourceFactory.DestroyItem(mConstantBuffer);
 	mShader = nullptr;
 	mConstantBuffer = nullptr;
 	mInitialized = false;

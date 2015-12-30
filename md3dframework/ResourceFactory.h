@@ -86,5 +86,5 @@ private:
 	pSampler		mDefaultPointSampler;
 	pMesh			mFullScreenTriangleMesh;
 
-	std::unordered_map<unsigned short, pBaseResource> mResources;
+	std::unordered_map<long, pBaseResource> mResources;
 };

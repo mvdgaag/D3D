@@ -89,7 +89,7 @@ public:
 	void VSSetConstantBuffer(pConstantBuffer inConstantBuffer, int idx);
 
 private:
-	RenderContext() { mInitialized = false; }
+	RenderContext();
 	~RenderContext();
 	RenderContext(RenderContext const&) = delete;
 	void operator=(RenderContext const&) = delete;

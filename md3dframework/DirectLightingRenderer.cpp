@@ -111,7 +111,7 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 
 void DirectLightingRenderer::Init()
 {
-	CleanUp();
+	assert(mInitialized == false);
 	mShader = theResourceFactory.LoadComputeShader("../md3dFramework/Shaders/DirectLightingCompute.hlsl");
 	mConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(ConstantBufferData));
 	mConstantBufferPointLights = theResourceFactory.MakeConstantBuffer(sizeof(ConstantBufferPointLightData));
@@ -126,8 +126,11 @@ void DirectLightingRenderer::Init()
 
 void DirectLightingRenderer::CleanUp()
 {
-	// TODO: Unregister and clean up resources properly!
-	// also for other classes?
+	theResourceFactory.DestroyItem(mShader);
+	theResourceFactory.DestroyItem(mConstantBuffer);
+	theResourceFactory.DestroyItem(mConstantBufferPointLights);
+	theResourceFactory.DestroyItem(mConstantBufferSpotLights);
+	theResourceFactory.DestroyItem(mConstantBufferDirectionalLights);
 
 	mShader = nullptr;
 	mConstantBuffer = nullptr;

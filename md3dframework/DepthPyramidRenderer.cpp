@@ -38,6 +38,7 @@ void DepthPyramidRenderer::Render(pTexture inSource, pRenderTarget inMaxTarget, 
 
 void DepthPyramidRenderer::Init()
 {
+	assert(mInitialized == false);
 	mInitialized = true;
 }
 

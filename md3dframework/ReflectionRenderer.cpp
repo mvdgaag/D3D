@@ -33,7 +33,7 @@ void ReflectionRenderer::Render(pTexture inSource, pRenderTarget inTarget)
 
 void ReflectionRenderer::Init()
 {
-	CleanUp();
+	assert(mInitialized == false);
 	mShader = theResourceFactory.LoadComputeShader("../md3dFramework/Shaders/ReflectionCompute.hlsl");
 	mInitialized = true;
 }
@@ -41,6 +41,7 @@ void ReflectionRenderer::Init()
 
 void ReflectionRenderer::CleanUp()
 {
+	theResourceFactory.DestroyItem(mShader);
 	mShader = nullptr;
 	mInitialized = false;
 }

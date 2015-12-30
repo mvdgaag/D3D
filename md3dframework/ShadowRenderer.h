@@ -15,5 +15,6 @@ public:
 private:
 	ShadowRenderer(ShadowRenderer const&) = delete;
 	void operator=(ShadowRenderer const&) = delete;
+	bool mInitialized = false;
 };
 

@@ -41,7 +41,7 @@ void LightComposeRenderer::Render(pTexture inDirectDiffuse, pTexture inDirectSpe
 
 void LightComposeRenderer::Init()
 {
-	CleanUp();
+	assert(mInitialized == false);
 	mShader = theResourceFactory.LoadComputeShader("../md3dFramework/Shaders/LightComposeCompute.hlsl");
 	mInitialized = true;
 }
@@ -49,6 +49,7 @@ void LightComposeRenderer::Init()
 
 void LightComposeRenderer::CleanUp()
 {
+	theResourceFactory.DestroyItem(mShader);
 	mShader = nullptr;
 	mInitialized = false;
 }
