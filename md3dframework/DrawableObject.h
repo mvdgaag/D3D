@@ -18,8 +18,9 @@ public:
 	void Init(pMesh inMesh, pMaterial inMaterial);
 	void CleanUp();
 
-	pMesh			GetMesh()				{ return mMesh; }
-	pMaterial		GetMaterial()			{ return mMaterial; }
+	pMesh			GetMesh()		{ return mMesh; }
+	pMaterial		GetMaterial()	{ return mMaterial; }
+	AABB			GetAABB()		{ return mAABB; }
 
 	// Can be overridden to set custom textures/constantbuffers
 	// Note that some textures and constantbuffers are reserved by the deferred renderer!
@@ -27,6 +28,7 @@ public:
 	virtual void	FinalizeAfterDraw()		{}
 
 private:
+	AABB mAABB;
 	pMesh mMesh = nullptr;
 	pMaterial mMaterial = nullptr;
 	pConstantBuffer mConstantBuffer = nullptr;

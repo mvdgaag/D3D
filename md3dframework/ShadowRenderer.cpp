@@ -3,6 +3,7 @@
 
 void ShadowRenderer::Render()
 {
+
 }
 
 

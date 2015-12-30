@@ -2,9 +2,6 @@
 #include <math.h>
 #include "GaagMath.h"
 
-// predeclarations
-class rect;
-
 
 class rect
 {

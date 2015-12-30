@@ -208,10 +208,12 @@
     <ClInclude Include="DirectLightingRenderer.h" />
     <ClInclude Include="DrawableObject.h" />
     <ClInclude Include="FileUtil.h" />
+    <ClInclude Include="Frustum.h" />
     <ClInclude Include="Gaag.h" />
     <ClInclude Include="GaagFramework.h" />
     <ClInclude Include="GaagCommon.h" />
     <ClInclude Include="GBuffer.h" />
+    <ClInclude Include="AABB.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="InputListener.h" />
     <ClInclude Include="NavMeshNode.h" />
@@ -255,6 +257,7 @@
     <ClCompile Include="DirectLightingRenderer.cpp" />
     <ClCompile Include="DrawableObject.cpp" />
     <ClCompile Include="FileUtil.cpp" />
+    <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="GaagFramework.cpp" />
     <ClCompile Include="GBuffer.cpp" />
     <ClCompile Include="IndirectLightingRenderer.cpp" />

@@ -165,6 +165,19 @@ void Mesh::InitFromData(SimpleVertex* inVertexData, int inNumVerts, unsigned sho
 	InitData.pSysMem = inIndexData;
 	D3DCall(theRenderContext.GetDevice()->CreateBuffer(&bd, &InitData, &mIndexBuffer));
 
+	float3 min_val;
+	float3 max_val;
+	min_val = max_val = inVertexData[0].Position;
+	for (int i = 1; i < mNumVerts; i++)
+	{
+		float3 val = inVertexData[i].Position;
+		min_val = minPerElem(min_val, val);
+		max_val = maxPerElem(max_val, val);
+	}
+	mAABB.mScale = max_val - min_val;
+	mAABB.mCenter = (max_val + min_val) / 2.0f;
+	mAABB.mRadius = length(mAABB.mScale) / 2.0f;
+
 	assert(mVertexBuffer != nullptr);
 	assert(mIndexBuffer != nullptr);
 }

@@ -12,6 +12,7 @@ public:
 	float4x4	GetViewMatrix() { return lookAt(mPosition, mTarget, mWorldUp); }
 	float4x4	GetProjectionMatrix() { return perspective(mFovY, mAspect, mNear, mFar); }
 	float4x4	GetViewProjectionMatrix() { return GetProjectionMatrix() * GetViewMatrix(); };
+	Frustum		ExtractFrustum() { Frustum result; result.InitFromProjectionMatrix(GetViewProjectionMatrix()); return result; }
 
 	float		GetFovX() { return mFovY * mAspect; }
 	float		GetFovY() { return mFovY; }

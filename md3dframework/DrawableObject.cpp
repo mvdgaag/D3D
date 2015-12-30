@@ -11,6 +11,7 @@
 void DrawableObject::Init(pMesh inMesh, pMaterial inMaterial)
 {
 	mMesh = inMesh;
+	mAABB = mMesh->GetAABB();
 	mMaterial = inMaterial;
 	mTransform = float4x4();
 }

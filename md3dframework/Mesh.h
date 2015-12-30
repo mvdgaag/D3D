@@ -27,6 +27,8 @@ public:
 	void InitPlane(int2 inNumSegments, float2 inScale = { 1, 1 });
 	void InitFullscreenTriangle();
 	void InitFromFile(std::string inFileName);
+	
+	AABB GetAABB() { return mAABB; }
 
 	void CleanUp() override;
 	
@@ -34,6 +36,7 @@ public:
 
 protected:
 
+	AABB mAABB;
 	ID3D11Buffer* mVertexBuffer = nullptr;
 	ID3D11Buffer* mIndexBuffer = nullptr;
 	unsigned int mStride = 0;

@@ -8,7 +8,9 @@
 #include <unordered_set>
 
 #include "GaagMath.h"
-#include "rect.h"
+#include "Rect.h"
+#include "Frustum.h"
+#include "AABB.h"
 
 
 #ifndef D3DCall

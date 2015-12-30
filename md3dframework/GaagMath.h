@@ -7,6 +7,7 @@
 #include "glm\glm.hpp"
 #include "glm\gtc\quaternion.hpp"
 #include "glm\gtc\matrix_transform.hpp"
+#include <vector>
 
 typedef glm::vec2 float2;
 typedef float2* pFloat2; 
@@ -90,6 +91,10 @@ inline float4x4 inverse(const float4x4& mat)
 {
 	return glm::inverse(mat);
 }
+
+inline float length(const float2& a) { return glm::length(a); }
+inline float length(const float3& a) { return glm::length(a); }
+inline float length(const float4& a) { return glm::length(a); }
 
 inline float3 cross(const float3& a, const float3& b) { return glm::cross(a, b); }
 

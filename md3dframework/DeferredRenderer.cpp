@@ -167,8 +167,15 @@ void DeferredRenderer::GeometryPass(std::vector<pDrawableObject> inDrawList)
 	
 	theRenderContext.SetRenderTargets(GBuffer::NUM_RENDER_TARGETS, mGBuffer->GetRenderTargets(), mGBuffer->GetDepthStencilTarget());
 
+	Camera& camera = *(Gaag.GetCamera());
+	Frustum camera_frustum = camera.ExtractFrustum();
 	for each (pDrawableObject obj in inDrawList)
 	{
+		AABB& aabb = obj->GetAABB();
+		float3 position = obj->GetPosition() + aabb.mCenter;
+		if (!camera_frustum.TestSphere(position, aabb.mRadius))
+			continue;
+
 		theRenderContext.SetMarker("Drawing Object");
 
 		ConstantDataEveryObject constantData;
