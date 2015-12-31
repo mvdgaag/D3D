@@ -6,7 +6,8 @@
 #include "RenderTarget.h"
 
 
-void LightComposeRenderer::Render(pTexture inDirectDiffuse, pTexture inDirectSpecular, pTexture inIndirect, pTexture inReflections, pRenderTarget inTarget)
+void LightComposeRenderer::Render(pTexture inDirectDiffuse, pTexture inDirectSpecular, pTexture inIndirect, 
+	pTexture inReflections, pTexture inDepth, pTexture inHalfDepth, pRenderTarget inTarget)
 {
 	assert(mInitialized == true);
 
@@ -23,6 +24,8 @@ void LightComposeRenderer::Render(pTexture inDirectDiffuse, pTexture inDirectSpe
 	theRenderContext.CSSetTextureAndSampler(inDirectSpecular, point_sampler, 1);
 	theRenderContext.CSSetTextureAndSampler(inIndirect, point_sampler, 2);
 	theRenderContext.CSSetTextureAndSampler(inReflections, point_sampler, 3);
+	theRenderContext.CSSetTextureAndSampler(inDepth, point_sampler, 4);
+	theRenderContext.CSSetTextureAndSampler(inHalfDepth, point_sampler, 5);
 	theRenderContext.CSSetRWTexture(inTarget, 0);
 
 	int groups_x = (inTarget->GetTexture()->GetWidth() + 7) / 8;
@@ -35,6 +38,9 @@ void LightComposeRenderer::Render(pTexture inDirectDiffuse, pTexture inDirectSpe
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 0);
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 1);
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 2);
+	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 3);
+	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 4);
+	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 5);
 	theRenderContext.CSSetRWTexture(NULL, 0);
 }
 

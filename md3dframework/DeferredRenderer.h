@@ -97,6 +97,8 @@ private:
 	
 	pGBuffer			mGBuffer = nullptr;
 	pRenderTarget		mFullResRGBATemp = nullptr;
+	pRenderTarget		mHalfLinearDepth = nullptr;
+	pRenderTarget		mHalfNormals = nullptr;
 	pRenderTarget		mDepthMaxPyramid = nullptr;
 	pRenderTarget		mDepthMinPyramid = nullptr;
 	pRenderTarget		mDirectLightingDiffuse = nullptr;

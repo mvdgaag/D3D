@@ -89,3 +89,56 @@ float Random(float x)	{ return FloatConstruct(Hash(asuint(x))); }
 float Random(float2 v)	{ return FloatConstruct(Hash(asuint(v))); }
 float Random(float3 v)	{ return FloatConstruct(Hash(asuint(v))); }
 float Random(float4 v)	{ return FloatConstruct(Hash(asuint(v))); }
+
+
+// returns a UV to upsample from
+uint2 NearestDepthSelect(uint2 inHiCoord, float4 inLoDepth, float inHiDepth, out bool outSampleBilinear)
+{
+	float4 delta = abs(inLoDepth - float4(inHiDepth, inHiDepth, inHiDepth, inHiDepth));
+	float max_delta = max(max(delta.x, delta.y), max(delta.z, delta.w));
+
+	const float treshold = 0.01;
+	if (max_delta < treshold * inHiDepth)
+	{
+		outSampleBilinear = true;
+		return inHiCoord / 2;
+	}
+
+	outSampleBilinear = false;
+	uint2 coord = (inHiCoord - 1) / 2;
+
+	if (delta.x < delta.y)
+	{
+		if (delta.z < delta.w)
+		{
+			if (delta.x < delta.z)
+				return coord;				// x
+			else
+				return coord + uint2(0, 1);	// z
+		}
+		else
+		{
+			if (delta.x < delta.w)
+				return coord;				// x
+			else
+				return coord + uint2(1, 1);	// w
+		}
+	}
+	else
+	{
+		if (delta.z < delta.w)
+		{
+			if (delta.y < delta.z)
+				return coord + uint2(1, 0);	// y
+			else
+				return coord + uint2(0, 1);	// z
+		}
+		else
+		{
+			if (delta.y < delta.w)
+				return coord + uint2(1, 0);	// y
+			else
+				return coord + uint2(1, 1);	// w
+		}
+	}
+}

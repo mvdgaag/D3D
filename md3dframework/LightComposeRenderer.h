@@ -15,7 +15,8 @@ public:
 
 	void Init();
 	void CleanUp();
-	void Render(pTexture inDirectDiffuse, pTexture inDirectSpecular, pTexture inIndirect, pTexture inReflections, pRenderTarget inTarget);
+	void Render(pTexture inDirectDiffuse, pTexture inDirectSpecular, pTexture inIndirect, 
+		pTexture inReflections, pTexture inDepth, pTexture inHalfDepth, pRenderTarget inTarget);
 
 private:
 	LightComposeRenderer(LightComposeRenderer const&) = delete;

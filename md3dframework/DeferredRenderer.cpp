@@ -16,8 +16,14 @@
 #include "PostProcessRenderer.h"
 #include "DrawableObject.h"
 #include "PointLight.h"
+#include "TextureUtil.h"
 #include <assert.h>
 #include <d3d11_1.h>
+
+
+
+#define HALF_RES_INDIRECT
+
 
 
 void DeferredRenderer::Init(int inWidth, int inHeight)
@@ -33,13 +39,19 @@ void DeferredRenderer::Init(int inWidth, int inHeight)
 	mDepthMaxPyramid = theResourceFactory.MakeRenderTarget(int2(inWidth / 2, inHeight / 2), mDepthPyramidRenderer.GetNumMipLevels(), FORMAT_R16_FLOAT);
 	mDirectLightingDiffuse = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
 	mDirectLightingSpecular = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
+#ifdef HALF_RES_INDIRECT
+	mIndirectLighting = theResourceFactory.MakeRenderTarget(int2(inWidth / 2, inHeight / 2), 1, FORMAT_R16G16B16A16_FLOAT);
+#else
 	mIndirectLighting = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
+#endif
 	mReflections = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
 	mLightComposed = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
 	mAntiAliased = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
 	mAAHistoryFrame = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
 	mPostProcessed = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
 	mFullResRGBATemp = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
+	mHalfLinearDepth = theResourceFactory.MakeRenderTarget(int2(inWidth / 2, inHeight / 2), 1, FORMAT_R32_FLOAT);
+	mHalfNormals = theResourceFactory.MakeRenderTarget(int2(inWidth / 2, inHeight / 2), 1, FORMAT_R16G16_FLOAT);
 	
 	mConstantBufferEveryFrame = theResourceFactory.MakeConstantBuffer(sizeof(ConstantDataEveryFrame));
 	mConstantBufferEveryObject = theResourceFactory.MakeConstantBuffer(sizeof(ConstantDataEveryObject));
@@ -219,20 +231,29 @@ void DeferredRenderer::GeometryPass(std::vector<pDrawableObject> inDrawList)
 void DeferredRenderer::LightingPass()
 {
 	theRenderContext.BeginEvent("Lighting Pass");
-	
+
 	//theRenderContext.SetMarker("Shadow Renderer");
 	//mShadowRenderer.Render();
 	
 	theRenderContext.SetMarker("Direct Lighting Renderer");
 	mDirectLightingRenderer.Render(mGBuffer, mDirectLightingDiffuse, mDirectLightingSpecular, mPointLights, mSpotLights, mDirectionalLights);
 	
-	theRenderContext.SetMarker("Depth Pyramid Renderer");
-	mDepthPyramidRenderer.Render(mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), mDepthMaxPyramid, mDepthMinPyramid);
+	//theRenderContext.SetMarker("Depth Pyramid Renderer");
+	//mDepthPyramidRenderer.Render(mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), mDepthMaxPyramid, mDepthMinPyramid);
 	
+#ifdef HALF_RES_INDIRECT
+	theRenderContext.SetMarker("Downres depth and normals");
+	TextureUtil::TextureDownSample(mHalfLinearDepth, mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), theResourceFactory.GetDefaultPointSampler());
+	TextureUtil::TextureDownSample(mHalfNormals, mGBuffer->GetTexture(GBuffer::NORMAL), theResourceFactory.GetDefaultPointSampler());
+	theRenderContext.SetMarker("Indirect Lighting Renderer");
+	mIndirectLightingRenderer.Render(mDirectLightingDiffuse->GetTexture(), mHalfNormals->GetTexture(), mGBuffer->GetTexture(GBuffer::DIFFUSE),
+		mHalfLinearDepth->GetTexture(), mDepthMaxPyramid->GetTexture(), mIndirectLighting, mFullResRGBATemp);
+#else
 	theRenderContext.SetMarker("Indirect Lighting Renderer");
 	mIndirectLightingRenderer.Render(mDirectLightingDiffuse->GetTexture(), mGBuffer->GetTexture(GBuffer::NORMAL), mGBuffer->GetTexture(GBuffer::DIFFUSE),
 		mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), mDepthMaxPyramid->GetTexture(), mIndirectLighting, mFullResRGBATemp);
-	
+#endif
+
 	//theRenderContext.SetMarker("Reflection Renderer");
 	//mReflectionRenderer.Render(mIndirectLighting->GetTexture(), mReflections);
 
@@ -241,6 +262,8 @@ void DeferredRenderer::LightingPass()
 									mDirectLightingSpecular->GetTexture(),
 									mIndirectLighting->GetTexture(),
 									mReflections->GetTexture(),
+									mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH),
+									mHalfLinearDepth->GetTexture(),
 									mLightComposed);
 	theRenderContext.EndEvent();
 }

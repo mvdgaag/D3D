@@ -27,6 +27,7 @@ void ResourceFactory::CleanUp()
 
 void ResourceFactory::DestroyItem(pBaseResource inResource)
 {
+	assert(inResource != nullptr);
 	UnRegisterResource(inResource);
 	delete inResource;
 }

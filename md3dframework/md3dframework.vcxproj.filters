@@ -482,6 +482,9 @@
     <FxCompile Include="Shaders\IndirectBlurCompute.hlsl">
       <Filter>Shaders\SystemShaders</Filter>
     </FxCompile>
+    <FxCompile Include="TextureFuncShaders\TextureDownSample.hlsl">
+      <Filter>Shaders\TextureFuncShaders</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\LibLight.hlsli">

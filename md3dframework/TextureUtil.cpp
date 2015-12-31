@@ -8,6 +8,8 @@
 
 namespace TextureUtil
 {
+	pComputeShader gTextureDownSampleShader;
+
 	pComputeShader gTextureAddShader;
 	pComputeShader gTextureAddConstantShader;
 
@@ -53,8 +55,14 @@ namespace TextureUtil
 	pComputeShader gTextureMipMinShader;
 	pComputeShader gTextureMipMaxShader;
 
+	static bool gTextureUtilInitialized = false;
+
 	void InitTextureUtil()
 	{
+		assert(gTextureUtilInitialized == false);
+
+		gTextureDownSampleShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureDownSample.hlsl");
+
 		gTextureAddShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureAdd.hlsl");
 		gTextureAddConstantShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureAddConstant.hlsl");
 
@@ -99,66 +107,94 @@ namespace TextureUtil
 		gTextureMipNearestShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureMipNearest.hlsl");
 		gTextureMipMinShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureMipMin.hlsl");
 		gTextureMipMaxShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureMipMax.hlsl");
+
+		gTextureUtilInitialized = true;
 	}
 
 
 	void CleanUpTextureUtil()
 	{
-		gTextureAddShader= nullptr;
-		gTextureAddConstantShader= nullptr;
-		
-		gTextureBlendShader= nullptr;
-		gTextureBlendConstantShader= nullptr;
-		
-		gTextureClampShader= nullptr;
-		gTextureClampConstantShader= nullptr;
+		if (gTextureUtilInitialized == false)
+			return;
 
-		gTextureCopyShader= nullptr;
+		theResourceFactory.DestroyItem(gTextureDownSampleShader);
+		theResourceFactory.DestroyItem(gTextureAddShader);
+		theResourceFactory.DestroyItem(gTextureAddConstantShader);
+		theResourceFactory.DestroyItem(gTextureBlendShader);
+		theResourceFactory.DestroyItem(gTextureBlendConstantShader);
+		theResourceFactory.DestroyItem(gTextureClampShader);
+		theResourceFactory.DestroyItem(gTextureClampConstantShader);
+		theResourceFactory.DestroyItem(gTextureCopyShader);
+		theResourceFactory.DestroyItem(gTextureDivShader);
+		theResourceFactory.DestroyItem(gTextureDivConstantShader);
+		theResourceFactory.DestroyItem(gTextureMaxShader);
+		theResourceFactory.DestroyItem(gTextureMaxConstantShader);
+		theResourceFactory.DestroyItem(gTextureMinShader);
+		theResourceFactory.DestroyItem(gTextureMinConstantShader);
+		theResourceFactory.DestroyItem(gTextureMulShader);
+		theResourceFactory.DestroyItem(gTextureMulConstantShader);
+		theResourceFactory.DestroyItem(gTextureSetShader);
+		theResourceFactory.DestroyItem(gTextureSubShader);
+		theResourceFactory.DestroyItem(gTextureSubConstantShader);
+		theResourceFactory.DestroyItem(gTextureTresholdShader);
+		theResourceFactory.DestroyItem(gTextureTresholdConstantShader);
+		theResourceFactory.DestroyItem(gTextureBoxBlurShader);
+		theResourceFactory.DestroyItem(gTextureGaussianBlurShader);
+		theResourceFactory.DestroyItem(gTextureStitchNorthShader);
+		theResourceFactory.DestroyItem(gTextureStitchEastShader);
+		theResourceFactory.DestroyItem(gTextureStitchSouthShader);
+		theResourceFactory.DestroyItem(gTextureStitchWestShader);
+		theResourceFactory.DestroyItem(gTextureMipAvgShader);
+		theResourceFactory.DestroyItem(gTextureMipAvgNormalShader);
+		theResourceFactory.DestroyItem(gTextureMipNearestShader);
+		theResourceFactory.DestroyItem(gTextureMipMinShader);
+		theResourceFactory.DestroyItem(gTextureMipMaxShader);
 
-		gTextureDivShader= nullptr;
-		gTextureDivConstantShader= nullptr;
-
-		gTextureMaxShader= nullptr;
-		gTextureMaxConstantShader= nullptr;
-
-		gTextureMinShader= nullptr;
-		gTextureMinConstantShader= nullptr;
-
-		gTextureMulShader= nullptr;
-		gTextureMulConstantShader= nullptr;
-
-		gTextureSetShader= nullptr;
-		
-		gTextureSubShader= nullptr;
-		gTextureSubConstantShader= nullptr;
-		
-		gTextureTresholdShader= nullptr;
-		gTextureTresholdConstantShader= nullptr;
-
+		gTextureDownSampleShader = nullptr;
+		gTextureAddShader = nullptr;
+		gTextureAddConstantShader = nullptr;
+		gTextureBlendShader = nullptr;
+		gTextureBlendConstantShader = nullptr;
+		gTextureClampShader = nullptr;
+		gTextureClampConstantShader = nullptr;
+		gTextureCopyShader = nullptr;
+		gTextureDivShader = nullptr;
+		gTextureDivConstantShader = nullptr;
+		gTextureMaxShader = nullptr;
+		gTextureMaxConstantShader = nullptr;
+		gTextureMinShader = nullptr;
+		gTextureMinConstantShader = nullptr;
+		gTextureMulShader = nullptr;
+		gTextureMulConstantShader = nullptr;
+		gTextureSetShader = nullptr;
+		gTextureSubShader = nullptr;
+		gTextureSubConstantShader = nullptr;
+		gTextureTresholdShader = nullptr;
+		gTextureTresholdConstantShader = nullptr;
 		gTextureBoxBlurShader = nullptr;
 		gTextureGaussianBlurShader = nullptr;
-
-		gTextureStitchNorthShader= nullptr;
-		gTextureStitchEastShader= nullptr;
-		gTextureStitchSouthShader= nullptr;
-		gTextureStitchWestShader= nullptr;
-
+		gTextureStitchNorthShader = nullptr;
+		gTextureStitchEastShader = nullptr;
+		gTextureStitchSouthShader = nullptr;
+		gTextureStitchWestShader = nullptr;
 		gTextureMipAvgShader = nullptr;
 		gTextureMipAvgNormalShader = nullptr;
 		gTextureMipNearestShader = nullptr;
 		gTextureMipMinShader = nullptr;
 		gTextureMipMaxShader = nullptr;
+
+		gTextureUtilInitialized = false;
 	}
 
 
-	void GPUTextureFunc(pTexture inDst, apTexture inSources, float4 inValues, ComputeShader& inShader)
+
+	void GPUTextureFunc(pRenderTarget inDst, apTexture inSources, float4 inValues, ComputeShader& inShader)
 	{
-		pRenderTarget rt = theResourceFactory.MakeRenderTarget(inDst);
 		pConstantBuffer cb = theResourceFactory.MakeConstantBuffer(sizeof(float4));
 		pComputeShader cs(&inShader);
 
 		theRenderContext.CSSetShader(cs);
-		theRenderContext.CSSetRWTexture(rt, 0);
+		theRenderContext.CSSetRWTexture(inDst, 0);
 
 		for (int i = 0; i < inSources.size(); i++)
 			theRenderContext.CSSetTexture(inSources[i], i);
@@ -166,8 +202,8 @@ namespace TextureUtil
 		theRenderContext.UpdateSubResource(*cb, &inValues);
 		theRenderContext.CSSetConstantBuffer(cb, 0);
 
-		int threads_x = (inDst->GetWidth() + 7) / 8;
-		int threads_y = (inDst->GetHeight() + 7) / 8;
+		int threads_x = (inDst->GetTexture()->GetWidth() + 7) / 8;
+		int threads_y = (inDst->GetTexture()->GetHeight() + 7) / 8;
 		theRenderContext.Dispatch(threads_x, threads_y, 1);
 
 		theRenderContext.CSSetConstantBuffer(nullptr, 0);
@@ -179,7 +215,110 @@ namespace TextureUtil
 		theRenderContext.CSSetShader(nullptr);
 
 		theResourceFactory.DestroyItem(cb);
+	}
+
+
+	void GPUTextureFunc(pRenderTarget inDst, apTexture inSources, ComputeShader& inShader)
+	{
+		pComputeShader cs(&inShader);
+
+		theRenderContext.CSSetShader(cs);
+		theRenderContext.CSSetRWTexture(inDst, 0);
+
+		for (int i = 0; i < inSources.size(); i++)
+			theRenderContext.CSSetTexture(inSources[i], i);
+
+		int threads_x = (inDst->GetTexture()->GetWidth() + 7) / 8;
+		int threads_y = (inDst->GetTexture()->GetHeight() + 7) / 8;
+		theRenderContext.Dispatch(threads_x, threads_y, 1);
+
+		theRenderContext.CSSetConstantBuffer(nullptr, 0);
+
+		for (int i = 0; i < inSources.size(); i++)
+			theRenderContext.CSSetTexture(nullptr, i);
+
+		theRenderContext.CSSetRWTexture(nullptr, 0);
+		theRenderContext.CSSetShader(nullptr);
+	}
+
+
+	void GPUTextureFunc(pRenderTarget inDst, apTexture inSources, apSampler inSamplers, ComputeShader& inShader)
+	{
+		pComputeShader cs(&inShader);
+
+		theRenderContext.CSSetShader(cs);
+		theRenderContext.CSSetRWTexture(inDst, 0);
+
+		for (int i = 0; i < inSources.size(); i++)
+			theRenderContext.CSSetTextureAndSampler(inSources[i], inSamplers[i], i);
+
+		int threads_x = (inDst->GetTexture()->GetWidth() + 7) / 8;
+		int threads_y = (inDst->GetTexture()->GetHeight() + 7) / 8;
+		theRenderContext.Dispatch(threads_x, threads_y, 1);
+
+		theRenderContext.CSSetConstantBuffer(nullptr, 0);
+
+		for (int i = 0; i < inSources.size(); i++)
+			theRenderContext.CSSetTextureAndSampler(nullptr, nullptr, i);
+
+		theRenderContext.CSSetRWTexture(nullptr, 0);
+		theRenderContext.CSSetShader(nullptr);
+	}
+
+
+	void GPUTextureFunc(pTexture inDst, apTexture inSources, float4 inValues, ComputeShader& inShader)
+	{
+		pRenderTarget rt = theResourceFactory.MakeRenderTarget(inDst);
+		GPUTextureFunc(rt, inSources, inValues, inShader);
 		theResourceFactory.DestroyItem(rt);
+	}
+
+
+	void GPUTextureFunc(pTexture inDst, apTexture inSources, ComputeShader& inShader)
+	{
+		pRenderTarget rt = theResourceFactory.MakeRenderTarget(inDst);
+		GPUTextureFunc(rt, inSources, inShader);
+		theResourceFactory.DestroyItem(rt);
+	}
+
+	void GPUTextureFunc(pTexture inDst, apTexture inSources, apSampler inSamplers, ComputeShader& inShader)
+	{
+		pRenderTarget rt = theResourceFactory.MakeRenderTarget(inDst);
+		GPUTextureFunc(rt, inSources, inSamplers, inShader);
+		theResourceFactory.DestroyItem(rt);
+	}
+
+	///////////////////////
+	// texture functions //
+	///////////////////////
+
+	void TextureDownSample(pRenderTarget inTarget, pTexture inSource, pSampler inSampler)
+	{
+		apTexture sources;
+		sources.push_back(inSource);
+		apSampler samplers;
+		samplers.push_back(inSampler);
+		GPUTextureFunc(inTarget, sources, samplers, *gTextureDownSampleShader);
+	}
+
+
+	void TextureDownSample(pTexture inTarget, pTexture inSource, pSampler inSampler)
+	{
+		apTexture sources;
+		sources.push_back(inSource);
+		apSampler samplers;
+		samplers.push_back(inSampler);
+		GPUTextureFunc(inTarget, sources, samplers, *gTextureDownSampleShader);
+	}
+
+
+	void TextureBlend(pRenderTarget inDst, pTexture inTop, pTexture inBottom, pTexture inOpacity)
+	{
+		apTexture sources;
+		sources.push_back(inTop);
+		sources.push_back(inBottom);
+		sources.push_back(inOpacity);
+		GPUTextureFunc(inDst, sources, *gTextureBlendShader);
 	}
 
 
@@ -189,34 +328,66 @@ namespace TextureUtil
 		sources.push_back(inTop);
 		sources.push_back(inBottom);
 		sources.push_back(inOpacity);
-		GPUTextureFunc(inDst, sources, float4(), *gTextureBlendShader);
+		GPUTextureFunc(inDst, sources, *gTextureBlendShader);
 	}
 
+
+	void TextureCopy(pRenderTarget inDst, pTexture inSrc)
+	{
+		apTexture sources;
+		sources.push_back(inSrc);
+		GPUTextureFunc(inDst, sources, *gTextureCopyShader);
+	}
 	
+
 	void TextureCopy(pTexture inDst, pTexture inSrc)
 	{
 		apTexture sources;
 		sources.push_back(inSrc);
-		GPUTextureFunc(inDst, sources, float4(), *gTextureCopyShader);
+		GPUTextureFunc(inDst, sources, *gTextureCopyShader);
 	}
 	
-	
+
+	void TextureSet(pRenderTarget inDst, float4 inVal)
+	{
+		apTexture sources;
+		GPUTextureFunc(inDst, sources, inVal, *gTextureSetShader);
+	}
+
+
 	void TextureSet(pTexture inDst, float4 inVal)
 	{
 		apTexture sources;
 		GPUTextureFunc(inDst, sources, inVal, *gTextureSetShader);
 	}
 
-	
+
+	void TextureMul(pRenderTarget inDst, pTexture inSrc1, pTexture inSrc2)
+	{
+		apTexture sources;
+		sources.push_back(inSrc1);
+		sources.push_back(inSrc2);
+		GPUTextureFunc(inDst, sources, *gTextureMulShader);
+	}
+
+
 	void TextureMul(pTexture inDst, pTexture inSrc1, pTexture inSrc2)
 	{
 		apTexture sources;
 		sources.push_back(inSrc1);
 		sources.push_back(inSrc2);
-		GPUTextureFunc(inDst, sources, float4(), *gTextureMulShader);
+		GPUTextureFunc(inDst, sources, *gTextureMulShader);
 	}
 	
 	
+	void TextureMul(pRenderTarget inDst, pTexture inSrc, float4 inVal)
+	{
+		apTexture sources;
+		sources.push_back(inSrc);
+		GPUTextureFunc(inDst, sources, inVal, *gTextureMulShader);
+	}
+
+
 	void TextureMul(pTexture inDst, pTexture inSrc, float4 inVal)
 	{
 		apTexture sources;
@@ -224,16 +395,33 @@ namespace TextureUtil
 		GPUTextureFunc(inDst, sources, inVal, *gTextureMulShader);
 	}
 
-	
+
+	void TextureDiv(pRenderTarget inDst, pTexture inSrc1, pTexture inSrc2)
+	{
+		apTexture sources;
+		sources.push_back(inSrc1);
+		sources.push_back(inSrc2);
+		GPUTextureFunc(inDst, sources, *gTextureDivShader);
+	}
+
+
 	void TextureDiv(pTexture inDst, pTexture inSrc1, pTexture inSrc2)
 	{
 		apTexture sources;
 		sources.push_back(inSrc1);
 		sources.push_back(inSrc2);
-		GPUTextureFunc(inDst, sources, float4(), *gTextureDivShader);
+		GPUTextureFunc(inDst, sources, *gTextureDivShader);
 	}
 	
-	
+
+	void TextureDiv(pRenderTarget inDst, pTexture inSrc, float4 inVal)
+	{
+		apTexture sources;
+		sources.push_back(inSrc);
+		GPUTextureFunc(inDst, sources, inVal, *gTextureDivShader);
+	}
+
+
 	void TextureDiv(pTexture inDst, pTexture inSrc, float4 inVal)
 	{
 		apTexture sources;
@@ -241,16 +429,33 @@ namespace TextureUtil
 		GPUTextureFunc(inDst, sources, inVal, *gTextureDivShader);
 	}
 
-	
+
+	void TextureAdd(pRenderTarget inDst, pTexture inSrc1, pTexture inSrc2)
+	{
+		apTexture sources;
+		sources.push_back(inSrc1);
+		sources.push_back(inSrc2);
+		GPUTextureFunc(inDst, sources, *gTextureAddShader);
+	}
+
+
 	void TextureAdd(pTexture inDst, pTexture inSrc1, pTexture inSrc2)
 	{
 		apTexture sources;
 		sources.push_back(inSrc1);
 		sources.push_back(inSrc2);
-		GPUTextureFunc(inDst, sources, float4(), *gTextureAddShader);
+		GPUTextureFunc(inDst, sources, *gTextureAddShader);
 	}
 	
-	
+
+	void TextureAdd(pRenderTarget inDst, pTexture inSrc, float4 inVal)
+	{
+		apTexture sources;
+		sources.push_back(inSrc);
+		GPUTextureFunc(inDst, sources, inVal, *gTextureAddShader);
+	}
+
+
 	void TextureAdd(pTexture inDst, pTexture inSrc, float4 inVal)
 	{
 		apTexture sources;
@@ -258,16 +463,33 @@ namespace TextureUtil
 		GPUTextureFunc(inDst, sources, inVal, *gTextureAddShader);
 	}
 
-	
+
+	void TextureSub(pRenderTarget inDst, pTexture inSrc1, pTexture inSrc2)
+	{
+		apTexture sources;
+		sources.push_back(inSrc1);
+		sources.push_back(inSrc2);
+		GPUTextureFunc(inDst, sources, *gTextureSubShader);
+	}
+
+
 	void TextureSub(pTexture inDst, pTexture inSrc1, pTexture inSrc2)
 	{
 		apTexture sources;
 		sources.push_back(inSrc1);
 		sources.push_back(inSrc2);
-		GPUTextureFunc(inDst, sources, float4(), *gTextureSubShader);
+		GPUTextureFunc(inDst, sources, *gTextureSubShader);
 	}
 	
 	
+	void TextureSub(pRenderTarget inDst, pTexture inSrc, float4 inVal)
+	{
+		apTexture sources;
+		sources.push_back(inSrc);
+		GPUTextureFunc(inDst, sources, inVal, *gTextureSubShader);
+	}
+
+
 	void TextureSub(pTexture inDst, pTexture inSrc, float4 inVal)
 	{
 		apTexture sources;
@@ -275,33 +497,67 @@ namespace TextureUtil
 		GPUTextureFunc(inDst, sources, inVal, *gTextureSubShader);
 	}
 
-	
+
+	void TextureMax(pRenderTarget inDst, pTexture inSrc1, pTexture inSrc2)
+	{
+		apTexture sources;
+		sources.push_back(inSrc1);
+		sources.push_back(inSrc2);
+		GPUTextureFunc(inDst, sources, *gTextureMaxShader);
+	}
+
+
 	void TextureMax(pTexture inDst, pTexture inSrc1, pTexture inSrc2)
 	{
 		apTexture sources;
 		sources.push_back(inSrc1);
 		sources.push_back(inSrc2);
-		GPUTextureFunc(inDst, sources, float4(), *gTextureMaxShader);
+		GPUTextureFunc(inDst, sources, *gTextureMaxShader);
 	}
 	
 	
+	void TextureMax(pRenderTarget inDst, pTexture inSrc, float4 inVal)
+	{
+		apTexture sources;
+		sources.push_back(inSrc);
+		GPUTextureFunc(inDst, sources, *gTextureMaxShader);
+	}
+
+
 	void TextureMax(pTexture inDst, pTexture inSrc, float4 inVal)
 	{
 		apTexture sources;
 		sources.push_back(inSrc);
-		GPUTextureFunc(inDst, sources, float4(), *gTextureMaxShader);
+		GPUTextureFunc(inDst, sources, *gTextureMaxShader);
 	}
 
-	
+
+	void TextureMin(pRenderTarget inDst, pTexture inSrc1, pTexture inSrc2)
+	{
+		apTexture sources;
+		sources.push_back(inSrc1);
+		sources.push_back(inSrc2);
+		GPUTextureFunc(inDst, sources, *gTextureMinShader);
+	}
+
+
 	void TextureMin(pTexture inDst, pTexture inSrc1, pTexture inSrc2)
 	{
 		apTexture sources;
 		sources.push_back(inSrc1);
 		sources.push_back(inSrc2);
-		GPUTextureFunc(inDst, sources, float4(), *gTextureMinShader);
+		GPUTextureFunc(inDst, sources, *gTextureMinShader);
 	}
 	
-	
+
+	void TextureMin(pRenderTarget inDst, pTexture inSrc, float4 inVal)
+	{
+		apTexture sources;
+		sources.push_back(inSrc);
+		GPUTextureFunc(inDst, sources, inVal, *gTextureMinShader);
+	}
+
+
 	void TextureMin(pTexture inDst, pTexture inSrc, float4 inVal)
 	{
 		apTexture sources;
@@ -309,17 +565,36 @@ namespace TextureUtil
 		GPUTextureFunc(inDst, sources, inVal, *gTextureMinShader);
 	}
 
-	
+
+	void TextureClamp(pRenderTarget inDst, pTexture inSrc, pTexture inLoVal, pTexture inHiVal)
+	{
+		apTexture sources;
+		sources.push_back(inSrc);
+		sources.push_back(inLoVal);
+		sources.push_back(inHiVal);
+		GPUTextureFunc(inDst, sources, *gTextureClampShader);
+	}
+
+
 	void TextureClamp(pTexture inDst, pTexture inSrc, pTexture inLoVal, pTexture inHiVal)
 	{
 		apTexture sources;
 		sources.push_back(inSrc);
 		sources.push_back(inLoVal);
 		sources.push_back(inHiVal);
-		GPUTextureFunc(inDst, sources, float4(), *gTextureClampShader);
+		GPUTextureFunc(inDst, sources, *gTextureClampShader);
 	}
 	
-	
+
+	void TextureClamp(pRenderTarget inDst, pTexture inSource, float4 inLoVal, float4 inHiVal)
+	{
+		apTexture sources;
+		sources.push_back(inSource);
+		// TODO: hival 
+		GPUTextureFunc(inDst, sources, inHiVal, *gTextureClampShader);
+	}
+
+
 	void TextureClamp(pTexture inDst, pTexture inSource, float4 inLoVal, float4 inHiVal)
 	{
 		apTexture sources;
@@ -329,12 +604,29 @@ namespace TextureUtil
 	}
 
 
+	void TextureTreshold(pRenderTarget inDst, pTexture inSrc1, pTexture inSrc2)
+	{
+		apTexture sources;
+		sources.push_back(inSrc1);
+		sources.push_back(inSrc2);
+		GPUTextureFunc(inDst, sources, *gTextureTresholdShader);
+	}
+
+
 	void TextureTreshold(pTexture inDst, pTexture inSrc1, pTexture inSrc2)
 	{
 		apTexture sources;
 		sources.push_back(inSrc1);
 		sources.push_back(inSrc2);
-		GPUTextureFunc(inDst, sources, float4(), *gTextureTresholdShader);
+		GPUTextureFunc(inDst, sources, *gTextureTresholdShader);
+	}
+
+
+	void TextureTreshold(pRenderTarget inDst, pTexture inSrc, float4 inVal)
+	{
+		apTexture sources;
+		sources.push_back(inSrc);
+		GPUTextureFunc(inDst, sources, inVal, *gTextureTresholdShader);
 	}
 
 
@@ -346,6 +638,14 @@ namespace TextureUtil
 	}
 
 
+	void TextureBoxBlur(pRenderTarget inDst, pTexture inSrc, int inRadius)
+	{
+		apTexture sources;
+		sources.push_back(inSrc);
+		GPUTextureFunc(inDst, sources, float4(inRadius, 0, 0, 0), *gTextureBoxBlurShader);
+	}
+
+
 	void TextureBoxBlur(pTexture inDst, pTexture inSrc, int inRadius)
 	{
 		apTexture sources;
@@ -354,6 +654,14 @@ namespace TextureUtil
 	}
 
 
+	void TextureGaussianBlur(pRenderTarget inDst, pTexture inSrc, int inRadius)
+	{
+		apTexture sources;
+		sources.push_back(inSrc);
+		GPUTextureFunc(inDst, sources, float4(inRadius, 0, 0, 0), *gTextureGaussianBlurShader);
+	}
+
+	
 	void TextureGaussianBlur(pTexture inDst, pTexture inSrc, int inRadius)
 	{
 		apTexture sources;

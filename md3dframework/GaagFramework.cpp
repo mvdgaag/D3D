@@ -27,6 +27,8 @@ GaagFramework::~GaagFramework()
 //--------------------------------------------------------------------------------------
 HRESULT GaagFramework::Init(HINSTANCE hInstance)
 {
+	assert(mInitialized == false);
+
 	mWindow = MAKE_NEW(Window);
 	mWindow->Init(hInstance);
 	theRenderContext.Init(mWindow);
@@ -57,6 +59,9 @@ HRESULT GaagFramework::Init(HINSTANCE hInstance)
 
 void GaagFramework::CleanUp()
 {
+	if (mInitialized == false)
+		return;
+
 	mCamera = nullptr;
 	mDeferredRenderer = nullptr;
 	mFullScreenTriangle = nullptr;
@@ -87,7 +92,7 @@ void GaagFramework::Render()
 
 	mDeferredRenderer->Render(mObjectList);
 	CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetAntiAliased()->GetTexture());
-	//CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetIndirectLighting()->GetTexture());
+	//CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetLightComposed()->GetTexture());
 	theRenderContext.SwapBuffers();
 }
 
