@@ -97,6 +97,9 @@ private:
 	
 	pGBuffer			mGBuffer = nullptr;
 	pRenderTarget		mFullResRGBATemp = nullptr;
+	pRenderTarget		mHalfResRGBATemp = nullptr;
+	pRenderTarget		mQuarterResRGBATemp = nullptr;
+	pRenderTarget		mEightResRGBATemp = nullptr;
 	pRenderTarget		mHalfLinearDepth = nullptr;
 	pRenderTarget		mHalfNormals = nullptr;
 	pRenderTarget		mDepthMaxPyramid = nullptr;

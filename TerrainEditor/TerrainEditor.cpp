@@ -99,7 +99,7 @@ void InitContent()
 	Gaag.RegisterLight(g_directional_light);
 
 	g_spot_light = theResourceFactory.MakeSpotLight(float3(0, 10, 0), 50.0, float3(0, 0, 1), 0.5, float4(1, 0, 0, 1));
-	Gaag.RegisterLight(g_spot_light);
+	//Gaag.RegisterLight(g_spot_light);
 
 	g_mesh = theResourceFactory.LoadMesh("Models/sphere.obj");
 	g_HeightField_pixel_shader = theResourceFactory.LoadPixelShader("Shaders/TerrainFragmentShader.hlsl");

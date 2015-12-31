@@ -2,17 +2,15 @@
 
 
 RWTexture2D<float4> dst : register(u0);					// full or half res
-Texture2D<float4> lightTexture : register(t0);			// full res
+Texture2D<float4> lightTexture : register(t0);			// quarter res
 Texture2D<float2> normalTexture : register(t1);			// full or half res
 Texture2D<float> linearDepthTexture : register(t2);		// full or half res
-Texture2D<float> maxDepthTexture : register(t3);		// unused
-Texture2D<float4> diffuseTexture : register(t4);		// full res
+Texture2D<float4> diffuseTexture : register(t3);		// full res
 
 SamplerState lightSampler : register(s0);
 SamplerState normalSampler : register(s1);
 SamplerState linearDepthSampler : register(s2);
-SamplerState maxDepthSampler : register(s3);
-SamplerState diffuseSampler : register(s4);
+SamplerState diffuseSampler : register(s3);
 
 cbuffer cIndirectLightingConstants : register(b0)
 {
@@ -24,10 +22,6 @@ cbuffer cIndirectLightingConstants : register(b0)
 #define MAX_SAMPLES 32
 #define MAX_MIP_LEVEL 5
 #define GOLDEN_ANGLE (3.1415 * (3.0 - sqrt(5.0)))
-
-// assumes depth and normals at half res
-// light still at full res
-#define HALF_RES_INDIRECT
 
 [numthreads(8, 8, 1)]
 void CS(uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID)
@@ -46,7 +40,12 @@ void CS(uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID)
 							3.0, 11.0, 1.0, 9.0,
 							15.0, 7.0, 13.0, 5.0 };
 
+	float3 pos = ReconstructCSPosition(uv, depth, cViewReconstructionVector);
+	float3 normal = DecodeNormal(normalTexture[coord].xy);
+
 	float rnd = Random(coord + cFrameData.w);
+	rnd = Random(floor(100.0 * pos));
+
 	float start_angle = (pattern[(DTid.y % 4) * 4 + (DTid.x % 4)] + rnd) / 16.0 * 2.0 * 3.1415;
 	float2 unit_vec = float2(sin(start_angle), cos(start_angle));
 
@@ -54,18 +53,18 @@ void CS(uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID)
 	float sina = sin(GOLDEN_ANGLE);
 	float2x2 rot_mat = float2x2(cosa, -sina, sina, cosa);
 
-	float3 pos = ReconstructCSPosition(uv, depth, cViewReconstructionVector);
-	float3 normal = DecodeNormal(normalTexture[coord].xy);
-
 	float radius = 0.9 + 0.2 * rnd;
 	float accum_ao = 0.0;
 	float3 accum_radiance = float3(0.0, 0.0, 0.0);
 	float running_weight_ao = 0.0001;
 	float running_weight_radiance = 1.0;
 
-	for (int i = 0; i < MAX_SAMPLES, radius < ss_radius; i++, radius *= sqrt(2))
+	for (int i = 0; i < MAX_SAMPLES, radius < ss_radius; i++, radius *= sqrt(2.0))
 	{
-		int2 samp_coord = clamp(coord + (unit_vec * radius), int2(0, 0), int2(cTargetSize.xy) - 1);
+		int2 samp_coord = coord + (unit_vec * radius);
+		if (any(samp_coord < int2(0, 0)) || any(samp_coord > int2(cTargetSize.xy) - 1))
+			continue;
+
 		float samp_depth = linearDepthTexture[samp_coord];
 		float2 samp_uv = float2(samp_coord + 0.5) / cTargetSize;
 		float3 samp_pos = ReconstructCSPosition(samp_uv, samp_depth, cViewReconstructionVector);
@@ -82,11 +81,7 @@ void CS(uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID)
 
 		float weight_radiance = vdn * dist_weight;
 		weight_radiance *= dot(samp_normal, samp_vec) < 0 ? 1.0 : 0.0;
-#ifdef HALF_RES_INDIRECT
-		accum_radiance += weight_radiance * lightTexture[samp_coord * 2];
-#else
-		accum_radiance += weight_radiance * lightTexture[samp_coord];
-#endif
+		accum_radiance += weight_radiance * lightTexture.SampleLevel(lightSampler, samp_uv, 0).xyz;
 		running_weight_radiance += weight_radiance;
 
 		unit_vec = mul(unit_vec, rot_mat);
@@ -99,11 +94,7 @@ void CS(uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID)
 	float3 up = cFrameData.xyz;
 	float3 sky_color = float3(0.5, 0.5, 0.5);
 	accum_radiance += saturate(1.0 - acos(dot(normal, up) - 0.01) / 3.1415) * accum_ao * sky_color;
-#ifdef HALF_RES_INDIRECT
-	accum_radiance *= diffuseTexture[coord * 2];
-#else
-	accum_radiance *= diffuseTexture[coord];
-#endif
+	accum_radiance *= diffuseTexture.SampleLevel(diffuseSampler, uv, 0).xyz;
 
 	dst[coord] = float4(accum_radiance, accum_ao);
 }

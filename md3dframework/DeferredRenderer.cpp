@@ -50,6 +50,9 @@ void DeferredRenderer::Init(int inWidth, int inHeight)
 	mAAHistoryFrame = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
 	mPostProcessed = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
 	mFullResRGBATemp = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
+	mHalfResRGBATemp = theResourceFactory.MakeRenderTarget(int2(inWidth / 2, inHeight / 2), 1, FORMAT_R16G16B16A16_FLOAT);
+	mQuarterResRGBATemp = theResourceFactory.MakeRenderTarget(int2(inWidth / 4, inHeight / 4), 1, FORMAT_R16G16B16A16_FLOAT);
+	mEightResRGBATemp = theResourceFactory.MakeRenderTarget(int2(inWidth / 8, inHeight / 8), 1, FORMAT_R16G16B16A16_FLOAT);
 	mHalfLinearDepth = theResourceFactory.MakeRenderTarget(int2(inWidth / 2, inHeight / 2), 1, FORMAT_R32_FLOAT);
 	mHalfNormals = theResourceFactory.MakeRenderTarget(int2(inWidth / 2, inHeight / 2), 1, FORMAT_R16G16_FLOAT);
 	
@@ -84,6 +87,9 @@ void DeferredRenderer::CleanUp()
 	theResourceFactory.DestroyItem(mAAHistoryFrame);
 	theResourceFactory.DestroyItem(mPostProcessed);
 	theResourceFactory.DestroyItem(mFullResRGBATemp);
+	theResourceFactory.DestroyItem(mHalfResRGBATemp);
+	theResourceFactory.DestroyItem(mQuarterResRGBATemp);
+	theResourceFactory.DestroyItem(mEightResRGBATemp);
 	theResourceFactory.DestroyItem(mConstantBufferEveryFrame);
 	theResourceFactory.DestroyItem(mConstantBufferEveryObject);
 	theResourceFactory.DestroyItem(mConstantBufferOnDemand);
@@ -100,7 +106,9 @@ void DeferredRenderer::CleanUp()
 	mAAHistoryFrame = nullptr;
 	mPostProcessed = nullptr;
 	mFullResRGBATemp = nullptr;
-
+	mHalfResRGBATemp = nullptr;
+	mQuarterResRGBATemp = nullptr;
+	mEightResRGBATemp = nullptr;
 	mConstantBufferEveryFrame = nullptr;
 	mConstantBufferEveryObject = nullptr;
 	mConstantBufferOnDemand = nullptr;
@@ -243,15 +251,20 @@ void DeferredRenderer::LightingPass()
 	
 #ifdef HALF_RES_INDIRECT
 	theRenderContext.SetMarker("Downres depth and normals");
+	// downsample depth
 	TextureUtil::TextureDownSample(mHalfLinearDepth, mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), theResourceFactory.GetDefaultPointSampler());
+	// downsample normals
 	TextureUtil::TextureDownSample(mHalfNormals, mGBuffer->GetTexture(GBuffer::NORMAL), theResourceFactory.GetDefaultPointSampler());
+	// downsample diffuse light
+	TextureUtil::TextureDownSample(mHalfResRGBATemp, mDirectLightingDiffuse->GetTexture(), theResourceFactory.GetDefaultLinearSampler());
+	TextureUtil::TextureDownSample(mQuarterResRGBATemp, mHalfResRGBATemp->GetTexture(), theResourceFactory.GetDefaultLinearSampler());
+	TextureUtil::TextureDownSample(mEightResRGBATemp, mQuarterResRGBATemp->GetTexture(), theResourceFactory.GetDefaultLinearSampler());
+	
 	theRenderContext.SetMarker("Indirect Lighting Renderer");
-	mIndirectLightingRenderer.Render(mDirectLightingDiffuse->GetTexture(), mHalfNormals->GetTexture(), mGBuffer->GetTexture(GBuffer::DIFFUSE),
-		mHalfLinearDepth->GetTexture(), mDepthMaxPyramid->GetTexture(), mIndirectLighting, mFullResRGBATemp);
+	mIndirectLightingRenderer.Render(mEightResRGBATemp->GetTexture(), mHalfNormals->GetTexture(), mHalfLinearDepth->GetTexture(), mGBuffer->GetTexture(GBuffer::DIFFUSE), mIndirectLighting, mFullResRGBATemp);
 #else
 	theRenderContext.SetMarker("Indirect Lighting Renderer");
-	mIndirectLightingRenderer.Render(mDirectLightingDiffuse->GetTexture(), mGBuffer->GetTexture(GBuffer::NORMAL), mGBuffer->GetTexture(GBuffer::DIFFUSE),
-		mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), mDepthMaxPyramid->GetTexture(), mIndirectLighting, mFullResRGBATemp);
+	mIndirectLightingRenderer.Render(mEightResRGBATemp->GetTexture(), mGBuffer->GetTexture(GBuffer::NORMAL), mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), mGBuffer->GetTexture(GBuffer::DIFFUSE), mIndirectLighting, mFullResRGBATemp);
 #endif
 
 	//theRenderContext.SetMarker("Reflection Renderer");

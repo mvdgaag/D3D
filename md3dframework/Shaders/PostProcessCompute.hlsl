@@ -1,3 +1,5 @@
+#include "LibHelper.hlsli"
+
 
 RWTexture2D<float4> dst : register(u0);
 Texture2D<float4> source : register(t0);
@@ -32,6 +34,7 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 		result += source.SampleLevel(sourceSampler, samp_uv, 0);
 	}
 
-	dst[coord] = pow(result / MOTION_BLUR_STEPS, GAMMA);
+	float noise = Random(coord) * 0.01;
+	dst[coord] = pow(result / MOTION_BLUR_STEPS, GAMMA) + noise;
 	//dst[coord] = source[coord];
 }

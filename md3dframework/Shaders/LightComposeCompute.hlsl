@@ -20,11 +20,6 @@ SamplerState LinearSampler
 [numthreads(8, 8, 1)]
 void CS(uint3 DTid : SV_DispatchThreadID)
 {
-	// TODO: make renderer show the pure result of this
-	// test half res depth buffer
-	// test upres 
-
-
 	// coord from bottom left of brush rect
 	float2 coord = float2(DTid.x, DTid.y);
 	float2 tex_size;

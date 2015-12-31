@@ -33,8 +33,6 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	float2 mv = motionVectors.SampleLevel(motionVectorSamper, current_uv, 0) * float2(1, -1);
 	float2 uv = (coord + 0.5) / cTargetSize;
 	float2 history_uv = uv - mv;
-	const float blend_strength = ((history_uv.x <= 0) || (history_uv.y <= 0) || (history_uv.x >= 1) || (history_uv.y >= 1)) ? 0.0 : 0.9;
-
 	float4 history_val = history.SampleLevel(historySamper, history_uv, 0);
 	
 	if (isnan(history_val.x) == true)
@@ -58,24 +56,24 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 		(unsharp_strength * normalization_factor * 0.125) * (valn + vale + vals + valw) -
 		(unsharp_strength * normalization_factor * (0.125 / sqrt(2.0))) * (valne + valse + valnw + valsw);
 
+	// base blend factor on coherence
+	float4 color_coherence = max(0.8, val / (val + 2.0 * abs(val - history_val)));
+
 	// 3*3 neighborhood clamp
 	float4 max_val = max(max(max(valn, vals), max(vale, valw)), max(max(valne, valse), max(valnw, valsw)));
 	float4 min_val = min(min(min(valn, vals), min(vale, valw)), min(min(valne, valse), min(valnw, valsw)));
 
-	// estimate luma
-	float luma = ApproximateLuma(val.xyz);
-	float max_luma = ApproximateLuma(max_val.xyz) * 1.02;
-	float min_luma = ApproximateLuma(min_val.xyz) * 0.98;
-
 	// give some room for noise supression if the reprojected value is within the neighborhood range
-	if (luma < max_luma && luma > min_luma)
-		history_val = clamp(history_val, min_val - 0.01, max_val + 0.01);
-	else
-		history_val = clamp(history_val, min_val, max_val);
+	// the amount is based on the amount of color coherence
+	max_val += (val * color_coherence < max_val) * 0.05 * color_coherence;
+	min_val -= (val > color_coherence * min_val) * 0.05 * color_coherence;
+	
+	// clamp
+	history_val = clamp(history_val, min_val, max_val);
 	
 	val = saturate(val);
 	history_val = saturate(history_val);
 
 	// blend
-	dst[coord] = saturate(lerp(val, history_val, blend_strength));
+	dst[coord] = saturate(lerp(val, history_val, color_coherence));
 }

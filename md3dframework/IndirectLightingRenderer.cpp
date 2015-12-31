@@ -9,15 +9,15 @@
 #include "TextureUtil.h"
 
 
-void IndirectLightingRenderer::Render(pTexture inSource, pTexture inNormal, pTexture inDiffuseColor, pTexture inLinearDepth, pTexture inMaxDepthPyramid, pRenderTarget inTarget, pRenderTarget inTempTarget)
+void IndirectLightingRenderer::Render(pTexture inSource, pTexture inNormal, pTexture inLinearDepth, pTexture inDiffuse, pRenderTarget inTarget, pRenderTarget inTempTarget)
 {
 	assert(mInitialized == true);
 	assert(inSource != nullptr);
 	assert(inTarget != nullptr);
 
-	ApplyIndirect(inSource, inNormal, inDiffuseColor, inLinearDepth, inMaxDepthPyramid, inTarget);
+	ApplyIndirect(inSource, inNormal, inLinearDepth, inDiffuse, inTarget);
 
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 2; i++)
 	{
 		ApplyBlur(inTarget->GetTexture(), inNormal, inLinearDepth, inTempTarget, true);
 		ApplyBlur(inTempTarget->GetTexture(), inNormal, inLinearDepth, inTarget, false);
@@ -28,9 +28,10 @@ void IndirectLightingRenderer::Render(pTexture inSource, pTexture inNormal, pTex
 void IndirectLightingRenderer::ApplyBlur(pTexture inSource, pTexture inNormal, pTexture inLinearDepth, pRenderTarget inTarget, bool inHorizontal)
 {
 	pSampler point_sampler = theResourceFactory.GetDefaultPointSampler();
+	pSampler linear_sampler = theResourceFactory.GetDefaultLinearSampler();
 
 	theRenderContext.CSSetShader(mBlurShader);
-	theRenderContext.CSSetTextureAndSampler(inSource, point_sampler, 0);
+	theRenderContext.CSSetTextureAndSampler(inSource, linear_sampler, 0);
 	theRenderContext.CSSetTextureAndSampler(inNormal, point_sampler, 1);
 	theRenderContext.CSSetTextureAndSampler(inLinearDepth, point_sampler, 2);
 	theRenderContext.CSSetRWTexture(inTarget, 0);
@@ -61,7 +62,7 @@ void IndirectLightingRenderer::ApplyBlur(pTexture inSource, pTexture inNormal, p
 }
 
 
-void IndirectLightingRenderer::ApplyIndirect(pTexture inSource, pTexture inNormal, pTexture inDiffuseColor, pTexture inLinearDepth, pTexture inMaxDepthPyramid, pRenderTarget inTarget)
+void IndirectLightingRenderer::ApplyIndirect(pTexture inSource, pTexture inNormal, pTexture inLinearDepth, pTexture inDiffuse, pRenderTarget inTarget)
 {
 	pSampler point_sampler = theResourceFactory.GetDefaultPointSampler();
 
@@ -69,15 +70,14 @@ void IndirectLightingRenderer::ApplyIndirect(pTexture inSource, pTexture inNorma
 	theRenderContext.CSSetTextureAndSampler(inSource, point_sampler, 0);
 	theRenderContext.CSSetTextureAndSampler(inNormal, point_sampler, 1);
 	theRenderContext.CSSetTextureAndSampler(inLinearDepth, point_sampler, 2);
-	theRenderContext.CSSetTextureAndSampler(inMaxDepthPyramid, point_sampler, 3);
-	theRenderContext.CSSetTextureAndSampler(inDiffuseColor, point_sampler, 4);
+	theRenderContext.CSSetTextureAndSampler(inDiffuse, point_sampler, 3);
 	theRenderContext.CSSetRWTexture(inTarget, 0);
 
 	pCamera cam = Gaag.GetCamera();
 	mConstantBufferData.viewspaceReconstructionVector.x = tan(0.5f * cam->GetFovX());
 	mConstantBufferData.viewspaceReconstructionVector.y = tan(0.5f * cam->GetFovY());
-	mConstantBufferData.targetSize.x = (float)theRenderContext.GetWidth();
-	mConstantBufferData.targetSize.y = (float)theRenderContext.GetHeight();
+	mConstantBufferData.targetSize.x = inTarget->GetTexture()->GetWidth();
+	mConstantBufferData.targetSize.y = inTarget->GetTexture()->GetHeight();
 	mConstantBufferData.frameData = float4(Gaag.WorldToCameraNormal(float3(0.0, 1.0, 0.0)), Gaag.GetRandom());
 
 	theRenderContext.UpdateSubResource(*mConstantBuffer, &mConstantBufferData);
@@ -95,7 +95,6 @@ void IndirectLightingRenderer::ApplyIndirect(pTexture inSource, pTexture inNorma
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 1);
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 2);
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 3);
-	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 4);
 	theRenderContext.CSSetRWTexture(NULL, 0);
 }
 
