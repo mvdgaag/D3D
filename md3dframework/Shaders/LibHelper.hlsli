@@ -142,3 +142,9 @@ uint2 NearestDepthSelect(uint2 inHiCoord, float4 inLoDepth, float inHiDepth, out
 		}
 	}
 }
+
+
+float ApproximateLuma(float3 inRGB)
+{
+	return sqrt(0.299 * inRGB.x * inRGB.x + 0.587 * inRGB.y * inRGB.y + 0.114 * inRGB.z * inRGB.z);
+}

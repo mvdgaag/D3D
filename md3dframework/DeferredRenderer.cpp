@@ -21,9 +21,7 @@
 #include <d3d11_1.h>
 
 
-
 #define HALF_RES_INDIRECT
-
 
 
 void DeferredRenderer::Init(int inWidth, int inHeight)

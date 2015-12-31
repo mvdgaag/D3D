@@ -1,6 +1,5 @@
 #include "LibHelper.hlsli"
 
-
 RWTexture2D<float4> dst : register(u0);					// full or half res
 Texture2D<float4> lightTexture : register(t0);			// quarter res
 Texture2D<float2> normalTexture : register(t1);			// full or half res

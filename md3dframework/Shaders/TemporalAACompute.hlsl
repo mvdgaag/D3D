@@ -14,12 +14,6 @@ cbuffer cTXAAConstants : register(b0)
 };
 
 
-float ApproximateLuma(float3 inRGB)
-{
-	return sqrt(0.299 * inRGB.x * inRGB.x + 0.587 * inRGB.y * inRGB.y + 0.114 * inRGB.z * inRGB.z);
-}
-
-
 [numthreads(8, 8, 1)]
 void CS(uint3 DTid : SV_DispatchThreadID)
 {
@@ -57,7 +51,7 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 		(unsharp_strength * normalization_factor * (0.125 / sqrt(2.0))) * (valne + valse + valnw + valsw);
 
 	// base blend factor on coherence
-	float4 color_coherence = max(0.8, val / (val + 2.0 * abs(val - history_val)));
+	float4 color_coherence = clamp(val / (val + 5.0 * abs(val - history_val)), 0.66, 0.99);
 
 	// 3*3 neighborhood clamp
 	float4 max_val = max(max(max(valn, vals), max(vale, valw)), max(max(valne, valse), max(valnw, valsw)));
@@ -65,8 +59,8 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 
 	// give some room for noise supression if the reprojected value is within the neighborhood range
 	// the amount is based on the amount of color coherence
-	max_val += (val * color_coherence < max_val) * 0.05 * color_coherence;
-	min_val -= (val > color_coherence * min_val) * 0.05 * color_coherence;
+	max_val += (val * color_coherence < max_val) * 0.025 * color_coherence;
+	min_val -= (val > color_coherence * min_val) * 0.025 * color_coherence;
 	
 	// clamp
 	history_val = clamp(history_val, min_val, max_val);
