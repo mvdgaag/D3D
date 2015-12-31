@@ -41,7 +41,7 @@ void IndirectLightingRenderer::ApplyBlur(pTexture inSource, pTexture inNormal, p
 	mConstantBufferData.targetSize.x = (float)theRenderContext.GetWidth();
 	mConstantBufferData.targetSize.y = (float)theRenderContext.GetHeight();
 	mConstantBufferData.frameData.x = inHorizontal ? 1 : 0;
-	mConstantBufferData.frameData.y = 4;
+	mConstantBufferData.frameData.y = 4; // pattern has a radius of 4 pixels, this radius attempts to remove the pattern
 
 	theRenderContext.UpdateSubResource(*mConstantBuffer, &mConstantBufferData);
 	theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);

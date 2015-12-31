@@ -14,6 +14,12 @@ cbuffer cTXAAConstants : register(b0)
 };
 
 
+float ApproximateLuma(float3 inRGB)
+{
+	return sqrt(0.299 * inRGB.x * inRGB.x + 0.587 * inRGB.y * inRGB.y + 0.114 * inRGB.z * inRGB.z);
+}
+
+
 [numthreads(8, 8, 1)]
 void CS(uint3 DTid : SV_DispatchThreadID)
 {
@@ -25,8 +31,9 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 
 	// history value (stupid dx11 doesn't allow float4 writes to RWTexture2D, so use history texture)
 	float2 mv = motionVectors.SampleLevel(motionVectorSamper, current_uv, 0) * float2(1, -1);
-	float2 history_uv = (coord + 0.5) / cTargetSize - mv;
-	const float blend_strength = ((history_uv.x <= 0) || (history_uv.y <= 0) || (history_uv.x >= 1) || (history_uv.y >= 1)) ? 0.0 : 0.85;
+	float2 uv = (coord + 0.5) / cTargetSize;
+	float2 history_uv = uv - mv;
+	const float blend_strength = ((history_uv.x <= 0) || (history_uv.y <= 0) || (history_uv.x >= 1) || (history_uv.y >= 1)) ? 0.0 : 0.9;
 
 	float4 history_val = history.SampleLevel(historySamper, history_uv, 0);
 	
@@ -54,7 +61,17 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	// 3*3 neighborhood clamp
 	float4 max_val = max(max(max(valn, vals), max(vale, valw)), max(max(valne, valse), max(valnw, valsw)));
 	float4 min_val = min(min(min(valn, vals), min(vale, valw)), min(min(valne, valse), min(valnw, valsw)));
-	history_val = clamp(history_val, min_val, max_val);
+
+	// estimate luma
+	float luma = ApproximateLuma(val.xyz);
+	float max_luma = ApproximateLuma(max_val.xyz) * 1.02;
+	float min_luma = ApproximateLuma(min_val.xyz) * 0.98;
+
+	// give some room for noise supression if the reprojected value is within the neighborhood range
+	if (luma < max_luma && luma > min_luma)
+		history_val = clamp(history_val, min_val - 0.01, max_val + 0.01);
+	else
+		history_val = clamp(history_val, min_val, max_val);
 	
 	val = saturate(val);
 	history_val = saturate(history_val);

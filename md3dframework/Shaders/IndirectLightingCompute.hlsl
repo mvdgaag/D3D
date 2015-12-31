@@ -46,7 +46,7 @@ void CS(uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID)
 							3.0, 11.0, 1.0, 9.0,
 							15.0, 7.0, 13.0, 5.0 };
 
-	float rnd = 0.001 * Random(coord + cFrameData.w);
+	float rnd = Random(coord + cFrameData.w);
 	float start_angle = (pattern[(DTid.y % 4) * 4 + (DTid.x % 4)] + rnd) / 16.0 * 2.0 * 3.1415;
 	float2 unit_vec = float2(sin(start_angle), cos(start_angle));
 
@@ -57,7 +57,7 @@ void CS(uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID)
 	float3 pos = ReconstructCSPosition(uv, depth, cViewReconstructionVector);
 	float3 normal = DecodeNormal(normalTexture[coord].xy);
 
-	float radius = 1.0 + 0.25 * rnd;
+	float radius = 0.9 + 0.2 * rnd;
 	float accum_ao = 0.0;
 	float3 accum_radiance = float3(0.0, 0.0, 0.0);
 	float running_weight_ao = 0.0001;
