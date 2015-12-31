@@ -35,6 +35,7 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	}
 
 	float noise = Random(coord) * 0.01;
-	dst[coord] = pow(result / MOTION_BLUR_STEPS, GAMMA) + noise;
-	//dst[coord] = source[coord];
+	float vignette = sqrt(sqrt(2) - length(uv * 2.0 - 1.0)) / sqrt(2);
+	vignette = (vignette + 1.0) * 0.5;
+	dst[coord] = pow(result / MOTION_BLUR_STEPS, GAMMA) * vignette + noise;
 }

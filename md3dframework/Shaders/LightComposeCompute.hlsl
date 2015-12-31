@@ -38,5 +38,5 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	float4 indirect;
 	indirect = (samp_bilinear == true) ? Indirect.SampleLevel(LinearSampler, uv, 0) : Indirect[half_coord];
 
-	dst[coord] = indirect;// +DirectDiffuse[coord] + DirectSpecular[coord];// +Reflections[coord];
+	dst[coord] = indirect + DirectDiffuse[coord] + DirectSpecular[coord];// +Reflections[coord];
 }
