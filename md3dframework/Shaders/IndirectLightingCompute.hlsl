@@ -64,7 +64,7 @@ void CS(uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID)
 		if (any(samp_coord < int2(0, 0)) || any(samp_coord > int2(cTargetSize.xy) - 1))
 			continue;
 
-		float samp_depth = linearDepthTexture[samp_coord];
+		float samp_depth = linearDepthTexture[samp_coord] * 1.001;
 		float2 samp_uv = float2(samp_coord + 0.5) / cTargetSize;
 		float3 samp_pos = ReconstructCSPosition(samp_uv, samp_depth, cViewReconstructionVector);
 		float3 samp_normal = DecodeNormal(normalTexture[samp_coord].xy);
@@ -92,7 +92,11 @@ void CS(uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID)
 	accum_radiance /= running_weight_radiance;
 	float3 up = cFrameData.xyz;
 	float3 sky_color = float3(0.5, 0.5, 0.5);
-	accum_radiance += saturate(1.0 - acos(dot(normal, up) - 0.01) / 3.1415) * accum_ao * sky_color;
+
+	// fraction of hemisphere
+	float sky_visible_frac = saturate(1.0 - acos(dot(normal, up) - 0.01) / 3.1415);
+	float sky_average_attenuation = dot(up, normalize(normal + up));
+	accum_radiance += sky_visible_frac * sky_average_attenuation * accum_ao * sky_color;
 	accum_radiance *= diffuseTexture.SampleLevel(diffuseSampler, uv, 0).xyz;
 
 	dst[coord] = float4(accum_radiance, accum_ao);

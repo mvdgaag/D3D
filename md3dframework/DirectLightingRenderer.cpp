@@ -23,8 +23,6 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 	assert(inSource != nullptr);
 	assert(inTargetDiffuse != nullptr);
 	assert(inTargetSpecular != nullptr);
-	assert(inTargetDiffuse->GetTexture()->GetWidth() == inTargetDiffuse->GetTexture()->GetWidth() &&
-		inTargetDiffuse->GetTexture()->GetHeight() == inTargetDiffuse->GetTexture()->GetHeight());
 
 	// set general constant buffer data
 	pCamera cam = Gaag.GetCamera();
@@ -67,7 +65,13 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 	for (int i = 0; i < inDirectionalLights.size(); i++)
 	{
 		mConstantBufferDirectionalLightData.lightDirections[i] = float4(Gaag.WorldToCameraNormal(float3(-inDirectionalLights[i]->GetDirection())), 1.0);
-		mConstantBufferDirectionalLightData.lightColors[i] = inDirectionalLights[i]->GetColor();
+		float4 color = inDirectionalLights[i]->GetColor();
+		color.w = (inDirectionalLights[i]->GetShadowMap() == nullptr) ? 0.0 : 1.0;
+		mConstantBufferDirectionalLightData.lightColors[i] = color;
+		float4x4& shadow_matrix = inDirectionalLights[i]->GetShadowMatrix();
+		float4x4 inverse_view = inverse(cam->GetViewMatrix());
+		float4x4 view_to_light = shadow_matrix * inverse_view;
+		mConstantBufferDirectionalLightData.invShadowMatrices[i] = transpose(view_to_light);
 	}
 	mConstantBufferDirectionalLightData.lightData = float4(inDirectionalLights.size(), 0, 0, 0);
 	theRenderContext.UpdateSubResource(*mConstantBufferDirectionalLights, &mConstantBufferDirectionalLightData);
@@ -76,21 +80,27 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::NORMAL), point_sampler, 1);
 	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::DIFFUSE), point_sampler, 2);
 	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::MATERIAL), point_sampler, 3);
+	for (int i = 0; i < inDirectionalLights.size(); i++)
+	{
+		pRenderTarget shadow_map = inDirectionalLights[i]->GetShadowMap();
+		if (shadow_map != nullptr)
+			theRenderContext.CSSetTextureAndSampler(shadow_map->GetTexture(), point_sampler, i + 4);
+	}
 	theRenderContext.CSSetRWTexture(inTargetDiffuse, 0);
 	theRenderContext.CSSetRWTexture(inTargetSpecular, 1);
 	theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);
 
 	// dispatch
-	int groups_x = (inTargetDiffuse->GetTexture()->GetWidth() + 7) / 8;
-	int groups_y = (inTargetDiffuse->GetTexture()->GetHeight() + 7) / 8;
-
 	if (inPointLights.size() > 0 || inSpotLights.size() > 0 || inDirectionalLights.size() > 0)
 	{
 		theRenderContext.CSSetShader(mShader);
 		theRenderContext.CSSetConstantBuffer(mConstantBufferPointLights, 1);
 		theRenderContext.CSSetConstantBuffer(mConstantBufferSpotLights, 2);
 		theRenderContext.CSSetConstantBuffer(mConstantBufferDirectionalLights, 3);
-		theRenderContext.Dispatch(groups_x, groups_y, 1);
+
+		assert(inTargetDiffuse->GetDimensions() == inTargetSpecular->GetDimensions());
+		int2 groups = (inTargetDiffuse->GetDimensions() + 7) / 8;
+		theRenderContext.Dispatch(groups.x, groups.y, 1);
 		theRenderContext.Flush();
 	}
 
@@ -104,6 +114,7 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 1);
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 2);
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 3);
+	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 4);
 	theRenderContext.CSSetRWTexture(NULL, 0);
 	theRenderContext.CSSetRWTexture(NULL, 1);
 }

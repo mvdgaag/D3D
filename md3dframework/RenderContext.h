@@ -29,6 +29,20 @@ class Window;
 #define theRenderContext RenderContext::GetInstance()
 
 
+typedef enum FillMode
+{
+	FILL_WIREFRAME = 2,
+	FILL_SOLID = 3
+};
+
+typedef enum CullMode
+{
+	CULL_NONE = 1,
+	CULL_FRONT = 2,
+	CULL_BACK = 3
+};
+
+
 class RenderContext
 {
 public:
@@ -53,6 +67,10 @@ public:
 	void EndEvent();
 	void SetMarker(std::string inMarker);
 
+	void SetViewport(int2 inDimensions, float inMinDepth, float inMaxDepth, int2 inTopLeft);
+	void SetRasterizerState(FillMode inFillMode, CullMode inCullMode, bool inFrontCounterClockwise,
+		int inDepthBias, float inDepthBiasClamp, float inSlopeScaledDepthBias,
+		bool inDepthClipEnable, bool inScissorEnable, bool inMultisampleEnable, bool inAntialiasedLineEnable);
 	void ClearDepthStencil(pDepthStencilTarget inDepthStencilTarget, float inClearDepth, unsigned char inClearStencil);
 	void ClearRenderTarget(pRenderTarget inRenderTarget, float4 inColor);
 	void SetRenderTargets(unsigned int inNumTargets, pRenderTarget* inTargets, pDepthStencilTarget inDepthStencilTarget);
@@ -61,6 +79,7 @@ public:
 	void Map(const Texture& inTexture, void** outDataPtr, int inMapType = 1); // 1 == read
 	void UnMap(const Texture& inTexture);
 	void DrawMesh(const Mesh& inMesh);
+	void DrawShadowMesh(const Mesh& inMesh);
 	void Flush();
 	void SwapBuffers();
 

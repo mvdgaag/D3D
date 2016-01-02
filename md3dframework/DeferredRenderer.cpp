@@ -177,12 +177,14 @@ void DeferredRenderer::ClearLights()
 void DeferredRenderer::GeometryPass(std::vector<pDrawableObject> inDrawList)
 {
 	theRenderContext.BeginEvent("Geometry Pass");
+
+	theRenderContext.SetRasterizerState(FILL_SOLID, CULL_BACK, true, 0, 0.0f, 0.0f, true, false, false, false);
+	theRenderContext.SetViewport(int2(mGBuffer->GetWidth(), mGBuffer->GetHeight()), 0.0f, 1.0f, int2(0, 0));
 	
 	for (int i = 0; i < GBuffer::NUM_RENDER_TARGETS; i++)
 		theRenderContext.ClearRenderTarget(mGBuffer->GetRenderTarget(GBuffer::GBufferType(i)), mGBuffer->GetClearColor(GBuffer::GBufferType(i)));
 	
 	theRenderContext.ClearDepthStencil(mGBuffer->GetDepthStencilTarget(), 1.0, 0);
-	
 	theRenderContext.SetRenderTargets(GBuffer::NUM_RENDER_TARGETS, mGBuffer->GetRenderTargets(), mGBuffer->GetDepthStencilTarget());
 
 	Camera& camera = *(Gaag.GetCamera());
@@ -203,7 +205,6 @@ void DeferredRenderer::GeometryPass(std::vector<pDrawableObject> inDrawList)
 		constantData.PrevModelViewProjectionMatrix = transpose(mPrevViewProjectionMatrix * obj->GetPrevTransform());
 
 		theRenderContext.UpdateSubResource(*mConstantBufferEveryObject, &constantData);
-		obj->SwapTransform();
 
 		Gaag.SetMaterial(obj->GetMaterial());
 		
@@ -230,6 +231,18 @@ void DeferredRenderer::GeometryPass(std::vector<pDrawableObject> inDrawList)
 	theRenderContext.SetRenderTargets(5, null_targets, NULL);
 	theRenderContext.EndEvent();
 
+	// render shadow maps
+	for (int i = 0; i < mDirectionalLights.size(); i++)
+	{
+		theRenderContext.SetMarker("Shadow Pass");
+		mShadowRenderer.Render(mDirectionalLights[i], inDrawList);
+	}
+
+	// swap the transforms
+	for each (pDrawableObject obj in inDrawList)
+		obj->SwapTransform();
+
+	// store projection matrix at previous projection matrix
 	mPrevViewProjectionMatrix = Gaag.GetCamera()->GetViewProjectionMatrix();
 }
 
@@ -237,9 +250,6 @@ void DeferredRenderer::GeometryPass(std::vector<pDrawableObject> inDrawList)
 void DeferredRenderer::LightingPass()
 {
 	theRenderContext.BeginEvent("Lighting Pass");
-
-	//theRenderContext.SetMarker("Shadow Renderer");
-	//mShadowRenderer.Render();
 	
 	theRenderContext.SetMarker("Direct Lighting Renderer");
 	mDirectLightingRenderer.Render(mGBuffer, mDirectLightingDiffuse, mDirectLightingSpecular, mPointLights, mSpotLights, mDirectionalLights);

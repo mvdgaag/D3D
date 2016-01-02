@@ -92,7 +92,7 @@ void GaagFramework::Render()
 
 	mDeferredRenderer->Render(mObjectList);
 	CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetAntiAliased()->GetTexture());
-	//CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetLightComposed()->GetTexture());
+	//CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetDirectLightingDiffuse()->GetTexture());
 	theRenderContext.SwapBuffers();
 }
 
@@ -100,8 +100,9 @@ void GaagFramework::Render()
 float3 GaagFramework::ScreenToCameraPos(int2 inScreenPos)
 {
 	pTexture linear_depth_texture = mDeferredRenderer->GetGBuffer()->GetTexture(GBuffer::LINEAR_DEPTH);
-	float2 NDC = float2(		float(inScreenPos.x) / linear_depth_texture->GetWidth(), 
-						  1.0 -	float(inScreenPos.y) / linear_depth_texture->GetHeight() ) * 2.0f - 1.0f;
+	int2 dimensions = linear_depth_texture->GetDimensions();
+	float2 NDC = float2(		float(inScreenPos.x) / dimensions.x, 
+						  1.0 -	float(inScreenPos.y) / dimensions.y ) * 2.0f - 1.0f;
 	float linear_depth = linear_depth_texture->GetPixel(inScreenPos).x;
 	float2 view_reconstruct = float2(tan(0.5f * mCamera->GetFovX()), tan(0.5f * mCamera->GetFovY()));
 	float2 xy = view_reconstruct * NDC * linear_depth;
@@ -181,9 +182,8 @@ void GaagFramework::CopyToRenderTarget(pRenderTarget inTarget, pTexture inSource
 	theRenderContext.CSSetTexture(inSource, 0);
 	theRenderContext.CSSetRWTexture(inTarget, 0);
 
-	int groups_x = (inTarget->GetTexture()->GetWidth() + 7) / 8;
-	int groups_y = (inTarget->GetTexture()->GetHeight() + 7) / 8;
-	theRenderContext.Dispatch(groups_x, groups_y, 1);
+	int2 groups = (inTarget->GetDimensions() + 7) / 8;
+	theRenderContext.Dispatch(groups.x, groups.y, 1);
 	theRenderContext.Flush();
 
 	// clear state

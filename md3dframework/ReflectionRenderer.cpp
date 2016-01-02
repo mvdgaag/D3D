@@ -19,9 +19,8 @@ void ReflectionRenderer::Render(pTexture inSource, pRenderTarget inTarget)
 	theRenderContext.CSSetTextureAndSampler(inSource, point_sampler, 0);
 	theRenderContext.CSSetRWTexture(inTarget, 0);
 
-	int groups_x = (inTarget->GetTexture()->GetWidth() + 7) / 8;
-	int groups_y = (inTarget->GetTexture()->GetHeight() + 7) / 8;
-	theRenderContext.Dispatch(groups_x, groups_y, 1);
+	int2 groups = (inTarget->GetDimensions() + 7) / 8;
+	theRenderContext.Dispatch(groups.x, groups.y, 1);
 	theRenderContext.Flush();
 
 	// clear state

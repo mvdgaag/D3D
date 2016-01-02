@@ -95,7 +95,7 @@ void InitContent()
 		//Gaag.RegisterLight(g_lights[i]);
 	}
 
-	g_directional_light = theResourceFactory.MakeDirectionalLight(float3(1, -1, 1), float4(1, 1, 1, 1));
+	g_directional_light = theResourceFactory.MakeDirectionalLight(float3(1, -1, 1), float4(1, 1, 1, 1), 2048);
 	Gaag.RegisterLight(g_directional_light);
 
 	g_spot_light = theResourceFactory.MakeSpotLight(float3(0, 10, 0), 50.0, float3(0, 0, 1), 0.5, float4(1, 0, 0, 1));
@@ -120,7 +120,8 @@ void InitContent()
 	g_BricksMaterial->SetPixelShader(g_HeightField_pixel_shader);
 	g_BricksMaterial->SetVertexShader(g_HeightField_vertex_shader);
 	
-	g_obj->Init(g_mesh, g_BricksMaterial);
+	g_obj->Init(g_mesh, theResourceFactory.GetDefaultMaterial());
+	g_obj->Translate(float3(0, 20, 0));
 	Gaag.RegisterObject(g_obj);
 
 	g_HeightField = MAKE_NEW(HeightField);

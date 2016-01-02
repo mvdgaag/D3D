@@ -12,7 +12,7 @@ void Brush::Init(pComputeShader inShader, float inRadius, float inFalloff, float
 
 void Brush::Apply(pHeightFieldTile inTile, const rect& inPixelRect, const float2& inWorldPosition)
 {
-	int2 resolution = inTile->GetHeightTexture()->GetResolution();
+	int2 resolution = inTile->GetHeightTexture()->GetDimensions();
 	if (inPixelRect.GetArea() <= 0)
 		return;
 

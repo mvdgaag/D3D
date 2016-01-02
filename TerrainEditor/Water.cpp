@@ -24,7 +24,7 @@ void Water::Init(pHeightField inTerrainHeightField, pMaterial inMaterial)
 			
 			pWaterTile water_tile = MAKE_NEW(WaterTile);
 			water_tile->Init(terrain_height_texture, water_height_texture, 
-				mWaterHeightField->GetTileScale().x / water_height_texture->GetWidth(), // pixelscale assumes square pixels
+				mWaterHeightField->GetTileScale().x / water_height_texture->GetDimensions().x, // pixelscale assumes square pixels
 				mWaterHeightField->GetTileScale().z);
 
 			mWaterTiles[x][y] = water_tile;

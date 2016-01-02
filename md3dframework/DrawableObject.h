@@ -24,8 +24,10 @@ public:
 
 	// Can be overridden to set custom textures/constantbuffers
 	// Note that some textures and constantbuffers are reserved by the deferred renderer!
-	virtual void	PrepareToDraw()			{}
-	virtual void	FinalizeAfterDraw()		{}
+	virtual void	PrepareToDraw()				{}
+	virtual void	FinalizeAfterDraw()			{}
+	virtual void	PrepareToDrawShadow()		{}
+	virtual void	FinalizeAfterDrawShadow()	{}
 
 private:
 	AABB mAABB;

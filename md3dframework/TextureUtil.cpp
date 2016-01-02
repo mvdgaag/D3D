@@ -202,9 +202,8 @@ namespace TextureUtil
 		theRenderContext.UpdateSubResource(*cb, &inValues);
 		theRenderContext.CSSetConstantBuffer(cb, 0);
 
-		int threads_x = (inDst->GetTexture()->GetWidth() + 7) / 8;
-		int threads_y = (inDst->GetTexture()->GetHeight() + 7) / 8;
-		theRenderContext.Dispatch(threads_x, threads_y, 1);
+		int2 groups = (inDst->GetDimensions() + 7) / 8;
+		theRenderContext.Dispatch(groups.x, groups.y, 1);
 
 		theRenderContext.CSSetConstantBuffer(nullptr, 0);
 
@@ -228,9 +227,8 @@ namespace TextureUtil
 		for (int i = 0; i < inSources.size(); i++)
 			theRenderContext.CSSetTexture(inSources[i], i);
 
-		int threads_x = (inDst->GetTexture()->GetWidth() + 7) / 8;
-		int threads_y = (inDst->GetTexture()->GetHeight() + 7) / 8;
-		theRenderContext.Dispatch(threads_x, threads_y, 1);
+		int2 groups = (inDst->GetDimensions() + 7) / 8;
+		theRenderContext.Dispatch(groups.x, groups.y, 1);
 
 		theRenderContext.CSSetConstantBuffer(nullptr, 0);
 
@@ -252,9 +250,8 @@ namespace TextureUtil
 		for (int i = 0; i < inSources.size(); i++)
 			theRenderContext.CSSetTextureAndSampler(inSources[i], inSamplers[i], i);
 
-		int threads_x = (inDst->GetTexture()->GetWidth() + 7) / 8;
-		int threads_y = (inDst->GetTexture()->GetHeight() + 7) / 8;
-		theRenderContext.Dispatch(threads_x, threads_y, 1);
+		int2 groups = (inDst->GetDimensions() + 7) / 8;
+		theRenderContext.Dispatch(groups.x, groups.y, 1);
 
 		theRenderContext.CSSetConstantBuffer(nullptr, 0);
 
@@ -672,8 +669,8 @@ namespace TextureUtil
 
 	void TextureStitchNorth(pTexture inDst, pTexture inSrc)
 	{
-		float4 params(inSrc->GetWidth() - 1, inSrc->GetHeight() - 1, 0, 0);
-		assert(params.x == inDst->GetWidth() - 1);
+		float4 params(inSrc->GetDimensions() - 1, 0, 0);
+		assert(params.x == inDst->GetDimensions().x - 1);
 
 		pRenderTarget rt = theResourceFactory.MakeRenderTarget(inDst);
 		pConstantBuffer cb = theResourceFactory.MakeConstantBuffer(sizeof(float4));
@@ -699,8 +696,8 @@ namespace TextureUtil
 
 	void TextureStitchSouth(pTexture inDst, pTexture inSrc)
 	{
-		float4 params(inSrc->GetWidth() - 1, inSrc->GetHeight() - 1, 0, 0);
-		assert(params.x == inDst->GetWidth() - 1);
+		float4 params(inSrc->GetDimensions() - 1, 0, 0);
+		assert(params.x == inDst->GetDimensions().x - 1);
 
 		pRenderTarget rt = theResourceFactory.MakeRenderTarget(inDst);
 		pConstantBuffer cb = theResourceFactory.MakeConstantBuffer(sizeof(float4));
@@ -726,8 +723,8 @@ namespace TextureUtil
 
 	void TextureStitchEast(pTexture inDst, pTexture inSrc)
 	{
-		float4 params(inSrc->GetWidth() - 1, inSrc->GetHeight() - 1, 0, 0);
-		assert(params.y == inDst->GetHeight() - 1);
+		float4 params(inSrc->GetDimensions() - 1, 0, 0);
+		assert(params.y == inDst->GetDimensions().y - 1);
 
 		pRenderTarget rt = theResourceFactory.MakeRenderTarget(inDst);
 		pConstantBuffer cb = theResourceFactory.MakeConstantBuffer(sizeof(float4));
@@ -753,8 +750,8 @@ namespace TextureUtil
 
 	void TextureStitchWest(pTexture inDst, pTexture inSrc)
 	{
-		float4 params(inSrc->GetWidth() - 1, inSrc->GetHeight() - 1, 0, 0);
-		assert(params.y == inDst->GetHeight() - 1);
+		float4 params(inSrc->GetDimensions() - 1, 0, 0);
+		assert(params.y == inDst->GetDimensions().y - 1);
 
 		pRenderTarget rt = theResourceFactory.MakeRenderTarget(inDst);
 		pConstantBuffer cb = theResourceFactory.MakeConstantBuffer(sizeof(float4));
@@ -780,8 +777,7 @@ namespace TextureUtil
 
 	void TextureGenerteMip(pRenderTarget inDst, int inDstLevel, pTexture inSrc, int inSrcLevel, TextureMipMode inMode)
 	{
-		assert(inDst->GetTexture()->GetWidth() >> (inDstLevel) == inSrc->GetWidth() >> (inSrcLevel + 1));
-		assert(inDst->GetTexture()->GetHeight() >> (inDstLevel) == inSrc->GetHeight() >> (inSrcLevel + 1));
+		assert(inDst->GetDimensions() >> (inDstLevel) == inSrc->GetDimensions() >> (inSrcLevel + 1));
 
 		switch (inMode)
 		{
@@ -813,9 +809,8 @@ namespace TextureUtil
 		theRenderContext.UpdateSubResource(*cb, &values);
 		theRenderContext.CSSetConstantBuffer(cb, 0);
 
-		int threads_x = ((inDst->GetTexture()->GetWidth() >> inDstLevel) + 7) / 8;
-		int threads_y = ((inDst->GetTexture()->GetHeight() >> inDstLevel) + 7) / 8;
-		theRenderContext.Dispatch(threads_x, threads_y, 1);
+		int2 groups = (inDst->GetDimensions() + 7) / 8;
+		theRenderContext.Dispatch(groups.x, groups.y, 1);
 		
 		theRenderContext.CSSetConstantBuffer(nullptr, 0);
 		theRenderContext.CSSetTexture(nullptr, 0);

@@ -1,6 +1,11 @@
 #pragma once
 #include "GaagCommon.h"
 
+REGISTERCLASS(ConstantBuffer);
+REGISTERCLASS(PixelShader);
+REGISTERCLASS(VertexShader);
+REGISTERCLASS(DirectionalLight);
+REGISTERCLASS(DrawableObject);
 
 class ShadowRenderer
 {
@@ -10,11 +15,20 @@ public:
 
 	void Init();
 	void CleanUp();
-	void Render();
+	void Render(pDirectionalLight inLight, apDrawableObject inShadowCasters);
 
 private:
 	ShadowRenderer(ShadowRenderer const&) = delete;
 	void operator=(ShadowRenderer const&) = delete;
 	bool mInitialized = false;
+
+	struct ConstantDataEveryObject
+	{
+		float4x4 modelViewProjectionMatrix;
+	};
+
+	pConstantBuffer mConstantBufferEveryObject;
+	pPixelShader mPixelShader;
+	pVertexShader mVertexShader;
 };
 

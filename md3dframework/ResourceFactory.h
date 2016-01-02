@@ -49,7 +49,7 @@ public:
 	pDepthStencilTarget MakeDepthStencilTarget(int2 inSize);
 	pPointLight			MakePointLight(float3 inPosition, float inRadius, float4 inColor);
 	pSpotLight			MakeSpotLight(float3 inPosition, float inRadius, float3 inDirection, float inConeCosine, float4 inColor);
-	pDirectionalLight	MakeDirectionalLight(float3 inDirection, float4 inColor);
+	pDirectionalLight	MakeDirectionalLight(float3 inDirection, float4 inColor, int inShadowMapSize = 0);
 
 	pMaterial			CloneMaterial(pMaterial inOther);
 

@@ -174,27 +174,10 @@ void RenderContext::Init(pWindow inWindow)
 	mOutputRenderTarget->Init(mBackBuffer);
 
 	// setup rasterizer
-	D3D11_RASTERIZER_DESC rasterDesc;
-	rasterDesc.AntialiasedLineEnable = false;
-	rasterDesc.CullMode = D3D11_CULL_BACK;
-	rasterDesc.DepthBias = 0;
-	rasterDesc.DepthBiasClamp = 0.0f;
-	rasterDesc.DepthClipEnable = true;
-	rasterDesc.FillMode = D3D11_FILL_SOLID;
-	rasterDesc.FrontCounterClockwise = true;
-	rasterDesc.MultisampleEnable = false;
-	rasterDesc.ScissorEnable = false;
-	rasterDesc.SlopeScaledDepthBias = 0.0f;
-
-	hr = mD3DDevice->CreateRasterizerState(&rasterDesc, &mRasterState);
-	if (FAILED(hr))
-	{
-		exit(hr);
-	}
-	mImmediateContext->RSSetState(mRasterState);
+	SetRasterizerState(FILL_SOLID, CULL_BACK, true, 0, 0.0f, 0.0f, true, false, false, false);
 	
 	D3D11_DEPTH_STENCIL_DESC dsDesc;
-
+	
 	dsDesc.DepthEnable = true;
 	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
@@ -218,14 +201,7 @@ void RenderContext::Init(pWindow inWindow)
 	mImmediateContext->OMSetDepthStencilState(pDSState, 1);
 
 	// Setup the viewport
-	D3D11_VIEWPORT vp;
-	vp.Width = (FLOAT)mWidth;
-	vp.Height = (FLOAT)mHeight;
-	vp.MinDepth = 0.0f;
-	vp.MaxDepth = 1.0f;
-	vp.TopLeftX = 0;
-	vp.TopLeftY = 0;
-	mImmediateContext->RSSetViewports(1, &vp);
+	SetViewport(int2(mWidth, mHeight), 0.0f, 1.0f, int2(0, 0));
 
 	hr = mImmediateContext->QueryInterface(__uuidof(mAnnotation), reinterpret_cast<void**>(&mAnnotation));
 	if (FAILED(hr))
@@ -272,6 +248,41 @@ void RenderContext::EndEvent()
 void RenderContext::SetMarker(std::string inMarker)
 {
 	mAnnotation->SetMarker(std::wstring(inMarker.begin(), inMarker.end()).c_str()); 
+}
+
+
+void RenderContext::SetViewport(int2 inDimensions, float inMinDepth, float inMaxDepth, int2 inTopLeft)
+{
+	D3D11_VIEWPORT vp;
+	vp.Width = (FLOAT)inDimensions.x;
+	vp.Height = (FLOAT)inDimensions.y;
+	vp.MinDepth = 0.0f;
+	vp.MaxDepth = 1.0f;
+	vp.TopLeftX = 0;
+	vp.TopLeftY = 0;
+	mImmediateContext->RSSetViewports(1, &vp);
+}
+
+
+void RenderContext::SetRasterizerState(FillMode inFillMode, CullMode inCullMode, bool inFrontCounterClockwise,
+	int inDepthBias, float inDepthBiasClamp, float inSlopeScaledDepthBias,
+	bool inDepthClipEnable, bool inScissorEnable, bool inMultisampleEnable, bool inAntialiasedLineEnable)
+{
+	D3D11_RASTERIZER_DESC rasterDesc;
+	rasterDesc.FillMode = D3D11_FILL_MODE(inFillMode);
+	rasterDesc.CullMode = D3D11_CULL_MODE(inCullMode);
+	rasterDesc.FrontCounterClockwise = inFrontCounterClockwise;
+	rasterDesc.DepthBias = inDepthBias;
+	rasterDesc.DepthBiasClamp = inDepthBiasClamp;
+	rasterDesc.SlopeScaledDepthBias = inSlopeScaledDepthBias;
+	rasterDesc.DepthClipEnable = inDepthClipEnable;
+	rasterDesc.ScissorEnable = inScissorEnable;
+	rasterDesc.MultisampleEnable = inMultisampleEnable;
+	rasterDesc.AntialiasedLineEnable = inAntialiasedLineEnable;
+
+	HRESULT hr = mD3DDevice->CreateRasterizerState(&rasterDesc, &mRasterState);
+	assert(!FAILED(hr));
+	mImmediateContext->RSSetState(mRasterState);
 }
 
 
@@ -344,6 +355,22 @@ void RenderContext::UnMap(const Texture& inTexture)
 
 void RenderContext::DrawMesh(const Mesh& inMesh)
 {
+	ID3D11Buffer* mesh_verts = inMesh.mVertexBuffer;
+	ID3D11Buffer* mesh_indices = inMesh.mIndexBuffer;
+	UINT stride = inMesh.mStride;
+	UINT offset = inMesh.mOffset;
+	mImmediateContext->IASetVertexBuffers(0, 1, &mesh_verts, &stride, &offset);
+	mImmediateContext->IASetIndexBuffer(mesh_indices, DXGI_FORMAT_R16_UINT, 0);
+	mImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	mImmediateContext->DrawIndexed(inMesh.mNumIndices, 0, 0);
+}
+
+
+void RenderContext::DrawShadowMesh(const Mesh& inMesh)
+{
+	// TODO: just positions!
+	// Make positions non-interleaved?
+
 	ID3D11Buffer* mesh_verts = inMesh.mVertexBuffer;
 	ID3D11Buffer* mesh_indices = inMesh.mIndexBuffer;
 	UINT stride = inMesh.mStride;

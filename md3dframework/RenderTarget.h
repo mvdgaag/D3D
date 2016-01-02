@@ -19,6 +19,8 @@ public:
 	void						Init(int inWidth, int inHeight, int inMipLevels, Format inFormat);
 	void						Init(pTexture inTexture);
 	void						CleanUp() override;
+	
+	int2						GetDimensions() { return mTexture->GetDimensions(); }
 	ResourceType				GetResourceType() const override { return ResourceType::RENDER_TARGET; }
 
 protected:

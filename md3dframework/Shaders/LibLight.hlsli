@@ -12,6 +12,7 @@ struct Light
 	float3	mDirection;
 	float3	mColor;
 	float	mAttenuation;
+	bool	mHasShadowMap;
 };
 
 

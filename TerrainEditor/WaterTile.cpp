@@ -17,8 +17,7 @@ void WaterTile::Init(pTexture inTerrainHeightTexture, pTexture inWaterHeightText
 	mWaterHeightTarget = theResourceFactory.MakeRenderTarget(inWaterHeightTexture);
 
 	// collect data for creating the other textures/rendertargets
-	mResolution.x = inWaterHeightTexture->GetWidth();
-	mResolution.y = inWaterHeightTexture->GetHeight();
+	mResolution = inWaterHeightTexture->GetDimensions();
 	Format format = inWaterHeightTexture->GetFormat();
 	BindFlag bind_flags = required_flags;
 

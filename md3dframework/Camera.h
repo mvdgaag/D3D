@@ -24,7 +24,7 @@ public:
 	// TODO: test, need to transpose?
 	float3		GetRight()		{ float4x4 view_mat = GetViewMatrix(); return float3(view_mat[0].x, view_mat[1].x, view_mat[2].x); }
 	float3		GetUp()			{ float4x4 view_mat = GetViewMatrix(); return float3(view_mat[0].y, view_mat[1].y, view_mat[2].y); }
-	float3		GetForward()	{ float4x4 view_mat = GetViewMatrix(); return float3(view_mat[0].z, view_mat[1].z, view_mat[2].z); }
+	float3		GetForward()	{ float4x4 view_mat = GetViewMatrix(); return -float3(view_mat[0].z, view_mat[1].z, view_mat[2].z); }
 
 	void		SetPosition(float inX, float inY, float inZ) { SetPosition(float3(inX, inY, inZ)); }
 	void		SetPosition(float3 inPosition) { mPosition = inPosition; }

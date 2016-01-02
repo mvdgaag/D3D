@@ -47,6 +47,9 @@ void CS(uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID)
 		float3 samp_dir = normalize(samp_pos - pos);
 		float3 samp_normal = DecodeNormal(normalTexture[samp_coord].xy);
 		float weight = saturate(dot(normal, samp_normal)) * (1.0 - abs(dot(normal, samp_dir)));
+		 
+		weight *= 1.0 - saturate(5 * abs(depth - samp_depth) / (depth + samp_depth));
+
 		weight *= weight;	// gamma
 		weight *= 2.0;		// gain
 		weight -= 0.1;		// lift

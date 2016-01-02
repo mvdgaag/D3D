@@ -9,9 +9,6 @@ void DepthStencilTarget::Init(int inWidth, int inHeight)
 {
 	CleanUp();
 
-	//mTexture = MAKE_NEW(Texture);
-	//mTexture->Init(inWidth, inHeight, 1, FORMAT_R24G8_TYPELESS, 0, BIND_DEPTH_STENCIL | BIND_SHADER_RESOURCE);
-
 	mTexture = theResourceFactory.MakeTexture(int2(inWidth, inHeight), 1, FORMAT_R24G8_TYPELESS, BIND_DEPTH_STENCIL | BIND_SHADER_RESOURCE);
 
 	// Create the depth stencil view

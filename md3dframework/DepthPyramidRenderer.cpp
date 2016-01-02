@@ -16,10 +16,8 @@ void DepthPyramidRenderer::Render(pTexture inSource, pRenderTarget inMaxTarget, 
 	assert(inMinTarget != nullptr);
 	assert(inMaxTarget->GetTexture()->GetMipLevels() == kNumMipLevels);
 	assert(inMinTarget->GetTexture()->GetMipLevels() == kNumMipLevels);
-	assert(inMaxTarget->GetTexture()->GetWidth() == inSource->GetWidth() / 2);
-	assert(inMinTarget->GetTexture()->GetWidth() == inSource->GetWidth() / 2);
-	assert(inMaxTarget->GetTexture()->GetHeight() == inSource->GetHeight() / 2);
-	assert(inMinTarget->GetTexture()->GetHeight() == inSource->GetHeight() / 2);
+	assert(inMaxTarget->GetDimensions() == inSource->GetDimensions() / 2);
+	assert(inMinTarget->GetDimensions() == inSource->GetDimensions() / 2);
 
 	// first mip from level 0 to 0 (target should be half_res)
 	TextureUtil::TextureGenerteMip(inMaxTarget, 0, inSource, 0, TextureUtil::TEXTURE_MIP_MAX);

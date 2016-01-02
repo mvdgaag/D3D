@@ -87,12 +87,12 @@ void PaintTool::ApplyPaint(float2 inWorldCoord)
 	for each (int2 index in tile_indices)
 	{
 		pHeightFieldTile tile = mTargetHeightField->GetTile(index);
-		int2 pixel = (tile_coord - float2(index)) * float2(tile->GetHeightTexture()->GetResolution());
+		int2 pixel = (tile_coord - float2(index)) * float2(tile->GetHeightTexture()->GetDimensions());
 		int2 pixel_radius = int2(mCurrentBrush->GetRadius() * tile->GetPixelsPerMeter()) + 1;
 		rect paint_rect(pixel - pixel_radius, pixel + pixel_radius);
 
 		if (tile != nullptr)
-			mCurrentBrush->Apply(tile, paint_rect, tile_coord * float2(tile->GetHeightTexture()->GetResolution()));
+			mCurrentBrush->Apply(tile, paint_rect, tile_coord * float2(tile->GetHeightTexture()->GetDimensions()));
 	}
 	/* TODO: required?
 	for each (int2 index in tile_indices)

@@ -47,9 +47,8 @@ void IndirectLightingRenderer::ApplyBlur(pTexture inSource, pTexture inNormal, p
 	theRenderContext.UpdateSubResource(*mConstantBuffer, &mConstantBufferData);
 	theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);
 
-	int groups_x = (inTarget->GetTexture()->GetWidth() + 7) / 8;
-	int groups_y = (inTarget->GetTexture()->GetHeight() + 7) / 8;
-	theRenderContext.Dispatch(groups_x, groups_y, 1);
+	int2 groups = (inTarget->GetDimensions() + 7) / 8;
+	theRenderContext.Dispatch(groups.x, groups.y, 1);
 	theRenderContext.Flush();
 
 	// clear state
@@ -76,16 +75,14 @@ void IndirectLightingRenderer::ApplyIndirect(pTexture inSource, pTexture inNorma
 	pCamera cam = Gaag.GetCamera();
 	mConstantBufferData.viewspaceReconstructionVector.x = tan(0.5f * cam->GetFovX());
 	mConstantBufferData.viewspaceReconstructionVector.y = tan(0.5f * cam->GetFovY());
-	mConstantBufferData.targetSize.x = inTarget->GetTexture()->GetWidth();
-	mConstantBufferData.targetSize.y = inTarget->GetTexture()->GetHeight();
+	mConstantBufferData.targetSize = inTarget->GetDimensions();
 	mConstantBufferData.frameData = float4(Gaag.WorldToCameraNormal(float3(0.0, 1.0, 0.0)), Gaag.GetRandom());
 
 	theRenderContext.UpdateSubResource(*mConstantBuffer, &mConstantBufferData);
 	theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);
 
-	int groups_x = (inTarget->GetTexture()->GetWidth() + 7) / 8;
-	int groups_y = (inTarget->GetTexture()->GetHeight() + 7) / 8;
-	theRenderContext.Dispatch(groups_x, groups_y, 1);
+	int2 groups = (inTarget->GetDimensions() + 7) / 8;
+	theRenderContext.Dispatch(groups.x, groups.y, 1);
 	theRenderContext.Flush();
 
 	// clear state

@@ -82,6 +82,11 @@ inline float4x4 perspective(float fovyRadians, float aspect, float zNear, float 
 	return glm::perspective(fovyRadians, aspect, zNear, zFar);
 }
 
+inline float4x4 ortho(float inLeft, float inRight, float inBottom, float inTop, float inNear, float inFar)
+{
+	return glm::ortho(inLeft, inRight, inBottom, inTop, inNear, inFar);
+}
+
 inline float4x4 transpose(const float4x4& mat)
 {
 	return glm::transpose(mat);

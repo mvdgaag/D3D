@@ -58,6 +58,7 @@ private:
 	{
 		float4 lightDirections[MAX_DIRECTIONAL_LIGHTS];
 		float4 lightColors[MAX_DIRECTIONAL_LIGHTS];
+		float4x4 invShadowMatrices[MAX_DIRECTIONAL_LIGHTS];
 		float4 lightData;
 	};
 

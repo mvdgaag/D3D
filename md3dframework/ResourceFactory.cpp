@@ -6,6 +6,9 @@ void ResourceFactory::Init()
 	mDefaultMaterial = MakeMaterial();
 	mDefaultMaterial->SetPixelShader(LoadPixelShader("../md3dFramework/Shaders/BasicFragmentShader.hlsl"));
 	mDefaultMaterial->SetVertexShader(LoadVertexShader("../md3dFramework/Shaders/BasicVertexShader.hlsl"));
+	mDefaultMaterial->SetDiffuseValue(float4(0.5, 0.5, 0.5, 1.0));
+	mDefaultMaterial->SetReflectivityValue(0.5);
+	mDefaultMaterial->SetRoughnessValue(0.5);
 
 	mCopyShader = LoadComputeShader("../md3dFramework/Shaders/CopyCompute.hlsl");
 
@@ -168,10 +171,10 @@ pSpotLight ResourceFactory::MakeSpotLight(float3 inPosition, float inRadius, flo
 }
 
 
-pDirectionalLight ResourceFactory::MakeDirectionalLight(float3 inDirection, float4 inColor)
+pDirectionalLight ResourceFactory::MakeDirectionalLight(float3 inDirection, float4 inColor, int inShadowMapSize)
 {
 	pDirectionalLight light = MAKE_NEW(DirectionalLight);
-	light->Init(inDirection, inColor);
+	light->Init(inDirection, inColor, inShadowMapSize);
 	RegisterResource(light);
 	return light;
 }

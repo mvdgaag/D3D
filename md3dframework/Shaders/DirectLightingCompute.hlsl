@@ -6,6 +6,7 @@
 #define MAX_POINT_LIGHTS		128
 #define MAX_SPOT_LIGHTS			128
 #define MAX_DIRECTIONAL_LIGHTS	4
+#define SHADOW_BIAS				0.001
 
 
 RWTexture2D<float4> OutDiffuse : register(u0);
@@ -14,6 +15,10 @@ Texture2D<float> LinearDepth : register(t0);
 Texture2D<half2> Normal : register(t1);
 Texture2D<float4> Diffuse : register(t2);
 Texture2D<float4> Surface : register(t3);
+Texture2D<float> Shadow1 : register(t4);
+Texture2D<float> Shadow2 : register(t5);
+Texture2D<float> Shadow3 : register(t6);
+Texture2D<float> Shadow4 : register(t7);
 
 
 groupshared uint sTilePointLightIndices[MAX_POINT_LIGHTS];
@@ -54,15 +59,24 @@ cbuffer cSpotLightConstants : register(b2)
 
 cbuffer cDirectionalLightConstants : register(b3)
 {
-	float4	cDirectionalLightDirections[MAX_DIRECTIONAL_LIGHTS];
-	float4	cDirectionalLightColors[MAX_DIRECTIONAL_LIGHTS];
-	float4	cDirectionalLightData; // x = count
+	float4	cDirectionalLightDirections[MAX_DIRECTIONAL_LIGHTS]; 
+	float4	cDirectionalLightColors[MAX_DIRECTIONAL_LIGHTS]; // alpha = has shadow map
+	float4x4 cViewToLightMatrix[MAX_DIRECTIONAL_LIGHTS];
+	float4	cDirectionalLightData;
 };
 
 
 SamplerState LinearSampler
 {
 	Filter = MIN_MAG_MIP_LINEAR;
+	AddressU = Clamp;
+	AddressV = Clamp;
+};
+
+
+SamplerState PointSampler
+{
+	Filter = MIN_MAG_MIP_POINT;
 	AddressU = Clamp;
 	AddressV = Clamp;
 };
@@ -233,14 +247,56 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 		}
 
 		// accumulate light from all directional light sources
-		for (int i = 0; i < cDirectionalLightData.x; i++)
+		for (int i = 0; i < MAX_DIRECTIONAL_LIGHTS; i++)
 		{
-			Light light;
-			light.mDirection = cDirectionalLightDirections[i];
-			light.mColor = cDirectionalLightColors[i].xyz;
-			light.mAttenuation = 1.0;
+			if (i < cDirectionalLightData.x)
+			{
+				Light light;
+				light.mDirection = cDirectionalLightDirections[i];
+				light.mColor = cDirectionalLightColors[i].xyz;
+				light.mHasShadowMap = cDirectionalLightColors[i].w != 0;
+				light.mAttenuation = 1.0;
 
-			AccumulateLight(material, texel_position, normal, light, diffuse_accum, specular_accum);
+				if (light.mHasShadowMap)
+				{
+					float2 uv = (float2(coord)+0.5) / cTargetSize.xy;
+					float shadow_depth;
+					float3 texel_light_position;
+					float2 shadow_map_uv;
+
+					if (i == 0)
+					{ 
+						texel_light_position = mul(float4(texel_position, 1.0), cViewToLightMatrix[i]);
+						shadow_map_uv = texel_light_position.xy * float2(0.5, -0.5) + 0.5;
+						shadow_depth = Shadow1.SampleLevel(PointSampler, shadow_map_uv, 0);
+					}
+					else if (i == 1)
+					{
+						texel_light_position = mul(float4(texel_position, 1.0), cViewToLightMatrix[i]);
+						shadow_map_uv = texel_light_position.xy * float2(0.5, 0.5) + 0.5;
+						shadow_depth = Shadow2.SampleLevel(PointSampler, shadow_map_uv, 0);
+					}
+					else if (i == 2)
+					{
+						texel_light_position = mul(float4(texel_position, 1.0), cViewToLightMatrix[i]);
+						shadow_map_uv = texel_light_position.xy * float2(0.5, 0.5) + 0.5;
+						shadow_depth = Shadow3.SampleLevel(PointSampler, shadow_map_uv, 0);
+					}
+					else // (i == 3)
+					{
+						texel_light_position = mul(float4(texel_position, 1.0), cViewToLightMatrix[i]);
+						shadow_map_uv = texel_light_position.xy * float2(0.5, 0.5) + 0.5;
+						shadow_depth = Shadow4.SampleLevel(PointSampler, shadow_map_uv, 0);
+					}
+
+					if (texel_light_position.z - SHADOW_BIAS < shadow_depth)
+						AccumulateLight(material, texel_position, normal, light, diffuse_accum, specular_accum);
+				}
+				else
+				{
+					AccumulateLight(material, texel_position, normal, light, diffuse_accum, specular_accum);
+				}
+			}
 		}
 	}
 

@@ -10,8 +10,7 @@ void HeightFieldTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments
 	mHeightMapRenderTarget = theResourceFactory.MakeRenderTarget(inHeightTexture);
 	mHeightMapTexture = mHeightMapRenderTarget->GetTexture();
 	
-	mNormalTexture = theResourceFactory.MakeTexture(int2(mHeightMapTexture->GetWidth(), mHeightMapTexture->GetHeight()),
-		1, Format::FORMAT_R8G8B8A8_SNORM, BindFlag::BIND_COMPUTE_TARGET);
+	mNormalTexture = theResourceFactory.MakeTexture(mHeightMapTexture->GetDimensions(),	1, Format::FORMAT_R8G8B8A8_SNORM, BindFlag::BIND_COMPUTE_TARGET);
 	mNormalRenderTarget = theResourceFactory.MakeRenderTarget(mNormalTexture);
 
 	// TODO:
@@ -19,7 +18,7 @@ void HeightFieldTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments
 	//UpdateNormals();
 
 	mHeightScale = inScale.z;
-	mPixelsPerMeter = float2(mHeightMapTexture->GetWidth(), mHeightMapTexture->GetHeight()) / float2(inScale);
+	mPixelsPerMeter = float2(mHeightMapTexture->GetDimensions()) / float2(inScale);
 	
 	std::vector<SimpleVertex> vertices;
 	std::vector<WORD> indices;
