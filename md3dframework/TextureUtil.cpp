@@ -204,6 +204,7 @@ namespace TextureUtil
 
 		int2 groups = (inDst->GetDimensions() + 7) / 8;
 		theRenderContext.Dispatch(groups.x, groups.y, 1);
+		theRenderContext.Flush();
 
 		theRenderContext.CSSetConstantBuffer(nullptr, 0);
 
@@ -229,6 +230,7 @@ namespace TextureUtil
 
 		int2 groups = (inDst->GetDimensions() + 7) / 8;
 		theRenderContext.Dispatch(groups.x, groups.y, 1);
+		theRenderContext.Flush();
 
 		theRenderContext.CSSetConstantBuffer(nullptr, 0);
 
@@ -252,6 +254,7 @@ namespace TextureUtil
 
 		int2 groups = (inDst->GetDimensions() + 7) / 8;
 		theRenderContext.Dispatch(groups.x, groups.y, 1);
+		theRenderContext.Flush();
 
 		theRenderContext.CSSetConstantBuffer(nullptr, 0);
 
@@ -683,6 +686,7 @@ namespace TextureUtil
 
 		int threads_x = (params.x + 31) / 32;
 		theRenderContext.Dispatch(threads_x, 1, 1);
+		theRenderContext.Flush();
 
 		theRenderContext.CSSetConstantBuffer(nullptr, 0);
 		theRenderContext.CSSetTexture(nullptr, 0);
@@ -710,6 +714,7 @@ namespace TextureUtil
 
 		int threads_x = (params.x + 31) / 32;
 		theRenderContext.Dispatch(threads_x, 1, 1);
+		theRenderContext.Flush();
 
 		theRenderContext.CSSetConstantBuffer(nullptr, 0);
 		theRenderContext.CSSetTexture(nullptr, 0);
@@ -737,6 +742,7 @@ namespace TextureUtil
 
 		int threads_y = (params.y + 31) / 32;
 		theRenderContext.Dispatch(1, threads_y, 1);
+		theRenderContext.Flush();
 
 		theRenderContext.CSSetConstantBuffer(nullptr, 0);
 		theRenderContext.CSSetTexture(nullptr, 0);
@@ -764,6 +770,7 @@ namespace TextureUtil
 
 		int threads_y = (params.y + 31) / 32;
 		theRenderContext.Dispatch(1, threads_y, 1);
+		theRenderContext.Flush();
 
 		theRenderContext.CSSetConstantBuffer(nullptr, 0);
 		theRenderContext.CSSetTexture(nullptr, 0);
@@ -811,6 +818,7 @@ namespace TextureUtil
 
 		int2 groups = (inDst->GetDimensions() + 7) / 8;
 		theRenderContext.Dispatch(groups.x, groups.y, 1);
+		theRenderContext.Flush();
 		
 		theRenderContext.CSSetConstantBuffer(nullptr, 0);
 		theRenderContext.CSSetTexture(nullptr, 0);

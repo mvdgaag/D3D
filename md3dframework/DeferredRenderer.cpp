@@ -257,6 +257,9 @@ void DeferredRenderer::LightingPass()
 	//theRenderContext.SetMarker("Depth Pyramid Renderer");
 	//mDepthPyramidRenderer.Render(mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), mDepthMaxPyramid, mDepthMinPyramid);
 	
+	TextureUtil::TextureDownSample(mHalfResRGBATemp, mDirectLightingDiffuse->GetTexture(), theResourceFactory.GetDefaultLinearSampler());
+	TextureUtil::TextureDownSample(mQuarterResRGBATemp, mHalfResRGBATemp->GetTexture(), theResourceFactory.GetDefaultLinearSampler());
+	TextureUtil::TextureDownSample(mEightResRGBATemp, mQuarterResRGBATemp->GetTexture(), theResourceFactory.GetDefaultLinearSampler());
 #ifdef HALF_RES_INDIRECT
 	theRenderContext.SetMarker("Downres depth and normals");
 	// downsample depth
@@ -264,10 +267,6 @@ void DeferredRenderer::LightingPass()
 	// downsample normals
 	TextureUtil::TextureDownSample(mHalfNormals, mGBuffer->GetTexture(GBuffer::NORMAL), theResourceFactory.GetDefaultPointSampler());
 	// downsample diffuse light
-	TextureUtil::TextureDownSample(mHalfResRGBATemp, mDirectLightingDiffuse->GetTexture(), theResourceFactory.GetDefaultLinearSampler());
-	TextureUtil::TextureDownSample(mQuarterResRGBATemp, mHalfResRGBATemp->GetTexture(), theResourceFactory.GetDefaultLinearSampler());
-	TextureUtil::TextureDownSample(mEightResRGBATemp, mQuarterResRGBATemp->GetTexture(), theResourceFactory.GetDefaultLinearSampler());
-	
 	theRenderContext.SetMarker("Indirect Lighting Renderer");
 	mIndirectLightingRenderer.Render(mEightResRGBATemp->GetTexture(), mHalfNormals->GetTexture(), mHalfLinearDepth->GetTexture(), mGBuffer->GetTexture(GBuffer::DIFFUSE), mIndirectLighting, mFullResRGBATemp);
 #else
@@ -277,7 +276,7 @@ void DeferredRenderer::LightingPass()
 
 	//theRenderContext.SetMarker("Reflection Renderer");
 	//mReflectionRenderer.Render(mIndirectLighting->GetTexture(), mReflections);
-
+	
 	theRenderContext.SetMarker("Light Compose Renderer");
 	mLightComposeRenderer.Render(	mDirectLightingDiffuse->GetTexture(),
 									mDirectLightingSpecular->GetTexture(),
@@ -286,6 +285,7 @@ void DeferredRenderer::LightingPass()
 									mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH),
 									mHalfLinearDepth->GetTexture(),
 									mLightComposed);
+									
 	theRenderContext.EndEvent();
 }
 

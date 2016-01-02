@@ -28,7 +28,7 @@ void CS(uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID)
 	float2 coord = float2(DTid.x, DTid.y);
 	float2 uv = (coord + 0.5) / cTargetSize;
 
-	float depth = linearDepthTexture[coord];
+	float depth = linearDepthTexture.SampleLevel(lightSampler, uv, 0).x;
 
 	float cs_radius = min(20.0, depth);
 	float sqr_radius = cs_radius * cs_radius;
@@ -40,7 +40,7 @@ void CS(uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID)
 							15.0, 7.0, 13.0, 5.0 };
 
 	float3 pos = ReconstructCSPosition(uv, depth, cViewReconstructionVector);
-	float3 normal = DecodeNormal(normalTexture[coord].xy);
+	float3 normal = DecodeNormal(normalTexture.SampleLevel(lightSampler, uv, 0).xy);
 
 	float rnd = Random(coord + cFrameData.w);
 	rnd = Random(floor(100.0 * pos));
@@ -63,11 +63,11 @@ void CS(uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID)
 		int2 samp_coord = coord + (unit_vec * radius);
 		if (any(samp_coord < int2(0, 0)) || any(samp_coord > int2(cTargetSize.xy) - 1))
 			continue;
-
-		float samp_depth = linearDepthTexture[samp_coord] * 1.001;
+		
 		float2 samp_uv = float2(samp_coord + 0.5) / cTargetSize;
+		float samp_depth = linearDepthTexture.SampleLevel(lightSampler, samp_uv, 0).x * 1.001;
 		float3 samp_pos = ReconstructCSPosition(samp_uv, samp_depth, cViewReconstructionVector);
-		float3 samp_normal = DecodeNormal(normalTexture[samp_coord].xy);
+		float3 samp_normal = DecodeNormal(normalTexture.SampleLevel(lightSampler, samp_uv, 0).xy);
 
 		float3 samp_vec = samp_pos - pos;
 		float sqr_dist = dot(samp_vec, samp_vec);
