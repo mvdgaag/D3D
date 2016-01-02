@@ -12,7 +12,7 @@ public:
 	Water() { mTerrainHeightField = nullptr; mWaterHeightField = nullptr; mWaterTiles = nullptr; }
 	~Water() { CleanUp(); }
 
-	void Init(pHeightField inHeightField, pMaterial inMaterial);
+	void Init(pHeightField inHeightField, pMaterial inMaterial, pMaterial inShadowMaterial);
 	void CleanUp();
 	void Update(float inTimeStep);
 

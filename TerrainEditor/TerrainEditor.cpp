@@ -18,9 +18,13 @@ pPointLight g_lights[100];
 pSpotLight g_spot_light;
 pDirectionalLight g_directional_light;
 
-pMaterial g_BricksMaterial;
+pMaterial g_TerrainMaterial;
 pPixelShader g_HeightField_pixel_shader;
 pVertexShader g_HeightField_vertex_shader;
+
+pMaterial g_TerrainShadowMaterial;
+pPixelShader g_TerrainShadowPixelShader;
+pVertexShader g_TerrainShadowVertexShader;
 
 pTexture g_diffuse_texture;
 pTexture g_normal_texture;
@@ -108,27 +112,33 @@ void InitContent()
 	//g_normal_texture = theResourceFactory.LoadTexture("Textures/photosculpt-squarebricks-normal.dds");
 	//g_surface_texture = theResourceFactory.LoadTexture("Textures/photosculpt-squarebricks-specular.dds");
 
-	g_BricksMaterial = theResourceFactory.MakeMaterial();
-	//g_BricksMaterial->SetDiffuseTexture(g_diffuse_texture);
-	//g_BricksMaterial->SetNormalTexture(g_normal_texture);
-	//g_BricksMaterial->SetSurfaceTexture(g_surface_texture);
-	g_BricksMaterial->SetDiffuseValue(float4(0.6f, 0.6f, 0.6f, 0.0f));
-	g_BricksMaterial->SetReflectivityValue(0.5f);
-	g_BricksMaterial->SetRoughnessValue(0.8f);
-	g_BricksMaterial->SetMetalicityValue(0.0f);
-	g_BricksMaterial->SetEmissivenessValue(0.0f);
-	g_BricksMaterial->SetPixelShader(g_HeightField_pixel_shader);
-	g_BricksMaterial->SetVertexShader(g_HeightField_vertex_shader);
+	g_TerrainMaterial = theResourceFactory.MakeMaterial();
+	//g_TerrainMaterial->SetDiffuseTexture(g_diffuse_texture);
+	//g_TerrainMaterial->SetNormalTexture(g_normal_texture);
+	//g_TerrainMaterial->SetSurfaceTexture(g_surface_texture);
+	g_TerrainMaterial->SetDiffuseValue(float4(0.6f, 0.6f, 0.6f, 0.0f));
+	g_TerrainMaterial->SetReflectivityValue(0.5f);
+	g_TerrainMaterial->SetRoughnessValue(0.8f);
+	g_TerrainMaterial->SetMetalicityValue(0.0f);
+	g_TerrainMaterial->SetEmissivenessValue(0.0f);
+	g_TerrainMaterial->SetPixelShader(g_HeightField_pixel_shader);
+	g_TerrainMaterial->SetVertexShader(g_HeightField_vertex_shader);
 	
+	g_TerrainShadowMaterial = theResourceFactory.MakeMaterial();
+	g_TerrainShadowVertexShader = theResourceFactory.LoadVertexShader("Shaders/TerrainShadowVertexShader.hlsl");
+	g_TerrainShadowPixelShader = theResourceFactory.LoadPixelShader("Shaders/TerrainShadowFragmentShader.hlsl");
+	g_TerrainShadowMaterial->SetVertexShader(g_TerrainShadowVertexShader);
+	g_TerrainShadowMaterial->SetPixelShader(g_TerrainShadowPixelShader);
+
 	g_obj->Init(g_mesh, theResourceFactory.GetDefaultMaterial());
 	g_obj->Translate(float3(0, 20, 0));
 	Gaag.RegisterObject(g_obj);
 
 	g_HeightField = MAKE_NEW(HeightField);
-	g_HeightField->Init(int2(3), int2(128), float3(50,50,5), g_BricksMaterial);
+	g_HeightField->Init(int2(3), int2(128), float3(50,50,5), g_TerrainMaterial, g_TerrainShadowMaterial);
 
 	g_water = MAKE_NEW(Water);
-	g_water->Init(g_HeightField, g_BricksMaterial);
+	g_water->Init(g_HeightField, g_TerrainMaterial, g_TerrainShadowMaterial);
 
 	int2 num_tiles = g_water->GetTerrainHeightField()->GetNumTiles();
 	for (int x = 0; x < num_tiles.x; x++)
@@ -164,7 +174,7 @@ void CleanUpContent()
 {
 	g_obj = nullptr;
 	g_mesh = nullptr;
-	g_BricksMaterial = nullptr;
+	g_TerrainMaterial = nullptr;
 	g_HeightField_pixel_shader = nullptr;
 	g_HeightField_vertex_shader = nullptr;
 	g_diffuse_texture = nullptr;

@@ -64,8 +64,6 @@ void ShadowRenderer::Render(pDirectionalLight inLight, apDrawableObject inShadow
 	theRenderContext.ClearRenderTarget(shadow_map, float4(0, 0, 0, 0));
 	theRenderContext.ClearDepthStencil(depth_stencil_target, 1.0, 0);
 	theRenderContext.SetRenderTargets(1, &shadow_map, depth_stencil_target);
-	theRenderContext.PSSetShader(mPixelShader);
-	theRenderContext.VSSetShader(mVertexShader);
 
 	// draw all objects
 	for each (pDrawableObject obj in inShadowCasters)
@@ -76,6 +74,12 @@ void ShadowRenderer::Render(pDirectionalLight inLight, apDrawableObject inShadow
 		constantData.modelViewProjectionMatrix = transpose(view_proj * obj->GetTransform());
 		theRenderContext.UpdateSubResource(*mConstantBufferEveryObject, &constantData);
 		theRenderContext.VSSetConstantBuffer(mConstantBufferEveryObject, 0);
+
+		// set shaders
+		// might be reset by custom shader, so need to be set for every object
+		// TODO: make more efficient?
+		theRenderContext.PSSetShader(mPixelShader);
+		theRenderContext.VSSetShader(mVertexShader);
 
 		obj->PrepareToDrawShadow();
 		theRenderContext.DrawShadowMesh(*(obj->GetMesh()));

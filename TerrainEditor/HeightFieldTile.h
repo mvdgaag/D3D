@@ -9,11 +9,13 @@ public:
 	HeightFieldTile() : DrawableObject() { mInitialized = false; }
 	~HeightFieldTile() {};
 
-	void Init(float3 inPosition, float3 inScale, int2 inNumSegments, pMaterial inMaterial, pTexture inHeightTexture);
+	void Init(float3 inPosition, float3 inScale, int2 inNumSegments, pMaterial inMaterial, pMaterial inShadowMaterial, pTexture inHeightTexture);
 	void CleanUp();
 	void UpdateNormals();
 	void PrepareToDraw() override;
 	void FinalizeAfterDraw() override;
+	void PrepareToDrawShadow() override;
+	void FinalizeAfterDrawShadow() override;
 
 	pTexture		GetHeightTexture()				{ return mHeightMapTexture; }
 	pTexture		GetNormalTexture()				{ return mNormalTexture; }
@@ -38,6 +40,7 @@ private:
 	pRenderTarget		mNormalRenderTarget		= nullptr;
 	pTexture			mNormalTexture			= nullptr;
 	pComputeShader		mUpdateNormalShader		= nullptr;
+	pMaterial			mCustomShadowMaterial	= nullptr;
 	bool				mInitialized			= false;
 };
 

@@ -9,7 +9,7 @@ class HeightField
 public:
 	HeightField() {};
 	~HeightField() {};
-	void Init(int2 inNumTiles, int2 inTileSegments, float3 inTileScale, pMaterial inMaterial);
+	void Init(int2 inNumTiles, int2 inTileSegments, float3 inTileScale, pMaterial inMaterial, pMaterial inShadowMaterial);
 	void CleanUp();
 
 	int2			GetNumTiles()				{ return mNumTiles; }

@@ -1,7 +1,7 @@
 #include "HeightFieldTile.h"
 
 
-void HeightFieldTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments, pMaterial inMaterial, pTexture inHeightTexture)
+void HeightFieldTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments, pMaterial inMaterial, pMaterial inShadowMaterial, pTexture inHeightTexture)
 {
 	CleanUp();
 
@@ -66,6 +66,8 @@ void HeightFieldTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments
 	mConstantBufferData.scale = float4(inScale, 0);
 	theRenderContext.UpdateSubResource(*mConstantBuffer, &mConstantBufferData);
 
+	mCustomShadowMaterial = inShadowMaterial;
+
 	mInitialized = true; 
 }
 
@@ -98,5 +100,22 @@ void HeightFieldTile::PrepareToDraw()
 void HeightFieldTile::FinalizeAfterDraw()
 {
 	theRenderContext.VSSetConstantBuffer(NULL, 2);
+	theRenderContext.VSSetTextureAndSampler(NULL, NULL, 0);
+}
+
+
+void HeightFieldTile::PrepareToDrawShadow()
+{
+	pSampler point_sampler = theResourceFactory.GetDefaultPointSampler();
+	theRenderContext.VSSetShader(mCustomShadowMaterial->GetVertexShader());
+	theRenderContext.PSSetShader(mCustomShadowMaterial->GetPixelShader());
+	theRenderContext.VSSetConstantBuffer(mConstantBuffer, 1);
+	theRenderContext.VSSetTextureAndSampler(mHeightMapTexture, point_sampler, 0);
+}
+
+
+void HeightFieldTile::FinalizeAfterDrawShadow()
+{
+	theRenderContext.VSSetConstantBuffer(NULL, 0);
 	theRenderContext.VSSetTextureAndSampler(NULL, NULL, 0);
 }

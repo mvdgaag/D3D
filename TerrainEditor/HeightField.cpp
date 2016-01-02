@@ -2,7 +2,7 @@
 #include "HeightFieldTile.h"
 
 
-void HeightField::Init(int2 inNumTiles, int2 inTileSegments, float3 inTileScale, pMaterial inMaterial)
+void HeightField::Init(int2 inNumTiles, int2 inTileSegments, float3 inTileScale, pMaterial inMaterial, pMaterial inShadowMaterial)
 {
 	CleanUp();
 	
@@ -27,7 +27,7 @@ void HeightField::Init(int2 inNumTiles, int2 inTileSegments, float3 inTileScale,
 			mTiles[idx] = MAKE_NEW(HeightFieldTile);
 			pMaterial material = theResourceFactory.CloneMaterial(inMaterial);
 			material->SetDiffuseValue(float4(1, 0, 0, 0));
-			mTiles[idx]->Init(tile_pos, mTileScale, mTileSegments, material, heightmap);
+			mTiles[idx]->Init(tile_pos, mTileScale, mTileSegments, material, inShadowMaterial, heightmap);
 			
 			Gaag.RegisterObject(mTiles[idx]);
 		}

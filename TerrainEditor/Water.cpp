@@ -3,13 +3,13 @@
 #include "WaterTile.h"
 
 
-void Water::Init(pHeightField inTerrainHeightField, pMaterial inMaterial)
+void Water::Init(pHeightField inTerrainHeightField, pMaterial inMaterial, pMaterial inShadowMaterial)
 {
 	assert(inTerrainHeightField != nullptr);
 	mTerrainHeightField = inTerrainHeightField;
 
 	mWaterHeightField = MAKE_NEW(HeightField);
-	mWaterHeightField->Init(mTerrainHeightField->GetNumTiles(), mTerrainHeightField->GetTileSegments(), mTerrainHeightField->GetTileScale(), inMaterial);
+	mWaterHeightField->Init(mTerrainHeightField->GetNumTiles(), mTerrainHeightField->GetTileSegments(), mTerrainHeightField->GetTileScale(), inMaterial, inShadowMaterial);
 
 	mNumTiles = mWaterHeightField->GetNumTiles();
 	mWaterTiles = new pWaterTile*[mNumTiles.x];
