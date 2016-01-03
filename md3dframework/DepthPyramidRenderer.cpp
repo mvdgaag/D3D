@@ -14,8 +14,9 @@ void DepthPyramidRenderer::Render(pTexture inSource, pRenderTarget inMaxTarget, 
 	assert(inSource != nullptr);
 	assert(inMaxTarget != nullptr);
 	assert(inMinTarget != nullptr);
-	assert(inMaxTarget->GetTexture()->GetMipLevels() == kNumMipLevels);
-	assert(inMinTarget->GetTexture()->GetMipLevels() == kNumMipLevels);
+	int num_mips = inMinTarget->GetTexture()->GetMipLevels();
+	assert(inMaxTarget->GetTexture()->GetMipLevels() == num_mips);
+	assert(num_mips > 1);
 	assert(inMaxTarget->GetDimensions() == inSource->GetDimensions() / 2);
 	assert(inMinTarget->GetDimensions() == inSource->GetDimensions() / 2);
 
@@ -25,7 +26,7 @@ void DepthPyramidRenderer::Render(pTexture inSource, pRenderTarget inMaxTarget, 
 
 	// TODO: test. Are we allowed to write to a mip of the same texture?
 	// or do we require a ping/pong texture?
-	for (int dst_level = 1; dst_level < kNumMipLevels; dst_level++)
+	for (int dst_level = 1; dst_level < num_mips; dst_level++)
 	{
 		int src_level = dst_level - 1;
 		TextureUtil::TextureGenerteMip(inMaxTarget, dst_level, inMaxTarget->GetTexture(), src_level, TextureUtil::TEXTURE_MIP_MAX);
@@ -45,4 +46,3 @@ void DepthPyramidRenderer::CleanUp()
 {
 	mInitialized = false;
 }
-

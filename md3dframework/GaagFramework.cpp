@@ -43,6 +43,7 @@ HRESULT GaagFramework::Init(HINSTANCE hInstance)
 	mFullScreenTriangle = theResourceFactory.GetFullScreenTriangleMesh();
 	mDefaultSampler = theResourceFactory.GetDefaultLinearSampler();
 	mCopyShader = theResourceFactory.GetCopyShader();
+	mCopyConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(float4));
 
 	mCamera = MAKE_NEW(Camera);
 	mCamera->SetPosition(1.0, 1.0, 1.0);
@@ -91,8 +92,8 @@ void GaagFramework::Render()
 		mFrameCallback();
 
 	mDeferredRenderer->Render(mObjectList);
-	CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetAntiAliased()->GetTexture());
-	//CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetDirectLightingDiffuse()->GetTexture());
+	CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetAntiAliased()->GetTexture(), 0);
+	//CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetDepthMaxPyramid()->GetTexture(), 5);
 	theRenderContext.SwapBuffers();
 }
 
@@ -173,14 +174,18 @@ void GaagFramework::SetMaterial(pMaterial inMaterial)
 }
 
 
-void GaagFramework::CopyToRenderTarget(pRenderTarget inTarget, pTexture inSource)
+void GaagFramework::CopyToRenderTarget(pRenderTarget inTarget, pTexture inSource, int inMipLevel)
 {
 	assert(inSource != nullptr);
 	assert(inTarget != nullptr);
 
+	float4 constant_data = float4(inTarget->GetDimensions(), inMipLevel, 0);
+	theRenderContext.UpdateSubResource(*mCopyConstantBuffer, &constant_data);
+
 	theRenderContext.CSSetShader(mCopyShader);
-	theRenderContext.CSSetTexture(inSource, 0);
-	theRenderContext.CSSetRWTexture(inTarget, 0);
+	theRenderContext.CSSetTextureAndSampler(inSource, theResourceFactory.GetDefaultPointSampler(), 0);
+	theRenderContext.CSSetRWTexture(inTarget, 0, 0);
+	theRenderContext.CSSetConstantBuffer(mCopyConstantBuffer, 0);
 
 	int2 groups = (inTarget->GetDimensions() + 7) / 8;
 	theRenderContext.Dispatch(groups.x, groups.y, 1);
@@ -189,5 +194,5 @@ void GaagFramework::CopyToRenderTarget(pRenderTarget inTarget, pTexture inSource
 	// clear state
 	theRenderContext.CSSetShader(NULL);
 	theRenderContext.CSSetTexture(NULL, 0);
-	theRenderContext.CSSetRWTexture(NULL, 0);
+	theRenderContext.CSSetRWTexture(NULL, 0, 0);
 }

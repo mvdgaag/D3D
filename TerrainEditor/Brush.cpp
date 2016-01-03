@@ -24,12 +24,12 @@ void Brush::Apply(pHeightFieldTile inTile, const rect& inPixelRect, const float2
 
 	theRenderContext.CSSetShader(mShader);
 	theRenderContext.CSSetConstantBuffer(cbuf, 0);
-	if (inTile != nullptr) theRenderContext.CSSetRWTexture(inTile->GetRenderTarget(), 0);
+	if (inTile != nullptr) theRenderContext.CSSetRWTexture(inTile->GetRenderTarget(), 0, 0);
 
 	int2 num_threads = ((inPixelRect.bottomRight - inPixelRect.topLeft) + 7) / 8;
 	theRenderContext.Dispatch(num_threads.x, num_threads.y, 1);
 
-	theRenderContext.CSSetRWTexture(NULL, 0);
+	theRenderContext.CSSetRWTexture(NULL, 0, 0);
 	theRenderContext.CSSetConstantBuffer(NULL, 0);
 	theRenderContext.CSSetShader(NULL);
 }

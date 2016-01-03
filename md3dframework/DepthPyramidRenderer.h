@@ -15,13 +15,11 @@ public:
 	void Init();
 	void CleanUp();
 	void Render(pTexture inSource, pRenderTarget inMaxTarget, pRenderTarget inMinTarget);
-	int GetNumMipLevels() { return kNumMipLevels; }
 
 private:
 	DepthPyramidRenderer(DepthPyramidRenderer const&) = delete;
 	void operator=(DepthPyramidRenderer const&) = delete;
 
-	const int	kNumMipLevels = 5; // 1/2 .. 1/8
 	bool		mInitialized = false;
 };
 

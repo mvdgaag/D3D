@@ -19,7 +19,7 @@ void PostProcessRenderer::Render(pTexture inSource, pTexture inMotionVectors, pR
 	theRenderContext.CSSetShader(mShader);
 	theRenderContext.CSSetTextureAndSampler(inSource, linear_sampler, 0);
 	theRenderContext.CSSetTextureAndSampler(inMotionVectors, linear_sampler, 1);
-	theRenderContext.CSSetRWTexture(inTarget, 0);
+	theRenderContext.CSSetRWTexture(inTarget, 0, 0);
 
 	mConstantBufferData.mTargetSize = float4(theRenderContext.GetWidth(), theRenderContext.GetHeight(),0,0);
 	theRenderContext.UpdateSubResource(*mConstantBuffer, &mConstantBufferData);
@@ -33,7 +33,7 @@ void PostProcessRenderer::Render(pTexture inSource, pTexture inMotionVectors, pR
 	theRenderContext.CSSetShader(NULL);
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 0);
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 1);
-	theRenderContext.CSSetRWTexture(NULL, 0);
+	theRenderContext.CSSetRWTexture(NULL, 0, 0);
 }
 
 

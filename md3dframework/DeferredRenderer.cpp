@@ -33,8 +33,8 @@ void DeferredRenderer::Init(int inWidth, int inHeight)
 	mGBuffer = MAKE_NEW(GBuffer);
 	mGBuffer->Init(inWidth, inHeight);
 
-	mDepthMinPyramid = theResourceFactory.MakeRenderTarget(int2(inWidth / 2, inHeight / 2), mDepthPyramidRenderer.GetNumMipLevels(), FORMAT_R16_FLOAT);
-	mDepthMaxPyramid = theResourceFactory.MakeRenderTarget(int2(inWidth / 2, inHeight / 2), mDepthPyramidRenderer.GetNumMipLevels(), FORMAT_R16_FLOAT);
+	mDepthMinPyramid = theResourceFactory.MakeRenderTarget(int2(inWidth / 2, inHeight / 2), 8, FORMAT_R16_FLOAT);
+	mDepthMaxPyramid = theResourceFactory.MakeRenderTarget(int2(inWidth / 2, inHeight / 2), 8, FORMAT_R16_FLOAT);
 	mDirectLightingDiffuse = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
 	mDirectLightingDiffuseTemp = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
 	mDirectLightingSpecular = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
@@ -263,9 +263,10 @@ void DeferredRenderer::LightingPass()
 	mDirectLightingRenderer.Render(mGBuffer, mDirectLightingDiffuse, mDirectLightingSpecular, mDirectLightingDiffuseTemp, mDirectLightingSpecularTemp, 
 		mPointLights, mSpotLights, mDirectionalLights);
 	
-	//theRenderContext.SetMarker("Depth Pyramid Renderer");
-	//mDepthPyramidRenderer.Render(mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), mDepthMaxPyramid, mDepthMinPyramid);
+	theRenderContext.SetMarker("Depth Pyramid Renderer");
+	mDepthPyramidRenderer.Render(mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), mDepthMaxPyramid, mDepthMinPyramid);
 	
+	theRenderContext.SetMarker("Downres Diffuse Lighting");
 	TextureUtil::TextureDownSample(mHalfResRGBATemp, mDirectLightingDiffuse->GetTexture(), theResourceFactory.GetDefaultLinearSampler());
 	TextureUtil::TextureDownSample(mQuarterResRGBATemp, mHalfResRGBATemp->GetTexture(), theResourceFactory.GetDefaultLinearSampler());
 	TextureUtil::TextureDownSample(mEightResRGBATemp, mQuarterResRGBATemp->GetTexture(), theResourceFactory.GetDefaultLinearSampler());
@@ -277,7 +278,9 @@ void DeferredRenderer::LightingPass()
 	TextureUtil::TextureDownSample(mHalfNormals, mGBuffer->GetTexture(GBuffer::NORMAL), theResourceFactory.GetDefaultPointSampler());
 	// downsample diffuse light
 	theRenderContext.SetMarker("Indirect Lighting Renderer");
-	mIndirectLightingRenderer.Render(mEightResRGBATemp->GetTexture(), mHalfNormals->GetTexture(), mHalfLinearDepth->GetTexture(), mGBuffer->GetTexture(GBuffer::DIFFUSE), mIndirectLighting, mFullResRGBATemp);
+	mIndirectLightingRenderer.Render(mEightResRGBATemp->GetTexture(), mHalfNormals->GetTexture(), 
+		mHalfLinearDepth->GetTexture(), mDepthMaxPyramid->GetTexture(),
+		mGBuffer->GetTexture(GBuffer::DIFFUSE), mIndirectLighting, mFullResRGBATemp);
 #else
 	theRenderContext.SetMarker("Indirect Lighting Renderer");
 	mIndirectLightingRenderer.Render(mEightResRGBATemp->GetTexture(), mGBuffer->GetTexture(GBuffer::NORMAL), mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), mGBuffer->GetTexture(GBuffer::DIFFUSE), mIndirectLighting, mFullResRGBATemp);
@@ -302,9 +305,11 @@ void DeferredRenderer::LightingPass()
 void DeferredRenderer::PostProcessPass()
 {
 	theRenderContext.BeginEvent("Post Process Pass");
+	theRenderContext.SetMarker("Post Process Shader");
 	mPostProcessRenderer.Render(mLightComposed->GetTexture(), mGBuffer->GetRenderTarget(GBuffer::MOTION_VECTORS)->GetTexture(), mPostProcessed);
 	
 	// temporal AA should be very last thing, because it clamps the values
+	theRenderContext.SetMarker("Temporal AA Shader");
 	mTAARenderer.Render(mPostProcessed->GetTexture(), mAAHistoryFrame, mGBuffer->GetTexture(GBuffer::MOTION_VECTORS), mAntiAliased);
 	theRenderContext.EndEvent();
 }

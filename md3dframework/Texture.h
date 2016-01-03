@@ -196,6 +196,7 @@ public:
 protected:
 	ID3D11Texture2D*			mTexture = nullptr;
 	ID3D11ShaderResourceView*	mShaderResourceView = nullptr;
+	ID3D11ShaderResourceView**	mMipShaderResourceViews = nullptr;
 	D3D11_TEXTURE2D_DESC*		mDesc = nullptr;
 	unsigned int				mWidth;
 	unsigned int				mHeight;
@@ -207,6 +208,8 @@ protected:
 private:
 	Texture() : BaseResource() {};
 	~Texture() { CleanUp(); }
+
+	void SetMipShaderResourceViews();
 
 	Texture(Texture const&) = delete;
 	void operator=(Texture const&) = delete;

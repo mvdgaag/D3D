@@ -89,10 +89,11 @@ public:
 	void CSSetShader(const ComputeShader& inComputeShader);
 
 	void CSSetTexture(pTexture inTexture, int idx);
+	void CSSetTextureSingleMip(pTexture inTexture, int inMipLevel, int idx);
 	void CSSetSampler(pSampler inSampler, int idx);
 	void CSSetTextureAndSampler(pTexture inTexture, pSampler inSampler, int idx);
 	void CSSetConstantBuffer(pConstantBuffer inConstantBuffer, int idx);
-	void CSSetRWTexture(pRenderTarget inRenderTarget, int idx);
+	void CSSetRWTexture(pRenderTarget inRenderTarget, int inMipLevel, int idx);
 	void Dispatch(unsigned int inX, unsigned int inY, unsigned int inZ);
 	
 	void PSSetShader(pPixelShader inPixelShader);

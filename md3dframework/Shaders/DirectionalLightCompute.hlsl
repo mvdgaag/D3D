@@ -4,7 +4,7 @@
 #define TILE_SIZE				8
 #define GROUP_SIZE				(TILE_SIZE * TILE_SIZE)
 #define MAX_DIRECTIONAL_LIGHTS	4
-#define SHADOW_BIAS				0.0025
+#define SHADOW_BIAS				0.001
 
 RWTexture2D<float4> OutDiffuseLight		: register(u0);
 RWTexture2D<float4> OutSpecularLight	: register(u1);

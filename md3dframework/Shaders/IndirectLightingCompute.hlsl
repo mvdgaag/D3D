@@ -5,11 +5,13 @@ Texture2D<float4> lightTexture : register(t0);			// quarter res
 Texture2D<float2> normalTexture : register(t1);			// full or half res
 Texture2D<float> linearDepthTexture : register(t2);		// full or half res
 Texture2D<float4> diffuseTexture : register(t3);		// full res
+Texture2D<float> maxDepthTexture : register(t4);				// full res, 5 mips
 
 SamplerState lightSampler : register(s0);
 SamplerState normalSampler : register(s1);
 SamplerState linearDepthSampler : register(s2);
 SamplerState diffuseSampler : register(s3);
+SamplerState maxDepthSampler : register(s4);
 
 cbuffer cIndirectLightingConstants : register(b0)
 {
@@ -19,7 +21,7 @@ cbuffer cIndirectLightingConstants : register(b0)
 };
 
 #define MAX_SAMPLES 32
-#define MAX_MIP_LEVEL 5
+#define MAX_MIP_LEVEL 7
 #define GOLDEN_ANGLE (3.1415 * (3.0 - sqrt(5.0)))
 
 [numthreads(8, 8, 1)]
@@ -58,14 +60,14 @@ void CS(uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID)
 	float running_weight_ao = 0.0001;
 	float running_weight_radiance = 1.0;
 
-	for (int i = 0; i < MAX_SAMPLES, radius < ss_radius; i++, radius *= sqrt(2.0))
+	for (uint i = 0; i < MAX_SAMPLES, radius < ss_radius; i++, radius *= sqrt(2.0))
 	{
 		int2 samp_coord = coord + (unit_vec * radius);
 		if (any(samp_coord < int2(0, 0)) || any(samp_coord > int2(cTargetSize.xy) - 1))
 			continue;
 		
 		float2 samp_uv = float2(samp_coord + 0.5) / cTargetSize;
-		float samp_depth = linearDepthTexture.SampleLevel(lightSampler, samp_uv, 0).x * 1.001;
+		float samp_depth = maxDepthTexture.SampleLevel(lightSampler, samp_uv, clamp((i-2) / 2, 0, MAX_MIP_LEVEL)).x * 1.001;
 		float3 samp_pos = ReconstructCSPosition(samp_uv, samp_depth, cViewReconstructionVector);
 		float3 samp_normal = DecodeNormal(normalTexture.SampleLevel(lightSampler, samp_uv, 0).xy);
 
@@ -74,9 +76,8 @@ void CS(uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID)
 		float vdn = max(0.0, dot(normal, samp_vec));
 
 		float dist_weight = pow(max(0.0, (sqr_radius - sqr_dist) / sqr_radius), 3);
-
-		accum_ao += dist_weight * radius * vdn / sqrt(sqr_dist);
-		running_weight_ao += dist_weight * radius;
+		accum_ao += dist_weight * vdn / sqrt(sqr_dist);
+		running_weight_ao += dist_weight;
 
 		float weight_radiance = vdn * dist_weight;
 		weight_radiance *= dot(samp_normal, samp_vec) < 0 ? 1.0 : 0.0;
@@ -87,7 +88,7 @@ void CS(uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID)
 	}
 
 	accum_ao /= running_weight_ao;
-	accum_ao = 1.001 - saturate(accum_ao);
+	accum_ao = 1.001 - saturate(2 * accum_ao);
 
 	accum_radiance /= running_weight_radiance;
 	float3 up = cFrameData.xyz;

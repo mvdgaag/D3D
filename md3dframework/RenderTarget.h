@@ -5,6 +5,7 @@
 
 struct ID3D11RenderTargetView;
 struct ID3D11UnorderedAccessView;
+struct ID3D11ShaderResourceView;
 
 REGISTERCLASS(RenderTarget);
 

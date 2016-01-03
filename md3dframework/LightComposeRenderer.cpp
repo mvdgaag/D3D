@@ -26,7 +26,7 @@ void LightComposeRenderer::Render(pTexture inDirectDiffuse, pTexture inDirectSpe
 	theRenderContext.CSSetTextureAndSampler(inReflections, point_sampler, 3);
 	theRenderContext.CSSetTextureAndSampler(inDepth, point_sampler, 4);
 	theRenderContext.CSSetTextureAndSampler(inHalfDepth, point_sampler, 5);
-	theRenderContext.CSSetRWTexture(inTarget, 0);
+	theRenderContext.CSSetRWTexture(inTarget, 0, 0);
 
 	int2 groups = (inTarget->GetDimensions() + 7) / 8;
 	theRenderContext.Dispatch(groups.x, groups.y, 1);
@@ -40,7 +40,7 @@ void LightComposeRenderer::Render(pTexture inDirectDiffuse, pTexture inDirectSpe
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 3);
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 4);
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 5);
-	theRenderContext.CSSetRWTexture(NULL, 0);
+	theRenderContext.CSSetRWTexture(NULL, 0, 0);
 }
 
 

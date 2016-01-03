@@ -52,7 +52,7 @@ public:
 	double		GetFrameTime()													{ return mFrameTime; }
 	double		GetFrameDeltaTime()												{ return mDeltaTime; }
 	void		SetMaterial(pMaterial inMaterial);
-	void		CopyToRenderTarget(pRenderTarget inTarget, pTexture inSource);
+	void		CopyToRenderTarget(pRenderTarget inTarget, pTexture inSource, int inMipLevel);
 
 private:
 	GaagFramework() { mInitialized = false; }
@@ -63,6 +63,7 @@ private:
 	pMesh							mFullScreenTriangle = nullptr;
 	pSampler						mDefaultSampler = nullptr;
 	pComputeShader					mCopyShader = nullptr;
+	pConstantBuffer					mCopyConstantBuffer = nullptr;
 	pWindow							mWindow;
 	pCamera							mCamera = nullptr;
 	pDeferredRenderer				mDeferredRenderer = nullptr;

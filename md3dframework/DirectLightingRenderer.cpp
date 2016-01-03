@@ -22,9 +22,9 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 	assert(inTargetDiffuse != nullptr);
 	assert(inTargetSpecular != nullptr);
 	assert(inTargetDiffuse->GetDimensions() == inTargetSpecular->GetDimensions());
-	assert(inDirectionalLights.size < MAX_DIRECTIONAL_LIGHTS);
-	assert(inPointLights.size < MAX_POINT_LIGHTS);
-	assert(inSpotLights.size < MAX_SPOT_LIGHTS);
+	assert(inDirectionalLights.size() <= MAX_DIRECTIONAL_LIGHTS);
+	assert(inPointLights.size() <= MAX_POINT_LIGHTS);
+	assert(inSpotLights.size() <= MAX_SPOT_LIGHTS);
 
 	pSampler point_sampler = theResourceFactory.GetDefaultPointSampler();
 	int2 groups = (inTargetDiffuse->GetDimensions() + 7) / 8;
@@ -39,8 +39,8 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 	mConstantBufferData.frameData.x = (float)Gaag.GetFrameID();
 	theRenderContext.UpdateSubResource(*mConstantBuffer, &mConstantBufferData);
 
-	theRenderContext.CSSetRWTexture(inTargetDiffuse, 0);
-	theRenderContext.CSSetRWTexture(inTargetSpecular, 1);
+	theRenderContext.CSSetRWTexture(inTargetDiffuse, 0, 0);
+	theRenderContext.CSSetRWTexture(inTargetSpecular, 0, 1);
 	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::LINEAR_DEPTH), point_sampler, 0);
 	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::NORMAL), point_sampler, 1);
 	theRenderContext.CSSetTextureAndSampler(inSource->GetTexture(GBuffer::DIFFUSE), point_sampler, 2);
@@ -88,8 +88,8 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 	theRenderContext.UpdateSubResource(*mConstantBufferPointLights, &mConstantBufferPointLightData);
 	theRenderContext.CSSetConstantBuffer(mConstantBufferPointLights, 1);
 
-	theRenderContext.CSSetRWTexture(inTargetDiffuseTemp, 0);
-	theRenderContext.CSSetRWTexture(inTargetSpecularTemp, 1);
+	theRenderContext.CSSetRWTexture(inTargetDiffuseTemp, 0, 0);
+	theRenderContext.CSSetRWTexture(inTargetSpecularTemp, 0, 1);
 	theRenderContext.CSSetTextureAndSampler(inTargetDiffuse->GetTexture(), point_sampler, 4);
 	theRenderContext.CSSetTextureAndSampler(inTargetSpecular->GetTexture(), point_sampler, 5);
 
@@ -116,8 +116,8 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 	theRenderContext.UpdateSubResource(*mConstantBufferSpotLights, &mConstantBufferSpotLightData);
 	theRenderContext.CSSetConstantBuffer(mConstantBufferSpotLights, 1);
 
-	theRenderContext.CSSetRWTexture(inTargetDiffuse, 0);
-	theRenderContext.CSSetRWTexture(inTargetSpecular, 1);
+	theRenderContext.CSSetRWTexture(inTargetDiffuse, 0, 0);
+	theRenderContext.CSSetRWTexture(inTargetSpecular, 0, 1);
 	theRenderContext.CSSetTextureAndSampler(inTargetDiffuseTemp->GetTexture(), point_sampler, 4);
 	theRenderContext.CSSetTextureAndSampler(inTargetSpecularTemp->GetTexture(), point_sampler, 5);
 
@@ -135,8 +135,8 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 4);
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 5);
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 6);
-	theRenderContext.CSSetRWTexture(NULL, 0);
-	theRenderContext.CSSetRWTexture(NULL, 1);
+	theRenderContext.CSSetRWTexture(NULL, 0, 0);
+	theRenderContext.CSSetRWTexture(NULL, 0, 1);
 }
 
 

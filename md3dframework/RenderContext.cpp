@@ -424,6 +424,17 @@ void RenderContext::CSSetTexture(pTexture inTexture, int idx)
 }
 
 
+void RenderContext::CSSetTextureSingleMip(pTexture inTexture, int inMipLevel, int idx)
+{
+	assert(inTexture != nullptr);
+	assert(inTexture->mMipLevels > inMipLevel);
+	assert(inTexture->mMipShaderResourceViews[inMipLevel] != nullptr);
+	ID3D11ShaderResourceView* srv = inTexture->mMipShaderResourceViews[inMipLevel];
+	mImmediateContext->CSSetShaderResources(idx, 1, &srv);
+	mCSBoundTextures[idx] = nullptr; // single mip texture doesn't count and will have to be rebound
+}
+
+
 void RenderContext::CSSetSampler(pSampler inSampler, int idx)
 {
 	if (mCSBoundSamplers[idx] == inSampler)
@@ -461,7 +472,7 @@ void RenderContext::CSSetConstantBuffer(pConstantBuffer inConstantBuffer, int id
 }
 
 
-void RenderContext::CSSetRWTexture(pRenderTarget inRenderTarget, int idx)
+void RenderContext::CSSetRWTexture(pRenderTarget inRenderTarget, int inMipLevel, int idx)
 {
 	if (mCSBoundRenderTargets[idx] == inRenderTarget)
 		return;
@@ -469,7 +480,7 @@ void RenderContext::CSSetRWTexture(pRenderTarget inRenderTarget, int idx)
 	{
 		ID3D11UnorderedAccessView* uav = NULL;
 		if (inRenderTarget != nullptr)
-			uav = inRenderTarget->mUnorderedAccessViews[0];
+			uav = inRenderTarget->mUnorderedAccessViews[inMipLevel];
 		const unsigned int initial_count = -1;
 		mImmediateContext->CSSetUnorderedAccessViews(idx, 1, &uav, &initial_count);
 		mCSBoundRenderTargets[idx] = inRenderTarget;

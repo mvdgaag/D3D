@@ -17,13 +17,13 @@ public:
 	
 	void Init();
 	void CleanUp();
-	void Render(pTexture inSource, pTexture inNormal, pTexture inLinearDepth, pTexture inDiffuse, pRenderTarget inTarget, pRenderTarget inTempTarget);
+	void Render(pTexture inSource, pTexture inNormal, pTexture inLinearDepth, pTexture inMaxDepth, pTexture inDiffuse, pRenderTarget inTarget, pRenderTarget inTempTarget);
 
 private:
 	IndirectLightingRenderer(IndirectLightingRenderer const&) = delete;
 	void operator=(IndirectLightingRenderer const&) = delete;
 
-	void ApplyIndirect(pTexture inSource, pTexture inNormal, pTexture inLinearDepth, pTexture inDiffuse, pRenderTarget inTarget);
+	void ApplyIndirect(pTexture inSource, pTexture inNormal, pTexture inLinearDepth, pTexture inMaxDepth, pTexture inDiffuse, pRenderTarget inTarget);
 	void ApplyBlur(pTexture inSource, pTexture inNormal, pTexture inLinearDepth, pRenderTarget inTarget, bool inHorizontal);
 
 	struct ConstantBufferData

@@ -9,13 +9,13 @@
 #include "TextureUtil.h"
 
 
-void IndirectLightingRenderer::Render(pTexture inSource, pTexture inNormal, pTexture inLinearDepth, pTexture inDiffuse, pRenderTarget inTarget, pRenderTarget inTempTarget)
+void IndirectLightingRenderer::Render(pTexture inSource, pTexture inNormal, pTexture inLinearDepth, pTexture inMaxDepth, pTexture inDiffuse, pRenderTarget inTarget, pRenderTarget inTempTarget)
 {
 	assert(mInitialized == true);
 	assert(inSource != nullptr);
 	assert(inTarget != nullptr);
 
-	ApplyIndirect(inSource, inNormal, inLinearDepth, inDiffuse, inTarget);
+	ApplyIndirect(inSource, inNormal, inLinearDepth, inMaxDepth, inDiffuse, inTarget);
 
 	for (int i = 0; i < 2; i++)
 	{
@@ -34,7 +34,7 @@ void IndirectLightingRenderer::ApplyBlur(pTexture inSource, pTexture inNormal, p
 	theRenderContext.CSSetTextureAndSampler(inSource, linear_sampler, 0);
 	theRenderContext.CSSetTextureAndSampler(inNormal, point_sampler, 1);
 	theRenderContext.CSSetTextureAndSampler(inLinearDepth, point_sampler, 2);
-	theRenderContext.CSSetRWTexture(inTarget, 0);
+	theRenderContext.CSSetRWTexture(inTarget, 0, 0);
 
 	pCamera cam = Gaag.GetCamera();
 	mConstantBufferData.viewspaceReconstructionVector.x = tan(0.5f * cam->GetFovX());
@@ -57,11 +57,11 @@ void IndirectLightingRenderer::ApplyBlur(pTexture inSource, pTexture inNormal, p
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 0);
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 1);
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 2);
-	theRenderContext.CSSetRWTexture(NULL, 0);
+	theRenderContext.CSSetRWTexture(NULL, 0, 0);
 }
 
 
-void IndirectLightingRenderer::ApplyIndirect(pTexture inSource, pTexture inNormal, pTexture inLinearDepth, pTexture inDiffuse, pRenderTarget inTarget)
+void IndirectLightingRenderer::ApplyIndirect(pTexture inSource, pTexture inNormal, pTexture inLinearDepth, pTexture inMaxDepth, pTexture inDiffuse, pRenderTarget inTarget)
 {
 	pSampler point_sampler = theResourceFactory.GetDefaultPointSampler();
 
@@ -70,7 +70,8 @@ void IndirectLightingRenderer::ApplyIndirect(pTexture inSource, pTexture inNorma
 	theRenderContext.CSSetTextureAndSampler(inNormal, point_sampler, 1);
 	theRenderContext.CSSetTextureAndSampler(inLinearDepth, point_sampler, 2);
 	theRenderContext.CSSetTextureAndSampler(inDiffuse, point_sampler, 3);
-	theRenderContext.CSSetRWTexture(inTarget, 0);
+	theRenderContext.CSSetTextureAndSampler(inMaxDepth, point_sampler, 4);
+	theRenderContext.CSSetRWTexture(inTarget, 0, 0);
 
 	pCamera cam = Gaag.GetCamera();
 	mConstantBufferData.viewspaceReconstructionVector.x = tan(0.5f * cam->GetFovX());
@@ -92,7 +93,8 @@ void IndirectLightingRenderer::ApplyIndirect(pTexture inSource, pTexture inNorma
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 1);
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 2);
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 3);
-	theRenderContext.CSSetRWTexture(NULL, 0);
+	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 4);
+	theRenderContext.CSSetRWTexture(NULL, 0, 0);
 }
 
 

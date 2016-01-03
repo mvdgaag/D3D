@@ -194,7 +194,7 @@ namespace TextureUtil
 		pComputeShader cs(&inShader);
 
 		theRenderContext.CSSetShader(cs);
-		theRenderContext.CSSetRWTexture(inDst, 0);
+		theRenderContext.CSSetRWTexture(inDst, 0, 0);
 
 		for (int i = 0; i < inSources.size(); i++)
 			theRenderContext.CSSetTexture(inSources[i], i);
@@ -211,7 +211,7 @@ namespace TextureUtil
 		for (int i = 0; i < inSources.size(); i++)
 			theRenderContext.CSSetTexture(nullptr, i);
 
-		theRenderContext.CSSetRWTexture(nullptr, 0);
+		theRenderContext.CSSetRWTexture(nullptr, 0, 0);
 		theRenderContext.CSSetShader(nullptr);
 
 		theResourceFactory.DestroyItem(cb);
@@ -223,7 +223,7 @@ namespace TextureUtil
 		pComputeShader cs(&inShader);
 
 		theRenderContext.CSSetShader(cs);
-		theRenderContext.CSSetRWTexture(inDst, 0);
+		theRenderContext.CSSetRWTexture(inDst, 0, 0);
 
 		for (int i = 0; i < inSources.size(); i++)
 			theRenderContext.CSSetTexture(inSources[i], i);
@@ -237,7 +237,7 @@ namespace TextureUtil
 		for (int i = 0; i < inSources.size(); i++)
 			theRenderContext.CSSetTexture(nullptr, i);
 
-		theRenderContext.CSSetRWTexture(nullptr, 0);
+		theRenderContext.CSSetRWTexture(nullptr, 0, 0);
 		theRenderContext.CSSetShader(nullptr);
 	}
 
@@ -247,7 +247,7 @@ namespace TextureUtil
 		pComputeShader cs(&inShader);
 
 		theRenderContext.CSSetShader(cs);
-		theRenderContext.CSSetRWTexture(inDst, 0);
+		theRenderContext.CSSetRWTexture(inDst, 0, 0);
 
 		for (int i = 0; i < inSources.size(); i++)
 			theRenderContext.CSSetTextureAndSampler(inSources[i], inSamplers[i], i);
@@ -261,7 +261,7 @@ namespace TextureUtil
 		for (int i = 0; i < inSources.size(); i++)
 			theRenderContext.CSSetTextureAndSampler(nullptr, nullptr, i);
 
-		theRenderContext.CSSetRWTexture(nullptr, 0);
+		theRenderContext.CSSetRWTexture(nullptr, 0, 0);
 		theRenderContext.CSSetShader(nullptr);
 	}
 
@@ -679,7 +679,7 @@ namespace TextureUtil
 		pConstantBuffer cb = theResourceFactory.MakeConstantBuffer(sizeof(float4));
 
 		theRenderContext.CSSetShader(gTextureStitchNorthShader);
-		theRenderContext.CSSetRWTexture(rt, 0);
+		theRenderContext.CSSetRWTexture(rt, 0, 0);
 		theRenderContext.CSSetTexture(inSrc, 0);
 		theRenderContext.UpdateSubResource(*cb, &params);
 		theRenderContext.CSSetConstantBuffer(cb, 0);
@@ -690,7 +690,7 @@ namespace TextureUtil
 
 		theRenderContext.CSSetConstantBuffer(nullptr, 0);
 		theRenderContext.CSSetTexture(nullptr, 0);
-		theRenderContext.CSSetRWTexture(nullptr, 0);
+		theRenderContext.CSSetRWTexture(nullptr, 0, 0);
 		theRenderContext.CSSetShader(nullptr);
 
 		theResourceFactory.DestroyItem(rt);
@@ -707,7 +707,7 @@ namespace TextureUtil
 		pConstantBuffer cb = theResourceFactory.MakeConstantBuffer(sizeof(float4));
 
 		theRenderContext.CSSetShader(gTextureStitchSouthShader);
-		theRenderContext.CSSetRWTexture(rt, 0);
+		theRenderContext.CSSetRWTexture(rt, 0, 0);
 		theRenderContext.CSSetTexture(inSrc, 0);
 		theRenderContext.UpdateSubResource(*cb, &params);
 		theRenderContext.CSSetConstantBuffer(cb, 0);
@@ -718,7 +718,7 @@ namespace TextureUtil
 
 		theRenderContext.CSSetConstantBuffer(nullptr, 0);
 		theRenderContext.CSSetTexture(nullptr, 0);
-		theRenderContext.CSSetRWTexture(nullptr, 0);
+		theRenderContext.CSSetRWTexture(nullptr, 0, 0);
 		theRenderContext.CSSetShader(nullptr);
 
 		theResourceFactory.DestroyItem(rt);
@@ -735,7 +735,7 @@ namespace TextureUtil
 		pConstantBuffer cb = theResourceFactory.MakeConstantBuffer(sizeof(float4));
 
 		theRenderContext.CSSetShader(gTextureStitchEastShader);
-		theRenderContext.CSSetRWTexture(rt, 0);
+		theRenderContext.CSSetRWTexture(rt, 0, 0);
 		theRenderContext.CSSetTexture(inSrc, 0);
 		theRenderContext.UpdateSubResource(*cb, &params);
 		theRenderContext.CSSetConstantBuffer(cb, 0);
@@ -746,7 +746,7 @@ namespace TextureUtil
 
 		theRenderContext.CSSetConstantBuffer(nullptr, 0);
 		theRenderContext.CSSetTexture(nullptr, 0);
-		theRenderContext.CSSetRWTexture(nullptr, 0);
+		theRenderContext.CSSetRWTexture(nullptr, 0, 0);
 		theRenderContext.CSSetShader(nullptr);
 
 		theResourceFactory.DestroyItem(rt);
@@ -763,7 +763,7 @@ namespace TextureUtil
 		pConstantBuffer cb = theResourceFactory.MakeConstantBuffer(sizeof(float4));
 
 		theRenderContext.CSSetShader(gTextureStitchWestShader);
-		theRenderContext.CSSetRWTexture(rt, 0);
+		theRenderContext.CSSetRWTexture(rt, 0, 0);
 		theRenderContext.CSSetTexture(inSrc, 0);
 		theRenderContext.UpdateSubResource(*cb, &params);
 		theRenderContext.CSSetConstantBuffer(cb, 0);
@@ -774,7 +774,7 @@ namespace TextureUtil
 
 		theRenderContext.CSSetConstantBuffer(nullptr, 0);
 		theRenderContext.CSSetTexture(nullptr, 0);
-		theRenderContext.CSSetRWTexture(nullptr, 0);
+		theRenderContext.CSSetRWTexture(nullptr, 0, 0);
 		theRenderContext.CSSetShader(nullptr);
 
 		theResourceFactory.DestroyItem(rt);
@@ -784,6 +784,7 @@ namespace TextureUtil
 
 	void TextureGenerteMip(pRenderTarget inDst, int inDstLevel, pTexture inSrc, int inSrcLevel, TextureMipMode inMode)
 	{
+		assert(inDst && inSrc);
 		assert(inDst->GetDimensions() >> (inDstLevel) == inSrc->GetDimensions() >> (inSrcLevel + 1));
 
 		switch (inMode)
@@ -808,23 +809,16 @@ namespace TextureUtil
 			break;
 		}
 		
-		theRenderContext.CSSetRWTexture(inDst, inDstLevel);
-		theRenderContext.CSSetTexture(inSrc, 0);
+		theRenderContext.CSSetRWTexture(inDst, inDstLevel, 0);
+		theRenderContext.CSSetTextureSingleMip(inSrc, inSrcLevel, 0);
 
-		pConstantBuffer cb = theResourceFactory.MakeConstantBuffer(sizeof(float4));
-		float4 values(inSrcLevel, 0, 0, 0);
-		theRenderContext.UpdateSubResource(*cb, &values);
-		theRenderContext.CSSetConstantBuffer(cb, 0);
-
-		int2 groups = (inDst->GetDimensions() + 7) / 8;
+		int2 groups = ((inDst->GetDimensions() >> inDstLevel) + 7) / 8;
 		theRenderContext.Dispatch(groups.x, groups.y, 1);
 		theRenderContext.Flush();
 		
 		theRenderContext.CSSetConstantBuffer(nullptr, 0);
 		theRenderContext.CSSetTexture(nullptr, 0);
-		theRenderContext.CSSetRWTexture(nullptr, 0);
+		theRenderContext.CSSetRWTexture(nullptr, 0, 0);
 		theRenderContext.CSSetShader(nullptr);
-
-		theResourceFactory.DestroyItem(cb);
 	}
 }

@@ -23,7 +23,7 @@ void TAARenderer::Render(pTexture inSource, pRenderTarget inHistory, pTexture in
 	theRenderContext.CSSetTextureAndSampler(inSource, point_sampler, 0);
 	theRenderContext.CSSetTextureAndSampler(inHistory->GetTexture(), linear_sampler, 1);
 	theRenderContext.CSSetTextureAndSampler(inMotionVectors, point_sampler, 2);
-	theRenderContext.CSSetRWTexture(inTarget, 0);
+	theRenderContext.CSSetRWTexture(inTarget, 0, 0);
 	
 	mConstantBufferData.mJitterOffset = GetJitterOffset(Gaag.GetFrameID());
 	mConstantBufferData.mTargetSize = float2(theRenderContext.GetWidth(), theRenderContext.GetHeight());
@@ -39,10 +39,10 @@ void TAARenderer::Render(pTexture inSource, pRenderTarget inHistory, pTexture in
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 0);
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 1);
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 2);
-	theRenderContext.CSSetRWTexture(NULL, 0);
+	theRenderContext.CSSetRWTexture(NULL, 0, 0);
 
 	// make history copy;
-	Gaag.CopyToRenderTarget(inHistory, inTarget->GetTexture());
+	Gaag.CopyToRenderTarget(inHistory, inTarget->GetTexture(), 0);
 }
 
 
