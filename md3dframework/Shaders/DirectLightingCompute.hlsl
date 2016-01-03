@@ -6,7 +6,7 @@
 #define MAX_POINT_LIGHTS		128
 #define MAX_SPOT_LIGHTS			128
 #define MAX_DIRECTIONAL_LIGHTS	4
-#define SHADOW_BIAS				0.001
+#define SHADOW_BIAS				0.0025
 
 
 RWTexture2D<float4> OutDiffuse : register(u0);
@@ -260,37 +260,46 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 				if (light.mHasShadowMap)
 				{
 					float2 uv = (float2(coord)+0.5) / cTargetSize.xy;
-					float shadow_depth;
 					float3 texel_light_position;
 					float2 shadow_map_uv;
+					float4 shadow_depth;
 
 					if (i == 0)
 					{ 
 						texel_light_position = mul(float4(texel_position, 1.0), cViewToLightMatrix[i]);
 						shadow_map_uv = texel_light_position.xy * float2(0.5, -0.5) + 0.5;
-						shadow_depth = Shadow1.SampleLevel(PointSampler, shadow_map_uv, 0);
+						shadow_depth = Shadow1.Gather(PointSampler, shadow_map_uv);
 					}
 					else if (i == 1)
 					{
 						texel_light_position = mul(float4(texel_position, 1.0), cViewToLightMatrix[i]);
 						shadow_map_uv = texel_light_position.xy * float2(0.5, 0.5) + 0.5;
-						shadow_depth = Shadow2.SampleLevel(PointSampler, shadow_map_uv, 0);
+						shadow_depth = Shadow2.Gather(PointSampler, shadow_map_uv);
 					}
 					else if (i == 2)
 					{
 						texel_light_position = mul(float4(texel_position, 1.0), cViewToLightMatrix[i]);
 						shadow_map_uv = texel_light_position.xy * float2(0.5, 0.5) + 0.5;
-						shadow_depth = Shadow3.SampleLevel(PointSampler, shadow_map_uv, 0);
+						shadow_depth = Shadow3.Gather(PointSampler, shadow_map_uv);
 					}
 					else // (i == 3)
 					{
 						texel_light_position = mul(float4(texel_position, 1.0), cViewToLightMatrix[i]);
 						shadow_map_uv = texel_light_position.xy * float2(0.5, 0.5) + 0.5;
-						shadow_depth = Shadow4.SampleLevel(PointSampler, shadow_map_uv, 0);
+						shadow_depth = Shadow4.Gather(PointSampler, shadow_map_uv);
 					}
 
-					if (texel_light_position.z - SHADOW_BIAS < shadow_depth)
+					float shade = 0.0;
+					shade += (texel_light_position.z - SHADOW_BIAS < shadow_depth.x) ? 0.25 : 0.0;
+					shade += (texel_light_position.z - SHADOW_BIAS < shadow_depth.y) ? 0.25 : 0.0;
+					shade += (texel_light_position.z - SHADOW_BIAS < shadow_depth.z) ? 0.25 : 0.0;
+					shade += (texel_light_position.z - SHADOW_BIAS < shadow_depth.w) ? 0.25 : 0.0;
+
+					if (shade > 0.0)
+					{
+						light.mColor *= shade;
 						AccumulateLight(material, texel_position, normal, light, diffuse_accum, specular_accum);
+					}
 				}
 				else
 				{
