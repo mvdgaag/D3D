@@ -36,7 +36,9 @@ void DeferredRenderer::Init(int inWidth, int inHeight)
 	mDepthMinPyramid = theResourceFactory.MakeRenderTarget(int2(inWidth / 2, inHeight / 2), mDepthPyramidRenderer.GetNumMipLevels(), FORMAT_R16_FLOAT);
 	mDepthMaxPyramid = theResourceFactory.MakeRenderTarget(int2(inWidth / 2, inHeight / 2), mDepthPyramidRenderer.GetNumMipLevels(), FORMAT_R16_FLOAT);
 	mDirectLightingDiffuse = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
+	mDirectLightingDiffuseTemp = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
 	mDirectLightingSpecular = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
+	mDirectLightingSpecularTemp = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
 #ifdef HALF_RES_INDIRECT
 	mIndirectLighting = theResourceFactory.MakeRenderTarget(int2(inWidth / 2, inHeight / 2), 1, FORMAT_R16G16B16A16_FLOAT);
 #else
@@ -77,17 +79,21 @@ void DeferredRenderer::CleanUp()
 	theResourceFactory.DestroyItem(mDepthMinPyramid);
 	theResourceFactory.DestroyItem(mDepthMaxPyramid);
 	theResourceFactory.DestroyItem(mDirectLightingDiffuse);
+	theResourceFactory.DestroyItem(mDirectLightingDiffuseTemp);
 	theResourceFactory.DestroyItem(mDirectLightingSpecular);
+	theResourceFactory.DestroyItem(mDirectLightingSpecularTemp);
 	theResourceFactory.DestroyItem(mIndirectLighting);
 	theResourceFactory.DestroyItem(mReflections);
 	theResourceFactory.DestroyItem(mLightComposed);
 	theResourceFactory.DestroyItem(mAntiAliased);
 	theResourceFactory.DestroyItem(mAAHistoryFrame);
 	theResourceFactory.DestroyItem(mPostProcessed);
+
 	theResourceFactory.DestroyItem(mFullResRGBATemp);
 	theResourceFactory.DestroyItem(mHalfResRGBATemp);
 	theResourceFactory.DestroyItem(mQuarterResRGBATemp);
 	theResourceFactory.DestroyItem(mEightResRGBATemp);
+	
 	theResourceFactory.DestroyItem(mConstantBufferEveryFrame);
 	theResourceFactory.DestroyItem(mConstantBufferEveryObject);
 	theResourceFactory.DestroyItem(mConstantBufferOnDemand);
@@ -96,7 +102,9 @@ void DeferredRenderer::CleanUp()
 	mDepthMinPyramid = nullptr;
 	mDepthMaxPyramid = nullptr;
 	mDirectLightingDiffuse = nullptr;
+	mDirectLightingDiffuseTemp = nullptr;
 	mDirectLightingSpecular = nullptr;
+	mDirectLightingSpecularTemp = nullptr;
 	mIndirectLighting = nullptr;
 	mReflections = nullptr;
 	mLightComposed = nullptr;
@@ -252,7 +260,8 @@ void DeferredRenderer::LightingPass()
 	theRenderContext.BeginEvent("Lighting Pass");
 	
 	theRenderContext.SetMarker("Direct Lighting Renderer");
-	mDirectLightingRenderer.Render(mGBuffer, mDirectLightingDiffuse, mDirectLightingSpecular, mPointLights, mSpotLights, mDirectionalLights);
+	mDirectLightingRenderer.Render(mGBuffer, mDirectLightingDiffuse, mDirectLightingSpecular, mDirectLightingDiffuseTemp, mDirectLightingSpecularTemp, 
+		mPointLights, mSpotLights, mDirectionalLights);
 	
 	//theRenderContext.SetMarker("Depth Pyramid Renderer");
 	//mDepthPyramidRenderer.Render(mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), mDepthMaxPyramid, mDepthMinPyramid);

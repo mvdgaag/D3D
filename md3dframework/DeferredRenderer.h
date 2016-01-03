@@ -105,7 +105,9 @@ private:
 	pRenderTarget		mDepthMaxPyramid = nullptr;
 	pRenderTarget		mDepthMinPyramid = nullptr;
 	pRenderTarget		mDirectLightingDiffuse = nullptr;
+	pRenderTarget		mDirectLightingDiffuseTemp = nullptr;
 	pRenderTarget		mDirectLightingSpecular = nullptr;
+	pRenderTarget		mDirectLightingSpecularTemp = nullptr;
 	pRenderTarget		mIndirectLighting = nullptr;
 	pRenderTarget		mReflections = nullptr;
 	pRenderTarget		mLightComposed = nullptr;

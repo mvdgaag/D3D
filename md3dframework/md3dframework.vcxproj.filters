@@ -458,9 +458,6 @@
     <FxCompile Include="TextureFuncShaders\TextureStitchWest.hlsl">
       <Filter>Shaders\TextureFuncShaders</Filter>
     </FxCompile>
-    <FxCompile Include="Shaders\DirectLightingCompute.hlsl">
-      <Filter>Shaders\SystemShaders</Filter>
-    </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureMipAvg.hlsl">
       <Filter>Shaders\TextureFuncShaders</Filter>
     </FxCompile>
@@ -492,6 +489,15 @@
       <Filter>Shaders\SystemShaders</Filter>
     </FxCompile>
     <FxCompile Include="Shaders\ShadowVertexShader.hlsl">
+      <Filter>Shaders\SystemShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\DirectionalLightCompute.hlsl">
+      <Filter>Shaders\SystemShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\PointLightCompute.hlsl">
+      <Filter>Shaders\SystemShaders</Filter>
+    </FxCompile>
+    <FxCompile Include="Shaders\SpotLightCompute.hlsl">
       <Filter>Shaders\SystemShaders</Filter>
     </FxCompile>
   </ItemGroup>
