@@ -37,8 +37,8 @@ void IndirectLightingRenderer::ApplyBlur(pTexture inSource, pTexture inNormal, p
 	theRenderContext.CSSetRWTexture(inTarget, 0, 0);
 
 	pCamera cam = Gaag.GetCamera();
-	mConstantBufferData.viewspaceReconstructionVector.x = tan(0.5f * cam->GetFovX());
-	mConstantBufferData.viewspaceReconstructionVector.y = tan(0.5f * cam->GetFovY());
+	mConstantBufferData.viewspaceReconstructionVector.x = 1.0 / cam->GetProjectionMatrix()[0][0];
+	mConstantBufferData.viewspaceReconstructionVector.y = 1.0 / cam->GetProjectionMatrix()[1][1];
 	mConstantBufferData.targetSize.x = (float)theRenderContext.GetWidth();
 	mConstantBufferData.targetSize.y = (float)theRenderContext.GetHeight();
 	mConstantBufferData.frameData.x = inHorizontal ? 1 : 0;
@@ -74,8 +74,8 @@ void IndirectLightingRenderer::ApplyIndirect(pTexture inSource, pTexture inNorma
 	theRenderContext.CSSetRWTexture(inTarget, 0, 0);
 
 	pCamera cam = Gaag.GetCamera();
-	mConstantBufferData.viewspaceReconstructionVector.x = tan(0.5f * cam->GetFovX());
-	mConstantBufferData.viewspaceReconstructionVector.y = tan(0.5f * cam->GetFovY());
+	mConstantBufferData.viewspaceReconstructionVector.x = 1.0 / cam->GetProjectionMatrix()[0][0];
+	mConstantBufferData.viewspaceReconstructionVector.y = 1.0 / cam->GetProjectionMatrix()[1][1];
 	mConstantBufferData.targetSize = inTarget->GetDimensions();
 	mConstantBufferData.frameData = float4(Gaag.WorldToCameraNormal(float3(0.0, 1.0, 0.0)), Gaag.GetRandom());
 

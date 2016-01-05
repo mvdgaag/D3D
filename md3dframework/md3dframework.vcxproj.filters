@@ -67,11 +67,11 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Shaders\TextureFuncShaders">
-      <UniqueIdentifier>{99b4c445-4350-4bc4-8df2-ec8086989530}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Shaders\SystemShaders">
       <UniqueIdentifier>{68315d72-dfc3-4bab-afb0-e2c2f0d47ba1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Shaders\SystemShaders\TextureFuncShaders">
+      <UniqueIdentifier>{99b4c445-4350-4bc4-8df2-ec8086989530}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -387,103 +387,103 @@
       <Filter>Shaders\SystemShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureAdd.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureBlend.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureClamp.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureCopy.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureDiv.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureMax.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureMin.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureMul.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureSet.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureSub.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureTreshold.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureAddConstant.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureBlendConstant.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureClampConstant.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureDivConstant.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureMaxConstant.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureMinConstant.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureMulConstant.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureSubConstant.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureTresholdConstant.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureStitchEast.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureStitchNorth.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureStitchSouth.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureStitchWest.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureMipAvg.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureMipAvgNormal.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureMipMax.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureMipMin.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureMipNearest.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureBoxBlur.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureGaussianBlur.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="Shaders\IndirectBlurCompute.hlsl">
       <Filter>Shaders\SystemShaders</Filter>
     </FxCompile>
     <FxCompile Include="TextureFuncShaders\TextureDownSample.hlsl">
-      <Filter>Shaders\TextureFuncShaders</Filter>
+      <Filter>Shaders\SystemShaders\TextureFuncShaders</Filter>
     </FxCompile>
     <FxCompile Include="Shaders\ShadowPixelShader.hlsl">
       <Filter>Shaders\SystemShaders</Filter>

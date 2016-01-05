@@ -51,7 +51,7 @@ PS_INPUT VS(VS_INPUT input)
 
 	float4 cam_space_pos = mul(float4(input.Position, 1.0), (modelViewMatrix));
 	output.LinearDepth = -cam_space_pos.z;
-	
+
 	// motion vectors
 	float4 prevPos = mul(float4(input.Position, 1.0), prevModelViewProjectionMatrix);
 	output.MotionVectors = (output.Position.xy / output.Position.w); // currentNDC

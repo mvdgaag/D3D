@@ -32,8 +32,8 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 	// set general constant buffer data
 	pCamera cam = Gaag.GetCamera();
 	mConstantBufferData.projectionMatrix = transpose(cam->GetProjectionMatrix());
-	mConstantBufferData.viewspaceReconstructionVector.x = tan(0.5f * cam->GetFovX());
-	mConstantBufferData.viewspaceReconstructionVector.y = tan(0.5f * cam->GetFovY());
+	mConstantBufferData.viewspaceReconstructionVector.x = 1.0 / cam->GetProjectionMatrix()[0][0];
+	mConstantBufferData.viewspaceReconstructionVector.y = 1.0 / cam->GetProjectionMatrix()[1][1];
 	mConstantBufferData.targetSize.x = (float)theRenderContext.GetWidth();
 	mConstantBufferData.targetSize.y = (float)theRenderContext.GetHeight();
 	mConstantBufferData.frameData.x = (float)Gaag.GetFrameID();
