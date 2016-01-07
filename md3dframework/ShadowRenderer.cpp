@@ -66,8 +66,15 @@ void ShadowRenderer::Render(pDirectionalLight inLight, apDrawableObject inShadow
 	theRenderContext.SetRenderTargets(1, &shadow_map, depth_stencil_target);
 
 	// draw all objects
+	Frustum shadow_frustum;
+	shadow_frustum.InitFromProjectionMatrix(view_proj);
 	for each (pDrawableObject obj in inShadowCasters)
 	{
+		AABB& aabb = obj->GetAABB();
+		float3 position = obj->GetPosition() + aabb.mCenter;
+		if (!shadow_frustum.TestSphere(position, aabb.mRadius))
+			continue;
+
 		theRenderContext.SetMarker("Drawing Shadow Object");
 
 		ConstantDataEveryObject constantData;
