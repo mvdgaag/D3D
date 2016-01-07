@@ -29,6 +29,7 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	float2 history_uv = uv - mv;
 	float4 history_val = history.SampleLevel(historySamper, history_uv, 0);
 	
+	// DEVHACK
 	if (isnan(history_val.x) == true)
 		history_val = 0;
 

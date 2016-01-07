@@ -40,7 +40,7 @@ void Frustum::InitFromProjectionMatrix(float4x4 inProjectionMatrix)
 	mPlanes[5].w = inProjectionMatrix[3][3] - inProjectionMatrix[3][2];
 
 	for (int i = 0; i < 6; i++)
-		normalize(mPlanes[i]);
+		mPlanes[i] = normalize(mPlanes[i]);
 }
 
 
