@@ -11,7 +11,7 @@ class DirectionalLight : public BaseResource
 {
 public:
 	DirectionalLight() {}
-	~DirectionalLight() {}
+	~DirectionalLight() { CleanUp(); }
 
 	void Init(float3 inDirection, float4 inColor, int inShadowMapSize = 0);
 	void CleanUp() override;

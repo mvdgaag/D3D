@@ -12,7 +12,7 @@
 
 Window* g_window = nullptr;
 
-pDrawableObject g_obj;
+pMeshObject g_obj;
 pMesh g_mesh;
 pPointLight g_lights[100];
 pSpotLight g_spot_light;
@@ -91,7 +91,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
 void InitContent()
 {
-	g_obj = MAKE_NEW(DrawableObject);
+	g_obj = MAKE_NEW(MeshObject);
 
 	for (int i = 0; i < 100; i++)
 	{

@@ -1,7 +1,7 @@
 #include "ShadowRenderer.h"
 #include "GaagFramework.h"
 #include "Camera.h"
-#include "DrawableObject.h"
+#include "MeshObject.h"
 #include "ConstantBuffer.h"
 #include "PixelShader.h"
 #include "VertexShader.h"
@@ -35,7 +35,7 @@ void ShadowRenderer::CleanUp()
 }
 
 
-void ShadowRenderer::Render(pDirectionalLight inLight, apDrawableObject inShadowCasters)
+void ShadowRenderer::Render(pDirectionalLight inLight, apMeshObject inShadowCasters)
 {
 	assert(mInitialized);
 	assert(inLight != nullptr);
@@ -68,7 +68,7 @@ void ShadowRenderer::Render(pDirectionalLight inLight, apDrawableObject inShadow
 	// draw all objects
 	Frustum shadow_frustum;
 	shadow_frustum.InitFromProjectionMatrix(view_proj);
-	for each (pDrawableObject obj in inShadowCasters)
+	for each (pMeshObject obj in inShadowCasters)
 	{
 		AABB& aabb = obj->GetAABB();
 		float3 position = obj->GetPosition() + aabb.mCenter;

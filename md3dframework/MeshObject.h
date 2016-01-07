@@ -1,22 +1,23 @@
 #pragma once
-#include "BaseDrawable.h"
+#include "BaseObject.h"
 #include "GaagCommon.h"
 
 // predefinitions
-REGISTERCLASS(DrawableObject);
+REGISTERCLASS(MeshObject);
 REGISTERCLASS(Mesh);
 REGISTERCLASS(Material);
 REGISTERCLASS(ConstantBuffer);
 
 
-class DrawableObject : public BaseDrawable
+class MeshObject : public BaseObject
 {
 public:
-	DrawableObject() : BaseDrawable() {}
-	~DrawableObject() {};
+	MeshObject() : BaseObject() {}
+	~MeshObject() { CleanUp(); }
 
 	void Init(pMesh inMesh, pMaterial inMaterial);
-	void CleanUp();
+	void CleanUp() override;
+	ObjectType GetObjectType() const override { return ObjectType::MESH_OBJECT; }
 
 	pMesh			GetMesh()		{ return mMesh; }
 	pMaterial		GetMaterial()	{ return mMaterial; }

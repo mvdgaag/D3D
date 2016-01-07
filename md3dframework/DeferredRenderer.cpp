@@ -14,7 +14,7 @@
 #include "LightComposeRenderer.h"
 #include "TAARenderer.h"
 #include "PostProcessRenderer.h"
-#include "DrawableObject.h"
+#include "MeshObject.h"
 #include "PointLight.h"
 #include "TextureUtil.h"
 #include <assert.h>
@@ -132,7 +132,7 @@ void DeferredRenderer::CleanUp()
 
 
 
-void DeferredRenderer::Render(std::vector<pDrawableObject> inDrawList)
+void DeferredRenderer::Render(std::vector<pMeshObject> inDrawList)
 {
 	assert(mInitialized);
 	
@@ -182,7 +182,7 @@ void DeferredRenderer::ClearLights()
 }
 
 
-void DeferredRenderer::GeometryPass(std::vector<pDrawableObject> inDrawList)
+void DeferredRenderer::GeometryPass(std::vector<pMeshObject> inDrawList)
 {
 	theRenderContext.BeginEvent("Geometry Pass");
 
@@ -197,7 +197,7 @@ void DeferredRenderer::GeometryPass(std::vector<pDrawableObject> inDrawList)
 
 	Camera& camera = *(Gaag.GetCamera());
 	Frustum camera_frustum = camera.ExtractFrustum();
-	for each (pDrawableObject obj in inDrawList)
+	for each (pMeshObject obj in inDrawList)
 	{
 		AABB& aabb = obj->GetAABB();
 		float3 position = obj->GetPosition() + aabb.mCenter;
@@ -247,7 +247,7 @@ void DeferredRenderer::GeometryPass(std::vector<pDrawableObject> inDrawList)
 	}
 
 	// swap the transforms
-	for each (pDrawableObject obj in inDrawList)
+	for each (pMeshObject obj in inDrawList)
 		obj->SwapTransform();
 
 	// store projection matrix at previous projection matrix

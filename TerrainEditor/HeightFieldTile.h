@@ -3,10 +3,10 @@
 
 REGISTERCLASS(HeightFieldTile);
 
-class HeightFieldTile : public DrawableObject
+class HeightFieldTile : public MeshObject
 {
 public:
-	HeightFieldTile() : DrawableObject() { mInitialized = false; }
+	HeightFieldTile() : MeshObject() { mInitialized = false; }
 	~HeightFieldTile() {};
 
 	void Init(float3 inPosition, float3 inScale, int2 inNumSegments, pMaterial inMaterial, pMaterial inShadowMaterial, pTexture inHeightTexture);

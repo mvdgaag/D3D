@@ -58,7 +58,7 @@ void HeightFieldTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments
 	pMesh mesh = theResourceFactory.MakeMesh();
 	mesh->InitFromData(vertices.data(), vertices.size(), indices.data(), indices.size());
 	
-	DrawableObject::Init(mesh, inMaterial);
+	MeshObject::Init(mesh, inMaterial);
 	Translate(inPosition);
 
 	mConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(mConstantBufferData));
@@ -74,7 +74,7 @@ void HeightFieldTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments
 
 void HeightFieldTile::CleanUp()
 {
-	DrawableObject::CleanUp();
+	MeshObject::CleanUp();
 	mHeightMapTexture = nullptr;
 	mHeightMapRenderTarget = nullptr;
 	mConstantBuffer = nullptr;

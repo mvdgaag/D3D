@@ -194,7 +194,8 @@
   <ItemGroup>
     <ClInclude Include="AiAgent.h" />
     <ClInclude Include="AiManager.h" />
-    <ClInclude Include="BaseDrawable.h" />
+    <ClInclude Include="BaseComponent.h" />
+    <ClInclude Include="BaseObject.h" />
     <ClInclude Include="BaseResource.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="CameraController.h" />
@@ -206,7 +207,7 @@
     <ClInclude Include="DepthStencilTarget.h" />
     <ClInclude Include="DirectionalLight.h" />
     <ClInclude Include="DirectLightingRenderer.h" />
-    <ClInclude Include="DrawableObject.h" />
+    <ClInclude Include="MeshObject.h" />
     <ClInclude Include="FileUtil.h" />
     <ClInclude Include="Frustum.h" />
     <ClInclude Include="Gaag.h" />
@@ -217,6 +218,7 @@
     <ClInclude Include="Input.h" />
     <ClInclude Include="InputListener.h" />
     <ClInclude Include="NavMeshNode.h" />
+    <ClInclude Include="ParticleSystem.h" />
     <ClInclude Include="PointLight.h" />
     <ClInclude Include="LightComposeRenderer.h" />
     <ClInclude Include="GaagMath.h" />
@@ -245,6 +247,8 @@
   <ItemGroup>
     <ClCompile Include="AiAgent.cpp" />
     <ClCompile Include="AiManager.cpp" />
+    <ClCompile Include="BaseComponent.cpp" />
+    <ClCompile Include="BaseObject.cpp" />
     <ClCompile Include="BaseResource.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="CameraController.cpp" />
@@ -256,7 +260,7 @@
     <ClCompile Include="DepthStencilTarget.cpp" />
     <ClCompile Include="DirectionalLight.cpp" />
     <ClCompile Include="DirectLightingRenderer.cpp" />
-    <ClCompile Include="DrawableObject.cpp" />
+    <ClCompile Include="MeshObject.cpp" />
     <ClCompile Include="FileUtil.cpp" />
     <ClCompile Include="Frustum.cpp" />
     <ClCompile Include="GaagFramework.cpp" />
@@ -265,6 +269,7 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="InputListener.cpp" />
     <ClCompile Include="NavMeshNode.cpp" />
+    <ClCompile Include="ParticleSystem.cpp" />
     <ClCompile Include="PointLight.cpp" />
     <ClCompile Include="LightComposeRenderer.cpp" />
     <ClCompile Include="Material.cpp" />

@@ -11,7 +11,7 @@
 #include "TAARenderer.h"
 #include "PostProcessRenderer.h"
 
-REGISTERCLASS(DrawableObject);
+REGISTERCLASS(MeshObject);
 REGISTERCLASS(GBuffer);
 REGISTERCLASS(DeferredRenderer);
 REGISTERCLASS(RenderTarget);
@@ -30,7 +30,7 @@ public:
 
 	void Init(int inWidth, int inHeight);
 	void CleanUp();
-	void Render(std::vector<pDrawableObject> inDrawList);
+	void Render(std::vector<pMeshObject> inDrawList);
 	void RegisterLight(pPointLight inLight);
 	void RegisterLight(pSpotLight inLight);
 	void RegisterLight(pDirectionalLight inLight);
@@ -56,7 +56,7 @@ private:
 	DeferredRenderer(DeferredRenderer const&) = delete;
 	void operator=(DeferredRenderer const&) = delete;
 
-	void GeometryPass(std::vector<pDrawableObject> inDrawList);
+	void GeometryPass(std::vector<pMeshObject> inDrawList);
 	void LightingPass();
 	void PostProcessPass();
 

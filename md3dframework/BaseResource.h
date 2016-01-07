@@ -1,9 +1,5 @@
 #pragma once
 #include "GaagCommon.h"
-#include <string>
-#include <unordered_map>
-#include <windows.h>
-#include <iostream>
 
 
 REGISTERCLASS(BaseResource);
@@ -34,20 +30,20 @@ class BaseResource
 	friend class ResourceFactory;
 
 public:
-	virtual ~BaseResource() { }
-	explicit BaseResource() { mUUID = sCurrentID++; }
+	virtual ~BaseResource()								{ }
+	explicit BaseResource()								{ mUUID = sCurrentResourceID++; }
 
 	virtual void			CleanUp()					= 0;
 	virtual ResourceType	GetResourceType() const		= 0;
 	
-	long GetUUID() const	{ return mUUID; }
+	unsigned long			GetUUID() const				{ return mUUID; }
 
 protected:
-	long mUUID;
+	unsigned long mUUID;
 
 private:
 	BaseResource(BaseResource const&) = delete;
 	void operator=(BaseResource const&) = delete;
-	static long sCurrentID;
+	static unsigned long sCurrentResourceID;
 };
 

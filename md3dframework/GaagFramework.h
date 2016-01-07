@@ -11,7 +11,7 @@
 #include "Window.h"
 			
 REGISTERCLASS(DeferredRenderer);
-REGISTERCLASS(DrawableObject);
+REGISTERCLASS(MeshObject);
 REGISTERCLASS(Camera);
 
 #define Gaag GaagFramework::GetInstance()
@@ -33,7 +33,7 @@ public:
 	void Render();
 	void SetFrameCallback(void(*inCallBack)(void)) { mFrameCallback = inCallBack; }
 	
-	void RegisterObject(pDrawableObject inObject) { mObjectList.push_back(inObject); }
+	void RegisterObject(pMeshObject inObject) { mObjectList.push_back(inObject); }
 
 	void RegisterLight(pPointLight inLight) { mDeferredRenderer->RegisterLight(inLight); }
 	void RegisterLight(pSpotLight inLight) { mDeferredRenderer->RegisterLight(inLight); }
@@ -67,7 +67,7 @@ private:
 	pWindow							mWindow;
 	pCamera							mCamera = nullptr;
 	pDeferredRenderer				mDeferredRenderer = nullptr;
-	std::vector<pDrawableObject>	mObjectList;
+	std::vector<pMeshObject>	mObjectList;
 	int								mFrameID;
 	double							mFrameTime;
 	double							mDeltaTime;

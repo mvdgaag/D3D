@@ -6,6 +6,7 @@
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <iostream>
 
 #include "GaagMath.h"
 #include "Rect.h"

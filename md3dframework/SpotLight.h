@@ -9,7 +9,7 @@ class SpotLight : public BaseResource
 {
 public:
 	SpotLight() {}
-	~SpotLight() {}
+	~SpotLight() { CleanUp(); }
 
 	void Init(float3 inPosition, float inRadius, float3 inDirection, float inConeCosine, float4 inColor) 
 	{ 

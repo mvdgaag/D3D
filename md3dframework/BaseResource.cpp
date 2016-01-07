@@ -1,4 +1,4 @@
 #include "BaseResource.h"
 
 
-long BaseResource::sCurrentID = 0;
+unsigned long BaseResource::sCurrentResourceID = 0;

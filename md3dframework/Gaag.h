@@ -6,7 +6,7 @@
 
 // other types
 #include "Camera.h"
-#include "DrawableObject.h"
+#include "MeshObject.h"
 
 // utilities
 #include "TextureUtil.h"

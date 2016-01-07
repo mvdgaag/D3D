@@ -5,7 +5,7 @@ REGISTERCLASS(ConstantBuffer);
 REGISTERCLASS(PixelShader);
 REGISTERCLASS(VertexShader);
 REGISTERCLASS(DirectionalLight);
-REGISTERCLASS(DrawableObject);
+REGISTERCLASS(MeshObject);
 
 class ShadowRenderer
 {
@@ -15,7 +15,7 @@ public:
 
 	void Init();
 	void CleanUp();
-	void Render(pDirectionalLight inLight, apDrawableObject inShadowCasters);
+	void Render(pDirectionalLight inLight, apMeshObject inShadowCasters);
 
 private:
 	ShadowRenderer(ShadowRenderer const&) = delete;

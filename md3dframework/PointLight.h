@@ -9,7 +9,7 @@ class PointLight : public BaseResource
 {
 public:
 	PointLight() {}
-	~PointLight() {}
+	~PointLight() { CleanUp(); }
 
 	void Init(float3 inPosition, float inRadius, float4 inColor) { mPosition = float4(inPosition, inRadius); mColor = inColor; }
 	void CleanUp() override {}

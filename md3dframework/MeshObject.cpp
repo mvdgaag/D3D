@@ -1,4 +1,4 @@
-#include "DrawableObject.h"
+#include "MeshObject.h"
 #include "RenderContext.h"
 #include "GaagFramework.h"
 #include "Camera.h"
@@ -8,7 +8,7 @@
 #include <assert.h>
 
 
-void DrawableObject::Init(pMesh inMesh, pMaterial inMaterial)
+void MeshObject::Init(pMesh inMesh, pMaterial inMaterial)
 {
 	mMesh = inMesh;
 	mAABB = mMesh->GetAABB();
@@ -17,7 +17,7 @@ void DrawableObject::Init(pMesh inMesh, pMaterial inMaterial)
 }
 
 
-void DrawableObject::CleanUp()
+void MeshObject::CleanUp()
 {
 	mMesh = nullptr;
 	mMaterial = nullptr;
