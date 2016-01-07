@@ -150,9 +150,6 @@
     <ClInclude Include="InputListener.h">
       <Filter>Header Files\Input</Filter>
     </ClInclude>
-    <ClInclude Include="Window.h">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="FileUtil.h">
       <Filter>Header Files\Util</Filter>
     </ClInclude>
@@ -231,6 +228,9 @@
     <ClInclude Include="ResourceFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Window.h">
+      <Filter>Header Files\Rendering\D3D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DeferredRenderer.cpp">
@@ -308,9 +308,6 @@
     <ClCompile Include="InputListener.cpp">
       <Filter>Source Files\Input</Filter>
     </ClCompile>
-    <ClCompile Include="Window.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="FileUtil.cpp">
       <Filter>Source Files\Util</Filter>
     </ClCompile>
@@ -364,6 +361,9 @@
       <Filter>Source Files\BaseClasses</Filter>
     </ClCompile>
     <ClCompile Include="ResourceFactory.cpp" />
+    <ClCompile Include="Window.cpp">
+      <Filter>Source Files\Rendering\D3D</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\BasicFragmentShader.hlsl">

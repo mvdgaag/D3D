@@ -1,6 +1,9 @@
 #pragma once
 #include "GaagCommon.h"
 
+// TODO: should be derived from baseobject
+
+
 REGISTERCLASS(Camera)
 
 class Camera

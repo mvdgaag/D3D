@@ -2,6 +2,10 @@
 #include "GaagCommon.h"
 #include "BaseResource.h"
 
+
+// TODO: should be derived from baseobject
+
+
 REGISTERCLASS(PointLight);
 
 

@@ -9,6 +9,9 @@ REGISTERCLASS(Material);
 REGISTERCLASS(ConstantBuffer);
 
 
+// todo: make component instead?
+
+
 class MeshObject : public BaseObject
 {
 public:
