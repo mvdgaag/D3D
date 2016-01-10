@@ -28,13 +28,15 @@ public:
 
 	unsigned long GetUUID() const					{ return mUUID; }
 
-	const apBaseComponent		GetComponents()		{ return mComponents; }
-	const apBaseObject			GetChildren()		{ return mChildren; }
-	const float3				GetPosition()		{ return float3(mTransform[3]) / mTransform[3].w; }
-	const float4x4&				GetTransform()		{ return mTransform; }
+	void						AddComponent(pBaseComponent inComponent);
+	void						RemoveComponent(pBaseComponent inComponent);
+	const apBaseComponent		GetComponents()	  	{ return mComponents; }
+	const apBaseObject			GetChildren()	  	{ return mChildren; }
+	const float3				GetPosition()	  	{ return float3(mTransform[3]) / mTransform[3].w; }
+	const float4x4&				GetTransform()	  	{ return mTransform; }
 	const float4x4&				GetPrevTransform()	{ return mPrevTransform; }
-	void						SwapTransform()		{ mPrevTransform = mTransform; }
-	
+	void						SwapTransform()	  	{ mPrevTransform = mTransform; }
+
 	void Rotate(float3 inAxis, float inAngle)	
 	{ 
 		mTransform = rotate(mTransform, inAngle, inAxis);

@@ -14,12 +14,7 @@ BaseComponent::BaseComponent()
 
 BaseComponent::~BaseComponent()
 {
-	// todo: this is slow
-	if (mParent != nullptr)
-	{
-		apBaseComponent siblings = mParent->GetComponents();
-		auto result = std::find(siblings.begin(), siblings.end(), this);
-		assert(result != siblings.end()); // could be conditional
-		siblings.erase(result);
-	}
+	if (mParent)
+		mParent->RemoveComponent(this);
 }
+
