@@ -69,6 +69,9 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	val = saturate(val);
 	history_val = saturate(history_val);
 
+	//DEVHACK
+	color_coherence *= 0.000001;
+
 	// blend
 	dst[coord] = saturate(lerp(val, history_val, color_coherence));
 }

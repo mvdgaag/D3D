@@ -360,9 +360,11 @@
     <ClCompile Include="BaseResource.cpp">
       <Filter>Source Files\BaseClasses</Filter>
     </ClCompile>
-    <ClCompile Include="ResourceFactory.cpp" />
     <ClCompile Include="Window.cpp">
       <Filter>Source Files\Rendering\D3D</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceFactory.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

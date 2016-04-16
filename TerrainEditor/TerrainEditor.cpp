@@ -117,7 +117,7 @@ void InitContent()
 	//g_TerrainMaterial->SetNormalTexture(g_normal_texture);
 	//g_TerrainMaterial->SetSurfaceTexture(g_surface_texture);
 	g_TerrainMaterial->SetDiffuseValue(float4(0.6f, 0.6f, 0.6f, 0.0f));
-	g_TerrainMaterial->SetReflectivityValue(0.5f);
+	g_TerrainMaterial->SetReflectivityValue(0.05f);
 	g_TerrainMaterial->SetRoughnessValue(0.8f);
 	g_TerrainMaterial->SetMetalicityValue(0.0f);
 	g_TerrainMaterial->SetEmissivenessValue(0.0f);

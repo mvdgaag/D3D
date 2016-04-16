@@ -93,7 +93,8 @@ void GaagFramework::Render()
 
 	mDeferredRenderer->Render(mObjectList);
 	CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetAntiAliased()->GetTexture(), 0);
-	//CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetIndirectLighting()->GetTexture(), 0);
+	//CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetDirectLightingSpecular()->GetTexture(), 0);
+	//CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetGBuffer()->GetTexture(GBuffer::NORMAL), 0);
 	theRenderContext.SwapBuffers();
 }
 

@@ -37,6 +37,7 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 	mConstantBufferData.targetSize.x = (float)theRenderContext.GetWidth();
 	mConstantBufferData.targetSize.y = (float)theRenderContext.GetHeight();
 	mConstantBufferData.frameData.x = (float)Gaag.GetFrameID();
+	mConstantBufferData.frameData.y = (float)Gaag.GetRandom();
 	theRenderContext.UpdateSubResource(*mConstantBuffer, &mConstantBufferData);
 
 	theRenderContext.CSSetRWTexture(inTargetDiffuse, 0, 0);

@@ -243,7 +243,8 @@ void DeferredRenderer::GeometryPass(std::vector<pMeshObject> inDrawList)
 	for (int i = 0; i < mDirectionalLights.size(); i++)
 	{
 		theRenderContext.SetMarker("Shadow Pass");
-		mShadowRenderer.Render(mDirectionalLights[i], inDrawList);
+		if (mDirectionalLights[i]->GetShadowMap() != nullptr)
+			mShadowRenderer.Render(mDirectionalLights[i], inDrawList);
 	}
 
 	// swap the transforms

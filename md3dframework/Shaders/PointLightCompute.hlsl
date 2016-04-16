@@ -144,18 +144,18 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 				continue;
 			
 			Light light;
-			light.mDirection = normalize(light_vec);
-			light.mColor = cPointLightColors[light_index].xyz;
-			light.mAttenuation = sqrt_attenuation * sqrt_attenuation;
+			light.direction = normalize(light_vec);
+			light.color = cPointLightColors[light_index].xyz;
+			light.attenuation = sqrt_attenuation * sqrt_attenuation;
 
 			// setup material
 			half3	normal = DecodeNormal(Normal[coord].xy);
 			half3	diffuse = Diffuse[coord].xyz;
 			half4	surface = Surface[coord];
 			Material material;
-			material.mRoughness = surface.x;
-			material.mReflectivity = surface.y;
-			material.mDiffuse = diffuse;
+			material.roughness = surface.x;
+			material.reflectance = surface.y;
+			material.diffuse = diffuse;
 			
 			AccumulateLight(material, texel_position, normal, light, diffuse_accum, specular_accum);
 		}
