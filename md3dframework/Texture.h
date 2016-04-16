@@ -183,8 +183,8 @@ public:
 	virtual void			Init(ID3D11Texture2D* inTexture);
 	virtual void			InitFromFile(std::string inFileName);
 
-	int2					Texture::GetDimensions()	{ return int2(mWidth, mHeight); }
-	int						Texture::GetMipLevels()		{ return mMipLevels; }
+	int2					GetDimensions()				{ return int2(mWidth, mHeight); }
+	int						GetMipLevels()				{ return mMipLevels; }
 	Format					GetFormat()					{ return mFormat; }
 	BindFlag				GetBindFlags()				{ return mBindFlags; }
 	CPUAccessFlag			GetCPUAccessFlags()			{ return mCPUAccessFlags; }

@@ -10,7 +10,7 @@ SamplerState motionSampler : register(s1);
 
 #define MOTION_BLUR_STRENGTH (1.0)
 #define MOTION_BLUR_STEPS (12)
-#define GAMMA (1.0)
+#define GAMMA (1.0/2.2)
 
 
 cbuffer cPostProcessConstants : register(b0)
@@ -28,14 +28,18 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	float2 history_uv = saturate(uv + mv * MOTION_BLUR_STRENGTH);
 
 	float4 result = 0;
+	float normalization = 0;
 	for (int i = 0; i < MOTION_BLUR_STEPS; i++)
 	{
 		float2 samp_uv = lerp(uv, history_uv, float(i) / MOTION_BLUR_STEPS);
-		result += source.SampleLevel(sourceSampler, samp_uv, 0);
+		float weight = float(MOTION_BLUR_STEPS - i) / (MOTION_BLUR_STEPS + 1);
+		weight *= weight * weight * weight;
+		result += weight * source.SampleLevel(sourceSampler, samp_uv, 0);
+		normalization += weight;
 	}
 
-	float noise = Random(coord) * 0.01;
+	float noise = Random(coord) * 0.02;
 	float vignette = sqrt(sqrt(2) - length(uv * 2.0 - 1.0)) / sqrt(2);
 	vignette = (vignette + 1.0) * 0.5;
-	dst[coord] = pow(result / MOTION_BLUR_STEPS, GAMMA) * vignette + noise;
+	dst[coord] = pow(result / normalization, GAMMA) * vignette + noise;
 }

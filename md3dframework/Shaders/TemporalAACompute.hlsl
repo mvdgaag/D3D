@@ -28,7 +28,8 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	float2 uv = (coord + 0.5) / cTargetSize;
 	float2 history_uv = uv - mv;
 	float4 history_val = history.SampleLevel(historySamper, history_uv, 0);
-	
+	float2 history_mv = motionVectors.SampleLevel(motionVectorSamper, history_uv, 0) * float2(1, -1);
+
 	// DEVHACK
 	if (isnan(history_val.x) == true)
 		history_val = 0;
@@ -70,7 +71,9 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	history_val = saturate(history_val);
 
 	//DEVHACK
-	color_coherence *= 0.000001;
+	//color_coherence *= 0.000001;
+
+	color_coherence *= saturate(1.0 - length(history_mv));
 
 	// blend
 	dst[coord] = saturate(lerp(val, history_val, color_coherence));

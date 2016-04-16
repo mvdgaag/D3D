@@ -54,6 +54,19 @@ float D_GGX(float dotNH, float alpha)
 	return alphaSqr / (denom * denom); // Division by PI left out (applied later)
 }
 
+float D_GGX_Anisotropic(float dotNH, float dotXH, float dotYH, float alpha, float anisotropy)
+{
+	float dotXH2 = dotXH * dotXH;
+	float dotYH2 = dotYH * dotYH;
+	float dotNH2 = dotNH * dotNH;
+	float mx = alpha;
+	float my = lerp(0, mx, 1.0f - anisotropy);
+	float mx2 = mx * mx;
+	float my2 = my * my;
+	float denom = dotXH2 / mx2 + dotYH2 / my2 + dotNH2;
+	return (1.0f / (mx * my)) * (1.0 / (denom * denom)); // Division by PI left out (applied later)
+}
+
 void LightingFuncGGX(float3 N, float3 V, float3 L, float roughness, float F0, out float Spec, out float Diff)
 {
 	float alpha = roughness*roughness;
@@ -66,6 +79,16 @@ void LightingFuncGGX(float3 N, float3 V, float3 L, float roughness, float F0, ou
 	float dotLH = saturate(dot(L, H));
 
 	float D = D_GGX(dotNH, alpha);
+
+	/*
+	float3 x = float3(1.0, 0.0, 0.0);
+	float3 y = normalize(cross(N, x));
+	x = normalize(cross(N, y));
+	float dotXH = saturate(dot(x, H));
+	float dotYH = saturate(dot(y, H));
+	D = D_GGX_Anisotropic(dotNH, dotXH, dotYH, alpha, 0.9);
+	*/
+
 	float F = F_GGX(dotLH, F0);
 	float vis = V_GGX(dotNL, dotNV, alpha);
 	
@@ -78,15 +101,20 @@ void AccumulateLight(Material inMaterial, float3 inPosition, float3 inNormal, Li
 	float3 N =			inNormal;
 	float3 V =			normalize(-inPosition);
 	float3 L =			inLight.direction;
-	float roughness =	saturate(inMaterial.roughness * inMaterial.roughness * 0.998 + 0.001);
-	float F0 =			saturate(inMaterial.reflectance * inMaterial.reflectance * 0.998 + 0.001);
+	float roughness =	saturate(inMaterial.roughness * inMaterial.roughness * 0.9998 + 0.0001);
+	float F0 =			saturate(inMaterial.reflectance * inMaterial.reflectance * 0.9998 + 0.0001);
 	
+
+	//DEVHACK add roughness to keep specular intact over distance
+	roughness = saturate(roughness + lerp(0.0, 0.05, saturate(-inPosition.z * 0.01)));
+
+
 	float S, D;
 
 	LightingFuncGGX(N, V, L, roughness, F0, S, D);
-	ioDiffuse += D * inMaterial.diffuse * inLight.color * inLight.attenuation; // /PI
-	ioSpecular += S * inLight.color * inLight.attenuation; // /PI
+	ioDiffuse += D * inMaterial.diffuse * inLight.color * inLight.attenuation / PI;
+	ioSpecular += S * inLight.color * inLight.attenuation / PI;
 
-	float3 ambient_color = float3(0.5, 0.5, 0.5);
-	ioDiffuse += inMaterial.diffuse * ambient_color * (1.0 - F0);
+	float3 ambient_color = float3(0.1, 0.1, 0.1);
+	ioDiffuse += inMaterial.diffuse * ambient_color * (1.0 - F0) / PI;
 }

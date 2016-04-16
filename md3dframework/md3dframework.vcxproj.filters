@@ -231,6 +231,9 @@
     <ClInclude Include="Window.h">
       <Filter>Header Files\Rendering\D3D</Filter>
     </ClInclude>
+    <ClInclude Include="TextureCube.h">
+      <Filter>Header Files\Rendering\D3D</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="DeferredRenderer.cpp">
@@ -365,6 +368,9 @@
     </ClCompile>
     <ClCompile Include="ResourceFactory.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureCube.cpp">
+      <Filter>Source Files\Rendering\D3D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

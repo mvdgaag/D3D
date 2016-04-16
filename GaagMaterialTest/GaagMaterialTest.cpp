@@ -66,7 +66,7 @@ void InitContent()
 	for (int i = 0; i < 100; i++)
 	{
 		g_materials[i] = theResourceFactory.MakeMaterial();
-		g_materials[i]->SetDiffuseValue(float4(0.5, 0.5, 0.5, 0.0f));
+		g_materials[i]->SetDiffuseValue(float4(1.0, 1.0, 1.0, 0.0f));
 		g_materials[i]->SetReflectivityValue(float(i / 10) / 10.0);
 		g_materials[i]->SetRoughnessValue(float(i % 10) / 10.0);
 		g_materials[i]->SetMetalicityValue(1.0f);
