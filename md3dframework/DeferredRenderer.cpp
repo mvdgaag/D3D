@@ -264,6 +264,7 @@ void DeferredRenderer::LightingPass()
 	mDirectLightingRenderer.Render(mGBuffer, mDirectLightingDiffuse, mDirectLightingSpecular, mDirectLightingDiffuseTemp, mDirectLightingSpecularTemp, 
 		mPointLights, mSpotLights, mDirectionalLights);
 	
+	/*
 	theRenderContext.SetMarker("Depth Pyramid Renderer");
 	mDepthPyramidRenderer.Render(mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), mDepthMaxPyramid, mDepthMinPyramid);
 	
@@ -271,6 +272,7 @@ void DeferredRenderer::LightingPass()
 	TextureUtil::TextureDownSample(mHalfResRGBATemp, mDirectLightingDiffuse->GetTexture(), theResourceFactory.GetDefaultLinearSampler());
 	TextureUtil::TextureDownSample(mQuarterResRGBATemp, mHalfResRGBATemp->GetTexture(), theResourceFactory.GetDefaultLinearSampler());
 	TextureUtil::TextureDownSample(mEightResRGBATemp, mQuarterResRGBATemp->GetTexture(), theResourceFactory.GetDefaultLinearSampler());
+
 #ifdef HALF_RES_INDIRECT
 	theRenderContext.SetMarker("Downres depth and normals");
 	// downsample depth
@@ -286,9 +288,10 @@ void DeferredRenderer::LightingPass()
 	theRenderContext.SetMarker("Indirect Lighting Renderer");
 	mIndirectLightingRenderer.Render(mEightResRGBATemp->GetTexture(), mGBuffer->GetTexture(GBuffer::NORMAL), mGBuffer->GetTexture(GBuffer::LINEAR_DEPTH), mGBuffer->GetTexture(GBuffer::DIFFUSE), mIndirectLighting, mFullResRGBATemp);
 #endif
+	*/
 
-	//theRenderContext.SetMarker("Reflection Renderer");
-	//mReflectionRenderer.Render(mIndirectLighting->GetTexture(), mReflections);
+	theRenderContext.SetMarker("Reflection Renderer");
+	mReflectionRenderer.Render(mIndirectLighting->GetTexture(), mReflections);
 	
 	theRenderContext.SetMarker("Light Compose Renderer");
 	mLightComposeRenderer.Render(	mDirectLightingDiffuse->GetTexture(),

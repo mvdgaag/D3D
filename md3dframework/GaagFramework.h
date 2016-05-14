@@ -26,7 +26,7 @@ public:
 		return instance;
 	}
 
-	HRESULT Init(HINSTANCE hInstance);
+	HRESULT Init(HINSTANCE hInstance, int inWidth, int inHeight);
 	bool IsInitialized() { return mInitialized; }
 	void CleanUp();
 

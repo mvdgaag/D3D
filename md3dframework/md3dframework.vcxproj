@@ -238,7 +238,6 @@
     <ClInclude Include="SpotLight.h" />
     <ClInclude Include="TAARenderer.h" />
     <ClInclude Include="Texture.h" />
-    <ClInclude Include="TextureCube.h" />
     <ClInclude Include="TextureUtil.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="Timer.h" />
@@ -286,7 +285,6 @@
     <ClCompile Include="SpotLight.cpp" />
     <ClCompile Include="TAARenderer.cpp" />
     <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="TextureCube.cpp" />
     <ClCompile Include="TextureUtil.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="Timer.cpp" />

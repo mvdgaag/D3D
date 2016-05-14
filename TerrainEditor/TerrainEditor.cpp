@@ -62,7 +62,7 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-	Gaag.Init(hInstance);
+	Gaag.Init(hInstance, 1200, 900);
 	Gaag.SetFrameCallback(&FrameFunc);
 	pCamera cam = Gaag.GetCamera();
 	cam->SetPosition(50, 100, 50);

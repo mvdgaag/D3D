@@ -163,6 +163,30 @@ typedef enum CPUAccessFlag
 inline CPUAccessFlag operator|(CPUAccessFlag a, CPUAccessFlag b) { return static_cast<CPUAccessFlag>(static_cast<int>(a) | static_cast<int>(b)); }
 
 
+typedef enum MiscFlag
+{
+	NONE = 0,
+	GENERATE_MIPS = 0x1L,
+	SHARED = 0x2L,
+	TEXTURECUBE = 0x4L,
+	DRAWINDIRECT_ARGS = 0x10L,
+	BUFFER_ALLOW_RAW_VIEWS = 0x20L,
+	BUFFER_STRUCTURED = 0x40L,
+	RESOURCE_CLAMP = 0x80L,
+	SHARED_KEYEDMUTEX = 0x100L,
+	GDI_COMPATIBLE = 0x200L,
+	SHARED_NTHANDLE = 0x800L,
+	RESTRICTED_CONTENT = 0x1000L,
+	RESTRICT_SHARED_RESOURCE = 0x2000L,
+	RESTRICT_SHARED_RESOURCE_DRIVER = 0x4000L,
+	GUARDED = 0x8000L,
+	TILE_POOL = 0x20000L,
+	TILED = 0x40000L,
+	HW_PROTECTED = 0x80000L
+} MiscFlag;
+inline MiscFlag operator|(MiscFlag a, MiscFlag b) { return static_cast<MiscFlag>(static_cast<int>(a) | static_cast<int>(b)); }
+
+
 class Texture : public BaseResource
 {
 	friend class ResourceFactory;
@@ -172,14 +196,16 @@ class Texture : public BaseResource
 	friend REGISTERCLASS(DepthStencilTarget);
 
 public:
-	virtual void Init(
+	virtual void			Init(
 		int inWidth, 
 		int inHeight, 
 		int inMipLevels, 
 		Format inFormat, 
 		unsigned int inUsage = 0, 
 		BindFlag inBindFlag = BindFlag::BIND_SHADER_RESOURCE, 
-		CPUAccessFlag inCPUAccessFlags = CPU_ACCESS_DEFAULT);
+		CPUAccessFlag inCPUAccessFlags = CPUAccessFlag::CPU_ACCESS_DEFAULT,
+		MiscFlag inMiscFlags = MiscFlag::NONE);
+
 	virtual void			Init(ID3D11Texture2D* inTexture);
 	virtual void			InitFromFile(std::string inFileName);
 
@@ -204,6 +230,7 @@ protected:
 	Format						mFormat;
 	BindFlag					mBindFlags;
 	CPUAccessFlag				mCPUAccessFlags;
+	MiscFlag					mMiscFlags;
 
 private:
 	Texture() : BaseResource() {};

@@ -105,11 +105,11 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 		half3 diffuse = Diffuse[coord].xyz;
 		half4 surface = Surface[coord];
 
-		// setup material
 		Material material;
 		material.roughness = surface.x;
 		material.reflectance = surface.y;
 		material.diffuse = diffuse;
+		material.metalicity = surface.z;
 
 		light.color *= shade;
 		AccumulateLight(material, position, normal, light, diffuse_accum, specular_accum);

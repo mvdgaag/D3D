@@ -1,3 +1,31 @@
+float LinearToSrgb(float inLinear)
+{
+	return (inLinear <= 0.0031308) ? 
+		inLinear * 12.92 : 
+		1.055 * pow(inLinear, 1.0 / 2.4) - 0.055;
+}
+
+
+float SrgbToLinear(float inSrgb)
+{
+	return  (inSrgb <= 0.04045) ? 
+		inSrgb / 12.92 : 
+		pow((inSrgb + 0.055) / 1.055, 2.4);
+}
+
+
+float3 LinearToSrgb(float3 inLinear)
+{
+	return float3(LinearToSrgb(inLinear.r), LinearToSrgb(inLinear.g), LinearToSrgb(inLinear.b));
+}
+
+
+float3 SrgbToLinear(float3 inSrgb)
+{
+	return float3(SrgbToLinear(inSrgb.r), SrgbToLinear(inSrgb.g), SrgbToLinear(inSrgb.b));
+}
+
+
 float3 ReconstructCSPosition(float2 inUV, float inLinearDepth, float2 inViewReconstructionVector)
 {
 	float2 NDC = float2(inUV.x, 1.0-inUV.y) * 2.0 - 1.0;

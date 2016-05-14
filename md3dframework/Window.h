@@ -14,11 +14,13 @@ public:
 	Window() {};
 	~Window() {};
 	
-	HRESULT Init(HINSTANCE hInstance);
+	HRESULT Init(HINSTANCE hInstance, int inWidth, int inHeight);
 
 protected:
 	static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 
 	HINSTANCE mHInst = nullptr;
 	HWND mHWnd = nullptr;
+	int mWidth;
+	int mHeight;
 };

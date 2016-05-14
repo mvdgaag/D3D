@@ -3,6 +3,7 @@
 
 struct Material
 {
+	float	metalicity;
 	float	roughness;
 	float	reflectance; // float R0 = ((1.0 - inIOR) / (1.0 + inIOR));
 	float3	diffuse;
@@ -19,13 +20,13 @@ struct Light
 
 
 
-float OrenNayar(float dotNL, float dotNV, float3 N, float V, float alpha)
+float OrenNayar(float dotNL, float dotNV, float3 N, float V, float m2)
 {
 	if (dotNL <= 0)
 		return 0;
 
-	float a = 1.0 - 0.5 * (alpha / (alpha + 0.57));
-	float b = 0.45 * (alpha / (alpha + 0.09));
+	float a = 1.0 - 0.5 * (m2 / (m2 + 0.57));
+	float b = 0.45 * (m2 / (m2 + 0.09));
 	float ga = dot(V - N * dotNV, N - N * dotNL);
 	return dotNL * (a + b * max(0.0, ga) * sqrt((1.0 - dotNV * dotNV) * (1.0 - dotNL * dotNL)) / max(dotNL, dotNV));
 }
@@ -36,30 +37,34 @@ float3 F_GGX(float dotLH, float F0)
 	return F0 + (1.0 - F0) * (dotLH5);
 }
 
-float G1V(float dotXX, float k)
+float G1V(float dotXX, float m2)
 {
-	return 1.0f / (dotXX * (1.0f - k) + k);
+//	return 1.0f / (dotXX * (1.0f - m2) + m2);
+	return 1.0f / (dotXX + sqrt(m2 + (1 - m2) * dotXX * dotXX));
 }
 
-float V_GGX(float dotNL, float dotNV, float alpha)
+float G_GGX(float dotNL, float dotNV, float m2)
 {
-	float k = alpha / 2.0f;
-	return G1V(dotNL, k) * G1V(dotNV, k);
+//	float k = m2 * 0.5f;
+//	return G1V(dotNL, m2) * G1V(dotNV, m2);
+	return G1V(dotNL, m2) * G1V(dotNV, m2);
 }
 
-float D_GGX(float dotNH, float alpha)
+
+
+float D_GGX(float dotNH, float m2)
 {
-	float alphaSqr = alpha * alpha;
-	float denom = dotNH * dotNH * (alphaSqr - 1.0) + 1.0f;
-	return alphaSqr / (denom * denom); // Division by PI left out (applied later)
+	float m2Sqr = m2 * m2;
+	float denom = dotNH * dotNH * (m2Sqr - 1.0) + 1.0f;
+	return m2Sqr / (denom * denom); // Division by PI left out (applied later)
 }
 
-float D_GGX_Anisotropic(float dotNH, float dotXH, float dotYH, float alpha, float anisotropy)
+float D_GGX_Anisotropic(float dotNH, float dotXH, float dotYH, float m2, float anisotropy)
 {
 	float dotXH2 = dotXH * dotXH;
 	float dotYH2 = dotYH * dotYH;
 	float dotNH2 = dotNH * dotNH;
-	float mx = alpha;
+	float mx = m2;
 	float my = lerp(0, mx, 1.0f - anisotropy);
 	float mx2 = mx * mx;
 	float my2 = my * my;
@@ -67,9 +72,9 @@ float D_GGX_Anisotropic(float dotNH, float dotXH, float dotYH, float alpha, floa
 	return (1.0f / (mx * my)) * (1.0 / (denom * denom)); // Division by PI left out (applied later)
 }
 
-void LightingFuncGGX(float3 N, float3 V, float3 L, float roughness, float F0, out float Spec, out float Diff)
+void LightingFuncGGX(float3 N, float3 V, float3 L, float m, float F0, out float Spec, out float Diff)
 {
-	float alpha = roughness*roughness;
+	float m2 = m*m;
 
 	float3 H = normalize(V + L);
 
@@ -78,22 +83,15 @@ void LightingFuncGGX(float3 N, float3 V, float3 L, float roughness, float F0, ou
 	float dotNH = saturate(dot(N, H));
 	float dotLH = saturate(dot(L, H));
 
-	float D = D_GGX(dotNH, alpha);
-
-	/*
-	float3 x = float3(1.0, 0.0, 0.0);
-	float3 y = normalize(cross(N, x));
-	x = normalize(cross(N, y));
-	float dotXH = saturate(dot(x, H));
-	float dotYH = saturate(dot(y, H));
-	D = D_GGX_Anisotropic(dotNH, dotXH, dotYH, alpha, 0.9);
-	*/
-
+	float D = D_GGX(dotNH, m2);
 	float F = F_GGX(dotLH, F0);
-	float vis = V_GGX(dotNL, dotNV, alpha);
+	float G = G_GGX(dotNL, dotNV, m2);
 	
-	Spec = dotNL * D * F * vis;
-	Diff = (1.0 - F) * OrenNayar(dotNL, dotNV, N, V, 1.0 - roughness);
+	Spec = dotNL * D * F * G;
+
+	//Spec = D * F * G / (4 * dotNL * dotNV);
+	//Spec = 0;
+	Diff = (1.0 - F) * dotNL;
 }
 
 void AccumulateLight(Material inMaterial, float3 inPosition, float3 inNormal, Light inLight, inout float3 ioDiffuse, inout float3 ioSpecular)
@@ -101,20 +99,20 @@ void AccumulateLight(Material inMaterial, float3 inPosition, float3 inNormal, Li
 	float3 N =			inNormal;
 	float3 V =			normalize(-inPosition);
 	float3 L =			inLight.direction;
-	float roughness =	saturate(inMaterial.roughness * inMaterial.roughness * 0.9998 + 0.0001);
-	float F0 =			saturate(inMaterial.reflectance * inMaterial.reflectance * 0.9998 + 0.0001);
+	float m =			max(0.025, saturate(inMaterial.roughness));
+	float F0 =			max(0.025, saturate(inMaterial.reflectance));
+	float3 diffuse =	inMaterial.diffuse.rgb * (1 - inMaterial.metalicity);
+	float3 specular =	lerp(float3(1.0, 1.0, 1.0), inMaterial.diffuse.rgb, inMaterial.metalicity);
 	
-
 	//DEVHACK add roughness to keep specular intact over distance
-	roughness = saturate(roughness + lerp(0.0, 0.05, saturate(-inPosition.z * 0.01)));
-
+	//m = saturate(m + lerp(0.0, 0.05, saturate(-inPosition.z * 0.01)));
 
 	float S, D;
 
-	LightingFuncGGX(N, V, L, roughness, F0, S, D);
-	ioDiffuse += D * inMaterial.diffuse * inLight.color * inLight.attenuation / PI;
-	ioSpecular += S * inLight.color * inLight.attenuation / PI;
+	LightingFuncGGX(N, V, L, m, F0, S, D);
+	ioDiffuse += D * diffuse * inLight.color * inLight.attenuation / PI;
+	ioSpecular += S * specular * inLight.color * inLight.attenuation / PI;
 
-	float3 ambient_color = float3(0.1, 0.1, 0.1);
-	ioDiffuse += inMaterial.diffuse * ambient_color * (1.0 - F0) / PI;
+	//float3 ambient_color = float3(0.1, 0.1, 0.1);
+	//ioDiffuse += inMaterial.diffuse * ambient_color * (1.0 - F0) / PI;
 }

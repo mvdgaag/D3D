@@ -21,7 +21,7 @@ void PostProcessRenderer::Render(pTexture inSource, pTexture inMotionVectors, pR
 	theRenderContext.CSSetTextureAndSampler(inMotionVectors, linear_sampler, 1);
 	theRenderContext.CSSetRWTexture(inTarget, 0, 0);
 
-	mConstantBufferData.mTargetSize = float4(theRenderContext.GetWidth(), theRenderContext.GetHeight(),0,0);
+	mConstantBufferData.mTargetSize = float4(theRenderContext.GetWidth(), theRenderContext.GetHeight(), Gaag.GetFrameID(),0);
 	theRenderContext.UpdateSubResource(*mConstantBuffer, &mConstantBufferData);
 	theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);
 

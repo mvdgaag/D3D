@@ -1,8 +1,11 @@
 #include "Window.h"
 #include "RenderContext.h"
 
-HRESULT Window::Init(HINSTANCE hInstance)
+HRESULT Window::Init(HINSTANCE hInstance, int inWidth, int inHeight)
 {
+	mWidth = inWidth;
+	mHeight = inHeight;
+
 	// Register class
 	WNDCLASSEX wcex;
 	wcex.cbSize = sizeof(WNDCLASSEX);
@@ -22,7 +25,7 @@ HRESULT Window::Init(HINSTANCE hInstance)
 
 	// Create window
 	mHInst = hInstance;
-	RECT rc = { 0, 0, 800, 600 };
+	RECT rc = { 0, 0, mWidth, mHeight };
 	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
 	mHWnd = CreateWindow(L"Gaag", L"Gaag",
 		WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX,

@@ -15,15 +15,12 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="GaagMaterialTest.h">
+    <ClInclude Include="RenderApe.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="GaagMaterialTest.cpp">
+    <ClCompile Include="RenderApe.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

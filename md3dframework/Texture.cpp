@@ -8,7 +8,7 @@
 
 
 void Texture::Init(int inWidth, int inHeight, int inMipLevels, Format inFormat, 
-	unsigned int inUsage, BindFlag inBindFlags, CPUAccessFlag inCPUAccessFlags)
+	unsigned int inUsage, BindFlag inBindFlags, CPUAccessFlag inCPUAccessFlags, MiscFlag inMiscFlags)
 {
 	CleanUp();
 
@@ -16,18 +16,19 @@ void Texture::Init(int inWidth, int inHeight, int inMipLevels, Format inFormat,
 	ZeroMemory(mDesc, sizeof(D3D11_TEXTURE2D_DESC));
 	mWidth = mDesc->Width = inWidth;
 	mHeight = mDesc->Height = inHeight;
-	mMipLevels = mDesc->MipLevels = mDesc->ArraySize = inMipLevels;
+	mMipLevels = mDesc->MipLevels = inMipLevels;
+	if (inMiscFlags & MiscFlag::TEXTURECUBE == MiscFlag::TEXTURECUBE)
+		mDesc->ArraySize = 6;
+	else
+		mDesc->ArraySize = 1;
 	
 	// HACK, needs to be different (not typeless) for depth-stencil
 	DXGI_FORMAT format = ((DXGI_FORMAT)inFormat == DXGI_FORMAT_R24G8_TYPELESS ? DXGI_FORMAT_R24_UNORM_X8_TYPELESS : (DXGI_FORMAT)inFormat);
 
 	mFormat = Format(format);
 	mDesc->Format = (DXGI_FORMAT)inFormat;
-	
 	mDesc->SampleDesc.Count = 1;
-	
 	mDesc->SampleDesc.Quality = 0;
-	
 	mDesc->Usage = (D3D11_USAGE)inUsage;
 	
 	mBindFlags = inBindFlags;
@@ -35,8 +36,10 @@ void Texture::Init(int inWidth, int inHeight, int inMipLevels, Format inFormat,
 
 	mCPUAccessFlags = inCPUAccessFlags;
 	mDesc->CPUAccessFlags = (D3D11_CPU_ACCESS_FLAG)inCPUAccessFlags;
-	mDesc->MiscFlags = 0;
+	mDesc->MiscFlags = inMiscFlags;
 	
+	mMiscFlags = inMiscFlags;
+
 	D3DCall(theRenderContext.GetDevice()->CreateTexture2D(mDesc, NULL, &mTexture));
 	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
 	shaderResourceViewDesc.Format = format;
@@ -70,6 +73,7 @@ void Texture::Init(ID3D11Texture2D* inTexture)
 	mFormat = (Format)mDesc->Format;
 	mBindFlags = (BindFlag)mDesc->BindFlags;
 	mCPUAccessFlags = (CPUAccessFlag)mDesc->CPUAccessFlags;
+	mMiscFlags = (MiscFlag)mDesc->MiscFlags;
 
 	assert(mTexture != nullptr);
 	assert(mShaderResourceView != nullptr);
@@ -98,6 +102,7 @@ void Texture::InitFromFile(std::string inFileName)
 	mFormat = (Format)mDesc->Format;
 	mBindFlags = (BindFlag)mDesc->BindFlags;
 	mCPUAccessFlags = (CPUAccessFlag)mDesc->CPUAccessFlags;
+	mMiscFlags = (MiscFlag)mDesc->MiscFlags;
 
 	assert(mTexture != nullptr);
 	assert(mShaderResourceView != nullptr);

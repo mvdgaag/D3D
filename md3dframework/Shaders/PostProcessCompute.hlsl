@@ -16,6 +16,8 @@ SamplerState motionSampler : register(s1);
 cbuffer cPostProcessConstants : register(b0)
 {
 	float2	cTargetSize;
+	float	cFrameID;
+	float	cUnused;
 };
 
 
@@ -38,8 +40,14 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 		normalization += weight;
 	}
 
-	float noise = Random(coord) * 0.02;
+	float noise = Random(coord + cFrameID) * 0.01;
 	float vignette = sqrt(sqrt(2) - length(uv * 2.0 - 1.0)) / sqrt(2);
 	vignette = (vignette + 1.0) * 0.5;
-	dst[coord] = pow(result / normalization, GAMMA) * vignette + noise;
+
+	// DEVHACK
+	noise *= 0;
+
+	float3 color = LinearToSrgb(vignette * result.rgb / normalization + noise);
+	dst[coord] = float4(color, 1.0);
+//	dst[coord] = pow(result / normalization, GAMMA) * vignette + noise;
 }

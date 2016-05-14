@@ -25,12 +25,12 @@ GaagFramework::~GaagFramework()
 //--------------------------------------------------------------------------------------
 // Create Direct3D device and swap chain
 //--------------------------------------------------------------------------------------
-HRESULT GaagFramework::Init(HINSTANCE hInstance)
+HRESULT GaagFramework::Init(HINSTANCE hInstance, int inWidth, int inHeight)
 {
 	assert(mInitialized == false);
 
 	mWindow = MAKE_NEW(Window);
-	mWindow->Init(hInstance);
+	mWindow->Init(hInstance, inWidth, inHeight);
 	theRenderContext.Init(mWindow);
 	theResourceFactory.Init();
 	theTime.Init();

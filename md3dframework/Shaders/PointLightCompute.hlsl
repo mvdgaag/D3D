@@ -156,6 +156,7 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 			material.roughness = surface.x;
 			material.reflectance = surface.y;
 			material.diffuse = diffuse;
+			material.metalicity = surface.z;
 			
 			AccumulateLight(material, texel_position, normal, light, diffuse_accum, specular_accum);
 		}
