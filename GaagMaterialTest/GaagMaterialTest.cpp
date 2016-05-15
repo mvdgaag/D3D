@@ -70,7 +70,7 @@ void InitContent()
 		g_materials[i]->SetDiffuseValue(float4(1.0, 0.0, 0.0, 0.0f));
 		g_materials[i]->SetReflectivityValue(float(i / 5) / 5.0);
 		g_materials[i]->SetRoughnessValue(float(i % 5) / 5.0);
-		g_materials[i]->SetMetalicityValue(0.9f);
+		g_materials[i]->SetMetalicityValue(0.0f);
 		g_materials[i]->SetEmissivenessValue(0.0f);
 		g_materials[i]->SetPixelShader(theResourceFactory.GetDefaultMaterial()->GetPixelShader());
 		g_materials[i]->SetVertexShader(theResourceFactory.GetDefaultMaterial()->GetVertexShader());

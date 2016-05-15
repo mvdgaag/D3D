@@ -9,6 +9,7 @@ struct Material
 	float3	diffuse;
 };
 
+
 struct Light
 {
 	float3	direction;
@@ -16,8 +17,6 @@ struct Light
 	float	attenuation;
 	bool	hasShadowMap;
 };
-
-
 
 
 float OrenNayar(float dotNL, float dotNV, float3 N, float V, float m2)
@@ -31,25 +30,24 @@ float OrenNayar(float dotNL, float dotNV, float3 N, float V, float m2)
 	return dotNL * (a + b * max(0.0, ga) * sqrt((1.0 - dotNV * dotNV) * (1.0 - dotNL * dotNL)) / max(dotNL, dotNV));
 }
 
+
 float3 F_GGX(float dotLH, float F0)
 {
 	float dotLH5 = pow(1.0f - dotLH, 5);
 	return F0 + (1.0 - F0) * (dotLH5);
 }
 
+
 float G1V(float dotXX, float m2)
 {
-//	return 1.0f / (dotXX * (1.0f - m2) + m2);
 	return 1.0f / (dotXX + sqrt(m2 + (1 - m2) * dotXX * dotXX));
 }
 
+
 float G_GGX(float dotNL, float dotNV, float m2)
 {
-//	float k = m2 * 0.5f;
-//	return G1V(dotNL, m2) * G1V(dotNV, m2);
 	return G1V(dotNL, m2) * G1V(dotNV, m2);
 }
-
 
 
 float D_GGX(float dotNH, float m2)
@@ -58,6 +56,7 @@ float D_GGX(float dotNH, float m2)
 	float denom = dotNH * dotNH * (m2Sqr - 1.0) + 1.0f;
 	return m2Sqr / (denom * denom); // Division by PI left out (applied later)
 }
+
 
 float D_GGX_Anisotropic(float dotNH, float dotXH, float dotYH, float m2, float anisotropy)
 {
@@ -71,6 +70,7 @@ float D_GGX_Anisotropic(float dotNH, float dotXH, float dotYH, float m2, float a
 	float denom = dotXH2 / mx2 + dotYH2 / my2 + dotNH2;
 	return (1.0f / (mx * my)) * (1.0 / (denom * denom)); // Division by PI left out (applied later)
 }
+
 
 void LightingFuncGGX(float3 N, float3 V, float3 L, float m, float F0, out float Spec, out float Diff)
 {
@@ -88,11 +88,9 @@ void LightingFuncGGX(float3 N, float3 V, float3 L, float m, float F0, out float 
 	float G = G_GGX(dotNL, dotNV, m2);
 	
 	Spec = dotNL * D * F * G;
-
-	//Spec = D * F * G / (4 * dotNL * dotNV);
-	//Spec = 0;
 	Diff = (1.0 - F) * dotNL;
 }
+
 
 void AccumulateLight(Material inMaterial, float3 inPosition, float3 inNormal, Light inLight, inout float3 ioDiffuse, inout float3 ioSpecular)
 {
@@ -108,11 +106,8 @@ void AccumulateLight(Material inMaterial, float3 inPosition, float3 inNormal, Li
 	//m = saturate(m + lerp(0.0, 0.05, saturate(-inPosition.z * 0.01)));
 
 	float S, D;
-
 	LightingFuncGGX(N, V, L, m, F0, S, D);
+	
 	ioDiffuse += D * diffuse * inLight.color * inLight.attenuation / PI;
 	ioSpecular += S * specular * inLight.color * inLight.attenuation / PI;
-
-	//float3 ambient_color = float3(0.1, 0.1, 0.1);
-	//ioDiffuse += inMaterial.diffuse * ambient_color * (1.0 - F0) / PI;
 }
