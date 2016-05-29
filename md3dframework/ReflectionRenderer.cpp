@@ -55,6 +55,7 @@ void ReflectionRenderer::Render(pTexture inSource, pRenderTarget inTarget, pText
 }
 
 
+// TODO: this does not seem to do anything!
 void ReflectionRenderer::FilterCubemap(pRenderTarget inOutCubemap) const
 {
 	assert(mInitialized == true);

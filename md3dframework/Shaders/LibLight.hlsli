@@ -225,12 +225,12 @@ float3 PrefilterEnvMap(TextureCube EnvMap, SamplerState EnvMapSampler, float m, 
 }
 
 
+// Warning expensive version without lookup textures or prefiltered mips on cubemap!
 float3 ApproximateSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, float3 SpecularColor, float m, float3 N, float3 V)
 {
 	float dotNV = saturate(dot(N, V));
 	float3 R = 2 * dot(V, N) * N - V;
 
-	// TODO: replace prefiltered_color and env_brdf with texture lookups
 	float3 prefiltered_color = PrefilterEnvMap(EnvMap, EnvMapSampler, m, R);
 	float2 env_brdf = IntegrateBRDF(m, dotNV);
 	
@@ -243,7 +243,9 @@ float3 ApproximateSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, fl
 	float dotNV = saturate(dot(N, V));
 	float3 R = 2 * dot(V, N) * N - V;
 
-	float mip = sqrt(m) * EnvMapMaxMip;
+	// TODO: find good mip selection that matches the prefilter
+	float mip = sqrt(m * 2) * (EnvMapMaxMip - 2);
+
 	float3 prefiltered_color = EnvMap.SampleLevel(EnvMapSampler, R, mip);
 	float2 env_brdf = BRDFLookupTexture.SampleLevel(BRDFLookupSampler, float2(m, dotNV), 0);
 
