@@ -1,5 +1,11 @@
-#define PI 3.141572
+#ifdef LIB_LIGHT
+#else
+#define LIB_LIGHT
 
+#include "LibHelper.hlsli"
+
+#define PI 3.14159265359
+#define HALF_PI 1.57079632679
 
 struct Material
 {
@@ -32,7 +38,7 @@ float radicalInverse_VdC(uint bits)
 
 float2 Hammersley(uint i, uint N) 
 {
-	return float2(float(i) / float(N), radicalInverse_VdC(i));
+	return float2(float(i) / max(0.0001, float(N)), radicalInverse_VdC(i));
 }
 
 
@@ -79,20 +85,6 @@ float D_GGX(float dotNH, float m2)
 }
 
 
-float D_GGX_Anisotropic(float dotNH, float dotXH, float dotYH, float m2, float anisotropy)
-{
-	float dotXH2 = dotXH * dotXH;
-	float dotYH2 = dotYH * dotYH;
-	float dotNH2 = dotNH * dotNH;
-	float mx = m2;
-	float my = lerp(0, mx, 1.0f - anisotropy);
-	float mx2 = mx * mx;
-	float my2 = my * my;
-	float denom = dotXH2 / mx2 + dotYH2 / my2 + dotNH2;
-	return (1.0f / (mx * my)) * (1.0 / (denom * denom)); // Division by PI left out (applied later)
-}
-
-
 void LightingFuncGGX(float3 N, float3 V, float3 L, float m, float F0, out float Spec, out float Diff)
 {
 	float m2 = m*m;
@@ -130,7 +122,8 @@ float3 ImportanceSampleGGX(float2 Xi, float m2, float3 N)
 	
 	// Tangent to world space
 	return TangentX * H.x + TangentY * H.y + N * H.z;
-}
+}
+
 
 float3 BruteForceSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, float3 SpecularColor, float m, float3 N, float3 V)
 {
@@ -140,6 +133,12 @@ float3 BruteForceSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, flo
 	for (uint i = 0; i < kNumSamples; i++)
 	{
 		float2 Xi = Hammersley(i, kNumSamples);
+//#define PER_PIXEL_RANDOM
+#ifdef PER_PIXEL_RANDOM
+		int j = abs(i * 9999 * V.x);
+		j = j % (i+1) - 1;
+		Xi = Hammersley((uint)j, i);
+#endif
 		float3 H = ImportanceSampleGGX(Xi, m, N);
 		float3 L = 2 * dot(V, H) * H - V;
 		
@@ -165,7 +164,7 @@ float3 BruteForceSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, flo
 }
 
 
-float2 IntegrateBRDF(float m, float3 N, float dotNV)
+float2 IntegrateBRDF(float m, float dotNV)
 {
 	float3 V;
 	V.x = sqrt(1.0f - dotNV * dotNV); // sin
@@ -179,13 +178,13 @@ float2 IntegrateBRDF(float m, float3 N, float dotNV)
 	for (uint i = 0; i < kNumSamples; i++)
 	{
 		float2 Xi = Hammersley(i, kNumSamples);
-		float3 H = ImportanceSampleGGX(Xi, m, N);
+		float3 H = ImportanceSampleGGX(Xi, m, float3(0.0, 0.0, 1.0));
 		float3 L = 2 * dot(V, H) * H - V;
-	
+
 		float dotNL = saturate(L.z);
 		float dotNH = saturate(H.z);
 		float dotVH = saturate(dot(V, H));
-		
+	
 		if (dotNL > 0)
 		{
 			float G = G_GGX(m, dotNV, dotNL);
@@ -223,17 +222,35 @@ float3 PrefilterEnvMap(TextureCube EnvMap, SamplerState EnvMapSampler, float m, 
 	}
 
 	return prefiltered_color / total_weight;
-}float3 ApproximateSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, float3 SpecularColor, float m, float3 N, float3 V)
+}
+
+
+float3 ApproximateSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, float3 SpecularColor, float m, float3 N, float3 V)
 {
 	float dotNV = saturate(dot(N, V));
 	float3 R = 2 * dot(V, N) * N - V;
 
 	// TODO: replace prefiltered_color and env_brdf with texture lookups
 	float3 prefiltered_color = PrefilterEnvMap(EnvMap, EnvMapSampler, m, R);
-	float2 env_brdf = IntegrateBRDF(m, N, dotNV);
+	float2 env_brdf = IntegrateBRDF(m, dotNV);
 	
 	return prefiltered_color * (SpecularColor * env_brdf.x + env_brdf.y);
-}
+}
+
+
+float3 ApproximateSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, float EnvMapMaxMip, Texture2D BRDFLookupTexture, SamplerState BRDFLookupSampler, float3 SpecularColor, float m, float3 N, float3 V)
+{
+	float dotNV = saturate(dot(N, V));
+	float3 R = 2 * dot(V, N) * N - V;
+
+	float mip = sqrt(m) * EnvMapMaxMip;
+	float3 prefiltered_color = EnvMap.SampleLevel(EnvMapSampler, R, mip);
+	float2 env_brdf = BRDFLookupTexture.SampleLevel(BRDFLookupSampler, float2(m, dotNV), 0);
+
+	return prefiltered_color *(SpecularColor * env_brdf.x + env_brdf.y);
+}
+
+
 void AccumulateLight(Material inMaterial, float3 inPosition, float3 inNormal, Light inLight, inout float3 ioDiffuse, inout float3 ioSpecular)
 {
 	float3 N =			inNormal;
@@ -253,3 +270,5 @@ void AccumulateLight(Material inMaterial, float3 inPosition, float3 inNormal, Li
 	ioDiffuse += D * diffuse * inLight.color * inLight.attenuation;
 	ioSpecular += S * specular * inLight.color * inLight.attenuation;
 }
+
+#endif

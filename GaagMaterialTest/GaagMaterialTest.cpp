@@ -33,11 +33,20 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-	Gaag.Init(hInstance, 1200, 600);
+	Gaag.Init(hInstance, 800, 600);
 	Gaag.SetFrameCallback(&FrameFunc);
+	
 	pCamera cam = Gaag.GetCamera();
-	cam->SetPosition(0, 0, -50);
+	cam->SetPosition(5, 5, -15);
 	InitContent();
+
+	RenderState render_state;
+	render_state.EnableDirect = true;
+	render_state.EnableIndirect = true;
+	render_state.EnableReflections = true;
+	render_state.EnablePostProcess = true;
+	render_state.CubeMap = g_cubemap;
+	Gaag.SetRenderState(render_state);
 
 	MSG msg = { 0 };
 	while (WM_QUIT != msg.message)
@@ -78,12 +87,12 @@ void InitContent()
 		g_objects[i] = MAKE_NEW(MeshObject);
 		g_objects[i]->Init(g_mesh, theResourceFactory.GetDefaultMaterial());
 		g_objects[i]->Init(g_mesh, g_materials[i]);
-		g_objects[i]->Translate(float3(3 * (i / 5) - 15, 3 * (i % 5) - 15, 0));
+		g_objects[i]->Translate(float3(3 * (i / 5) - 7.5, 3 * (i % 5) - 7.5, 0));
 		Gaag.RegisterObject(g_objects[i]);
-
 	}
 
-	//g_cubemap = theResourceFactory.LoadTexture("Textures/cubemap.dds");
+	g_cubemap = theResourceFactory.LoadTexture("Textures/cubemap.dds", BIND_COMPUTE_TARGET);
+	Gaag.PreFilterCubemap(g_cubemap);
 
 	g_directional_light = theResourceFactory.MakeDirectionalLight(float3(1, -1, 1), float4(1, 1, 1, 1), 0);
 	Gaag.RegisterLight(g_directional_light);

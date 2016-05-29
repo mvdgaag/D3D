@@ -39,6 +39,8 @@ public:
 	void RegisterLight(pSpotLight inLight) { mDeferredRenderer->RegisterLight(inLight); }
 	void RegisterLight(pDirectionalLight inLight) { mDeferredRenderer->RegisterLight(inLight); }
 
+	void PreFilterCubemap(pTexture inCubemap) { mDeferredRenderer->PreFilterCubemap(inCubemap); };
+
 	float3 ScreenToCameraPos(int2 inScreenPos);
 	float3 WorldToCameraPos(float3 inCameraPos);
 	float3 CameraToWorldPos(float3 inCameraPos);
@@ -51,6 +53,8 @@ public:
 	float		GetRandom()														{ return float(rand()) / RAND_MAX; }
 	double		GetFrameTime()													{ return mFrameTime; }
 	double		GetFrameDeltaTime()												{ return mDeltaTime; }
+	void		SetRenderState(RenderState inRenderState)						{ assert(mDeferredRenderer != nullptr); mDeferredRenderer->SetRenderState(inRenderState); }
+	RenderState	GetRenderState(RenderState inRenderState)						{ assert(mDeferredRenderer != nullptr); return mDeferredRenderer->GetRenderState(); }
 	void		SetMaterial(pMaterial inMaterial);
 	void		CopyToRenderTarget(pRenderTarget inTarget, pTexture inSource, int inMipLevel);
 
@@ -67,7 +71,7 @@ private:
 	pWindow							mWindow;
 	pCamera							mCamera = nullptr;
 	pDeferredRenderer				mDeferredRenderer = nullptr;
-	std::vector<pMeshObject>	mObjectList;
+	std::vector<pMeshObject>		mObjectList;
 	int								mFrameID;
 	double							mFrameTime;
 	double							mDeltaTime;

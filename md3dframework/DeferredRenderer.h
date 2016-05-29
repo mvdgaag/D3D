@@ -13,13 +13,27 @@
 
 REGISTERCLASS(MeshObject);
 REGISTERCLASS(GBuffer);
-REGISTERCLASS(DeferredRenderer);
 REGISTERCLASS(RenderTarget);
 REGISTERCLASS(Texture);
 REGISTERCLASS(ConstantBuffer);
 REGISTERCLASS(PointLight);
 REGISTERCLASS(SpotLight);
 REGISTERCLASS(DirectionalLight);
+
+REGISTERSTRUCT(RenderState);
+REGISTERCLASS(DeferredRenderer);
+
+
+struct RenderState
+{
+	RenderState() : EnableDirect(true), EnableIndirect(true), EnableReflections(true), EnablePostProcess(true), CubeMap(nullptr) {}
+
+	pTexture	CubeMap;
+	bool		EnableDirect;
+	bool		EnableIndirect;
+	bool		EnableReflections;
+	bool		EnablePostProcess;
+};
 
 
 class DeferredRenderer
@@ -28,13 +42,16 @@ public:
 	DeferredRenderer() : mInitialized(false) {}
 	~DeferredRenderer() { CleanUp(); }
 
-	void Init(int inWidth, int inHeight);
-	void CleanUp();
-	void Render(std::vector<pMeshObject> inDrawList);
-	void RegisterLight(pPointLight inLight);
-	void RegisterLight(pSpotLight inLight);
-	void RegisterLight(pDirectionalLight inLight);
-	void ClearLights();
+	void		Init(int inWidth, int inHeight);
+	void		CleanUp();
+	void		SetRenderState(const RenderState &inRenderState)	{ mRenderState = inRenderState; };
+	RenderState GetRenderState() const								{ return mRenderState; };
+	void		Render(std::vector<pMeshObject> inDrawList);
+	void		RegisterLight(pPointLight inLight);
+	void		RegisterLight(pSpotLight inLight);
+	void		RegisterLight(pDirectionalLight inLight);
+	void		PreFilterCubemap(pTexture inCubemap);
+	void		ClearLights();
 
 	pGBuffer		GetGBuffer()				{ return mGBuffer; }
 	pRenderTarget	GetDepthMinPyramid()		{ return mDepthMinPyramid; }
@@ -50,8 +67,6 @@ public:
 	pConstantBuffer	GetConstantBufferEveryFrame()	{ return mConstantBufferEveryFrame; }
 	pConstantBuffer	GetConstantBufferOnDemand()		{ return mConstantBufferOnDemand; }
 
-
-
 private:
 	DeferredRenderer(DeferredRenderer const&) = delete;
 	void operator=(DeferredRenderer const&) = delete;
@@ -60,6 +75,7 @@ private:
 	void LightingPass();
 	void PostProcessPass();
 
+	RenderState					mRenderState;
 	ShadowRenderer				mShadowRenderer;
 	DirectLightingRenderer		mDirectLightingRenderer;
 	DepthPyramidRenderer		mDepthPyramidRenderer;

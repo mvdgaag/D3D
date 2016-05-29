@@ -24,13 +24,13 @@ cbuffer cIndirectLightingConstants : register(b0)
 #define MAX_MIP_LEVEL 7
 #define GOLDEN_ANGLE (3.1415 * (3.0 - sqrt(5.0)))
 
-[numthreads(8, 8, 1)]
-void CS(uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID)
-{
-	float2 coord = float2(DTid.x, DTid.y);
-	float2 uv = (coord + 0.5) / cTargetSize;
 
-	float depth = linearDepthTexture.SampleLevel(lightSampler, uv, 0).x;
+float4 SSGI(float3 inPos, float3 inNormal, float inDepth, float2 inCoord)
+{
+	float3 pos = inPos;
+	float3 normal = inNormal;
+	float depth = inDepth;
+	float2 coord = inCoord;
 
 	float cs_radius = min(20.0, depth);
 	float sqr_radius = cs_radius * cs_radius;
@@ -41,13 +41,10 @@ void CS(uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID)
 							3.0, 11.0, 1.0, 9.0,
 							15.0, 7.0, 13.0, 5.0 };
 
-	float3 pos = ReconstructCSPosition(uv, depth, cViewReconstructionVector);
-	float3 normal = DecodeNormal(normalTexture.SampleLevel(lightSampler, uv, 0).xy);
-
 	float rnd = Random(coord + cFrameData.w);
 	rnd = Random(floor(100.0 * pos));
 
-	float start_angle = (pattern[(DTid.y % 4) * 4 + (DTid.x % 4)] + rnd) / 16.0 * 2.0 * 3.1415;
+	float start_angle = (pattern[(coord.y % 4) * 4 + (coord.x % 4)] + rnd) / 16.0 * 2.0 * 3.1415;
 	float2 unit_vec = float2(sin(start_angle), cos(start_angle));
 
 	float cosa = cos(GOLDEN_ANGLE);
@@ -91,14 +88,32 @@ void CS(uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID)
 	accum_ao = 1.001 - saturate(2 * accum_ao);
 
 	accum_radiance /= running_weight_radiance;
+
+	return float4(accum_radiance, accum_ao);
+}
+
+
+[numthreads(8, 8, 1)]
+void CS(uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID)
+{
+	float2 coord = float2(DTid.x, DTid.y);
+	float2 uv = (coord + 0.5) / cTargetSize;
+
+	float depth = linearDepthTexture.SampleLevel(lightSampler, uv, 0).x;
+	float3 pos = ReconstructCSPosition(uv, depth, cViewReconstructionVector);
+	float3 normal = DecodeNormal(normalTexture.SampleLevel(lightSampler, uv, 0).xy);
+
+	float4 ssgi = SSGI(pos, normal, depth, coord);
+	
 	float3 up = cFrameData.xyz;
 	float3 sky_color = float3(0.5, 0.5, 0.5);
 
 	// fraction of hemisphere
 	float sky_visible_frac = saturate(1.0 - acos(dot(normal, up) - 0.01) / 3.1415);
 	float sky_average_attenuation = dot(up, normalize(normal + up));
-	accum_radiance += sky_visible_frac * sky_average_attenuation * accum_ao * sky_color;
-	accum_radiance *= diffuseTexture.SampleLevel(diffuseSampler, uv, 0).xyz;
+	
+	//ssgi.rgb += sky_visible_frac * sky_average_attenuation * ssgi.a * sky_color;
+	ssgi.rgb *= diffuseTexture.SampleLevel(diffuseSampler, uv, 0).xyz;
 
-	dst[coord] = float4(accum_radiance, accum_ao);
+	dst[coord] = float4(ssgi);
 }

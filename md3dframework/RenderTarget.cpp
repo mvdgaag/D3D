@@ -7,11 +7,12 @@
 
 void RenderTarget::Init(int inWidth, int inHeight, int inMipLevels, Format inFormat)
 {
-	CleanUp();
+	assert(!mInitialized);
 
 	BindFlag bind_flags = BIND_RENDER_TARGET | BIND_UNORDERED_ACCESS | BIND_SHADER_RESOURCE;
 	pTexture texture = MAKE_NEW(Texture);
 	texture->Init(inWidth, inHeight, inMipLevels, inFormat, 0, bind_flags);
+	mOwnsTexture = true;
 
 	Init(texture);
 }
@@ -19,9 +20,8 @@ void RenderTarget::Init(int inWidth, int inHeight, int inMipLevels, Format inFor
 
 void RenderTarget::Init(pTexture inTexture)
 {
-	CleanUp();
+	assert(!mInitialized);
 
-	// TODO: replace with smart pointers, does this target now own the texture for destruction?
 	mTexture = inTexture;
 	unsigned int required_flags = D3D11_BIND_RENDER_TARGET;
 	assert((mTexture->mDesc->BindFlags & required_flags) == required_flags);
@@ -48,6 +48,8 @@ void RenderTarget::Init(pTexture inTexture)
 		D3DCall(theRenderContext.GetDevice()->CreateUnorderedAccessView(mTexture->mTexture, &uav_desc, &mUnorderedAccessViews[i]));
 		assert(mUnorderedAccessViews[i] != nullptr);
 	}
+
+	mInitialized = true;
 }
 
 
@@ -67,6 +69,9 @@ void RenderTarget::CleanUp()
 		delete[] mRenderTargetViews;
 		mRenderTargetViews = nullptr;
 	}
+
+	if (mOwnsTexture)
+		mTexture->CleanUp();
 
 	mTexture = nullptr;
 }

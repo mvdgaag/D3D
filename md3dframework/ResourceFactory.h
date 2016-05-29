@@ -33,7 +33,7 @@ public:
 
 	void				DestroyItem(pBaseResource inResource);
 
-	pTexture			LoadTexture(std::string inFilename);
+	pTexture			LoadTexture(std::string inFilename, BindFlag inAdditionalBindFlags);
 	pPixelShader		LoadPixelShader(std::string inFilename);
 	pVertexShader		LoadVertexShader(std::string inFilename);
 	pComputeShader		LoadComputeShader(std::string inFilename);

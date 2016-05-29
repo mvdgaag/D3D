@@ -82,7 +82,7 @@ void Texture::Init(ID3D11Texture2D* inTexture)
 }
 
 
-void Texture::InitFromFile(std::string inFileName)
+void Texture::InitFromFile(std::string inFileName, BindFlag inAdditionalBindFlags, CPUAccessFlag inCPUAccessFlags, MiscFlag inMiscFlags)
 {
 	assert(FileUtil::FileExists(inFileName.c_str()));
 
@@ -90,7 +90,11 @@ void Texture::InitFromFile(std::string inFileName)
 
 	std::wstring filename = std::wstring(inFileName.begin(), inFileName.end());
 
-	D3DCall(DirectX::CreateDDSTextureFromFile(theRenderContext.GetDevice(), filename.c_str(), nullptr, &mShaderResourceView));
+	//D3DCall(DirectX::CreateDDSTextureFromFile(theRenderContext.GetDevice(), filename.c_str(), nullptr, &mShaderResourceView));
+
+	D3DCall(DirectX::CreateDDSTextureFromFileEx(theRenderContext.GetDevice(), theRenderContext.GetContext(), filename.c_str(), 0, D3D11_USAGE_DEFAULT, 
+		(UINT)(D3D11_BIND_SHADER_RESOURCE | inAdditionalBindFlags), (UINT)inCPUAccessFlags, (UINT)inMiscFlags, false,
+		nullptr, &mShaderResourceView, nullptr));
 
 	mShaderResourceView->GetResource(reinterpret_cast<ID3D11Resource**>(&mTexture));
 	mDesc = new D3D11_TEXTURE2D_DESC();
@@ -98,11 +102,12 @@ void Texture::InitFromFile(std::string inFileName)
 
 	mWidth = mDesc->Width;
 	mHeight = mDesc->Height;
-	mMipLevels = mDesc->MipLevels;
 	mFormat = (Format)mDesc->Format;
 	mBindFlags = (BindFlag)mDesc->BindFlags;
 	mCPUAccessFlags = (CPUAccessFlag)mDesc->CPUAccessFlags;
 	mMiscFlags = (MiscFlag)mDesc->MiscFlags;
+	mTexture->GetDesc(mDesc);
+	mMipLevels = mDesc->MipLevels;
 
 	assert(mTexture != nullptr);
 	assert(mShaderResourceView != nullptr);

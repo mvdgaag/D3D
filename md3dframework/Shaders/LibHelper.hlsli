@@ -1,3 +1,7 @@
+#ifdef LIB_HELPER
+#else
+#define LIB_HELPER
+
 float LinearToSrgb(float inLinear)
 {
 	return (inLinear <= 0.0031308) ? 
@@ -176,3 +180,5 @@ float ApproximateLuma(float3 inRGB)
 {
 	return sqrt(0.299 * inRGB.x * inRGB.x + 0.587 * inRGB.y * inRGB.y + 0.114 * inRGB.z * inRGB.z);
 }
+
+#endif

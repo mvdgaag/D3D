@@ -137,6 +137,7 @@ inline Format operator|(Format a, Format b) { return static_cast<Format>(static_
 
 typedef enum BindFlag
 {
+	BIND_NONE = 0,
 	BIND_VERTEX_BUFFER = 0x1L,
 	BIND_INDEX_BUFFER = 0x2L,
 	BIND_CONSTANT_BUFFER = 0x4L,
@@ -207,7 +208,7 @@ public:
 		MiscFlag inMiscFlags = MiscFlag::NONE);
 
 	virtual void			Init(ID3D11Texture2D* inTexture);
-	virtual void			InitFromFile(std::string inFileName);
+	virtual void			InitFromFile(std::string inFileName, BindFlag inAdditionalBindFlags = BIND_NONE, CPUAccessFlag inCPUAccessFlags = CPU_ACCESS_DEFAULT, MiscFlag = GENERATE_MIPS);
 
 	int2					GetDimensions()				{ return int2(mWidth, mHeight); }
 	int						GetMipLevels()				{ return mMipLevels; }

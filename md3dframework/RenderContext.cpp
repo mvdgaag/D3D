@@ -251,6 +251,15 @@ void RenderContext::SetMarker(std::string inMarker)
 }
 
 
+void RenderContext::GenerateMips(pTexture inTexture)
+{
+	assert((inTexture->mBindFlags & (BindFlag::BIND_SHADER_RESOURCE | BindFlag::BIND_RENDER_TARGET)) == (BindFlag::BIND_SHADER_RESOURCE | BindFlag::BIND_RENDER_TARGET));
+	assert(inTexture->mMiscFlags & MiscFlag::GENERATE_MIPS == MiscFlag::GENERATE_MIPS);
+
+	mImmediateContext->GenerateMips(inTexture->mShaderResourceView);
+}
+
+
 void RenderContext::SetViewport(int2 inDimensions, float inMinDepth, float inMaxDepth, int2 inTopLeft)
 {
 	D3D11_VIEWPORT vp;

@@ -36,10 +36,10 @@ void ResourceFactory::DestroyItem(pBaseResource inResource)
 }
 
 
-pTexture ResourceFactory::LoadTexture(std::string inFilename)
+pTexture ResourceFactory::LoadTexture(std::string inFilename, BindFlag inAdditionalBindFlags)
 {
 	pTexture texture = MAKE_NEW(Texture);
-	texture->InitFromFile(inFilename);
+	texture->InitFromFile(inFilename, inAdditionalBindFlags);
 	RegisterResource(texture);
 	return texture;
 };

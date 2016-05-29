@@ -53,12 +53,13 @@ public:
 	}
 
 	// TODO: add create functions for shaders, buffers, etc, so no d3d link to this header is required anymore..
-	ID3D11Device*	GetDevice() const					{ return mD3DDevice; }
-	pTexture		GetBackBuffer() const				{ return mBackBuffer; }
-	pRenderTarget	GetOutputRenderTarget() const		{ return mOutputRenderTarget; }
-	unsigned int	GetWidth() const					{ return mWidth; }
-	unsigned int	GetHeight() const					{ return mHeight; }
-	bool			IsInitialized() const				{ return mInitialized; }
+	ID3D11Device*			GetDevice() const					{ return mD3DDevice; }
+	ID3D11DeviceContext*	GetContext() const					{ return mImmediateContext; }
+	pTexture				GetBackBuffer() const				{ return mBackBuffer; }
+	pRenderTarget			GetOutputRenderTarget() const		{ return mOutputRenderTarget; }
+	unsigned int			GetWidth() const					{ return mWidth; }
+	unsigned int			GetHeight() const					{ return mHeight; }
+	bool					IsInitialized() const				{ return mInitialized; }
 
 	void Init(pWindow inWindow);
 	void CleanUp();
@@ -67,6 +68,7 @@ public:
 	void EndEvent();
 	void SetMarker(std::string inMarker);
 
+	void GenerateMips(pTexture inTexture);
 	void SetViewport(int2 inDimensions, float inMinDepth, float inMaxDepth, int2 inTopLeft);
 	void SetRasterizerState(FillMode inFillMode, CullMode inCullMode, bool inFrontCounterClockwise,
 		int inDepthBias, float inDepthBiasClamp, float inSlopeScaledDepthBias,
