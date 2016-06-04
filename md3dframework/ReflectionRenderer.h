@@ -16,8 +16,8 @@ public:
 
 	void Init();
 	void CleanUp();
-	void Render(pTexture inSource, pRenderTarget inTarget, pTexture inNormal, pTexture inMaterial, pTexture inDepth, pTexture inCubemap);
-	void FilterCubemap(pRenderTarget inOutCubemap) const;
+	void Render(pTexture inSource, pRenderTarget inTarget, pTexture inNormal, pTexture inMaterial, pTexture inDiffuse, pTexture inDepth, pTexture inCubemap);
+	pTexture FilterCubemap(pTexture inCubemap) const;
 
 private:
 	ReflectionRenderer(ReflectionRenderer const&) = delete;

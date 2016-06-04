@@ -90,10 +90,10 @@ pMesh ResourceFactory::MakeMesh()
 }
 
 
-pTexture ResourceFactory::MakeTexture(int2 inSize, int inMipLevels, Format inFormat, BindFlag inBindFlags)
+pTexture ResourceFactory::MakeTexture(int2 inSize, int inMipLevels, Format inFormat, BindFlag inBindFlags, MiscFlag inMiscFlags)
 {
 	pTexture texture = MAKE_NEW(Texture);
-	texture->Init(inSize.x, inSize.y, inMipLevels, inFormat, 0, inBindFlags);
+	texture->Init(inSize.x, inSize.y, inMipLevels, inFormat, 0, inBindFlags, CPU_ACCESS_DEFAULT, inMiscFlags);
 	RegisterResource(texture);
 	return texture;
 };

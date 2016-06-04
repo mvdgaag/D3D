@@ -76,10 +76,10 @@ void InitContent()
 	for (int i = 0; i < 25; i++)
 	{
 		g_materials[i] = theResourceFactory.MakeMaterial();
-		g_materials[i]->SetDiffuseValue(float4(1.0, 0.0, 0.0, 0.0f));
+		g_materials[i]->SetDiffuseValue(float4(0.5, 0.5, 0.5, 0.0f));
 		g_materials[i]->SetReflectivityValue(float(i / 5) / 5.0);
 		g_materials[i]->SetRoughnessValue(float(i % 5) / 5.0);
-		g_materials[i]->SetMetalicityValue(0.0f);
+		g_materials[i]->SetMetalicityValue(1.0f);
 		g_materials[i]->SetEmissivenessValue(0.0f);
 		g_materials[i]->SetPixelShader(theResourceFactory.GetDefaultMaterial()->GetPixelShader());
 		g_materials[i]->SetVertexShader(theResourceFactory.GetDefaultMaterial()->GetVertexShader());
@@ -92,9 +92,9 @@ void InitContent()
 	}
 
 	g_cubemap = theResourceFactory.LoadTexture("Textures/cubemap.dds", BIND_COMPUTE_TARGET);
-	Gaag.PreFilterCubemap(g_cubemap);
+	//Gaag.PreFilterCubemap(g_cubemap);
 
-	g_directional_light = theResourceFactory.MakeDirectionalLight(float3(1, -1, 1), float4(1, 1, 1, 1), 0);
+	g_directional_light = theResourceFactory.MakeDirectionalLight(float3(1, -1, 1), float4(100, 100, 100, 1), 0);
 	Gaag.RegisterLight(g_directional_light);
 
 	g_camera_controller = MAKE_NEW(CameraController);

@@ -50,7 +50,7 @@ public:
 	void		RegisterLight(pPointLight inLight);
 	void		RegisterLight(pSpotLight inLight);
 	void		RegisterLight(pDirectionalLight inLight);
-	void		PreFilterCubemap(pTexture inCubemap);
+	pTexture	PreFilterCubemap(pTexture inCubemap);
 	void		ClearLights();
 
 	pGBuffer		GetGBuffer()				{ return mGBuffer; }

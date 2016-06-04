@@ -133,6 +133,7 @@ typedef enum Format
 	FORMAT_FORCE_UINT = 0xffffffff
 };
 inline Format operator|(Format a, Format b) { return static_cast<Format>(static_cast<int>(a) | static_cast<int>(b)); }
+inline Format operator&(Format a, Format b) { return static_cast<Format>(static_cast<int>(a) & static_cast<int>(b)); }
 
 
 typedef enum BindFlag
@@ -153,6 +154,7 @@ typedef enum BindFlag
 	BIND_COMPUTE_TARGET = ((int)BIND_SHADER_RESOURCE | (int)BIND_RENDER_TARGET | (int)BIND_UNORDERED_ACCESS)
 } BindFlag;
 inline BindFlag operator|(BindFlag a, BindFlag b) { return static_cast<BindFlag>(static_cast<int>(a) | static_cast<int>(b)); }
+inline BindFlag operator&(BindFlag a, BindFlag b) { return static_cast<BindFlag>(static_cast<int>(a) & static_cast<int>(b)); }
 
 
 typedef enum CPUAccessFlag 
@@ -162,6 +164,7 @@ typedef enum CPUAccessFlag
 	CPU_ACCESS_READ = 0x20000L
 } CPUAccessFlag;
 inline CPUAccessFlag operator|(CPUAccessFlag a, CPUAccessFlag b) { return static_cast<CPUAccessFlag>(static_cast<int>(a) | static_cast<int>(b)); }
+inline CPUAccessFlag operator&(CPUAccessFlag a, CPUAccessFlag b) { return static_cast<CPUAccessFlag>(static_cast<int>(a) & static_cast<int>(b)); }
 
 
 typedef enum MiscFlag
@@ -186,6 +189,7 @@ typedef enum MiscFlag
 	HW_PROTECTED = 0x80000L
 } MiscFlag;
 inline MiscFlag operator|(MiscFlag a, MiscFlag b) { return static_cast<MiscFlag>(static_cast<int>(a) | static_cast<int>(b)); }
+inline MiscFlag operator&(MiscFlag a, MiscFlag b) { return static_cast<MiscFlag>(static_cast<int>(a) & static_cast<int>(b)); }
 
 
 class Texture : public BaseResource

@@ -182,12 +182,10 @@ void DeferredRenderer::ClearLights()
 }
 
 
-void DeferredRenderer::PreFilterCubemap(pTexture inCubemap)
+pTexture DeferredRenderer::PreFilterCubemap(pTexture inCubemap)
 {
 	assert(mInitialized);
-	pRenderTarget rt = theResourceFactory.MakeRenderTarget(inCubemap);
-	mReflectionRenderer.FilterCubemap(rt);
-	theResourceFactory.DestroyItem(rt);
+	return mReflectionRenderer.FilterCubemap(inCubemap);
 }
 
 
@@ -309,7 +307,8 @@ void DeferredRenderer::LightingPass()
 	if (mRenderState.EnableReflections && mRenderState.CubeMap != nullptr)
 	{
 		theRenderContext.SetMarker("Reflection Renderer");
-		mReflectionRenderer.Render(mIndirectLighting->GetTexture(), mReflections, mGBuffer->GetTexture(GBuffer::NORMAL), mGBuffer->GetTexture(GBuffer::MATERIAL), mDepthMinPyramid->GetTexture(), mRenderState.CubeMap);
+		mReflectionRenderer.Render(mIndirectLighting->GetTexture(), mReflections, mGBuffer->GetTexture(GBuffer::NORMAL), mGBuffer->GetTexture(GBuffer::MATERIAL), 
+			mGBuffer->GetTexture(GBuffer::DIFFUSE), mDepthMinPyramid->GetTexture(), mRenderState.CubeMap);
 	}
 
 	theRenderContext.SetMarker("Light Compose Renderer");

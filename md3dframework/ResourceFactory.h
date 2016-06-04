@@ -40,7 +40,7 @@ public:
 	pMesh				LoadMesh(std::string inFilename);
 
 	pMesh				MakeMesh();
-	pTexture			MakeTexture(int2 inSize, int inMipLevels, Format inFormat, BindFlag inBindFlags);
+	pTexture			MakeTexture(int2 inSize, int inMipLevels, Format inFormat, BindFlag inBindFlags = BindFlag::BIND_SHADER_RESOURCE, MiscFlag inMiscFlags = MiscFlag::NONE);
 	pRenderTarget		MakeRenderTarget(int2 inSize, int inMipLevels, Format inFormat);
 	pRenderTarget		MakeRenderTarget(pTexture inTexture);
 	pConstantBuffer		MakeConstantBuffer(int inSize);

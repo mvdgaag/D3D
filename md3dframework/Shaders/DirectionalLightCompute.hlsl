@@ -112,6 +112,7 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 		material.metalicity = surface.z;
 
 		light.color *= shade;
+		
 		AccumulateLight(material, position, normal, light, diffuse_accum, specular_accum);
 		
 		OutDiffuseLight[coord] = float4(diffuse_accum, 1);

@@ -36,7 +36,10 @@ void RenderTarget::Init(pTexture inTexture)
 	D3D11_UNORDERED_ACCESS_VIEW_DESC uav_desc;
 	ZeroMemory(&uav_desc, sizeof(uav_desc));
 	uav_desc.Format = mTexture->mDesc->Format;
-	uav_desc.ViewDimension = D3D11_UAV_DIMENSION_TEXTURE2D;
+	uav_desc.ViewDimension = (inTexture->mMiscFlags & MiscFlag::TEXTURECUBE) ? D3D11_UAV_DIMENSION_TEXTURE2DARRAY : D3D11_UAV_DIMENSION_TEXTURE2D;
+
+	// TODO: Add array slices for cubemap!
+	///
 
 	for (int i = 0; i < mTexture->GetMipLevels(); i++)
 	{

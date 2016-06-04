@@ -39,7 +39,7 @@ public:
 	void RegisterLight(pSpotLight inLight) { mDeferredRenderer->RegisterLight(inLight); }
 	void RegisterLight(pDirectionalLight inLight) { mDeferredRenderer->RegisterLight(inLight); }
 
-	void PreFilterCubemap(pTexture inCubemap) { mDeferredRenderer->PreFilterCubemap(inCubemap); };
+	pTexture PreFilterCubemap(pTexture inCubemap) { return mDeferredRenderer->PreFilterCubemap(inCubemap); };
 
 	float3 ScreenToCameraPos(int2 inScreenPos);
 	float3 WorldToCameraPos(float3 inCameraPos);

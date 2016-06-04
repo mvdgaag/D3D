@@ -7,15 +7,17 @@ Texture2D<float4> Source : register(t0);
 
 Texture2D<float4> NormalTexture : register(t1);
 Texture2D<float4> MaterialTexture : register(t2);
-Texture2D<float4> LinearDepthTexture : register(t3);
-TextureCube<float4> CubemapTexture : register(t4);
-Texture2D<float4> BRDFLookupTexture : register(t5);
+Texture2D<float4> DiffuseTexture : register(t3);
+Texture2D<float4> LinearDepthTexture : register(t4);
+TextureCube<float4> CubemapTexture : register(t5);
+Texture2D<float4> BRDFLookupTexture : register(t6);
 
 SamplerState NormalSampler : register(s1);
 SamplerState MaterialSampler : register(s2);
-SamplerState LinearDepthSampler : register(s3);
-SamplerState CubemapSampler : register(s4);
-SamplerState BRDFLookupSampler : register(s5);
+SamplerState DiffuseSampler : register(s3);
+SamplerState LinearDepthSampler : register(s4);
+SamplerState CubemapSampler : register(s5);
+SamplerState BRDFLookupSampler : register(s6);
 
 
 cbuffer cConstants : register(b0)
@@ -37,16 +39,28 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	float3 normal = DecodeNormal(NormalTexture.SampleLevel(NormalSampler, uv, 0).xy);
 	float4 material = MaterialTexture.SampleLevel(MaterialSampler, uv, 0);
 	
-	float m = material.x;
-	float s = material.y;
+	float roughness = material.x;
+	float3 specular_color = material.yyy;
+	float3 diffuse_color = DiffuseTexture[coord];
+	float metal = material.z;
+
+	// DEVHACK, set metal for high reflectance values (over 20%)
+	// metal = saturate(material.y * 5.0 - 1.0);
+
+	specular_color = lerp(specular_color, (specular_color * 2 + 0.5) * diffuse_color, metal.xxx);
+	diffuse_color *= (1 - metal);
 
 	float3 view = normalize(-pos);
 	float3 light = reflect(view, normal);
 
-	float3 refl = CubemapTexture.SampleLevel(CubemapSampler, light * float3(1,-1,1), 0);
-	
-	refl = ApproximateSpecularIBL(CubemapTexture, CubemapSampler, cParams.y, BRDFLookupTexture, BRDFLookupSampler, float3(s, s, s), m, normal, view);
-	//refl = BruteForceSpecularIBL(CubemapTexture, CubemapSampler, float3(s, s, s), m, normal, view);
+	float3 refl = ApproximateSpecularIBL(CubemapTexture, CubemapSampler, cParams.y, BRDFLookupTexture, BRDFLookupSampler, specular_color, roughness, normal, view);
+	//refl = ApproximateSpecularIBL(CubemapTexture, CubemapSampler, specular_color, roughness, normal, view);
+	//if (coord.x > 400) refl = BruteForceSpecularIBL(CubemapTexture, CubemapSampler, specular_color, roughness, normal, view);
 
+	
+	// DEVHACK: add diffuse
+	refl += (1 - specular_color) * diffuse_color * CubemapTexture.SampleLevel(CubemapSampler, normal, cParams.y - 1) / 3.141592;
+
+	// DEVHACK
 	Dest[coord] = float4(refl, 0.0);
 }

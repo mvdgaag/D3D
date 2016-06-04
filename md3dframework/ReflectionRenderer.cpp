@@ -7,7 +7,7 @@
 #include "Camera.h"
 
 
-void ReflectionRenderer::Render(pTexture inSource, pRenderTarget inTarget, pTexture inNormal, pTexture inMaterial, pTexture inMinDepthPyramid, pTexture inCubemap)
+void ReflectionRenderer::Render(pTexture inSource, pRenderTarget inTarget, pTexture inNormal, pTexture inMaterial, pTexture inDiffuse, pTexture inMinDepthPyramid, pTexture inCubemap)
 {
 	assert(mInitialized == true);
 
@@ -34,9 +34,10 @@ void ReflectionRenderer::Render(pTexture inSource, pRenderTarget inTarget, pText
 	theRenderContext.CSSetTextureAndSampler(inSource, point_sampler, 0);
 	theRenderContext.CSSetTextureAndSampler(inNormal, point_sampler, 1);
 	theRenderContext.CSSetTextureAndSampler(inMaterial, point_sampler, 2);
-	theRenderContext.CSSetTextureAndSampler(inMinDepthPyramid, point_sampler, 3);
-	theRenderContext.CSSetTextureAndSampler(inCubemap, linear_sampler, 4);
-	theRenderContext.CSSetTextureAndSampler(mBRDFLookupTarget->GetTexture(), linear_sampler, 5);
+	theRenderContext.CSSetTextureAndSampler(inDiffuse, point_sampler, 3);
+	theRenderContext.CSSetTextureAndSampler(inMinDepthPyramid, point_sampler, 4);
+	theRenderContext.CSSetTextureAndSampler(inCubemap, linear_sampler, 5);
+	theRenderContext.CSSetTextureAndSampler(mBRDFLookupTarget->GetTexture(), linear_sampler, 6);
 
 	int2 groups = (inTarget->GetDimensions() + 7) / 8;
 	theRenderContext.Dispatch(groups.x, groups.y, 1);
@@ -51,42 +52,51 @@ void ReflectionRenderer::Render(pTexture inSource, pRenderTarget inTarget, pText
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 3);
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 4);
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 5);
+	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 6);
 	theRenderContext.CSSetConstantBuffer(NULL, 0);
 }
 
 
-// TODO: this does not seem to do anything!
-void ReflectionRenderer::FilterCubemap(pRenderTarget inOutCubemap) const
+// TODO: does not seem to be doing anything!
+// Mips are there, but not rendered
+pTexture ReflectionRenderer::FilterCubemap(pTexture inCubemap) const
 {
 	assert(mInitialized == true);
+	assert(inCubemap != nullptr);
 
+	int2 dim = inCubemap->GetDimensions();
+	int max_mip = max(log2(dim.x), log2(dim.y));
+
+	pTexture result_texture = theResourceFactory.MakeTexture(dim, max_mip, inCubemap->GetFormat(), BindFlag::BIND_COMPUTE_TARGET, MiscFlag::TEXTURECUBE & MiscFlag::GENERATE_MIPS);
 	pSampler point_sampler = theResourceFactory.GetDefaultPointSampler();
-	//pSampler linear_sampler = theResourceFactory.GetDefaultLinearSampler();
 
-	assert(inOutCubemap != nullptr);
-
-	int max_mip = min(log2(inOutCubemap->GetDimensions().x), log2(inOutCubemap->GetDimensions().y));
 	for (int i = 1; i <= max_mip; i++)
 	{
-		int2 dim = inOutCubemap->GetDimensions() >> i;
+		int2 mip_dim = dim >> i;
 
 		// TODO: calculate based on pixel's solid angle
 		float roughness = (float)i / (float)max_mip;
+	
+		for (int j = 0; j < 6; j++)
+		{
+			pRenderTarget rt = theResourceFactory.MakeRenderTarget(result_texture);
 
-		// set general constant buffer data
-		CubemapFilterConstantBufferData data;
-		data.params = float4(float(dim.x), float(dim.y), roughness, 0.0);
+			// set general constant buffer data
+			CubemapFilterConstantBufferData data;
+			data.params = float4(float(mip_dim.x), float(mip_dim.y), j, roughness);
 
-		theRenderContext.UpdateSubResource(*mCubemapFilterConstantBuffer, &data);
-		theRenderContext.CSSetConstantBuffer(mCubemapFilterConstantBuffer, 0);
+			theRenderContext.UpdateSubResource(*mCubemapFilterConstantBuffer, &data);
+			theRenderContext.CSSetConstantBuffer(mCubemapFilterConstantBuffer, 0);
 
-		theRenderContext.CSSetShader(mCubemapFilterShader);
-		theRenderContext.CSSetRWTexture(inOutCubemap, i, 0);
-		theRenderContext.CSSetTextureAndSampler(inOutCubemap->GetTexture(), point_sampler, 0);
+			theRenderContext.CSSetShader(mCubemapFilterShader);
+			theRenderContext.CSSetRWTexture(rt, i, 0);
+			theRenderContext.CSSetTextureSingleMip(inCubemap, 0, 0);
+			theRenderContext.CSSetSampler(point_sampler, 0);
 
-		int2 groups = (dim + 7) / 8;
-		theRenderContext.Dispatch(groups.x, groups.y, 6);
-		theRenderContext.Flush();
+			int2 groups = (dim + 7) / 8;
+			theRenderContext.Dispatch(groups.x, groups.y, 6);
+			theRenderContext.Flush();
+		}
 	}
 
 	// clear state
@@ -94,6 +104,8 @@ void ReflectionRenderer::FilterCubemap(pRenderTarget inOutCubemap) const
 	theRenderContext.CSSetRWTexture(NULL, 0, 0);
 	theRenderContext.CSSetTextureAndSampler(NULL, NULL, 0);
 	theRenderContext.CSSetConstantBuffer(NULL, 0);
+
+	return result_texture;
 }
 
 

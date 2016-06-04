@@ -1,15 +1,15 @@
 #include "LibLight.hlsli"
 
-TextureCube<float4> CubemapTexture	: register(t0);
-SamplerState CubemapSampler			: register(s0);
-RWTexture2D<float4> OutputCubeMap	: register(u0);
+TextureCube<float4> CubemapTexture		: register(t0);
+SamplerState CubemapSampler				: register(s0);
+RWTexture2D<float4> OutputCubeMapFace	: register(u0);
 
 #define TILE_SIZE	(8)
 #define GROUP_SIZE	(TILE_SIZE * TILE_SIZE)
 
 cbuffer cConstants : register(b0)
 {
-	float4	cParams;	// target size x, y, roughness, unused
+	float4	cParams;	// target size x, y, roughness
 };
 
 
@@ -36,15 +36,15 @@ float3 PixelToDirection(int2 inPixelCoord, int inAxis)
 }
 
 
-[numthreads(TILE_SIZE, TILE_SIZE, 6)]
+[numthreads(TILE_SIZE, TILE_SIZE, 1)]
 void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThreadID, uint inGroupIndex : SV_GroupIndex)
 {
 	int2 coord = inDispatchThreadID.xy;
-	int face = inDispatchThreadID.z;
 
-	float m = cParams.z;
+	float m = cParams.w;
+	float face = cParams.z;
 	float3 R = PixelToDirection(coord, face);
 	float3 col = PrefilterEnvMap(CubemapTexture, CubemapSampler, m, R);
 
-	OutputCubeMap[coord] = float4(col, 1.0);
+	OutputCubeMapFace[coord] = float4(col, 1.0);
 }
