@@ -54,7 +54,7 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	float3 light = reflect(view, normal);
 
 	float3 refl = ApproximateSpecularIBL(CubemapTexture, CubemapSampler, cParams.y, BRDFLookupTexture, BRDFLookupSampler, specular_color, roughness, normal, view);
-	//refl = ApproximateSpecularIBL(CubemapTexture, CubemapSampler, specular_color, roughness, normal, view);
+	refl = ApproximateSpecularIBL(CubemapTexture, CubemapSampler, specular_color, roughness, normal, view);
 	if (coord.x > 400) refl = BruteForceSpecularIBL(CubemapTexture, CubemapSampler, specular_color, roughness, normal, view);
 	
 	// DEVHACK: add diffuse

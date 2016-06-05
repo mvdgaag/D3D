@@ -179,7 +179,8 @@ float V_SmithGGXCorrelated(float dotNL, float dotNV, float alphaG)
 	float Lambda_GGXL = dotNV * sqrt((-dotNL * alphaG2 + dotNL) * dotNL + alphaG2);
 	
 	return 0.5 / (Lambda_GGXV + Lambda_GGXL);
-}
+}
+
 
 /*
 **
@@ -226,14 +227,11 @@ float3 BruteForceSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, flo
 			// Importance sampling weight for each sample
 			//
 			// weight = fr . (N.L)
+			// with : fr = D(H) . F(H) . G(V, L) / ( 4 (N.L) (N.O) )
 			//
-			// with :
-			// fr = D(H) . F(H) . G(V, L) / ( 4 (N.L) (N.O) )
-			//
-			// Since we integrate in the microfacet space , we include the
-			// Jacobian of the transform
-			//
+			// Since we integrate in the microfacet space , we include the Jacobian of the transform
 			// pdf = D(H) . (N.H) / ( 4 (L.H) )
+			
 			float D = D_GGX(dotNH, m2);
 			float pdfH = D * dotNH;
 			float pdf = pdfH / (4.0 * dotLH);
@@ -245,7 +243,7 @@ float3 BruteForceSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, flo
 		
 			if (pdf > 0)
 				SpecularLighting += EnvMap.SampleLevel(EnvMapSampler, L, 0).rgb * weight / pdf;
-		}
+		}
 	}
 	return SpecularLighting / kNumSamples;
 }
@@ -281,9 +279,8 @@ float2 IntegrateBRDF(float m2, float dotNV)
 	
 		if (dotNL > 0)
 		{
-			//float G = G_GGX(m, dotNV, dotNL);
-			//float vis = G * dotVH / (dotNH * dotNV);
-			float vis = V_SmithGGXCorrelated(dotNL, dotNV, m2);
+			float G = G_GGX_Correlated(dotNL, dotNV, m2);
+			float vis = G * dotVH / (dotNH * dotNV);
 			float Fc = pow(1 - dotVH, 5);
 			A += (1 - Fc) * vis;
 			B += Fc * vis;
@@ -321,8 +318,10 @@ float3 PrefilterEnvMap(TextureCube EnvMap, SamplerState EnvMapSampler, float m2,
 
 
 // Warning expensive version without lookup textures or prefiltered mips on cubemap!
-float3 ApproximateSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, float3 SpecularColor, float m2, float3 N, float3 V)
+float3 ApproximateSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, float3 SpecularColor, float m, float3 N, float3 V)
 {
+	float m2 = m * m;
+
 	float dotNV = saturate(dot(N, V));
 	float3 R = 2 * dot(V, N) * N - V;
 
@@ -333,8 +332,10 @@ float3 ApproximateSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, fl
 }
 
 
-float3 ApproximateSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, float EnvMapMaxMip, Texture2D BRDFLookupTexture, SamplerState BRDFLookupSampler, float3 SpecularColor, float m2, float3 N, float3 V)
+float3 ApproximateSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, float EnvMapMaxMip, Texture2D BRDFLookupTexture, SamplerState BRDFLookupSampler, float3 SpecularColor, float m, float3 N, float3 V)
 {
+	float m2 = m * m;
+
 	float dotNV = saturate(dot(N, V));
 	float3 R = 2 * dot(V, N) * N - V;
 
@@ -369,8 +370,8 @@ void BRDF_GGX(float3 N, float3 V, float3 L, float m2, float3 F0, out float3 Spec
 	float F = F_GGX(dotLH, F0, float3(1.0, 1.0, 1.0));
 	float vis = V_SmithGGXCorrelated(dotNL, dotNV, m2);
 
-	Spec = D * F * vis;
-	Diff = (1 - F) / PI;//Fr_DisneyDiffuse(dotNV, dotNL, dotLH, m2) / PI;
+	Spec = D * F * vis; // = D * F * G / (4 * dotNL * dotNV)
+	Diff = (1 - F) / PI;
 }
 
 
@@ -385,9 +386,6 @@ void AccumulateLight(Material inMaterial, float3 inPosition, float3 inNormal, Li
 	float3 diffuse =	inMaterial.diffuse.rgb * (1 - inMaterial.metalicity);
 	float3 specular =	lerp(float3(F0,F0,F0), inMaterial.diffuse.rgb, inMaterial.metalicity);
 	
-	//DEVHACK add roughness to keep specular intact over distance
-	//m = saturate(m + lerp(0.0, 0.05, saturate(-inPosition.z * 0.01)));
-
 	// TODO: this is double calculated in the brdf function!
 	float dotNL = saturate(dot(N, L));
 
