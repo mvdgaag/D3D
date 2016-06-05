@@ -25,6 +25,13 @@ struct Light
 };
 
 
+
+/* 
+**
+** Imprtance sampling functions  
+**
+*/
+
 float radicalInverse_VdC(uint bits) 
 {
 	bits = (bits << 16u) | (bits >> 16u);
@@ -42,10 +49,33 @@ float2 Hammersley(uint i, uint N)
 }
 
 
-float3 F_GGX(float dotLX, float F0, float F90)
+// TODO: m2*m2 or m2 in CosTheta
+// m2*m2 seems to best match analytical light falloff, but needs proof
+float3 ImportanceSampleGGX(float2 Xi, float m2, float3 N)
 {
-	return F0 + (F90 - F0) * pow(1.0 - dotLX, 5.0);
+	float Phi = 2 * PI * Xi.x;
+	float CosTheta = sqrt((1 - Xi.y) / (1 + (m2*m2 - 1) * Xi.y));
+	float SinTheta = sqrt(1 - CosTheta * CosTheta);
+
+	float3 H;
+	H.x = SinTheta * cos(Phi);
+	H.y = SinTheta * sin(Phi);
+	H.z = CosTheta;
+
+	float3 UpVector = abs(N.z) < 0.999 ? float3(0, 0, 1) : float3(1, 0, 0);
+	float3 TangentX = normalize(cross(UpVector, N));
+	float3 TangentY = cross(N, TangentX);
+
+	// Tangent to world space
+	return TangentX * H.x + TangentY * H.y + N * H.z;
 }
+
+
+/*
+**
+** Diffuse functions
+**
+*/
 
 
 float OrenNayar(float dotNL, float dotNV, float3 N, float V, float m2)
@@ -60,36 +90,71 @@ float OrenNayar(float dotNL, float dotNV, float3 N, float V, float m2)
 }
 
 
-float Fr_DisneyDiffuse(float dotNV, float dotNL, float LdotH, float m2)
-{
-	float energyBias = lerp(0, 0.5, m2);
-	float energyFactor = lerp(1.0, 1.0 / 1.51, m2*m2);
-	float f90 = energyBias + 2.0 * LdotH * LdotH * m2*m2;
-	float3 f0 = float3 (1.0, 1.0, 1.0);
-	float lightScatter = F_GGX(dotNL, f0, f90).r;
-	float viewScatter = F_GGX(dotNV, f0, f90).r;
-	
-	return lightScatter * viewScatter * energyFactor;
-}
+/*
+**
+** Fresnel functions
+**
+*/
 
-float G1V(float dotXX, float m2)
+
+float3 F_GGX(float dotLX, float3 F0, float3 F90)
 {
-	return 1.0 / (dotXX * (1.0 - m2) + m2);
+	return F0 + (F90 - F0) * pow(1.0 - dotLX, 5.0);
 }
 
+
+/*
+**
+** Shadowing/visibility functions
+**
+*/
+
+
+// Schlick Smith G for GGX
+float G1_SchlickSmith(float dotXX, float k)
+{
+	return dotXX / (dotXX * (1.0 - k) + k);
+}
+
+float G_SchlickSmithGGX(float dotNL, float dotNV, float m2)
+{
+	float k = max(m2 * 0.5, 1e-5);
+	return G1_SchlickSmith(dotNL, k) * G1_SchlickSmith(dotNV, k);
+}
+
+
+// Smith G for GGX
+float G1_GGX(float dotXX, float k)
+{
+	(2.0 * dotXX) / (dotXX + sqrt(k + (1 - k) * dotXX * dotXX));
+}
 
 float G_GGX(float dotNL, float dotNV, float m2)
 {
-	float k = max(m2 * 0.5, 1e-5);
-	return G1V(dotNL, k) * G1V(dotNV, k);
+	float k = m2 * m2;
+	return G1_GGX(dotNL, k) * G1_GGX(dotNV, k);
 }
 
 
+// smith G with height correlation for GGX
+float G1_GGX_Correlated(float dotXX, float k)
+{
+	float dotXX2 = dotXX * dotXX;
+	return (-1.0 + sqrt(k * (1.0 - dotXX2) / dotXX2 + 1.0)) * 0.5;
+}
+
+float G_GGX_Correlated(float dotNL, float dotNV, float m2)
+{
+	float k = m2 * m2;
+	return rcp(1.0 + G1_GGX_Correlated(dotNL, k) + G1_GGX_Correlated(dotNV, k));
+}
+
+
+// Smith visibility for GGX, optimized
 float RcpV1GGX(float dotXX, float a2)
 {
 	return dotXX + sqrt(a2 + (1 - a2) * dotXX * dotXX);
 }
-
 
 float V_GGX(float dotNL, float dotNV, float m2)
 {
@@ -98,6 +163,7 @@ float V_GGX(float dotNL, float dotNV, float m2)
 }
 
 
+// Smith visibility for GGX, height correlated, optimized
 float V_SmithGGXCorrelated(float dotNL, float dotNV, float alphaG)
 {
 	// Original formulation of G_SmithGGX Correlated
@@ -115,7 +181,14 @@ float V_SmithGGXCorrelated(float dotNL, float dotNV, float alphaG)
 	return 0.5 / (Lambda_GGXV + Lambda_GGXL);
 }
 
-// use GGX / Trowbridge-Reitz, same as Disney and Unreal 4
+/*
+**
+** Microfacet Distribution functions
+**
+*/
+
+
+// GGX Trowbridge-Reitz
 // http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf p3
 float D_GGX(float dotNH, float m2)
 {
@@ -124,44 +197,11 @@ float D_GGX(float dotNH, float m2)
 }
 
 
-void BRDF_GGX(float3 N, float3 V, float3 L, float m, float F0, out float Spec, out float Diff)
-{
-	float m2 = m*m;
-
-	float3 H = normalize(V + L);
-
-	float dotNL = saturate(dot(N, L));
-	float dotNV = abs(dot(N, V)) + 1e-5f;
-	float dotNH = saturate(dot(N, H));
-	float dotLH = saturate(dot(L, H));
-
-	float D = D_GGX(dotNH, m2);
-	float F = F_GGX(dotLH, F0, 1.0);
-	float vis = V_SmithGGXCorrelated(dotNL, dotNV, m2);
-
-	Spec = D * F * vis / PI;
-	Diff = (1 - F) / PI;//Fr_DisneyDiffuse(dotNV, dotNL, dotLH, m2) / PI;
-}
-
-
-float3 ImportanceSampleGGX(float2 Xi, float m2, float3 N)
-{
-	float Phi = 2 * PI * Xi.x;
-	float CosTheta = sqrt((1 - Xi.y) / (1 + (m2 * m2 - 1) * Xi.y));
-	float SinTheta = sqrt(1 - CosTheta * CosTheta);
-	
-	float3 H;
-	H.x = SinTheta * cos(Phi);
-	H.y = SinTheta * sin(Phi);
-	H.z = CosTheta;
-	
-	float3 UpVector = abs(N.z) < 0.999 ? float3(0, 0, 1) : float3(1, 0, 0);
-	float3 TangentX = normalize(cross(UpVector, N));
-	float3 TangentY = cross(N, TangentX);
-	
-	// Tangent to world space
-	return TangentX * H.x + TangentY * H.y + N * H.z;
-}
+/*
+**
+** Brute-force reference functions
+**
+*/
 
 
 float3 BruteForceSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, float3 SpecularColor, float m, float3 N, float3 V)
@@ -173,38 +213,52 @@ float3 BruteForceSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, flo
 	for (uint i = 0; i < kNumSamples; i++)
 	{
 		float2 Xi = Hammersley(i, kNumSamples);
-//#define PER_PIXEL_RANDOM
-#ifdef PER_PIXEL_RANDOM
-		int j = abs(i * 9999 * V.x);
-		j = j % (i+1) - 1;
-		Xi = Hammersley((uint)j, i);
-#endif
 		float3 H = ImportanceSampleGGX(Xi, m2, N);
 		float3 L = 2 * dot(V, H) * H - V;
 		
-		float dotNV = saturate(dot(N, V)) ;
 		float dotNL = saturate(dot(N, L));
-		float dotNH = saturate(dot(N, H));
-		float dotVH = saturate(dot(V, H));
-		
 		if (dotNL > 0)
 		{
-			float3 SampleColor = EnvMap.SampleLevel(EnvMapSampler, L, 0).rgb;
-			float G = G_GGX(m2, dotNV, dotNL);
-			float Fc = pow(1 - dotVH, 5);
-			float3 F = (1 - Fc) * SpecularColor + Fc;
-			
-			// Incident light = SampleColor * dotNL
-			// Microfacet specular = D * G * F / (4 * dotNL * dotNV)
-			// pdf = D * dotNH / (4 * dotVH)
-			SpecularLighting += SampleColor * F * G * dotVH / (dotNH * dotNV);
-		}
+			float dotNV = saturate(dot(N, V));
+			float dotNH = saturate(dot(N, H));
+			float dotLH = saturate(dot(L, H));
+
+			// Importance sampling weight for each sample
+			//
+			// weight = fr . (N.L)
+			//
+			// with :
+			// fr = D(H) . F(H) . G(V, L) / ( 4 (N.L) (N.O) )
+			//
+			// Since we integrate in the microfacet space , we include the
+			// Jacobian of the transform
+			//
+			// pdf = D(H) . (N.H) / ( 4 (L.H) )
+			float D = D_GGX(dotNH, m2);
+			float pdfH = D * dotNH;
+			float pdf = pdfH / (4.0 * dotLH);
+		
+			// Implicit weight (N.L canceled out)
+			float3 F = F_GGX(dotLH, SpecularColor.x, 1.0);
+			float G = G_GGX_Correlated(dotNL, dotNV, m2);
+			float weight = F * G * D / (4.0 * dotNV);
+		
+			if (pdf > 0)
+				SpecularLighting += EnvMap.SampleLevel(EnvMapSampler, L, 0).rgb * weight / pdf;
+		}
 	}
 	return SpecularLighting / kNumSamples;
 }
 
 
-float2 IntegrateBRDF(float m, float dotNV)
+/*
+**
+** Integration/prebaking functions
+**
+*/
+
+
+float2 IntegrateBRDF(float m2, float dotNV)
 {
 	float3 V;
 	V.x = sqrt(1.0f - dotNV * dotNV); // sin
@@ -218,7 +272,7 @@ float2 IntegrateBRDF(float m, float dotNV)
 	for (uint i = 0; i < kNumSamples; i++)
 	{
 		float2 Xi = Hammersley(i, kNumSamples);
-		float3 H = ImportanceSampleGGX(Xi, m, float3(0.0, 0.0, 1.0));
+		float3 H = ImportanceSampleGGX(Xi, m2, float3(0.0, 0.0, 1.0));
 		float3 L = 2 * dot(V, H) * H - V;
 
 		float dotNL = saturate(L.z);
@@ -227,8 +281,9 @@ float2 IntegrateBRDF(float m, float dotNV)
 	
 		if (dotNL > 0)
 		{
-			float G = G_GGX(m, dotNV, dotNL);
-			float vis = G * dotVH / (dotNH * dotNV);
+			//float G = G_GGX(m, dotNV, dotNL);
+			//float vis = G * dotVH / (dotNH * dotNV);
+			float vis = V_SmithGGXCorrelated(dotNL, dotNV, m2);
 			float Fc = pow(1 - dotVH, 5);
 			A += (1 - Fc) * vis;
 			B += Fc * vis;
@@ -239,14 +294,13 @@ float2 IntegrateBRDF(float m, float dotNV)
 }
 
 
-float3 PrefilterEnvMap(TextureCube EnvMap, SamplerState EnvMapSampler, float m, float3 R)
+float3 PrefilterEnvMap(TextureCube EnvMap, SamplerState EnvMapSampler, float m2, float3 R)
 {
 	float3 N = R;
 	float3 V = R;
 	float3 prefiltered_color = 0;
 	float  total_weight = 0;
 	const uint kNumSamples = 1024;
-	float m2 = m*m;
 
 	for (uint i = 0; i < kNumSamples; i++)
 	{
@@ -267,31 +321,56 @@ float3 PrefilterEnvMap(TextureCube EnvMap, SamplerState EnvMapSampler, float m, 
 
 
 // Warning expensive version without lookup textures or prefiltered mips on cubemap!
-float3 ApproximateSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, float3 SpecularColor, float m, float3 N, float3 V)
+float3 ApproximateSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, float3 SpecularColor, float m2, float3 N, float3 V)
 {
 	float dotNV = saturate(dot(N, V));
 	float3 R = 2 * dot(V, N) * N - V;
 
-	float3 prefiltered_color = PrefilterEnvMap(EnvMap, EnvMapSampler, m, R);
-	float2 env_brdf = IntegrateBRDF(m, dotNV);
+	float3 prefiltered_color = PrefilterEnvMap(EnvMap, EnvMapSampler, m2, R);
+	float2 env_brdf = IntegrateBRDF(m2, dotNV);
 	
 	return prefiltered_color * (SpecularColor * env_brdf.x + env_brdf.y);
 }
 
 
-float3 ApproximateSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, float EnvMapMaxMip, Texture2D BRDFLookupTexture, SamplerState BRDFLookupSampler, float3 SpecularColor, float m, float3 N, float3 V)
+float3 ApproximateSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, float EnvMapMaxMip, Texture2D BRDFLookupTexture, SamplerState BRDFLookupSampler, float3 SpecularColor, float m2, float3 N, float3 V)
 {
 	float dotNV = saturate(dot(N, V));
 	float3 R = 2 * dot(V, N) * N - V;
 
 	// TODO: find good mip selection that matches the prefilter
 	// For now this seems to roughly match the brute force sampling, but with a standard mipped map 
-	float mip = (1-pow(1-m, 4)) * EnvMapMaxMip;
+	float mip = (1-pow(1-sqrt(m2), 4)) * EnvMapMaxMip;
 
 	float3 prefiltered_color = EnvMap.SampleLevel(EnvMapSampler, R, mip);
-	float2 env_brdf = BRDFLookupTexture.SampleLevel(BRDFLookupSampler, float2(m, dotNV), 0);
+	float2 env_brdf = BRDFLookupTexture.SampleLevel(BRDFLookupSampler, float2(m2, dotNV), 0);
 
 	return prefiltered_color * (SpecularColor * env_brdf.x + env_brdf.y);
+}
+
+
+/*
+**
+** Lighting functions
+**
+*/
+
+
+void BRDF_GGX(float3 N, float3 V, float3 L, float m2, float3 F0, out float3 Spec, out float3 Diff)
+{
+	float3 H = normalize(V + L);
+
+	float dotNL = saturate(dot(N, L));
+	float dotNV = saturate(dot(N, V));
+	float dotNH = saturate(dot(N, H));
+	float dotLH = saturate(dot(L, H));
+
+	float D = D_GGX(dotNH, m2);
+	float F = F_GGX(dotLH, F0, float3(1.0, 1.0, 1.0));
+	float vis = V_SmithGGXCorrelated(dotNL, dotNV, m2);
+
+	Spec = D * F * vis;
+	Diff = (1 - F) / PI;//Fr_DisneyDiffuse(dotNV, dotNL, dotLH, m2) / PI;
 }
 
 
@@ -300,10 +379,11 @@ void AccumulateLight(Material inMaterial, float3 inPosition, float3 inNormal, Li
 	float3 N =			inNormal;
 	float3 V =			normalize(-inPosition);
 	float3 L =			inLight.direction;
-	float m =			max(0.025, saturate(inMaterial.roughness));
-	float F0 =			max(0.025, saturate(inMaterial.reflectance));
+	float m =			max(0.1, saturate(inMaterial.roughness));
+	float m2 =			m * m;
+	float F0 =			max(0.02, saturate(inMaterial.reflectance));
 	float3 diffuse =	inMaterial.diffuse.rgb * (1 - inMaterial.metalicity);
-	float3 specular =	lerp(float3(1.0, 1.0, 1.0), inMaterial.diffuse.rgb, inMaterial.metalicity);
+	float3 specular =	lerp(float3(F0,F0,F0), inMaterial.diffuse.rgb, inMaterial.metalicity);
 	
 	//DEVHACK add roughness to keep specular intact over distance
 	//m = saturate(m + lerp(0.0, 0.05, saturate(-inPosition.z * 0.01)));
@@ -311,8 +391,8 @@ void AccumulateLight(Material inMaterial, float3 inPosition, float3 inNormal, Li
 	// TODO: this is double calculated in the brdf function!
 	float dotNL = saturate(dot(N, L));
 
-	float S, D;
-	BRDF_GGX(N, V, L, m, F0, S, D);
+	float3 S, D;
+	BRDF_GGX(N, V, L, m2, specular, S, D);
 	
 	ioDiffuse += D * diffuse * inLight.color * inLight.attenuation * dotNL;
 	ioSpecular += S * specular * inLight.color * inLight.attenuation * dotNL;
