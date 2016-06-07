@@ -71,6 +71,26 @@ float3 ImportanceSampleGGX(float2 Xi, float m2, float3 N)
 }
 
 
+float3 ImportanceSampleCosine(float2 Xi, float3 N)
+{
+	float Phi = 2 * PI * Xi.x;
+	float CosTheta = sqrt(1 - Xi.y);
+	float SinTheta = sqrt(1 - CosTheta * CosTheta);
+
+	float3 H;
+	H.x = SinTheta * cos(Phi);
+	H.y = SinTheta * sin(Phi);
+	H.z = CosTheta;
+
+	float3 UpVector = abs(N.z) < 0.999 ? float3(0, 0, 1) : float3(1, 0, 0);
+	float3 TangentX = normalize(cross(UpVector, N));
+	float3 TangentY = cross(N, TangentX);
+
+	// Tangent to world space
+	return TangentX * H.x + TangentY * H.y + N * H.z;
+}
+
+
 /*
 **
 ** Diffuse functions
@@ -167,10 +187,10 @@ float V_GGX(float dotNL, float dotNV, float m2)
 float V_SmithGGXCorrelated(float dotNL, float dotNV, float alphaG)
 {
 	// Original formulation of G_SmithGGX Correlated
-	// lambda_v = ( -1 + sqrt ( alphaG2 * (1 - dotNL2 ) / dotNL2 + 1)) * 0.5 f;
-	// lambda_l = ( -1 + sqrt ( alphaG2 * (1 - dotNV2 ) / dotNV2 + 1)) * 0.5 f;
+	// lambda_v = (-1 + sqrt(alphaG2 * (1 - dotNL2) / dotNL2 + 1)) / 2;
+	// lambda_l = (-1 + sqrt(alphaG2 * (1 - dotNV2) / dotNV2 + 1)) / 2;
 	// G_SmithGGXCorrelated = 1 / (1 + lambda_v + lambda_l );
-	// V_SmithGGXCorrelated = G_SmithGGXCorrelated / (4.0 f * dotNL * dotNV );
+	// V_SmithGGXCorrelated = G_SmithGGXCorrelated / (4 * dotNL * dotNV );
 	
 	// This is the optimize version
 	float alphaG2 = alphaG * alphaG;
@@ -208,7 +228,7 @@ float D_GGX(float dotNH, float m2)
 float3 BruteForceSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, float3 SpecularColor, float m, float3 N, float3 V)
 {
 	float3 SpecularLighting = 0;
-	const uint kNumSamples = 1024;
+	const uint kNumSamples = 512;
 	float m2 = m*m;
 	
 	for (uint i = 0; i < kNumSamples; i++)
@@ -225,19 +245,16 @@ float3 BruteForceSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, flo
 			float dotLH = saturate(dot(L, H));
 
 			// Importance sampling weight for each sample
-			//
-			// weight = fr . (N.L)
-			// with : fr = D(H) . F(H) . G(V, L) / ( 4 (N.L) (N.O) )
-			//
-			// Since we integrate in the microfacet space , we include the Jacobian of the transform
-			// pdf = D(H) . (N.H) / ( 4 (L.H) )
+			// weight = fr * dotNL
+			// with : fr = D(H) * F(H) * G(V, L) / ( 4 * dotNL * dotNV )
 			
+			// Since we integrate in the microfacet space, we include the Jacobian of the transform
+			// pdf = D(H) * dotNH / ( 4 * dotLH )
 			float D = D_GGX(dotNH, m2);
-			float pdfH = D * dotNH;
-			float pdf = pdfH / (4.0 * dotLH);
+			float pdf = D * dotNH / (4.0 * dotLH);
 		
-			// Implicit weight (N.L canceled out)
-			float3 F = F_GGX(dotLH, SpecularColor.x, 1.0);
+			// dotNL canceled out
+			float3 F = F_GGX(dotLH, SpecularColor, float3(1.0, 1.0, 1.0));
 			float G = G_GGX_Correlated(dotNL, dotNV, m2);
 			float weight = F * G * D / (4.0 * dotNV);
 		
@@ -246,6 +263,23 @@ float3 BruteForceSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, flo
 		}
 	}
 	return SpecularLighting / kNumSamples;
+}
+
+
+float3 BruteForceDiffuseIBL(TextureCube EnvMap, SamplerState EnvMapSampler, float3 SpecularColor, float m, float3 N, float3 V)
+{
+	float3 DiffuseLighting = 0;
+	const uint kNumSamples = 512;
+
+	// TODO: take into account roughness
+	// energy conservation with specular
+	for (uint i = 0; i < kNumSamples; i++)
+	{
+		float2 Xi = Hammersley(i, kNumSamples);
+		float3 L = ImportanceSampleCosine(Xi, N);
+		DiffuseLighting += EnvMap.SampleLevel(EnvMapSampler, L, 0).rgb;
+	}
+	return DiffuseLighting / kNumSamples;
 }
 
 
@@ -325,6 +359,9 @@ float3 ApproximateSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, fl
 	float dotNV = saturate(dot(N, V));
 	float3 R = 2 * dot(V, N) * N - V;
 
+	// HACK attempt to approximate sampling the dominant specular direction
+	R = lerp(R, N, m2);
+
 	float3 prefiltered_color = PrefilterEnvMap(EnvMap, EnvMapSampler, m2, R);
 	float2 env_brdf = IntegrateBRDF(m2, dotNV);
 	
@@ -339,9 +376,12 @@ float3 ApproximateSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, fl
 	float dotNV = saturate(dot(N, V));
 	float3 R = 2 * dot(V, N) * N - V;
 
+	// HACK attempt to approximate sampling the dominant specular direction
+	R = lerp(R, N, m2);
+
 	// TODO: find good mip selection that matches the prefilter
 	// For now this seems to roughly match the brute force sampling, but with a standard mipped map 
-	float mip = (1-pow(1-sqrt(m2), 4)) * EnvMapMaxMip;
+	float mip = pow(m, 0.5) * EnvMapMaxMip;
 
 	float3 prefiltered_color = EnvMap.SampleLevel(EnvMapSampler, R, mip);
 	float2 env_brdf = BRDFLookupTexture.SampleLevel(BRDFLookupSampler, float2(m2, dotNV), 0);
@@ -354,6 +394,68 @@ float3 ApproximateSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, fl
 **
 ** Lighting functions
 **
+*/
+
+
+/*
+// http://www.frostbite.com/2014/11/moving-frostbite-to-pbr/
+void SpherelightIlluminance(float3 lightWorldPos, float3 worldPos, float3 worldNormal, float radius)
+{
+	float3 Lunormalized = lightWorldPos - worldPos;
+	float3 L = normalize(Lunormalized);
+	float distance2 = dot(Lunormalized, Lunormalized);
+	float illuminance = 0;
+
+#if WITHOUT_CORRECT_HORIZON // Analytical solution above horizon
+	// Patch to Sphere frontal equation ( Quilez version )
+	float radius2 = radius * radius;
+	// Do not allow object to penetrate the light ( max )
+	// Form factor equation include a (1 / PI ) that need to be cancel
+	// thus the " PI *"
+	illuminance = PI * (radius2 / (max(radius2, distance2))) * saturate(dot(worldNormal, L));
+# else // Analytical solution with horizon
+	// Tilted patch to sphere equation
+	float beta = acos(dot(worldNormal, L));
+	float H = sqrt(distance2);
+	float h = H / radius;
+	float x = sqrt(h * h - 1);
+	float y = -x * (1 / tan(beta));
+	
+	if (h * cos(beta) > 1)
+		illuminance = cos(beta) / (h * h);
+	else
+		illuminance = (1 / (PI * h * h)) * (cos(beta) * acos(y) - x * sin(beta) * sqrt(1 - y * y)) +	(1 / PI) * atan(sin(beta) * sqrt(1 - y * y) / x);
+	
+	illuminance *= PI;
+# endif
+
+	return illuminance;
+}
+
+
+
+	cos_b = dot(worldNormal, L);
+	sin_b = sqrt(1 - cos_b * cos_b);
+	tan_b = sin_b / cos_b;
+
+	// Tilted patch to sphere equation
+	
+	float distance = sqrt(distance2);
+	float norm_distance = distance / radius;
+	float norm_distance2 = norm_distance * norm_distance;
+
+	float edge_distance = sqrt(norm_distance2 - 1);
+	float y = -edge_distance * (1 / tan_b);
+	float y2 = y*y;
+
+	if (h * cos_b > 1)
+		illuminance = cos_b / (norm_distance2);
+	else
+		illuminance = (1 / (PI * norm_distance2)) * 
+			(cos_b * acos(y) - edge_distance * sin_b * sqrt(1 - y2)) + 
+			(1 / PI) * atan(sin_b * sqrt(1 - y2) / edge_distance);
+
+	illuminance *= PI;
 */
 
 
