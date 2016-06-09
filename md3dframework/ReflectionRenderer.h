@@ -29,6 +29,7 @@ private:
 		float2 viewspaceReconstructionVector;
 		float2 targetSize;
 		float4 params;
+		float4x4 inverseViewMatrix;
 	};
 
 	struct CubemapFilterConstantBufferData

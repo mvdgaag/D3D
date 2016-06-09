@@ -331,7 +331,7 @@ float3 PrefilterEnvMap(TextureCube EnvMap, SamplerState EnvMapSampler, float m2,
 	float3 V = R;
 	float3 prefiltered_color = 0;
 	float  total_weight = 0;
-	const uint kNumSamples = 1024;
+	const uint kNumSamples = 256;
 
 	for (uint i = 0; i < kNumSamples; i++)
 	{
@@ -360,7 +360,7 @@ float3 ApproximateSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, fl
 	float3 R = 2 * dot(V, N) * N - V;
 
 	// HACK attempt to approximate sampling the dominant specular direction
-	R = lerp(R, N, m2);
+	R = lerp(R, N, m*m2);
 
 	float3 prefiltered_color = PrefilterEnvMap(EnvMap, EnvMapSampler, m2, R);
 	float2 env_brdf = IntegrateBRDF(m2, dotNV);
@@ -377,11 +377,9 @@ float3 ApproximateSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, fl
 	float3 R = 2 * dot(V, N) * N - V;
 
 	// HACK attempt to approximate sampling the dominant specular direction
-	R = lerp(R, N, m2);
+	R = lerp(R, N, m*m2);
 
-	// TODO: find good mip selection that matches the prefilter
-	// For now this seems to roughly match the brute force sampling, but with a standard mipped map 
-	float mip = pow(m, 0.5) * EnvMapMaxMip;
+	float mip = m * (EnvMapMaxMip - 2);
 
 	float3 prefiltered_color = EnvMap.SampleLevel(EnvMapSampler, R, mip);
 	float2 env_brdf = BRDFLookupTexture.SampleLevel(BRDFLookupSampler, float2(m2, dotNV), 0);

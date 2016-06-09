@@ -13,6 +13,7 @@ pDirectionalLight g_directional_light;
 pMaterial g_materials[100];
 pCameraController g_camera_controller;
 pTexture g_cubemap;
+pTexture g_filtered_cubemap;
 
 void FrameFunc();
 void InitContent();
@@ -45,7 +46,8 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 	render_state.EnableIndirect = true;
 	render_state.EnableReflections = true;
 	render_state.EnablePostProcess = true;
-	render_state.CubeMap = g_cubemap;
+	render_state.CubeMap = g_filtered_cubemap;
+	//render_state.CubeMap = g_cubemap;
 	Gaag.SetRenderState(render_state);
 
 	MSG msg = { 0 };
@@ -91,8 +93,10 @@ void InitContent()
 		Gaag.RegisterObject(g_objects[i]);
 	}
 
-	g_cubemap = theResourceFactory.LoadTexture("Textures/cubemap.dds", BIND_COMPUTE_TARGET);
-	//Gaag.PreFilterCubemap(g_cubemap);
+	g_cubemap = theResourceFactory.LoadTexture("Textures/cubemap2.dds", BIND_COMPUTE_TARGET);
+	
+	// TODO: even if the cubemap is not used, the context seems to crash on this?
+	g_filtered_cubemap = Gaag.PreFilterCubemap(g_cubemap);
 
 	g_directional_light = theResourceFactory.MakeDirectionalLight(float3(1, -1, 1), float4(1, 1, 1, 1), 0);
 	Gaag.RegisterLight(g_directional_light);

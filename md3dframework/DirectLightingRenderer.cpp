@@ -117,10 +117,12 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 	theRenderContext.UpdateSubResource(*mConstantBufferSpotLights, &mConstantBufferSpotLightData);
 	theRenderContext.CSSetConstantBuffer(mConstantBufferSpotLights, 1);
 
-	theRenderContext.CSSetRWTexture(inTargetDiffuse, 0, 0);
-	theRenderContext.CSSetRWTexture(inTargetSpecular, 0, 1);
+	theRenderContext.CSSetRWTexture(NULL, 0, 0);
+	theRenderContext.CSSetRWTexture(NULL, 0, 1);
 	theRenderContext.CSSetTextureAndSampler(inTargetDiffuseTemp->GetTexture(), point_sampler, 4);
 	theRenderContext.CSSetTextureAndSampler(inTargetSpecularTemp->GetTexture(), point_sampler, 5);
+	theRenderContext.CSSetRWTexture(inTargetDiffuse, 0, 0);
+	theRenderContext.CSSetRWTexture(inTargetSpecular, 0, 1);
 
 	theRenderContext.Dispatch(groups.x, groups.y, 1);
 	theRenderContext.Flush();

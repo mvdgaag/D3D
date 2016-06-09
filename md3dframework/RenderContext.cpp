@@ -483,17 +483,12 @@ void RenderContext::CSSetConstantBuffer(pConstantBuffer inConstantBuffer, int id
 
 void RenderContext::CSSetRWTexture(pRenderTarget inRenderTarget, int inMipLevel, int idx)
 {
-	if (mCSBoundRenderTargets[idx] == inRenderTarget)
-		return;
-	else
-	{
-		ID3D11UnorderedAccessView* uav = NULL;
-		if (inRenderTarget != nullptr)
-			uav = inRenderTarget->mUnorderedAccessViews[inMipLevel];
-		const unsigned int initial_count = -1;
-		mImmediateContext->CSSetUnorderedAccessViews(idx, 1, &uav, &initial_count);
-		mCSBoundRenderTargets[idx] = inRenderTarget;
-	}
+	ID3D11UnorderedAccessView* uav = NULL;
+	if (inRenderTarget != nullptr)
+		uav = inRenderTarget->mUnorderedAccessViews[inMipLevel];
+	const unsigned int initial_count = -1;
+	mImmediateContext->CSSetUnorderedAccessViews(idx, 1, &uav, &initial_count);
+	mCSBoundRenderTargets[idx] = inRenderTarget;
 }
 
 

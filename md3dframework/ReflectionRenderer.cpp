@@ -26,6 +26,7 @@ void ReflectionRenderer::Render(pTexture inSource, pRenderTarget inTarget, pText
 	mConstantBufferData.viewspaceReconstructionVector.y = 1.0 / cam->GetProjectionMatrix()[1][1];
 	mConstantBufferData.targetSize = (float2)inTarget->GetTexture()->GetDimensions();
 	mConstantBufferData.params = float4(Gaag.GetFrameID(), inCubemap->GetMipLevels(), 0, 0);
+	mConstantBufferData.inverseViewMatrix = inverse(Gaag.GetCamera()->GetViewMatrix());
 	theRenderContext.UpdateSubResource(*mConstantBuffer, &mConstantBufferData);
 	theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);
 
@@ -64,40 +65,43 @@ pTexture ReflectionRenderer::FilterCubemap(pTexture inCubemap) const
 	assert(mInitialized == true);
 	assert(inCubemap != nullptr);
 
+	pSampler point_sampler = theResourceFactory.GetDefaultPointSampler();
 	int2 dim = inCubemap->GetDimensions();
 	int max_mip = max(log2(dim.x), log2(dim.y));
 
-	pTexture result_texture = theResourceFactory.MakeTexture(dim, max_mip, inCubemap->GetFormat(), BindFlag::BIND_COMPUTE_TARGET, MiscFlag::TEXTURECUBE & MiscFlag::GENERATE_MIPS);
-	pSampler point_sampler = theResourceFactory.GetDefaultPointSampler();
+	pTexture result_texture = theResourceFactory.MakeTexture(dim, max_mip, inCubemap->GetFormat(), BindFlag::BIND_COMPUTE_TARGET, MiscFlag::TEXTURECUBE | MiscFlag::GENERATE_MIPS);
+	pRenderTarget rt = theResourceFactory.MakeRenderTarget(result_texture);
 
-	for (int i = 1; i <= max_mip; i++)
+	// TODO: smaller than max_mip? or <=, but crashed!
+	for (int i = 0; i < max_mip; i++)
 	{
 		int2 mip_dim = dim >> i;
 
 		// TODO: calculate based on pixel's solid angle
-		float roughness = (float)i / (float)max_mip;
-	
-		for (int j = 0; j < 6; j++)
-		{
-			pRenderTarget rt = theResourceFactory.MakeRenderTarget(result_texture);
+		float roughness = min(1.0, ((float)i + 0.001) / (float)(max_mip-2));
+		
+		// mip = m * (x - 2);
+		// m = mip / (x - 2);
 
-			// set general constant buffer data
-			CubemapFilterConstantBufferData data;
-			data.params = float4(float(mip_dim.x), float(mip_dim.y), j, roughness);
+		// set general constant buffer data
+		CubemapFilterConstantBufferData data;
+		data.params = float4(float(mip_dim.x), float(mip_dim.y), roughness, 0);
 
-			theRenderContext.UpdateSubResource(*mCubemapFilterConstantBuffer, &data);
-			theRenderContext.CSSetConstantBuffer(mCubemapFilterConstantBuffer, 0);
+		theRenderContext.UpdateSubResource(*mCubemapFilterConstantBuffer, &data);
+		theRenderContext.CSSetConstantBuffer(mCubemapFilterConstantBuffer, 0);
 
-			theRenderContext.CSSetShader(mCubemapFilterShader);
-			theRenderContext.CSSetRWTexture(rt, i, 0);
-			theRenderContext.CSSetTextureSingleMip(inCubemap, 0, 0);
-			theRenderContext.CSSetSampler(point_sampler, 0);
+		theRenderContext.CSSetShader(mCubemapFilterShader);
+		theRenderContext.CSSetRWTexture(rt, i, 0);
+		theRenderContext.CSSetTextureSingleMip(inCubemap, 0, 0);
+		theRenderContext.CSSetSampler(point_sampler, 0);
 
-			int2 groups = (dim + 7) / 8;
-			theRenderContext.Dispatch(groups.x, groups.y, 6);
-			theRenderContext.Flush();
-		}
+		int2 groups = (dim + 7) / 8;
+		theRenderContext.Dispatch(groups.x, groups.y, 6);
+		theRenderContext.Flush();
 	}
+
+	// DEVHACK
+	//theResourceFactory.DestroyItem(rt);
 
 	// clear state
 	theRenderContext.CSSetShader(NULL);

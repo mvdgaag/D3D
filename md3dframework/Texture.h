@@ -220,6 +220,7 @@ public:
 	BindFlag				GetBindFlags()				{ return mBindFlags; }
 	CPUAccessFlag			GetCPUAccessFlags()			{ return mCPUAccessFlags; }
 	float4					GetPixel(int2 inPixelCoordinate);
+	bool					IsCubemap()					{ return ((mMiscFlags & MiscFlag::TEXTURECUBE) != 0); }
 	
 	void					CleanUp() override;
 	ResourceType			GetResourceType() const override { return ResourceType::TEXTURE; };

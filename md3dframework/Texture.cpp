@@ -43,7 +43,7 @@ void Texture::Init(int inWidth, int inHeight, int inMipLevels, Format inFormat,
 	D3DCall(theRenderContext.GetDevice()->CreateTexture2D(mDesc, NULL, &mTexture));
 	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
 	shaderResourceViewDesc.Format = format;
-	shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	shaderResourceViewDesc.ViewDimension = (inMiscFlags & MiscFlag::TEXTURECUBE == MiscFlag::TEXTURECUBE) ? D3D11_SRV_DIMENSION_TEXTURECUBE : D3D11_SRV_DIMENSION_TEXTURE2D;
 	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
 	shaderResourceViewDesc.Texture2D.MipLevels = -1;
 	D3DCall(theRenderContext.GetDevice()->CreateShaderResourceView(mTexture, &shaderResourceViewDesc, &mShaderResourceView));
@@ -226,6 +226,7 @@ void Texture::SetMipShaderResourceViews()
 	shaderResourceViewDesc.Texture2D.MipLevels = 1;
 
 	mMipShaderResourceViews = new ID3D11ShaderResourceView*[mMipLevels];
+	int num_layers = (mMiscFlags & MiscFlag::TEXTURECUBE) ? 6 : 1;
 	for (int i = 0; i < mMipLevels; i++)
 	{
 		shaderResourceViewDesc.Texture2D.MostDetailedMip = i;
