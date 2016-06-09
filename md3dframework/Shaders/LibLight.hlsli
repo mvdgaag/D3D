@@ -483,8 +483,9 @@ void AccumulateLight(Material inMaterial, float3 inPosition, float3 inNormal, Li
 	float m =			max(0.1, saturate(inMaterial.roughness));
 	float m2 =			m * m;
 	float F0 =			max(0.02, saturate(inMaterial.reflectance));
-	float3 diffuse =	inMaterial.diffuse.rgb * (1 - inMaterial.metalicity);
-	float3 specular =	lerp(float3(F0,F0,F0), inMaterial.diffuse.rgb, inMaterial.metalicity);
+
+	float3 specular = lerp(float3(F0, F0, F0), (F0 * 2 + 0.5) * inMaterial.diffuse.rgb, inMaterial.metalicity);
+	float3 diffuse = inMaterial.diffuse.rgb * (1 - inMaterial.metalicity);
 	
 	// TODO: this is double calculated in the brdf function!
 	float dotNL = saturate(dot(N, L));

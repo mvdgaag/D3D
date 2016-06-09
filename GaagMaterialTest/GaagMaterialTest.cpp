@@ -81,7 +81,7 @@ void InitContent()
 		g_materials[i]->SetDiffuseValue(float4(0.9, 0.0, 0.0, 0.0f));
 		g_materials[i]->SetReflectivityValue(fmaxf(0.04f, float(i / 5) / 5.0)); // low reflectance row = 4% (typical for non-metals)
 		g_materials[i]->SetRoughnessValue(pow(float(i % 5) / 5.0, 1.0));
-		g_materials[i]->SetMetalicityValue(0.0f);
+		g_materials[i]->SetMetalicityValue(0.0);
 		g_materials[i]->SetEmissivenessValue(0.0f);
 		g_materials[i]->SetPixelShader(theResourceFactory.GetDefaultMaterial()->GetPixelShader());
 		g_materials[i]->SetVertexShader(theResourceFactory.GetDefaultMaterial()->GetVertexShader());
@@ -93,7 +93,7 @@ void InitContent()
 		Gaag.RegisterObject(g_objects[i]);
 	}
 
-	g_cubemap = theResourceFactory.LoadTexture("Textures/cubemap2.dds", BIND_COMPUTE_TARGET);
+	g_cubemap = theResourceFactory.LoadTexture("Textures/cubemap.dds", BIND_COMPUTE_TARGET);
 	
 	// TODO: even if the cubemap is not used, the context seems to crash on this?
 	g_filtered_cubemap = Gaag.PreFilterCubemap(g_cubemap);

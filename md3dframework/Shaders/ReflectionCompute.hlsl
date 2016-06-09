@@ -45,9 +45,6 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	float3 diffuse_color = DiffuseTexture[coord];
 	float metal = material.z;
 
-	// DEVHACK, set metal for high reflectance values (over 20%)
-	// metal = saturate(material.y * 5.0 - 1.0);
-
 	specular_color = lerp(specular_color, (specular_color * 2 + 0.5) * diffuse_color, metal.xxx);
 	diffuse_color *= (1 - metal);
 
@@ -56,7 +53,7 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 
 	float3 refl = ApproximateSpecularIBL(CubemapTexture, CubemapSampler, cParams.y, BRDFLookupTexture, BRDFLookupSampler, specular_color, roughness, world_normal, world_view);
 	// DEVHACK: add diffuse
-	refl += diffuse_color * (1 - specular_color) * CubemapTexture.SampleLevel(CubemapSampler, world_normal, 9).rgb;
+	refl += diffuse_color * (1 - specular_color) * CubemapTexture.SampleLevel(CubemapSampler, world_normal, 7).rgb;
 
 	if (coord.x > 400 && false)
 	{
