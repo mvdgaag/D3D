@@ -215,9 +215,9 @@ void DeferredRenderer::GeometryPass(std::vector<pMeshObject> inDrawList)
 
 		ConstantDataEveryObject constantData;
 		Camera& camera = *(Gaag.GetCamera());
-		constantData.modelViewMatrix = transpose(camera.GetViewMatrix() * obj->GetTransform());
-		constantData.modelViewProjectionMatrix = transpose(camera.GetViewProjectionMatrix() * obj->GetTransform());
-		constantData.PrevModelViewProjectionMatrix = transpose(mPrevViewProjectionMatrix * obj->GetPrevTransform());
+		constantData.modelViewMatrix = (camera.GetViewMatrix() * obj->GetTransform());
+		constantData.modelViewProjectionMatrix = (camera.GetViewProjectionMatrix() * obj->GetTransform());
+		constantData.PrevModelViewProjectionMatrix = (mPrevViewProjectionMatrix * obj->GetPrevTransform());
 
 		theRenderContext.UpdateSubResource(*mConstantBufferEveryObject, &constantData);
 

@@ -74,7 +74,7 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 
 	if (light.hasShadowMap)
 	{
-		float3 texel_light_position = mul(float4(position, 1.0), cViewToLightMatrix);
+		float3 texel_light_position = mul(cViewToLightMatrix, float4(position, 1.0));
 		float2 shadow_map_uv = texel_light_position.xy * float2(0.5, -0.5) + 0.5;
 		int2 shadow_map_resolution;
 		Shadow.GetDimensions(shadow_map_resolution.x, shadow_map_resolution.y);

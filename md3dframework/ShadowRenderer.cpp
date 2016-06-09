@@ -78,6 +78,7 @@ void ShadowRenderer::Render(pDirectionalLight inLight, apMeshObject inShadowCast
 		theRenderContext.SetMarker("Drawing Shadow Object");
 
 		ConstantDataEveryObject constantData;
+		// TODO: can get rid of transpose
 		constantData.modelViewProjectionMatrix = transpose(view_proj * obj->GetTransform());
 		theRenderContext.UpdateSubResource(*mConstantBufferEveryObject, &constantData);
 		theRenderContext.VSSetConstantBuffer(mConstantBufferEveryObject, 0);

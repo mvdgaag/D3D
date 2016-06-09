@@ -44,16 +44,16 @@ PS_INPUT VS(VS_INPUT input)
 	PS_INPUT output =		(PS_INPUT)0;
 
 	// jitter for TAA
-	output.Position = mul(float4(input.Position, 1.0), modelViewProjectionMatrix);
-	output.Normal = mul(float4(input.Normal, 0.0), modelViewMatrix).xyz;
-	output.Tangent = mul(float4(input.Tangent, 0.0), modelViewMatrix).xyz;
+	output.Position = mul(modelViewProjectionMatrix, float4(input.Position, 1.0));
+	output.Normal = mul(modelViewMatrix, float4(input.Normal, 0.0)).xyz;
+	output.Tangent = mul(modelViewMatrix, float4(input.Tangent, 0.0)).xyz;
 	output.TexCoord = input.TexCoord.xy;
 
-	float4 cam_space_pos = mul(float4(input.Position, 1.0), (modelViewMatrix));
+	float4 cam_space_pos = mul(modelViewMatrix, float4(input.Position, 1.0));
 	output.LinearDepth = -cam_space_pos.z;
 
 	// motion vectors
-	float4 prevPos = mul(float4(input.Position, 1.0), prevModelViewProjectionMatrix);
+	float4 prevPos = mul(prevModelViewProjectionMatrix, float4(input.Position, 1.0));
 	output.MotionVectors = (output.Position.xy / output.Position.w); // currentNDC
 	output.MotionVectors -= (prevPos.xy / prevPos.w); // prevNDC
 	output.MotionVectors *= 0.5; // NDC to UV range conversion
