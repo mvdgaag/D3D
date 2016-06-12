@@ -230,36 +230,33 @@ float3 BruteForceSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, flo
 	float3 SpecularLighting = 0;
 	const uint kNumSamples = 512;
 	float m2 = m*m;
-	
+
 	for (uint i = 0; i < kNumSamples; i++)
 	{
 		float2 Xi = Hammersley(i, kNumSamples);
 		float3 H = ImportanceSampleGGX(Xi, m2, N);
 		float3 L = 2 * dot(V, H) * H - V;
-		
+
 		float dotNL = saturate(dot(N, L));
 		if (dotNL > 0)
 		{
+			// weight = fr * dotNL
+			// with : fr = D(H) * F(H) * G(V, L) / ( 4 * dotNL * dotNV )
+			//
+			// Since we integrate in the microfacet space, we include the Jacobian of the transform
+			// pdf = D(H) * dotNH / ( 4 * dotLH )
+			//
+			// weight / pdf = ( dotNL * D(H) * F(H) * G(V, L) * 4 * dotLH ) / ( 4 * dotNL * dotNV * D(H) * dotNH ) =
+			// F(H) * G(V, L) * dotLH / DotNV * dotNH;
+
 			float dotNV = saturate(dot(N, V));
 			float dotNH = saturate(dot(N, H));
 			float dotLH = saturate(dot(L, H));
 
-			// Importance sampling weight for each sample
-			// weight = fr * dotNL
-			// with : fr = D(H) * F(H) * G(V, L) / ( 4 * dotNL * dotNV )
-			
-			// Since we integrate in the microfacet space, we include the Jacobian of the transform
-			// pdf = D(H) * dotNH / ( 4 * dotLH )
-			float D = D_GGX(dotNH, m2);
-			float pdf = D * dotNH / (4.0 * dotLH);
-		
-			// dotNL canceled out
 			float3 F = F_GGX(dotLH, SpecularColor, float3(1.0, 1.0, 1.0));
 			float G = G_GGX_Correlated(dotNL, dotNV, m2);
-			float weight = F * G * D / (4.0 * dotNV);
-		
-			if (pdf > 0)
-				SpecularLighting += EnvMap.SampleLevel(EnvMapSampler, L, 0).rgb * weight / pdf;
+			
+			SpecularLighting += EnvMap.SampleLevel(EnvMapSampler, L, 0).rgb * F * G * dotLH / (dotNV * dotNH);
 		}
 	}
 	return SpecularLighting / kNumSamples;
@@ -331,6 +328,8 @@ float3 PrefilterEnvMap(TextureCube EnvMap, SamplerState EnvMapSampler, float m2,
 	float3 V = R;
 	float3 prefiltered_color = 0;
 	float  total_weight = 0;
+
+	// TODO: higher numbers crash compute shader on timeout!
 	const uint kNumSamples = 256;
 
 	for (uint i = 0; i < kNumSamples; i++)
@@ -351,24 +350,6 @@ float3 PrefilterEnvMap(TextureCube EnvMap, SamplerState EnvMapSampler, float m2,
 }
 
 
-// Warning expensive version without lookup textures or prefiltered mips on cubemap!
-float3 ApproximateSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, float3 SpecularColor, float m, float3 N, float3 V)
-{
-	float m2 = m * m;
-
-	float dotNV = saturate(dot(N, V));
-	float3 R = 2 * dot(V, N) * N - V;
-
-	// HACK attempt to approximate sampling the dominant specular direction
-	R = lerp(R, N, m*m2);
-
-	float3 prefiltered_color = PrefilterEnvMap(EnvMap, EnvMapSampler, m2, R);
-	float2 env_brdf = IntegrateBRDF(m2, dotNV);
-	
-	return prefiltered_color * (SpecularColor * env_brdf.x + env_brdf.y);
-}
-
-
 float3 ApproximateSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, float EnvMapMaxMip, Texture2D BRDFLookupTexture, SamplerState BRDFLookupSampler, float3 SpecularColor, float m, float3 N, float3 V)
 {
 	float m2 = m * m;
@@ -377,12 +358,17 @@ float3 ApproximateSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, fl
 	float3 R = 2 * dot(V, N) * N - V;
 
 	// HACK attempt to approximate sampling the dominant specular direction
+	// m^3 seems to match brute force highlight locations better than m^2 and m^4
 	R = lerp(R, N, m*m2);
 
 	float mip = m * (EnvMapMaxMip - 2);
 
 	float3 prefiltered_color = EnvMap.SampleLevel(EnvMapSampler, R, mip);
 	float2 env_brdf = BRDFLookupTexture.SampleLevel(BRDFLookupSampler, float2(m2, dotNV), 0);
+
+	// uncomment to skip lookups and generate from mip0
+	//float3 prefiltered_color = PrefilterEnvMap(EnvMap, EnvMapSampler, m2, R);
+	//float2 env_brdf = IntegrateBRDF(m2, dotNV);
 
 	return prefiltered_color * (SpecularColor * env_brdf.x + env_brdf.y);
 }
