@@ -222,7 +222,7 @@ void Texture::SetMipShaderResourceViews()
 {
 	D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
 	shaderResourceViewDesc.Format = (DXGI_FORMAT)mFormat;
-	shaderResourceViewDesc.ViewDimension = (mMiscFlags & MiscFlag::TEXTURECUBE == MiscFlag::TEXTURECUBE) ? D3D11_SRV_DIMENSION_TEXTURECUBE : D3D11_SRV_DIMENSION_TEXTURE2D;
+	shaderResourceViewDesc.ViewDimension = ((mMiscFlags & MiscFlag::TEXTURECUBE) == MiscFlag::TEXTURECUBE) ? D3D11_SRV_DIMENSION_TEXTURECUBE : D3D11_SRV_DIMENSION_TEXTURE2D;
 	shaderResourceViewDesc.Texture2D.MipLevels = 1;
 
 	mMipShaderResourceViews = new ID3D11ShaderResourceView*[mMipLevels];

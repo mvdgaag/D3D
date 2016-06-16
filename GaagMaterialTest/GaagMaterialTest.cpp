@@ -7,13 +7,21 @@
 
 Window* g_window = nullptr;
 
-pMeshObject g_objects[100];
-pMesh g_mesh;
-pDirectionalLight g_directional_light;
-pMaterial g_materials[100];
-pCameraController g_camera_controller;
-pTexture g_cubemap;
-pTexture g_filtered_cubemap;
+pMesh				g_mesh;
+pMeshObject			g_objects[25];
+pMaterial			g_materials[25];
+
+pMesh				g_cube_mesh;
+pMeshObject			g_cube_object;
+pMaterial			g_cube_material;
+pTexture			g_cube_surface_texture;
+
+pCameraController	g_camera_controller;
+pTexture			g_cubemap;
+pTexture			g_filtered_cubemap;
+
+pDirectionalLight	g_directional_light;
+
 
 void FrameFunc();
 void InitContent();
@@ -87,15 +95,30 @@ void InitContent()
 		g_materials[i]->SetVertexShader(theResourceFactory.GetDefaultMaterial()->GetVertexShader());
 
 		g_objects[i] = MAKE_NEW(MeshObject);
-		g_objects[i]->Init(g_mesh, theResourceFactory.GetDefaultMaterial());
 		g_objects[i]->Init(g_mesh, g_materials[i]);
 		g_objects[i]->Translate(float3(3 * (i / 5) - 7.5, 3 * (i % 5) - 7.5, 0));
 		Gaag.RegisterObject(g_objects[i]);
 	}
 
+	g_cube_surface_texture = theResourceFactory.LoadTexture("Textures/roughnesstest.dds", BindFlag::BIND_SHADER_RESOURCE | BindFlag::BIND_RENDER_TARGET);
+
+	g_cube_material = theResourceFactory.MakeMaterial();
+	g_cube_material->SetDiffuseValue(float4(0.2, 0.6, 0.4, 0.0f));
+	g_cube_material->SetReflectivityValue(0.04);
+	g_cube_material->SetSurfaceTexture(g_cube_surface_texture);
+	g_cube_material->SetMetalicityValue(0.0);
+	g_cube_material->SetEmissivenessValue(0.0f);
+	g_cube_material->SetPixelShader(theResourceFactory.GetDefaultMaterial()->GetPixelShader());
+	g_cube_material->SetVertexShader(theResourceFactory.GetDefaultMaterial()->GetVertexShader());
+
+	g_cube_mesh = theResourceFactory.MakeMesh();
+	g_cube_mesh->InitCube(float3(5,5,5));
+	g_cube_object = MAKE_NEW(MeshObject);
+	g_cube_object->Init(g_cube_mesh, g_cube_material);
+	g_cube_object->Translate(float3(0, 0, 10));
+	Gaag.RegisterObject(g_cube_object);
+
 	g_cubemap = theResourceFactory.LoadTexture("Textures/cubemap.dds", BIND_COMPUTE_TARGET);
-	
-	// TODO: even if the cubemap is not used, the context seems to crash on this?
 	g_filtered_cubemap = Gaag.PreFilterCubemap(g_cubemap);
 
 	g_directional_light = theResourceFactory.MakeDirectionalLight(float3(1, -1, 1), float4(1, 1, 1, 1), 0);
