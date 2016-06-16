@@ -27,4 +27,17 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="Textures\cubemap.dds">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Textures\roughnesstest.dds">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="Models\sphere.obj">
+      <Filter>Resource Files</Filter>
+    </Object>
+  </ItemGroup>
 </Project>
