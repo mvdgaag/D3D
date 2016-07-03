@@ -10,7 +10,6 @@ SamplerState motionSampler : register(s1);
 
 #define MOTION_BLUR_STRENGTH (1.0)
 #define MOTION_BLUR_STEPS (12)
-#define GAMMA (1.0/2.2)
 
 
 cbuffer cPostProcessConstants : register(b0)
@@ -44,10 +43,5 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	float vignette = sqrt(sqrt(2) - length(uv * 2.0 - 1.0)) / sqrt(2);
 	vignette = (vignette + 1.0) * 0.5;
 
-	// DEVHACK
-	noise *= 0;
-
-	float3 color = LinearToSrgb(vignette * result.rgb / normalization + noise);
-	dst[coord] = float4(color, 1.0);
-//	dst[coord] = pow(result / normalization, GAMMA) * vignette + noise;
+	dst[coord] = float4(LinearToSrgb(result.xyz / normalization) * vignette + noise, 1.0);
 }

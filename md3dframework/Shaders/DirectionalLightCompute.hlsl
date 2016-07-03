@@ -113,7 +113,10 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 
 		light.color *= shade;
 		
-		AccumulateLight(material, position, normal, light, diffuse_accum, specular_accum);
+		if (coord.x > 400)
+			AccumulateLight(material, position, normal, light, diffuse_accum, specular_accum);
+		else
+			AccumulateLightOpt(material, position, normal, light, diffuse_accum, specular_accum);
 		
 		OutDiffuseLight[coord] = float4(diffuse_accum, 1);
 		OutSpecularLight[coord] = float4(specular_accum, 1);

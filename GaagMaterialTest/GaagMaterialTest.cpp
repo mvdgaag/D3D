@@ -15,6 +15,9 @@ pMesh				g_cube_mesh;
 pMeshObject			g_cube_object;
 pMaterial			g_cube_material;
 pTexture			g_cube_surface_texture;
+pTexture			g_cube_normal_texture;
+pTexture			g_cube_diffuse_texture;
+
 
 pCameraController	g_camera_controller;
 pTexture			g_cubemap;
@@ -51,8 +54,12 @@ int WINAPI wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance, 
 
 	RenderState render_state;
 	render_state.EnableDirect = true;
-	render_state.EnableIndirect = true;
+	render_state.EnableIndirect = false;
+#ifdef REFL
 	render_state.EnableReflections = true;
+#else
+	render_state.EnableReflections = false;
+#endif
 	render_state.EnablePostProcess = true;
 	render_state.CubeMap = g_filtered_cubemap;
 	//render_state.CubeMap = g_cubemap;
@@ -100,14 +107,14 @@ void InitContent()
 		Gaag.RegisterObject(g_objects[i]);
 	}
 
-	g_cube_surface_texture = theResourceFactory.LoadTexture("Textures/roughnesstest.dds", BindFlag::BIND_SHADER_RESOURCE | BindFlag::BIND_RENDER_TARGET);
+	g_cube_surface_texture = theResourceFactory.LoadTexture("Textures/surface.dds", BindFlag::BIND_SHADER_RESOURCE | BindFlag::BIND_RENDER_TARGET);
+	g_cube_normal_texture = theResourceFactory.LoadTexture("Textures/normal.dds", BindFlag::BIND_SHADER_RESOURCE | BindFlag::BIND_RENDER_TARGET);
+	g_cube_diffuse_texture = theResourceFactory.LoadTexture("Textures/diffuse.dds", BindFlag::BIND_SHADER_RESOURCE | BindFlag::BIND_RENDER_TARGET);
 
 	g_cube_material = theResourceFactory.MakeMaterial();
-	g_cube_material->SetDiffuseValue(float4(0.2, 0.6, 0.4, 0.0f));
-	g_cube_material->SetReflectivityValue(0.04);
 	g_cube_material->SetSurfaceTexture(g_cube_surface_texture);
-	g_cube_material->SetMetalicityValue(0.0);
-	g_cube_material->SetEmissivenessValue(0.0f);
+	g_cube_material->SetNormalTexture(g_cube_normal_texture);
+	g_cube_material->SetDiffuseTexture(g_cube_diffuse_texture);
 	g_cube_material->SetPixelShader(theResourceFactory.GetDefaultMaterial()->GetPixelShader());
 	g_cube_material->SetVertexShader(theResourceFactory.GetDefaultMaterial()->GetVertexShader());
 
@@ -118,8 +125,10 @@ void InitContent()
 	g_cube_object->Translate(float3(0, 0, 10));
 	Gaag.RegisterObject(g_cube_object);
 
+#ifdef REFL
 	g_cubemap = theResourceFactory.LoadTexture("Textures/cubemap.dds", BIND_COMPUTE_TARGET);
 	g_filtered_cubemap = Gaag.PreFilterCubemap(g_cubemap);
+#endif
 
 	g_directional_light = theResourceFactory.MakeDirectionalLight(float3(1, -1, 1), float4(1, 1, 1, 1), 0);
 	Gaag.RegisterLight(g_directional_light);

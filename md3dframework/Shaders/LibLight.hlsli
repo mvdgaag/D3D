@@ -49,12 +49,12 @@ float2 Hammersley(uint i, uint N)
 }
 
 
-// TODO: m2*m2 or m2 in CosTheta
-// m2*m2 seems to best match analytical light falloff, but needs proof
-float3 ImportanceSampleGGX(float2 Xi, float m2, float3 N)
+// TODO: alpha*alpha or alpha in CosTheta
+// alpha*alpha seems to best match analytical light falloff, but needs proof
+float3 ImportanceSampleGGX(float2 Xi, float alpha, float3 N)
 {
 	float Phi = 2 * PI * Xi.x;
-	float CosTheta = sqrt((1 - Xi.y) / (1 + (m2*m2 - 1) * Xi.y));
+	float CosTheta = sqrt((1 - Xi.y) / (1 + (alpha*alpha - 1) * Xi.y));
 	float SinTheta = sqrt(1 - CosTheta * CosTheta);
 
 	float3 H;
@@ -98,13 +98,13 @@ float3 ImportanceSampleCosine(float2 Xi, float3 N)
 */
 
 
-float OrenNayar(float dotNL, float dotNV, float3 N, float V, float m2)
+float OrenNayar(float dotNL, float dotNV, float3 N, float V, float alpha)
 {
 	if (dotNL <= 0)
 		return 0;
 
-	float a = 1.0 - 0.5 * (m2 / (m2 + 0.57));
-	float b = 0.45 * (m2 / (m2 + 0.09));
+	float a = 1.0 - 0.5 * (alpha / (alpha + 0.57));
+	float b = 0.45 * (alpha / (alpha + 0.09));
 	float ga = dot(V - N * dotNV, N - N * dotNL);
 	return dotNL * (a + b * max(0.0, ga) * sqrt((1.0 - dotNV * dotNV) * (1.0 - dotNL * dotNL)) / max(dotNL, dotNV));
 }
@@ -136,56 +136,46 @@ float G1_SchlickSmith(float dotXX, float k)
 	return dotXX / (dotXX * (1.0 - k) + k);
 }
 
-float G_SchlickSmithGGX(float dotNL, float dotNV, float m2)
+
+float G_GGX_Correlated(float dotNL, float dotNV, float alpha)
 {
-	float k = max(m2 * 0.5, 1e-5);
-	return G1_SchlickSmith(dotNL, k) * G1_SchlickSmith(dotNV, k);
-}
+	// different than frostbytes optimalisation, that seems wrong!
 
+	// float lambda_v = (-1 + sqrt(1 + alphaG2 * (1 - dotNV2) / dotNV2)) / 2;
+	// float lambda_l = (-1 + sqrt(1 + alphaG2 * (1 - dotNL2) / dotNL2)) / 2;
+	// G_SmithGGXCorrelated = 1 / (1 + lambda_v + lambda_l );
 
-// Smith G for GGX
-float G1_GGX(float dotXX, float k)
-{
-	(2.0 * dotXX) / (dotXX + sqrt(k + (1 - k) * dotXX * dotXX));
-}
+	float alpha2 = alpha * alpha;
+	float dotNL2 = dotNL * dotNL;
+	float dotNV2 = dotNV * dotNV;
 
-float G_GGX(float dotNL, float dotNV, float m2)
-{
-	float k = m2 * m2;
-	return G1_GGX(dotNL, k) * G1_GGX(dotNV, k);
-}
-
-
-// smith G with height correlation for GGX
-float G1_GGX_Correlated(float dotXX, float k)
-{
-	float dotXX2 = dotXX * dotXX;
-	return (-1.0 + sqrt(k * (1.0 - dotXX2) / dotXX2 + 1.0)) * 0.5;
-}
-
-float G_GGX_Correlated(float dotNL, float dotNV, float m2)
-{
-	float k = m2 * m2;
-	return rcp(1.0 + G1_GGX_Correlated(dotNL, k) + G1_GGX_Correlated(dotNV, k));
-}
-
-
-// Smith visibility for GGX, optimized
-float RcpV1GGX(float dotXX, float a2)
-{
-	return dotXX + sqrt(a2 + (1 - a2) * dotXX * dotXX);
-}
-
-float V_GGX(float dotNL, float dotNV, float m2)
-{
-	float a2 = m2*m2;
-	return rcp(RcpV1GGX(dotNL, a2) * RcpV1GGX(dotNV, a2));
+	float a = sqrt(1.0 + alpha2 * (-1.0 + (1.0 / dotNL2)));
+	float b = sqrt(1.0 + alpha2 * (-1.0 + (1.0 / dotNV2)));
+	return (2.0 * dotNL * dotNV) / (a + b);
 }
 
 
 // Smith visibility for GGX, height correlated, optimized
-float V_SmithGGXCorrelated(float dotNL, float dotNV, float alphaG)
+float V_SmithGGXCorrelated(float dotNL, float dotNV, float alpha)
 {
+	// different than frostbytes optimalisation, that seems wrong!
+
+	// float lambda_v = (-1 + sqrt(1 + alphaG2 * (1 - dotNV2) / dotNV2)) / 2;
+	// float lambda_l = (-1 + sqrt(1 + alphaG2 * (1 - dotNL2) / dotNL2)) / 2;
+	// G_SmithGGXCorrelated = 1 / (1 + lambda_v + lambda_l );
+	// V_SmithGGXCorrelated = G_SmithGGXCorrelated / (4 * dotNL * dotNV );
+
+	float alpha2 = alpha * alpha;
+	float dotNL2 = dotNL * dotNL;
+	float dotNV2 = dotNV * dotNV;
+
+	float a = sqrt(1.0 + alpha2 * (-1.0 + (1.0 / dotNL2)));
+	float b = sqrt(1.0 + alpha2 * (-1.0 + (1.0 / dotNV2)));
+	return 0.5 / (a + b);
+
+	/*
+	frostbytes version:
+
 	// Original formulation of G_SmithGGX Correlated
 	// lambda_v = (-1 + sqrt(alphaG2 * (1 - dotNL2) / dotNL2 + 1)) / 2;
 	// lambda_l = (-1 + sqrt(alphaG2 * (1 - dotNV2) / dotNV2 + 1)) / 2;
@@ -199,6 +189,7 @@ float V_SmithGGXCorrelated(float dotNL, float dotNV, float alphaG)
 	float Lambda_GGXL = dotNV * sqrt((-dotNL * alphaG2 + dotNL) * dotNL + alphaG2);
 	
 	return 0.5 / (Lambda_GGXV + Lambda_GGXL);
+	*/
 }
 
 
@@ -211,12 +202,16 @@ float V_SmithGGXCorrelated(float dotNL, float dotNV, float alphaG)
 
 // GGX Trowbridge-Reitz
 // http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf p3
-float D_GGX(float dotNH, float m2)
+float D_GGX(float dotNH, float alpha)
 {
-	float tmp = m2 / max(1e-8, (dotNH * dotNH * (m2 * m2 - 1.0) + 1.0));
+	float tmp = alpha / max(1e-8, (dotNH * dotNH * (alpha * alpha - 1.0) + 1.0));
 	return tmp * tmp / PI;
 }
 
+
+/*
+	dotNH = dot(l+v,n) / |l+v|
+*/
 
 /*
 **
@@ -229,12 +224,12 @@ float3 BruteForceSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, flo
 {
 	float3 SpecularLighting = 0;
 	const uint kNumSamples = 512;
-	float m2 = m*m;
+	float alpha = m*m;
 
 	for (uint i = 0; i < kNumSamples; i++)
 	{
 		float2 Xi = Hammersley(i, kNumSamples);
-		float3 H = ImportanceSampleGGX(Xi, m2, N);
+		float3 H = ImportanceSampleGGX(Xi, alpha, N);
 		float3 L = 2 * dot(V, H) * H - V;
 
 		float dotNL = saturate(dot(N, L));
@@ -254,7 +249,7 @@ float3 BruteForceSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, flo
 			float dotLH = saturate(dot(L, H));
 
 			float3 F = F_GGX(dotLH, SpecularColor, float3(1.0, 1.0, 1.0));
-			float G = G_GGX_Correlated(dotNL, dotNV, m2);
+			float G = G_GGX_Correlated(dotNL, dotNV, alpha);
 			
 			SpecularLighting += EnvMap.SampleLevel(EnvMapSampler, L, 0).rgb * F * G * dotLH / (dotNV * dotNH);
 		}
@@ -287,7 +282,7 @@ float3 BruteForceDiffuseIBL(TextureCube EnvMap, SamplerState EnvMapSampler, floa
 */
 
 
-float2 IntegrateBRDF(float m2, float dotNV)
+float2 IntegrateBRDF(float alpha, float dotNV)
 {
 	float3 V;
 	V.x = sqrt(1.0f - dotNV * dotNV); // sin
@@ -301,7 +296,7 @@ float2 IntegrateBRDF(float m2, float dotNV)
 	for (uint i = 0; i < kNumSamples; i++)
 	{
 		float2 Xi = Hammersley(i, kNumSamples);
-		float3 H = ImportanceSampleGGX(Xi, m2, float3(0.0, 0.0, 1.0));
+		float3 H = ImportanceSampleGGX(Xi, alpha, float3(0.0, 0.0, 1.0));
 		float3 L = 2 * dot(V, H) * H - V;
 
 		float dotNL = saturate(L.z);
@@ -310,7 +305,7 @@ float2 IntegrateBRDF(float m2, float dotNV)
 	
 		if (dotNL > 0)
 		{
-			float G = G_GGX_Correlated(dotNL, dotNV, m2);
+			float G = G_GGX_Correlated(dotNL, dotNV, alpha);
 			float vis = G * dotVH / (dotNH * dotNV);
 			float Fc = pow(1 - dotVH, 5);
 			A += (1 - Fc) * vis;
@@ -322,7 +317,7 @@ float2 IntegrateBRDF(float m2, float dotNV)
 }
 
 
-float3 PrefilterEnvMap(TextureCube EnvMap, SamplerState EnvMapSampler, float m2, float3 R)
+float3 PrefilterEnvMap(TextureCube EnvMap, SamplerState EnvMapSampler, float alpha, float3 R)
 {
 	float3 N = R;
 	float3 V = R;
@@ -330,12 +325,12 @@ float3 PrefilterEnvMap(TextureCube EnvMap, SamplerState EnvMapSampler, float m2,
 	float  total_weight = 0;
 
 	// TODO: higher numbers crash compute shader on timeout!
-	const uint kNumSamples = 256;
+	const uint kNumSamples = 512;
 
 	for (uint i = 0; i < kNumSamples; i++)
 	{
 		float2 Xi = Hammersley(i, kNumSamples);
-		float3 H = ImportanceSampleGGX(Xi, m2, N);
+		float3 H = ImportanceSampleGGX(Xi, alpha, N);
 		float3 L = 2 * dot(V, H) * H - V;
 		float dotNL = saturate(dot(N, L));
 
@@ -350,25 +345,37 @@ float3 PrefilterEnvMap(TextureCube EnvMap, SamplerState EnvMapSampler, float m2,
 }
 
 
+// http://www.frostbite.com/wp-content/uploads/2014/11/course_notes_moving_frostbite_to_pbr_v2.pdf
+float3 getSpecularDominantDir(float3 N, float3 R, float roughness)
+{
+	float smoothness = saturate(1 - roughness);
+	float lerpFactor = smoothness * (sqrt(smoothness) + roughness);
+	 // The result is not normalized as we fetch in a cubemap
+	return lerp(N, R, lerpFactor);
+}
+
+
+
 float3 ApproximateSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, float EnvMapMaxMip, Texture2D BRDFLookupTexture, SamplerState BRDFLookupSampler, float3 SpecularColor, float m, float3 N, float3 V)
 {
-	float m2 = m * m;
+	float alpha = m * m;
 
 	float dotNV = saturate(dot(N, V));
 	float3 R = 2 * dot(V, N) * N - V;
 
 	// HACK attempt to approximate sampling the dominant specular direction
 	// m^3 seems to match brute force highlight locations better than m^2 and m^4
-	R = lerp(R, N, m*m2);
+	//R = lerp(R, N, m*alpha);
+	R = getSpecularDominantDir(N, R, m);
 
 	float mip = m * (EnvMapMaxMip - 2);
 
 	float3 prefiltered_color = EnvMap.SampleLevel(EnvMapSampler, R, mip);
-	float2 env_brdf = BRDFLookupTexture.SampleLevel(BRDFLookupSampler, float2(m2, dotNV), 0);
+	float2 env_brdf = BRDFLookupTexture.SampleLevel(BRDFLookupSampler, float2(alpha, dotNV), 0);
 
 	// uncomment to skip lookups and generate from mip0
-	//float3 prefiltered_color = PrefilterEnvMap(EnvMap, EnvMapSampler, m2, R);
-	//float2 env_brdf = IntegrateBRDF(m2, dotNV);
+	//float3 prefiltered_color = PrefilterEnvMap(EnvMap, EnvMapSampler, alpha, R);
+	//float2 env_brdf = IntegrateBRDF(alpha, dotNV);
 
 	return prefiltered_color * (SpecularColor * env_brdf.x + env_brdf.y);
 }
@@ -443,7 +450,7 @@ void SpherelightIlluminance(float3 lightWorldPos, float3 worldPos, float3 worldN
 */
 
 
-void BRDF_GGX(float3 N, float3 V, float3 L, float m2, float3 F0, out float3 Spec, out float3 Diff)
+void BRDF_GGX(float3 N, float3 V, float3 L, float alpha, float3 F0, out float3 Spec, out float3 Diff)
 {
 	float3 H = normalize(V + L);
 
@@ -452,12 +459,19 @@ void BRDF_GGX(float3 N, float3 V, float3 L, float m2, float3 F0, out float3 Spec
 	float dotNH = saturate(dot(N, H));
 	float dotLH = saturate(dot(L, H));
 
-	float D = D_GGX(dotNH, m2);
-	float F = F_GGX(dotLH, F0, float3(1.0, 1.0, 1.0));
-	float vis = V_SmithGGXCorrelated(dotNL, dotNV, m2);
+	if (dotNL > 0)
+	{
+		float D = D_GGX(dotNH, alpha);
+		float F = F_GGX(dotLH, F0, float3(1.0, 1.0, 1.0));
+		float vis = V_SmithGGXCorrelated(dotNL, dotNV, alpha);
 
-	Spec = D * F * vis; // = D * F * G / (4 * dotNL * dotNV)
-	Diff = (1 - F) / PI;
+		Spec = D * F * vis; // = D * F * G / (4 * dotNL * dotNV)
+		Diff = (1 - F) / PI;
+	}
+	else
+	{
+		Spec = Diff = 0;
+	}
 }
 
 
@@ -467,7 +481,7 @@ void AccumulateLight(Material inMaterial, float3 inPosition, float3 inNormal, Li
 	float3 V =			normalize(-inPosition);
 	float3 L =			inLight.direction;
 	float m =			max(0.1, saturate(inMaterial.roughness));
-	float m2 =			m * m;
+	float alpha =			m * m;
 	float F0 =			max(0.02, saturate(inMaterial.reflectance));
 
 	float3 specular = lerp(float3(F0, F0, F0), (F0 * 2 + 0.5) * inMaterial.diffuse.rgb, inMaterial.metalicity);
@@ -477,10 +491,49 @@ void AccumulateLight(Material inMaterial, float3 inPosition, float3 inNormal, Li
 	float dotNL = saturate(dot(N, L));
 
 	float3 S, D;
-	BRDF_GGX(N, V, L, m2, specular, S, D);
+	BRDF_GGX(N, V, L, alpha, specular, S, D);
 	
 	ioDiffuse += D * diffuse * inLight.color * inLight.attenuation * dotNL;
 	ioSpecular += S * specular * inLight.color * inLight.attenuation * dotNL;
+}
+
+
+void AccumulateLightOpt(Material inMaterial, float3 inPosition, float3 inNormal, Light inLight, inout float3 ioDiffuse, inout float3 ioSpecular)
+{
+	float3 N = inNormal;
+	float3 V = normalize(-inPosition);
+	float3 L = inLight.direction;
+	float m = max(0.1, saturate(inMaterial.roughness));
+	float alpha = m * m;
+	float F0 = max(0.02, saturate(inMaterial.reflectance));
+
+	float3 specular = lerp(float3(F0, F0, F0), (F0 * 2 + 0.5) * inMaterial.diffuse.rgb, inMaterial.metalicity);
+	float3 diffuse = inMaterial.diffuse.rgb * (1 - inMaterial.metalicity);
+
+	float dotNL = saturate(dot(N, L));
+	float dotNV = saturate(dot(N, V));	
+	float dotVL = saturate(dot(V, L));
+	//float dotNH = saturate(dot(normalize(V+L), N));
+	//dotNH = (dotNL + dotNV) / sqrt(2.0 * dotVL + 2.0); // normalized if V and L are
+
+	float alpha2 = alpha * alpha;
+	float dotNL2 = dotNL * dotNL;
+	float dotNV2 = dotNV * dotNV;
+	float dotNH2 = (dotNL + dotNV) * (dotNL + dotNV) / (2.0 + 2.0 * dotVL);
+
+	// GGX: D
+	float tmp = alpha / max(1e-5, (dotNH2 * (alpha2 - 1.0) + 1.0));
+	float D = tmp * tmp / PI;
+
+	// GGX: vis = G / (4 * dotNL * dotNV)
+	tmp = (1.0 / alpha2) - 1.0;
+	float vis = 0.5 / ( alpha * ( sqrt(tmp + 1.0/dotNL2) + sqrt(tmp + 1.0/dotNV2) ) );
+
+	// Schlick fresnel
+	float F = F0 + (1.0 - F0) * pow(1.0 - sqrt(dotNH2), 5.0);
+	
+	ioDiffuse += (1-F0) / PI * diffuse * inLight.color * inLight.attenuation * dotNL;
+	ioSpecular += D * vis * F * specular * inLight.color * inLight.attenuation * dotNL;
 }
 
 
