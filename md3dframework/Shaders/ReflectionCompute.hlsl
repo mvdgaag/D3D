@@ -53,13 +53,13 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 
 	float3 refl = ApproximateSpecularIBL(CubemapTexture, CubemapSampler, cParams.y, BRDFLookupTexture, BRDFLookupSampler, specular_color, roughness, world_normal, world_view);
 	// DEVHACK: add diffuse
-	//refl += diffuse_color * (1 - specular_color) * CubemapTexture.SampleLevel(CubemapSampler, world_normal, 7).rgb;
+	refl += diffuse_color * (1 - specular_color) * CubemapTexture.SampleLevel(CubemapSampler, world_normal, 7).rgb;
 
-	if (coord.x > 400 && true)
+	if (coord.x > 400 && false)
 	{
 		refl = BruteForceSpecularIBL(CubemapTexture, CubemapSampler, specular_color, roughness, world_normal, world_view);
 		// DEVHACK: add diffuse
-		//refl += diffuse_color * (1 - specular_color) * BruteForceDiffuseIBL(CubemapTexture, CubemapSampler, specular_color, roughness, world_normal, world_view);
+		refl += diffuse_color * (1 - specular_color) * BruteForceDiffuseIBL(CubemapTexture, CubemapSampler, specular_color, roughness, world_normal, world_view);
 	}
 
 	Dest[coord] = float4(refl, 0.0);

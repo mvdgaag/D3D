@@ -129,67 +129,44 @@ float3 F_GGX(float dotLX, float3 F0, float3 F90)
 **
 */
 
-
-// Schlick Smith G for GGX
-float G1_SchlickSmith(float dotXX, float k)
+/*
+float Unoptimized_G_GGX_Correlated(float dotNL, float dotNV, float alpha)
 {
-	return dotXX / (dotXX * (1.0 - k) + k);
+	float alpha2 = alpha * alpha;
+	float dotNL2 = dotNL * dotNL;
+	float dotNV2 = dotNV * dotNV;
+
+	float lambda_v = (-1.0 + sqrt(1.0 + alpha2 * (1.0 - dotNV2) / dotNV2)) / 2.0;
+	float lambda_l = (-1.0 + sqrt(1.0 + alpha2 * (1.0 - dotNL2) / dotNL2)) / 2.0;
+	return (dotNL * dotNV) / (1.0 + lambda_v + lambda_l );
 }
 
+
+float Unoptimized_V_GGXCorrelated(float dotNL, float dotNV, float alpha)
+{
+	return Unoptimized_G_GGX_Correlated(dotNL, dotNV, alpha) / (4.0 * dotNL * dotNV);
+}
+*/
 
 float G_GGX_Correlated(float dotNL, float dotNV, float alpha)
 {
-	// different than frostbytes optimalisation, that seems wrong!
-
-	// float lambda_v = (-1 + sqrt(1 + alphaG2 * (1 - dotNV2) / dotNV2)) / 2;
-	// float lambda_l = (-1 + sqrt(1 + alphaG2 * (1 - dotNL2) / dotNL2)) / 2;
-	// G_SmithGGXCorrelated = 1 / (1 + lambda_v + lambda_l );
-
 	float alpha2 = alpha * alpha;
 	float dotNL2 = dotNL * dotNL;
 	float dotNV2 = dotNV * dotNV;
 
-	float a = sqrt(1.0 + alpha2 * (-1.0 + (1.0 / dotNL2)));
-	float b = sqrt(1.0 + alpha2 * (-1.0 + (1.0 / dotNV2)));
-	return (2.0 * dotNL * dotNV) / (a + b);
+	float tmp = (1.0 / alpha2) - 1.0;
+	return (2.0 * dotNL * dotNV) / (alpha * (sqrt(tmp + 1.0 / dotNL2) + sqrt(tmp + 1.0 / dotNV2)));
 }
 
 
-// Smith visibility for GGX, height correlated, optimized
-float V_SmithGGXCorrelated(float dotNL, float dotNV, float alpha)
+float V_GGXCorrelated(float dotNL, float dotNV, float alpha)
 {
-	// different than frostbytes optimalisation, that seems wrong!
-
-	// float lambda_v = (-1 + sqrt(1 + alphaG2 * (1 - dotNV2) / dotNV2)) / 2;
-	// float lambda_l = (-1 + sqrt(1 + alphaG2 * (1 - dotNL2) / dotNL2)) / 2;
-	// G_SmithGGXCorrelated = 1 / (1 + lambda_v + lambda_l );
-	// V_SmithGGXCorrelated = G_SmithGGXCorrelated / (4 * dotNL * dotNV );
-
 	float alpha2 = alpha * alpha;
 	float dotNL2 = dotNL * dotNL;
 	float dotNV2 = dotNV * dotNV;
 
-	float a = sqrt(1.0 + alpha2 * (-1.0 + (1.0 / dotNL2)));
-	float b = sqrt(1.0 + alpha2 * (-1.0 + (1.0 / dotNV2)));
-	return 0.5 / (a + b);
-
-	/*
-	frostbytes version:
-
-	// Original formulation of G_SmithGGX Correlated
-	// lambda_v = (-1 + sqrt(alphaG2 * (1 - dotNL2) / dotNL2 + 1)) / 2;
-	// lambda_l = (-1 + sqrt(alphaG2 * (1 - dotNV2) / dotNV2 + 1)) / 2;
-	// G_SmithGGXCorrelated = 1 / (1 + lambda_v + lambda_l );
-	// V_SmithGGXCorrelated = G_SmithGGXCorrelated / (4 * dotNL * dotNV );
-	
-	// This is the optimize version
-	float alphaG2 = alphaG * alphaG;
-	// Caution : the " dotNL *" and " dotNV *" are explicitely inversed , this is not a mistake .
-	float Lambda_GGXV = dotNL * sqrt((-dotNV * alphaG2 + dotNV) * dotNV + alphaG2);
-	float Lambda_GGXL = dotNV * sqrt((-dotNL * alphaG2 + dotNL) * dotNL + alphaG2);
-	
-	return 0.5 / (Lambda_GGXV + Lambda_GGXL);
-	*/
+	float tmp = (1.0 / alpha2) - 1.0;
+	return 0.5 / (alpha * (sqrt(tmp + 1.0 / dotNL2) + sqrt(tmp + 1.0 / dotNV2)));
 }
 
 
@@ -388,68 +365,6 @@ float3 ApproximateSpecularIBL(TextureCube EnvMap, SamplerState EnvMapSampler, fl
 */
 
 
-/*
-// http://www.frostbite.com/2014/11/moving-frostbite-to-pbr/
-void SpherelightIlluminance(float3 lightWorldPos, float3 worldPos, float3 worldNormal, float radius)
-{
-	float3 Lunormalized = lightWorldPos - worldPos;
-	float3 L = normalize(Lunormalized);
-	float distance2 = dot(Lunormalized, Lunormalized);
-	float illuminance = 0;
-
-#if WITHOUT_CORRECT_HORIZON // Analytical solution above horizon
-	// Patch to Sphere frontal equation ( Quilez version )
-	float radius2 = radius * radius;
-	// Do not allow object to penetrate the light ( max )
-	// Form factor equation include a (1 / PI ) that need to be cancel
-	// thus the " PI *"
-	illuminance = PI * (radius2 / (max(radius2, distance2))) * saturate(dot(worldNormal, L));
-# else // Analytical solution with horizon
-	// Tilted patch to sphere equation
-	float beta = acos(dot(worldNormal, L));
-	float H = sqrt(distance2);
-	float h = H / radius;
-	float x = sqrt(h * h - 1);
-	float y = -x * (1 / tan(beta));
-	
-	if (h * cos(beta) > 1)
-		illuminance = cos(beta) / (h * h);
-	else
-		illuminance = (1 / (PI * h * h)) * (cos(beta) * acos(y) - x * sin(beta) * sqrt(1 - y * y)) +	(1 / PI) * atan(sin(beta) * sqrt(1 - y * y) / x);
-	
-	illuminance *= PI;
-# endif
-
-	return illuminance;
-}
-
-
-
-	cos_b = dot(worldNormal, L);
-	sin_b = sqrt(1 - cos_b * cos_b);
-	tan_b = sin_b / cos_b;
-
-	// Tilted patch to sphere equation
-	
-	float distance = sqrt(distance2);
-	float norm_distance = distance / radius;
-	float norm_distance2 = norm_distance * norm_distance;
-
-	float edge_distance = sqrt(norm_distance2 - 1);
-	float y = -edge_distance * (1 / tan_b);
-	float y2 = y*y;
-
-	if (h * cos_b > 1)
-		illuminance = cos_b / (norm_distance2);
-	else
-		illuminance = (1 / (PI * norm_distance2)) * 
-			(cos_b * acos(y) - edge_distance * sin_b * sqrt(1 - y2)) + 
-			(1 / PI) * atan(sin_b * sqrt(1 - y2) / edge_distance);
-
-	illuminance *= PI;
-*/
-
-
 void BRDF_GGX(float3 N, float3 V, float3 L, float alpha, float3 F0, out float3 Spec, out float3 Diff)
 {
 	float3 H = normalize(V + L);
@@ -463,7 +378,7 @@ void BRDF_GGX(float3 N, float3 V, float3 L, float alpha, float3 F0, out float3 S
 	{
 		float D = D_GGX(dotNH, alpha);
 		float F = F_GGX(dotLH, F0, float3(1.0, 1.0, 1.0));
-		float vis = V_SmithGGXCorrelated(dotNL, dotNV, alpha);
+		float vis = V_GGXCorrelated(dotNL, dotNV, alpha);
 
 		Spec = D * F * vis; // = D * F * G / (4 * dotNL * dotNV)
 		Diff = (1 - F) / PI;
@@ -481,7 +396,7 @@ void AccumulateLight(Material inMaterial, float3 inPosition, float3 inNormal, Li
 	float3 V =			normalize(-inPosition);
 	float3 L =			inLight.direction;
 	float m =			max(0.1, saturate(inMaterial.roughness));
-	float alpha =			m * m;
+	float alpha =		m * m;
 	float F0 =			max(0.02, saturate(inMaterial.reflectance));
 
 	float3 specular = lerp(float3(F0, F0, F0), (F0 * 2 + 0.5) * inMaterial.diffuse.rgb, inMaterial.metalicity);
@@ -525,9 +440,7 @@ void AccumulateLightOpt(Material inMaterial, float3 inPosition, float3 inNormal,
 	float tmp = alpha / max(1e-5, (dotNH2 * (alpha2 - 1.0) + 1.0));
 	float D = tmp * tmp / PI;
 
-	// GGX: vis = G / (4 * dotNL * dotNV)
-	tmp = (1.0 / alpha2) - 1.0;
-	float vis = 0.5 / ( alpha * ( sqrt(tmp + 1.0/dotNL2) + sqrt(tmp + 1.0/dotNV2) ) );
+	float vis = V_GGXCorrelated(dotNL, dotNV, alpha);
 
 	// Schlick fresnel
 	float F = F0 + (1.0 - F0) * pow(1.0 - sqrt(dotNH2), 5.0);

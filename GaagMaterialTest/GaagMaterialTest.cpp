@@ -5,6 +5,8 @@
 #include "PointLight.h"
 #include "SpotLight.h"
 
+#define REFL
+
 Window* g_window = nullptr;
 
 pMesh				g_mesh;
