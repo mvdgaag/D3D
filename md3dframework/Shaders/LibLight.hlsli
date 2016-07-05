@@ -399,17 +399,18 @@ void AccumulateLight(Material inMaterial, float3 inPosition, float3 inNormal, Li
 	float alpha =		m * m;
 	float F0 =			max(0.02, saturate(inMaterial.reflectance));
 
-	float3 specular = lerp(float3(F0, F0, F0), (F0 * 2 + 0.5) * inMaterial.diffuse.rgb, inMaterial.metalicity);
-	float3 diffuse = inMaterial.diffuse.rgb * (1 - inMaterial.metalicity);
+	float3 specular_color = lerp(float3(F0, F0, F0), (F0 * 2.0) * inMaterial.diffuse.rgb, inMaterial.metalicity);
+	float3 diffuse_color = inMaterial.diffuse.rgb * (1 - inMaterial.metalicity);
 	
 	// TODO: this is double calculated in the brdf function!
 	float dotNL = saturate(dot(N, L));
 
 	float3 S, D;
-	BRDF_GGX(N, V, L, alpha, specular, S, D);
+	BRDF_GGX(N, V, L, alpha, specular_color, S, D);
 	
-	ioDiffuse += D * diffuse * inLight.color * inLight.attenuation * dotNL;
-	ioSpecular += S * specular * inLight.color * inLight.attenuation * dotNL;
+	float irradiance = inLight.color * inLight.attenuation * dotNL;
+	ioDiffuse += D * diffuse_color * irradiance;
+	ioSpecular += S * specular_color * irradiance;
 }
 
 
@@ -422,31 +423,32 @@ void AccumulateLightOpt(Material inMaterial, float3 inPosition, float3 inNormal,
 	float alpha = m * m;
 	float F0 = max(0.02, saturate(inMaterial.reflectance));
 
-	float3 specular = lerp(float3(F0, F0, F0), (F0 * 2 + 0.5) * inMaterial.diffuse.rgb, inMaterial.metalicity);
-	float3 diffuse = inMaterial.diffuse.rgb * (1 - inMaterial.metalicity);
+	float3 specular_color = lerp(float3(F0, F0, F0), (F0 * 2.0) * inMaterial.diffuse.rgb, inMaterial.metalicity);
+	float3 diffuse_color = inMaterial.diffuse.rgb * (1 - inMaterial.metalicity);
 
 	float dotNL = saturate(dot(N, L));
 	float dotNV = saturate(dot(N, V));	
 	float dotVL = saturate(dot(V, L));
-	//float dotNH = saturate(dot(normalize(V+L), N));
-	//dotNH = (dotNL + dotNV) / sqrt(2.0 * dotVL + 2.0); // normalized if V and L are
 
 	float alpha2 = alpha * alpha;
 	float dotNL2 = dotNL * dotNL;
 	float dotNV2 = dotNV * dotNV;
 	float dotNH2 = (dotNL + dotNV) * (dotNL + dotNV) / (2.0 + 2.0 * dotVL);
 
-	// GGX: D
-	float tmp = alpha / max(1e-5, (dotNH2 * (alpha2 - 1.0) + 1.0));
-	float D = tmp * tmp / PI;
+	// Denominator of GGX height correlated visibility term = 1/vis where vis = G/(4*dotNL*dotNV)
+	float tmp = (1.0 / alpha2) - 1.0;
+	float vis_denom = 2 * (alpha * (sqrt(tmp + 1.0 / dotNL2) + sqrt(tmp + 1.0 / dotNV2)));
 
-	float vis = V_GGXCorrelated(dotNL, dotNV, alpha);
+	// Denominator of GGX distribution term = alpha2/D, where D is the specular distribution of GGX (alpha 2 is multiplied in the end)
+	tmp = max(1e-5, (dotNH2 * (alpha2 - 1.0) + 1.0));
+	float D_denom = tmp * tmp * PI;
 
 	// Schlick fresnel
 	float F = F0 + (1.0 - F0) * pow(1.0 - sqrt(dotNH2), 5.0);
 	
-	ioDiffuse += (1-F0) / PI * diffuse * inLight.color * inLight.attenuation * dotNL;
-	ioSpecular += D * vis * F * specular * inLight.color * inLight.attenuation * dotNL;
+	float irradiance = inLight.color * inLight.attenuation * dotNL;
+	ioDiffuse += ((1 - F0) / PI) * diffuse_color * irradiance;
+	ioSpecular += ((alpha2 * F) / (vis_denom * D_denom)) * specular_color * irradiance;
 }
 
 

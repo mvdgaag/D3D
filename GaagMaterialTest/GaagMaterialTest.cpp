@@ -5,7 +5,7 @@
 #include "PointLight.h"
 #include "SpotLight.h"
 
-#define REFL
+//#define REFL
 
 Window* g_window = nullptr;
 
