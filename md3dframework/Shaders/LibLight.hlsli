@@ -428,7 +428,7 @@ void AccumulateLightOpt(Material inMaterial, float3 inPosition, float3 inNormal,
 
 	float dotNL = saturate(dot(N, L));
 	float dotNV = saturate(dot(N, V));	
-	float dotVL = saturate(dot(V, L));
+	float dotVL = dot(V, L);
 
 	float alpha2 = alpha * alpha;
 	float dotNL2 = dotNL * dotNL;
