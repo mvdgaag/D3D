@@ -120,6 +120,22 @@ float OrenNayar(float dotNL, float dotNV, float3 N, float V, float alpha)
 float3 F_GGX(float dotLX, float3 F0, float3 F90)
 {
 	return F0 + (F90 - F0) * pow(1.0 - dotLX, 5.0);
+	
+	/*
+	float f0 = max(max(F0.x, F0.y), F0.z);
+	float ldx = saturate(dotLX);
+
+	float a = 1.0 - ldx;
+	float a4 = a * a;
+	a4 *= a4;
+	float die = f0 + (1 - f0) * a4 * a;
+
+	float a8 = a4 * a4;
+	float met = a8 * a4 + (1 - a8) * f0;
+
+	float fres = lerp(die, met, f0);
+	return fres * F0;
+	*/
 }
 
 

@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GaagMaterialTest", "GaagMat
 		{DDF6E666-30AB-49B6-A623-11B17A1989A8} = {DDF6E666-30AB-49B6-A623-11B17A1989A8}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ShaderBuilder", "ShaderBuilder\ShaderBuilder.vcxproj", "{3E3BE772-1EA3-4A85-A92C-56F7D6FF5D8C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -82,6 +84,21 @@ Global
 		{04351F2A-526A-4049-8442-3D75FD327232}.Release|Win32.Build.0 = Release|Win32
 		{04351F2A-526A-4049-8442-3D75FD327232}.Release|x64.ActiveCfg = Release|x64
 		{04351F2A-526A-4049-8442-3D75FD327232}.Release|x64.Build.0 = Release|x64
+		{3E3BE772-1EA3-4A85-A92C-56F7D6FF5D8C}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{3E3BE772-1EA3-4A85-A92C-56F7D6FF5D8C}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{3E3BE772-1EA3-4A85-A92C-56F7D6FF5D8C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3E3BE772-1EA3-4A85-A92C-56F7D6FF5D8C}.Debug|Win32.Build.0 = Debug|Win32
+		{3E3BE772-1EA3-4A85-A92C-56F7D6FF5D8C}.Debug|x64.ActiveCfg = Debug|Win32
+		{3E3BE772-1EA3-4A85-A92C-56F7D6FF5D8C}.Profile|Mixed Platforms.ActiveCfg = Release|Win32
+		{3E3BE772-1EA3-4A85-A92C-56F7D6FF5D8C}.Profile|Mixed Platforms.Build.0 = Release|Win32
+		{3E3BE772-1EA3-4A85-A92C-56F7D6FF5D8C}.Profile|Win32.ActiveCfg = Release|Win32
+		{3E3BE772-1EA3-4A85-A92C-56F7D6FF5D8C}.Profile|Win32.Build.0 = Release|Win32
+		{3E3BE772-1EA3-4A85-A92C-56F7D6FF5D8C}.Profile|x64.ActiveCfg = Release|Win32
+		{3E3BE772-1EA3-4A85-A92C-56F7D6FF5D8C}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{3E3BE772-1EA3-4A85-A92C-56F7D6FF5D8C}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{3E3BE772-1EA3-4A85-A92C-56F7D6FF5D8C}.Release|Win32.ActiveCfg = Release|Win32
+		{3E3BE772-1EA3-4A85-A92C-56F7D6FF5D8C}.Release|Win32.Build.0 = Release|Win32
+		{3E3BE772-1EA3-4A85-A92C-56F7D6FF5D8C}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
