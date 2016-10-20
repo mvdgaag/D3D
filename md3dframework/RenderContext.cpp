@@ -42,6 +42,7 @@ void RenderContext::Init(pWindow inWindow)
 	UINT createDeviceFlags = 0;
 #ifdef _DEBUG
 	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
+	createDeviceFlags |= D3D11_CREATE_DEVICE_DISABLE_GPU_TIMEOUT;
 #endif
 
 	D3D_DRIVER_TYPE driverTypes[] =
