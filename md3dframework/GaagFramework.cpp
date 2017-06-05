@@ -95,9 +95,9 @@ void GaagFramework::Render()
 	CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetAntiAliased()->GetTexture(), 0);
 	
 	// HACK
-	
-	//CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetReflections()->GetTexture(), 0);
+	//CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetDirectLightingDiffuse()->GetTexture(), 0);
 	//CopyToRenderTarget(theRenderContext.GetOutputRenderTarget(), mDeferredRenderer->GetGBuffer()->GetTexture(GBuffer::MATERIAL), 0);
+	
 	theRenderContext.SwapBuffers();
 }
 

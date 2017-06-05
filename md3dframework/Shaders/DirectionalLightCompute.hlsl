@@ -99,6 +99,7 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 	{
 		shade = 1.0;
 	}
+
 	if (shade > 0.0)
 	{
 		half3 normal = DecodeNormal(Normal[coord].xy);
@@ -113,12 +114,13 @@ void CS(uint3 inGroupID : SV_GroupID, uint3 inDispatchThreadID : SV_DispatchThre
 
 		light.color *= shade;
 		
-		if (coord.x > 400)
+		// TODO: test
+		//if (coord.x > 400)
 			AccumulateLight(material, position, normal, light, diffuse_accum, specular_accum);
-		else
-			AccumulateLightOpt(material, position, normal, light, diffuse_accum, specular_accum);
+		//else
+//			AccumulateLightOpt(material, position, normal, light, diffuse_accum, specular_accum);
 		
-		OutDiffuseLight[coord] = float4(diffuse_accum, 1);
+		OutDiffuseLight[coord] = float4(diffuse_accum, 1);// +float4(dot(normal, light.direction), 0.0, 0.0, 0.0);
 		OutSpecularLight[coord] = float4(specular_accum, 1);
 	}
 	else
