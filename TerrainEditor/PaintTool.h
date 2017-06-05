@@ -15,10 +15,10 @@ public:
 	void Init(pBrushLibrary inBrushLibrary);
 	void CleanUp();
 
-	void SetBrush(pBrush inBrush) { mCurrentBrush = inBrush; }
+	void SetBrush(pBrush inBrush) { assert(inBrush != nullptr);  mCurrentBrush = inBrush; }
 	pBrush GetBrush() { return mCurrentBrush; }
 
-	void SetTargetHeightField(pHeightField inHeightField) { mTargetHeightField = inHeightField; }
+	void SetTargetHeightField(pHeightField inHeightField) { assert(inHeightField != nullptr); mTargetHeightField = inHeightField; }
 	pHeightField GetTargetHeightField() { return mTargetHeightField; }
 
 	void OnKeyDown(unsigned int inKey) override;

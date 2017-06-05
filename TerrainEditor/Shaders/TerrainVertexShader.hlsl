@@ -50,11 +50,10 @@ struct PS_INPUT
 PS_INPUT VS(VS_INPUT input)
 {
 	PS_INPUT output = (PS_INPUT)0;
-
+	
 	float3 pos = input.Position;
-		pos.y += cTerrainScale.z * cHeightTexture.SampleLevel(cHeightSampler, input.TexCoord, 0).x;
-		//pos.y += input.TexCoord.x + input.TexCoord.y;
-
+	pos.y += cTerrainScale.z * cHeightTexture.SampleLevel(cHeightSampler, input.TexCoord, 0).x;
+	
 	float2 tex_size;
 	cHeightTexture.GetDimensions(tex_size.x, tex_size.y);
 	float2 rcp_tex_size = 1.0 / tex_size;
@@ -77,15 +76,15 @@ PS_INPUT VS(VS_INPUT input)
 	output.Normal = mul(float4(nor, 0.0), modelViewMatrix).xyz;
 
 	// jitter for TAA
-	output.Position = mul(float4(pos, 1.0), modelViewProjectionMatrix);
-	output.Tangent = mul(float4(input.Tangent, 0.0), modelViewMatrix).xyz;
+	output.Position = mul(modelViewProjectionMatrix, float4(pos, 1.0));
+	output.Tangent = mul(modelViewMatrix, float4(input.Tangent, 0.0)).xyz;
 	output.TexCoord = input.TexCoord.xy;
 
-	float4 cam_space_pos = mul(float4(pos, 1.0), (modelViewMatrix));
+	float4 cam_space_pos = mul(modelViewMatrix, float4(pos, 1.0));
 	output.LinearDepth = -cam_space_pos.z;
 	
 	// motion vectors
-	float4 prevPos = mul(float4(pos, 1.0), prevModelViewProjectionMatrix);
+	float4 prevPos = mul(prevModelViewProjectionMatrix, float4(pos, 1.0));
 	output.MotionVectors = (output.Position.xy / output.Position.w); // currentNDC
 	output.MotionVectors -= (prevPos.xy / prevPos.w); // prevNDC
 	output.MotionVectors *= 0.5; // NDC to UV range conversion

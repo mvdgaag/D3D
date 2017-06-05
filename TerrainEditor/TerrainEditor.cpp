@@ -45,7 +45,9 @@ void CleanUpContent();
 static void FrameFunc()
 {
 	float time_step = (float)Gaag.GetFrameDeltaTime();
-	g_water->Update(time_step);
+
+	if (g_water != nullptr)
+		g_water->Update(time_step);
 	
 	float angle = 0.1f * 2.0f * 3.1415f * time_step;
 	g_obj->Rotate(float3(0.0f, 1.0f, 0.0f), angle);
@@ -99,23 +101,22 @@ void InitContent()
 		//Gaag.RegisterLight(g_lights[i]);
 	}
 
-	g_directional_light = theResourceFactory.MakeDirectionalLight(float3(1, -1, 1), float4(1, 1, 1, 1), 2048);
+	//g_directional_light = theResourceFactory.MakeDirectionalLight(float3(1, -1, 1), float4(1, 1, 1, 1), 2048);
+	g_directional_light = theResourceFactory.MakeDirectionalLight(float3(1, -1, 1), float4(10.0, 10.0, 10.0, 1.0), 0);
 	Gaag.RegisterLight(g_directional_light);
 
 	g_spot_light = theResourceFactory.MakeSpotLight(float3(0, 10, 0), 50.0, float3(0, 0, 1), 0.5, float4(1, 0, 0, 1));
 	//Gaag.RegisterLight(g_spot_light);
 
 	g_mesh = theResourceFactory.LoadMesh("Models/sphere.obj");
+	g_obj->Init(g_mesh, theResourceFactory.GetDefaultMaterial());
+	g_obj->Translate(float3(0, 20, 0));
+	Gaag.RegisterObject(g_obj);
+	
 	g_HeightField_pixel_shader = theResourceFactory.LoadPixelShader("Shaders/TerrainFragmentShader.hlsl");
 	g_HeightField_vertex_shader = theResourceFactory.LoadVertexShader("Shaders/TerrainVertexShader.hlsl");
-	//g_diffuse_texture = theResourceFactory.LoadTexture("Textures/photosculpt-squarebricks-diffuse.dds");
-	//g_normal_texture = theResourceFactory.LoadTexture("Textures/photosculpt-squarebricks-normal.dds");
-	//g_surface_texture = theResourceFactory.LoadTexture("Textures/photosculpt-squarebricks-specular.dds");
-
+	
 	g_TerrainMaterial = theResourceFactory.MakeMaterial();
-	//g_TerrainMaterial->SetDiffuseTexture(g_diffuse_texture);
-	//g_TerrainMaterial->SetNormalTexture(g_normal_texture);
-	//g_TerrainMaterial->SetSurfaceTexture(g_surface_texture);
 	g_TerrainMaterial->SetDiffuseValue(float4(0.6f, 0.6f, 0.6f, 0.0f));
 	g_TerrainMaterial->SetReflectivityValue(0.05f);
 	g_TerrainMaterial->SetRoughnessValue(0.8f);
@@ -129,10 +130,6 @@ void InitContent()
 	g_TerrainShadowPixelShader = theResourceFactory.LoadPixelShader("Shaders/TerrainShadowFragmentShader.hlsl");
 	g_TerrainShadowMaterial->SetVertexShader(g_TerrainShadowVertexShader);
 	g_TerrainShadowMaterial->SetPixelShader(g_TerrainShadowPixelShader);
-
-	g_obj->Init(g_mesh, theResourceFactory.GetDefaultMaterial());
-	g_obj->Translate(float3(0, 20, 0));
-	Gaag.RegisterObject(g_obj);
 
 	g_HeightField = MAKE_NEW(HeightField);
 	g_HeightField->Init(int2(3), int2(128), float3(50,50,5), g_TerrainMaterial, g_TerrainShadowMaterial);
