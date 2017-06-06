@@ -106,13 +106,13 @@ void CS(uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID)
 	float4 ssgi = SSGI(pos, normal, depth, coord);
 	
 	float3 up = cFrameData.xyz;
-	float3 sky_color = float3(0.5, 0.5, 0.5);
+	float3 sky_color = float3(0.5, 0.5, 0.5); // TODO: add skylight light instead
 
 	// fraction of hemisphere
 	float sky_visible_frac = saturate(1.0 - acos(dot(normal, up) - 0.01) / 3.1415);
 	float sky_average_attenuation = dot(up, normalize(normal + up));
 	
-	//ssgi.rgb += sky_visible_frac * sky_average_attenuation * ssgi.a * sky_color;
+	ssgi.rgb += sky_visible_frac * sky_average_attenuation * ssgi.a * sky_color;
 	ssgi.rgb *= diffuseTexture.SampleLevel(diffuseSampler, uv, 0).xyz;
 
 	dst[coord] = float4(ssgi);

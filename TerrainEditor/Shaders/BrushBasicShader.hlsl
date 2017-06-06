@@ -1,5 +1,3 @@
-#include "LibSimplexNoiseShader.hlsli"
-
 RWTexture2D<float> rwTarget : register(u0);
 
 
@@ -28,11 +26,5 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	falloff = saturate((1.0 - falloff) / falloff_start_frac);
 	falloff = smoothstep(0.0, 1.0, falloff);
 
-	int2 world_pixel_position = cPaintData.zw + coord_in_brush - radius;
-	float noise = 0.25 * snoise(0.1 * float2(world_pixel_position));
-	noise += 0.5 * snoise(0.05 * float2(world_pixel_position) + 42.0);
-	noise += snoise(0.025 * float2(world_pixel_position) + 666.0);
-	noise /= 1.75;
-
-	rwTarget[target_pixel] += falloff * height_add * noise;
+	rwTarget[target_pixel] += falloff * height_add;
 }

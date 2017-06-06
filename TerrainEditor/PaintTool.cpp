@@ -87,12 +87,38 @@ void PaintTool::ApplyPaint(float2 inWorldCoord)
 	for each (int2 index in tile_indices)
 	{
 		pHeightFieldTile tile = mTargetHeightField->GetTile(index);
+		
+		// set neighbords array if needed
+		apHeightFieldTile neighbors;
+		if (mCurrentBrush->SamplesNeighbors())
+		{
+			neighbors.resize(3);
+			assert(tile_indices.size() <= 4);
+			for each (int2 neighbor_index in tile_indices)
+			{
+				if (neighbor_index == index)
+					continue;
+
+				// horizontal neighbor
+				if (neighbor_index.y == index.y)
+					neighbors[0] = mTargetHeightField->GetTile(neighbor_index);
+				// vertical neighbor
+				else if (neighbor_index.x == index.x)
+					neighbors[1] = mTargetHeightField->GetTile(neighbor_index);
+				// diagonal neighbor
+				else
+					neighbors[2] = mTargetHeightField->GetTile(neighbor_index);
+			}
+		}
+
 		int2 pixel = (tile_coord - float2(index)) * float2(tile->GetHeightTexture()->GetDimensions());
 		int2 pixel_radius = int2(mCurrentBrush->GetRadius() * tile->GetPixelsPerMeter()) + 1;
 		rect paint_rect(pixel - pixel_radius, pixel + pixel_radius);
 
 		if (tile != nullptr)
-			mCurrentBrush->Apply(tile, paint_rect, tile_coord * float2(tile->GetHeightTexture()->GetDimensions()));
+		{
+			mCurrentBrush->Apply(tile, paint_rect, tile_coord * float2(tile->GetHeightTexture()->GetDimensions()), neighbors);
+		}
 	}
 	/* TODO: required?
 	for each (int2 index in tile_indices)

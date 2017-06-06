@@ -62,6 +62,7 @@ float3 NormalMap(float3 inGeometryNormal, float3 inTangent, float2 inTexCoord)
 PS_OUTPUT PS(PS_INPUT input)
 {
 	PS_OUTPUT output = (PS_OUTPUT)0;
+
 	output.LinearDepth = input.LinearDepth;
 	
 	uint flags = cFlags;
@@ -82,6 +83,10 @@ PS_OUTPUT PS(PS_INPUT input)
 		output.Surface = cSurfaceTexture.Sample(cSurfaceSampler, input.TexCoord);
 	
 	output.MotionVectors = input.MotionVectors;
+
+
+	// DEVHACK
+	output.Diffuse = float4(input.TexCoord, 0.0, 1.0);
 
 	return output;
 }

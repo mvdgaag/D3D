@@ -73,7 +73,7 @@ PS_INPUT VS(VS_INPUT input)
 		2.0 * rcp_tex_size.y);
 	
 	float3 nor = normalize(cross(dz, dx));
-	output.Normal = mul(float4(nor, 0.0), modelViewMatrix).xyz;
+	output.Normal = mul(modelViewMatrix, float4(nor, 0.0)).xyz;
 
 	// jitter for TAA
 	output.Position = mul(modelViewProjectionMatrix, float4(pos, 1.0));

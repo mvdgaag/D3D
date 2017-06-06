@@ -41,5 +41,5 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	const float exposure = -1.0;
 	float linear_exposure = pow(2.0, exposure);
 	// DEVHACK indirect killed
-	dst[coord] = (DirectDiffuse[coord] + DirectSpecular[coord] + Reflections[coord] + 0*indirect) * linear_exposure;
+	dst[coord] = (DirectDiffuse[coord] + DirectSpecular[coord] + Reflections[coord] + indirect) * linear_exposure;
 }

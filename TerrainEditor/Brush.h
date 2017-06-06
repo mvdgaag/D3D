@@ -10,8 +10,8 @@ public:
 	Brush() {};
 	~Brush() {};
 	
-	void			Init(pComputeShader inShader, float inRadius = 10.0, float inFalloff = 0.5, float inStrength = 0.1);
-	void			Apply(pHeightFieldTile inTile, const rect& inPixelRect, const float2& inWorldPosition);
+	void			Init(pComputeShader inShader, float inRadius = 10.0, float inFalloff = 0.5, float inStrength = 0.1, bool inSamplesNeighbors = false);
+	void			Apply(pHeightFieldTile inTile, const rect& inPixelRect, const float2& inWorldPosition, const apHeightFieldTile inNeighbors);
 	
 	void			SetRadius(float inRadius)					{ mRadius = inRadius; }
 	float			GetRadius()									{ return mRadius; }
@@ -21,17 +21,19 @@ public:
 	float			GetFalloffFraction()						{ return mFalloffFraction; }
 	void			SetStrength(float inStrength)				{ mStrength = inStrength; }
 	float			GetStrength()								{ return mStrength; }
+	bool			SamplesNeighbors()							{ return mSamplesNeighbors; }
 private:
 	struct ConstantBufferData
 	{
 		int4	rect;
+		int4	texInfo;
 		float4	paintData;
-		float4	brushData;
 	};
 	ConstantBufferData mConstantBuffer;
 	float mRadius;
 	float mFalloffFraction;
 	float mStrength;
+	bool mSamplesNeighbors;
 	pComputeShader mShader;
 };
 

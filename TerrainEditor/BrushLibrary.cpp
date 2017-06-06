@@ -17,7 +17,7 @@ void BrushLibrary::Init()
 
 	pComputeShader smooth_brush_shader = theResourceFactory.LoadComputeShader("Shaders/BrushSmoothShader.hlsl");
 	pBrush smooth_brush = MAKE_NEW(Brush);
-	smooth_brush->Init(smooth_brush_shader);
+	smooth_brush->Init(smooth_brush_shader, 10.0, 0.5, 0.1, true);
 	AddBrush("Smooth", smooth_brush);
 }
 

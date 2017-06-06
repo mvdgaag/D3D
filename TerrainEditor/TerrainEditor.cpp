@@ -134,9 +134,9 @@ void InitContent()
 	g_HeightField = MAKE_NEW(HeightField);
 	g_HeightField->Init(int2(3), int2(128), float3(50,50,5), g_TerrainMaterial, g_TerrainShadowMaterial);
 
+	/*
 	g_water = MAKE_NEW(Water);
 	g_water->Init(g_HeightField, g_TerrainMaterial, g_TerrainShadowMaterial);
-
 	int2 num_tiles = g_water->GetTerrainHeightField()->GetNumTiles();
 	for (int x = 0; x < num_tiles.x; x++)
 	{
@@ -154,6 +154,7 @@ void InitContent()
 			material.SetRoughnessValue(0.1);
 		}
 	}
+	*/
 
 	g_brush_library = MAKE_NEW(BrushLibrary);
 	g_brush_library->Init();

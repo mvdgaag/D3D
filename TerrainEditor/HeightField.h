@@ -52,9 +52,9 @@ public:
 		float2 bottom_right = glm::clamp(WorldToTileSpace(inWorldRect.bottomRight), tile_min, tile_max);
 
 		std::vector<int2> result;
-		for (int x = top_left.x; x < bottom_right.x; x++)
-			for (int y = top_left.y; y < bottom_right.y; y++)
-				result.push_back(int2(x, y));
+		for (int y = top_left.y; y < bottom_right.y; y++)
+				for (int x = top_left.x; x < bottom_right.x; x++)
+					result.push_back(int2(x, y));
 
 		return result;
 	}
