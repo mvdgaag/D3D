@@ -1,6 +1,6 @@
 #include <windows.h>
 #include <windowsx.h>
-#include "HeightField.h"
+#include "Terrain.h"
 #include "PaintTool.h"
 #include "BrushLibrary.h"
 #include "Brush.h"
@@ -19,8 +19,8 @@ pSpotLight g_spot_light;
 pDirectionalLight g_directional_light;
 
 pMaterial g_TerrainMaterial;
-pPixelShader g_HeightField_pixel_shader;
-pVertexShader g_HeightField_vertex_shader;
+pPixelShader g_Terrain_pixel_shader;
+pVertexShader g_Terrain_vertex_shader;
 
 pMaterial g_TerrainShadowMaterial;
 pPixelShader g_TerrainShadowPixelShader;
@@ -30,7 +30,7 @@ pTexture g_diffuse_texture;
 pTexture g_normal_texture;
 pTexture g_surface_texture;
 pTexture g_heightmap;
-pHeightField g_HeightField;
+pTerrain g_Terrain;
 pWater g_water;
 
 pPaintTool g_paint_tool;
@@ -113,8 +113,8 @@ void InitContent()
 	g_obj->Translate(float3(0, 20, 0));
 	Gaag.RegisterObject(g_obj);
 	
-	g_HeightField_pixel_shader = theResourceFactory.LoadPixelShader("Shaders/TerrainFragmentShader.hlsl");
-	g_HeightField_vertex_shader = theResourceFactory.LoadVertexShader("Shaders/TerrainVertexShader.hlsl");
+	g_Terrain_pixel_shader = theResourceFactory.LoadPixelShader("Shaders/TerrainFragmentShader.hlsl");
+	g_Terrain_vertex_shader = theResourceFactory.LoadVertexShader("Shaders/TerrainVertexShader.hlsl");
 	
 	g_TerrainMaterial = theResourceFactory.MakeMaterial();
 	g_TerrainMaterial->SetDiffuseValue(float4(0.6f, 0.6f, 0.6f, 0.0f));
@@ -122,8 +122,8 @@ void InitContent()
 	g_TerrainMaterial->SetRoughnessValue(0.8f);
 	g_TerrainMaterial->SetMetalicityValue(0.0f);
 	g_TerrainMaterial->SetEmissivenessValue(0.0f);
-	g_TerrainMaterial->SetPixelShader(g_HeightField_pixel_shader);
-	g_TerrainMaterial->SetVertexShader(g_HeightField_vertex_shader);
+	g_TerrainMaterial->SetPixelShader(g_Terrain_pixel_shader);
+	g_TerrainMaterial->SetVertexShader(g_Terrain_vertex_shader);
 	
 	g_TerrainShadowMaterial = theResourceFactory.MakeMaterial();
 	g_TerrainShadowVertexShader = theResourceFactory.LoadVertexShader("Shaders/TerrainShadowVertexShader.hlsl");
@@ -131,20 +131,20 @@ void InitContent()
 	g_TerrainShadowMaterial->SetVertexShader(g_TerrainShadowVertexShader);
 	g_TerrainShadowMaterial->SetPixelShader(g_TerrainShadowPixelShader);
 
-	g_HeightField = MAKE_NEW(HeightField);
-	g_HeightField->Init(int2(3), int2(128), float3(50,50,5), g_TerrainMaterial, g_TerrainShadowMaterial);
+	g_Terrain = MAKE_NEW(Terrain);
+	g_Terrain->Init(int2(3), int2(128), float3(50,50,5), g_TerrainMaterial, g_TerrainShadowMaterial);
 
 	/*
 	g_water = MAKE_NEW(Water);
-	g_water->Init(g_HeightField, g_TerrainMaterial, g_TerrainShadowMaterial);
-	int2 num_tiles = g_water->GetTerrainHeightField()->GetNumTiles();
+	g_water->Init(g_Terrain, g_TerrainMaterial, g_TerrainShadowMaterial);
+	int2 num_tiles = g_water->GetTerrainTerrain()->GetNumTiles();
 	for (int x = 0; x < num_tiles.x; x++)
 	{
 		for (int y = 0; y < num_tiles.y; y++)
 		{
 			int2 coord(x, y);
 			pTexture texture = g_water->GetTile(coord)->GetFluxTexture();
-			Material& material = *g_water->GetWaterHeightField()->GetTile(coord)->GetMaterial();
+			Material& material = *g_water->GetWaterTerrain()->GetTile(coord)->GetMaterial();
 			//material.SetDiffuseTexture(texture);
 			material.SetDiffuseTexture(NULL);
 			material.SetNormalTexture(NULL);
@@ -161,7 +161,7 @@ void InitContent()
 
 	g_paint_tool = MAKE_NEW(PaintTool);
 	g_paint_tool->Init(g_brush_library);
-	g_paint_tool->SetTargetHeightField(g_HeightField);
+	g_paint_tool->SetTargetTerrain(g_Terrain);
 
 	g_camera_controller = MAKE_NEW(CameraController);
 	g_camera_controller->SetTargetCamera(Gaag.GetCamera());
@@ -173,13 +173,13 @@ void CleanUpContent()
 	g_obj = nullptr;
 	g_mesh = nullptr;
 	g_TerrainMaterial = nullptr;
-	g_HeightField_pixel_shader = nullptr;
-	g_HeightField_vertex_shader = nullptr;
+	g_Terrain_pixel_shader = nullptr;
+	g_Terrain_vertex_shader = nullptr;
 	g_diffuse_texture = nullptr;
 	g_normal_texture = nullptr;
 	g_surface_texture = nullptr;
 	g_heightmap = nullptr;
-	g_HeightField = nullptr;
+	g_Terrain = nullptr;
 	g_water = nullptr;
 	g_paint_tool = nullptr;
 	g_brush_library = nullptr;

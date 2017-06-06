@@ -1,6 +1,6 @@
 #pragma once
 #include "Gaag.h"
-#include "HeightField.h"
+#include "Terrain.h"
 #include "Brush.h"
 
 REGISTERCLASS(PaintTool);
@@ -18,8 +18,8 @@ public:
 	void SetBrush(pBrush inBrush) { assert(inBrush != nullptr);  mCurrentBrush = inBrush; }
 	pBrush GetBrush() { return mCurrentBrush; }
 
-	void SetTargetHeightField(pHeightField inHeightField) { assert(inHeightField != nullptr); mTargetHeightField = inHeightField; }
-	pHeightField GetTargetHeightField() { return mTargetHeightField; }
+	void SetTargetTerrain(pTerrain inTerrain) { assert(inTerrain != nullptr); mTargetTerrain = inTerrain; }
+	pTerrain GetTargetTerrain() { return mTargetTerrain; }
 
 	void OnKeyDown(unsigned int inKey) override;
 	void OnKeyUp(unsigned int inKey) override  {}
@@ -36,7 +36,7 @@ private:
 
 	pBrushLibrary mBrushLibrary;
 	pBrush mCurrentBrush;
-	pHeightField mTargetHeightField;
+	pTerrain mTargetTerrain;
 	bool mPainting;
 };
 

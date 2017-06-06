@@ -76,17 +76,17 @@ void PaintTool::ContinuePaint(float3 inWorldPos)
 
 void PaintTool::ApplyPaint(float2 inWorldCoord, int inLayerID)
 {
-	assert(mTargetHeightField != nullptr);
+	assert(mTargetTerrain != nullptr);
 
 	if (mCurrentBrush == nullptr)
 		return;
 
-	float2 tile_coord = mTargetHeightField->WorldToTileSpace(inWorldCoord);
+	float2 tile_coord = mTargetTerrain->WorldToTileSpace(inWorldCoord);
 
-	std::vector<int2> tile_indices = mTargetHeightField->GetTiles(rect(inWorldCoord - mCurrentBrush->GetRadius(), inWorldCoord + mCurrentBrush->GetRadius()));
+	std::vector<int2> tile_indices = mTargetTerrain->GetTiles(rect(inWorldCoord - mCurrentBrush->GetRadius(), inWorldCoord + mCurrentBrush->GetRadius()));
 	for each (int2 index in tile_indices)
 	{
-		pRenderTarget target = mTargetHeightField->GetLayerRenderTarget(index, inLayerID);
+		pRenderTarget target = mTargetTerrain->GetLayerRenderTarget(index, inLayerID);
 		
 		// set neighbords array if needed
 		apTexture neighbors;
@@ -101,18 +101,18 @@ void PaintTool::ApplyPaint(float2 inWorldCoord, int inLayerID)
 
 				// horizontal neighbor
 				if (neighbor_index.y == index.y)
-					neighbors[0] = mTargetHeightField->GetLayerTexture(neighbor_index, inLayerID);
+					neighbors[0] = mTargetTerrain->GetLayerTexture(neighbor_index, inLayerID);
 				// vertical neighbor
 				else if (neighbor_index.x == index.x)
-					neighbors[1] = mTargetHeightField->GetLayerTexture(neighbor_index, inLayerID);
+					neighbors[1] = mTargetTerrain->GetLayerTexture(neighbor_index, inLayerID);
 				// diagonal neighbor
 				else
-					neighbors[2] = mTargetHeightField->GetLayerTexture(neighbor_index, inLayerID);
+					neighbors[2] = mTargetTerrain->GetLayerTexture(neighbor_index, inLayerID);
 			}
 		}
 
 		int2 pixel = (tile_coord - float2(index)) * float2(target->GetDimensions());
-		float2 pixels_per_meter = float2(target->GetDimensions().x, target->GetDimensions().y) / float2(mTargetHeightField->GetTileScale().x, mTargetHeightField->GetTileScale().y);
+		float2 pixels_per_meter = float2(target->GetDimensions().x, target->GetDimensions().y) / float2(mTargetTerrain->GetTileScale().x, mTargetTerrain->GetTileScale().y);
 		int2 pixel_radius = int2(pixels_per_meter * mCurrentBrush->GetRadius()) + int2(1, 1);
 		rect paint_rect(pixel - pixel_radius, pixel + pixel_radius);
 
@@ -121,12 +121,14 @@ void PaintTool::ApplyPaint(float2 inWorldCoord, int inLayerID)
 			mCurrentBrush->Apply(target, paint_rect, tile_coord * float2(target->GetDimensions()), neighbors);
 		}
 	}
-	/* TODO: required?
+	/* TODO: required? should be identical, but data is duplicated and hopefully treated exactly the same
+	cannot hurt to ensure with a copy
+
 	for each (int2 index in tile_indices)
 	{
-		pHeightFieldTile tile = mTargetHeightField->GetTile(index);
-		pHeightFieldTile east = mTargetHeightField->GetTile(index + int2(1, 0));
-		pHeightFieldTile north = mTargetHeightField->GetTile(index + int2(0, 1));
+		pTerrainTile tile = mTargetTerrain->GetTile(index);
+		pTerrainTile east = mTargetTerrain->GetTile(index + int2(1, 0));
+		pTerrainTile north = mTargetTerrain->GetTile(index + int2(0, 1));
 		if (east) 
 			TextureUtil::TextureStitchEast(tile->GetHeightTexture(), east->GetHeightTexture());
 		if (north) 

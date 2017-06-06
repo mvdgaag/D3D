@@ -1,16 +1,16 @@
 #pragma once
 #include "Gaag.h"
-#include "HeightFieldTile.h"
+#include "TerrainTile.h"
 #include "Layer.h"
 
 
-REGISTERCLASS(HeightField);
+REGISTERCLASS(Terrain);
 
-class HeightField
+class Terrain
 {
 public:
-	HeightField() {};
-	~HeightField() {};
+	Terrain() {};
+	~Terrain() {};
 	void Init(int2 inNumTiles, int2 inTileSegments, float3 inTileScale, pMaterial inMaterial, pMaterial inShadowMaterial);
 	void CleanUp();
 
@@ -27,7 +27,7 @@ public:
 	}
 
 
-	pHeightFieldTile GetTile(const int2& inTileIndex)	
+	pTerrainTile GetTile(const int2& inTileIndex)	
 	{ 
 		if (inTileIndex.x >= 0 && inTileIndex.x < mNumTiles.x && inTileIndex.y >= 0 && inTileIndex.y < mNumTiles.y)
 			return mTiles[inTileIndex.y * mNumTiles.x + inTileIndex.x];
@@ -54,7 +54,7 @@ public:
 	}
 
 	
-	pHeightFieldTile GetTile(const float2& inWorldCoord)
+	pTerrainTile GetTile(const float2& inWorldCoord)
 	{
 		int2 tile_index = WorldToTileSpace(inWorldCoord);
 		return GetTile(tile_index);
@@ -95,7 +95,7 @@ private:
 	int2 mNumTiles;
 	int2 mTileSegments;
 	float3 mTileScale;
-	pHeightFieldTile* mTiles = nullptr;
+	pTerrainTile* mTiles = nullptr;
 	apLayer mLayers;
 };
 

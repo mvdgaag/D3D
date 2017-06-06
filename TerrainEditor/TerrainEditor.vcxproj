@@ -155,9 +155,9 @@
     <ClInclude Include="BrushLibrary.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="PaintTool.h" />
-    <ClInclude Include="HeightField.h" />
+    <ClInclude Include="Terrain.h" />
     <ClInclude Include="TerrainEditor.h" />
-    <ClInclude Include="HeightFieldTile.h" />
+    <ClInclude Include="TerrainTile.h" />
     <ClInclude Include="Water.h" />
     <ClInclude Include="WaterTile.h" />
   </ItemGroup>
@@ -166,9 +166,9 @@
     <ClCompile Include="BrushLibrary.cpp" />
     <ClCompile Include="Layer.cpp" />
     <ClCompile Include="PaintTool.cpp" />
-    <ClCompile Include="HeightField.cpp" />
+    <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TerrainEditor.cpp" />
-    <ClCompile Include="HeightFieldTile.cpp" />
+    <ClCompile Include="TerrainTile.cpp" />
     <ClCompile Include="Water.cpp" />
     <ClCompile Include="WaterTile.cpp" />
   </ItemGroup>

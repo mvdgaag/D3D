@@ -1,13 +1,13 @@
 #pragma once
 #include "Gaag.h"
 
-REGISTERCLASS(HeightFieldTile);
+REGISTERCLASS(TerrainTile);
 
-class HeightFieldTile : public MeshObject
+class TerrainTile : public MeshObject
 {
 public:
-	HeightFieldTile() : MeshObject() { mInitialized = false; }
-	~HeightFieldTile() {};
+	TerrainTile() : MeshObject() { mInitialized = false; }
+	~TerrainTile() {};
 
 	void Init(float3 inPosition, float3 inScale, int2 inNumSegments, pMaterial inMaterial, pMaterial inShadowMaterial, pTexture inHeightTexture);
 	void CleanUp();

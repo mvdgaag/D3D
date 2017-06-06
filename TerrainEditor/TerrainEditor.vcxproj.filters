@@ -42,13 +42,13 @@
     <ClInclude Include="Water.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="HeightFieldTile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HeightField.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Layer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Terrain.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TerrainTile.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -71,13 +71,13 @@
     <ClCompile Include="Water.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="HeightFieldTile.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HeightField.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Layer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Terrain.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TerrainTile.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

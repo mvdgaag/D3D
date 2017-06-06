@@ -1,7 +1,7 @@
-#include "HeightFieldTile.h"
+#include "TerrainTile.h"
 
 
-void HeightFieldTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments, pMaterial inMaterial, pMaterial inShadowMaterial, pTexture inHeightTexture)
+void TerrainTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments, pMaterial inMaterial, pMaterial inShadowMaterial, pTexture inHeightTexture)
 {
 	CleanUp();
 
@@ -14,7 +14,7 @@ void HeightFieldTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments
 	mNormalRenderTarget = theResourceFactory.MakeRenderTarget(mNormalTexture);
 
 	// TODO:
-	//mUpdateNormalShader = theResourceFactory.Get("HeightFieldUpdateNormalShader");
+	//mUpdateNormalShader = theResourceFactory.Get("TerrainUpdateNormalShader");
 	//UpdateNormals();
 
 	mHeightScale = inScale.z;
@@ -72,7 +72,7 @@ void HeightFieldTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments
 }
 
 
-void HeightFieldTile::CleanUp()
+void TerrainTile::CleanUp()
 {
 	MeshObject::CleanUp();
 	mHeightMapTexture = nullptr;
@@ -82,14 +82,14 @@ void HeightFieldTile::CleanUp()
 }
 
 
-void HeightFieldTile::UpdateNormals()
+void TerrainTile::UpdateNormals()
 {
 	theRenderContext.CSSetShader(mUpdateNormalShader);
 }
 
 
 
-void HeightFieldTile::PrepareToDraw()
+void TerrainTile::PrepareToDraw()
 {
 	pSampler point_sampler = theResourceFactory.GetDefaultPointSampler();
 	theRenderContext.VSSetConstantBuffer(mConstantBuffer, 2);
@@ -97,14 +97,14 @@ void HeightFieldTile::PrepareToDraw()
 }
 
 
-void HeightFieldTile::FinalizeAfterDraw()
+void TerrainTile::FinalizeAfterDraw()
 {
 	theRenderContext.VSSetConstantBuffer(NULL, 2);
 	theRenderContext.VSSetTextureAndSampler(NULL, NULL, 0);
 }
 
 
-void HeightFieldTile::PrepareToDrawShadow()
+void TerrainTile::PrepareToDrawShadow()
 {
 	pSampler point_sampler = theResourceFactory.GetDefaultPointSampler();
 	theRenderContext.VSSetShader(mCustomShadowMaterial->GetVertexShader());
@@ -114,7 +114,7 @@ void HeightFieldTile::PrepareToDrawShadow()
 }
 
 
-void HeightFieldTile::FinalizeAfterDrawShadow()
+void TerrainTile::FinalizeAfterDrawShadow()
 {
 	theRenderContext.VSSetConstantBuffer(NULL, 0);
 	theRenderContext.VSSetTextureAndSampler(NULL, NULL, 0);

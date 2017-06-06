@@ -1,8 +1,8 @@
-#include "HeightField.h"
-#include "HeightFieldTile.h"
+#include "Terrain.h"
+#include "TerrainTile.h"
 
 
-void HeightField::Init(int2 inNumTiles, int2 inTileSegments, float3 inTileScale, pMaterial inMaterial, pMaterial inShadowMaterial)
+void Terrain::Init(int2 inNumTiles, int2 inTileSegments, float3 inTileScale, pMaterial inMaterial, pMaterial inShadowMaterial)
 {
 	CleanUp();
 	
@@ -14,7 +14,7 @@ void HeightField::Init(int2 inNumTiles, int2 inTileSegments, float3 inTileScale,
 	height_layer->Init(inNumTiles, int2(mTileSegments.x + 1, mTileSegments.y + 1), FORMAT_R32_FLOAT);
 	mLayers.push_back(height_layer);
 
-	mTiles = new pHeightFieldTile[mNumTiles.x * mNumTiles.y];
+	mTiles = new pTerrainTile[mNumTiles.x * mNumTiles.y];
 	for (int y = 0; y < mNumTiles.y; y++)
 	{
 		for (int x = 0; x < mNumTiles.x; x++)
@@ -26,7 +26,7 @@ void HeightField::Init(int2 inNumTiles, int2 inTileSegments, float3 inTileScale,
 			tile_pos.y = 0.0;
 			tile_pos.z = (float(y) - float(mNumTiles.y - 1) / 2.0) * mTileScale.y;
 			
-			mTiles[idx] = MAKE_NEW(HeightFieldTile);
+			mTiles[idx] = MAKE_NEW(TerrainTile);
 			pMaterial material = theResourceFactory.CloneMaterial(inMaterial);
 			material->SetDiffuseValue(float4(1, 0, 0, 0));
 			mTiles[idx]->Init(tile_pos, mTileScale, mTileSegments, material, inShadowMaterial, height_layer->GetTileTexture(int2(x, y)));
@@ -37,7 +37,7 @@ void HeightField::Init(int2 inNumTiles, int2 inTileSegments, float3 inTileScale,
 }
 
 
-void HeightField::CleanUp()
+void Terrain::CleanUp()
 {
 	for (int y = 0; y < mNumTiles.y; y++)
 	{

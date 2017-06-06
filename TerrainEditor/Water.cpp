@@ -1,17 +1,17 @@
 #include "Water.h"
-#include "HeightField.h"
+#include "Terrain.h"
 #include "WaterTile.h"
 
 
-void Water::Init(pHeightField inTerrainHeightField, pMaterial inMaterial, pMaterial inShadowMaterial)
+void Water::Init(pTerrain inTerrainTerrain, pMaterial inMaterial, pMaterial inShadowMaterial)
 {
-	assert(inTerrainHeightField != nullptr);
-	mTerrainHeightField = inTerrainHeightField;
+	assert(inTerrainTerrain != nullptr);
+	mTerrainTerrain = inTerrainTerrain;
 
-	mWaterHeightField = MAKE_NEW(HeightField);
-	mWaterHeightField->Init(mTerrainHeightField->GetNumTiles(), mTerrainHeightField->GetTileSegments(), mTerrainHeightField->GetTileScale(), inMaterial, inShadowMaterial);
+	mWaterTerrain = MAKE_NEW(Terrain);
+	mWaterTerrain->Init(mTerrainTerrain->GetNumTiles(), mTerrainTerrain->GetTileSegments(), mTerrainTerrain->GetTileScale(), inMaterial, inShadowMaterial);
 
-	mNumTiles = mWaterHeightField->GetNumTiles();
+	mNumTiles = mWaterTerrain->GetNumTiles();
 	mWaterTiles = new pWaterTile*[mNumTiles.x];
 	for (int x = 0; x < mNumTiles.x; x++)
 	{
@@ -19,13 +19,13 @@ void Water::Init(pHeightField inTerrainHeightField, pMaterial inMaterial, pMater
 		for (int y = 0; y < mNumTiles.y; y++)
 		{
 			int2 tile_coord(x, y);
-			pTexture terrain_height_texture = mTerrainHeightField->GetTile(tile_coord)->GetHeightTexture();
-			pTexture water_height_texture = mWaterHeightField->GetTile(tile_coord)->GetHeightTexture();
+			pTexture terrain_height_texture = mTerrainTerrain->GetTile(tile_coord)->GetHeightTexture();
+			pTexture water_height_texture = mWaterTerrain->GetTile(tile_coord)->GetHeightTexture();
 			
 			pWaterTile water_tile = MAKE_NEW(WaterTile);
 			water_tile->Init(terrain_height_texture, water_height_texture, 
-				mWaterHeightField->GetTileScale().x / water_height_texture->GetDimensions().x, // pixelscale assumes square pixels
-				mWaterHeightField->GetTileScale().z);
+				mWaterTerrain->GetTileScale().x / water_height_texture->GetDimensions().x, // pixelscale assumes square pixels
+				mWaterTerrain->GetTileScale().z);
 
 			mWaterTiles[x][y] = water_tile;
 		}
@@ -45,8 +45,8 @@ void Water::CleanUp()
 	}
 	delete[] mWaterTiles;
 
-	mWaterHeightField = nullptr;
-	mTerrainHeightField = nullptr;
+	mWaterTerrain = nullptr;
+	mTerrainTerrain = nullptr;
 }
 
 
