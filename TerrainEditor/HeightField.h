@@ -17,8 +17,8 @@ public:
 	int2			GetNumTiles()				{ return mNumTiles; }
 	int2			GetTileSegments()			{ return mTileSegments; }
 	float3			GetTileScale()				{ return mTileScale; }
-
-
+	
+	
 	float2 WorldToTileSpace(float2 inWorldCoord)
 	{
 		float2 world_top_left = float2(mNumTiles.x, mNumTiles.y) * float2(mTileScale.x, mTileScale.y) / 2.0f;
@@ -35,14 +35,43 @@ public:
 			return nullptr;
 	}
 
+
+	pRenderTarget GetLayerRenderTarget(const int2& inTileIndex, const int inLayerID)
+	{
+		if (inTileIndex.x >= 0 && inTileIndex.x < mNumTiles.x && inTileIndex.y >= 0 && inTileIndex.y < mNumTiles.y && inLayerID < mLayers.size())
+			return mLayers[inLayerID]->GetTileRenderTarget(inTileIndex);
+		else
+			return nullptr;
+	}
+
+
+	pTexture GetLayerTexture(const int2& inTileIndex, const int inLayerID)
+	{
+		if (inTileIndex.x >= 0 && inTileIndex.x < mNumTiles.x && inTileIndex.y >= 0 && inTileIndex.y < mNumTiles.y && inLayerID < mLayers.size())
+			return mLayers[inLayerID]->GetTileTexture(inTileIndex);
+		else
+			return nullptr;
+	}
+
 	
 	pHeightFieldTile GetTile(const float2& inWorldCoord)
 	{
 		int2 tile_index = WorldToTileSpace(inWorldCoord);
-		if (tile_index.x >= 0 && tile_index.x < mNumTiles.x && tile_index.y >= 0 && tile_index.y < mNumTiles.y)
-			return mTiles[tile_index.y * mNumTiles.x + tile_index.x];
-		else
-			return nullptr;
+		return GetTile(tile_index);
+	}
+
+
+	pRenderTarget GetLayerRenderTarget(const float2& inWorldCoord, const int inLayerID)
+	{
+		int2 tile_index = WorldToTileSpace(inWorldCoord);
+		return GetLayerRenderTarget(tile_index, inLayerID);
+	}
+
+
+	pTexture GetLayerTexture(const float2& inWorldCoord, const int inLayerID)
+	{
+		int2 tile_index = WorldToTileSpace(inWorldCoord);
+		return GetLayerTexture(tile_index, inLayerID);
 	}
 
 

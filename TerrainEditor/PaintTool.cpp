@@ -74,7 +74,7 @@ void PaintTool::ContinuePaint(float3 inWorldPos)
 }
 
 
-void PaintTool::ApplyPaint(float2 inWorldCoord)
+void PaintTool::ApplyPaint(float2 inWorldCoord, int inLayerID)
 {
 	assert(mTargetHeightField != nullptr);
 
@@ -86,10 +86,10 @@ void PaintTool::ApplyPaint(float2 inWorldCoord)
 	std::vector<int2> tile_indices = mTargetHeightField->GetTiles(rect(inWorldCoord - mCurrentBrush->GetRadius(), inWorldCoord + mCurrentBrush->GetRadius()));
 	for each (int2 index in tile_indices)
 	{
-		pHeightFieldTile tile = mTargetHeightField->GetTile(index);
+		pRenderTarget target = mTargetHeightField->GetLayerRenderTarget(index, inLayerID);
 		
 		// set neighbords array if needed
-		apHeightFieldTile neighbors;
+		apTexture neighbors;
 		if (mCurrentBrush->SamplesNeighbors())
 		{
 			neighbors.resize(3);
@@ -101,23 +101,24 @@ void PaintTool::ApplyPaint(float2 inWorldCoord)
 
 				// horizontal neighbor
 				if (neighbor_index.y == index.y)
-					neighbors[0] = mTargetHeightField->GetTile(neighbor_index);
+					neighbors[0] = mTargetHeightField->GetLayerTexture(neighbor_index, inLayerID);
 				// vertical neighbor
 				else if (neighbor_index.x == index.x)
-					neighbors[1] = mTargetHeightField->GetTile(neighbor_index);
+					neighbors[1] = mTargetHeightField->GetLayerTexture(neighbor_index, inLayerID);
 				// diagonal neighbor
 				else
-					neighbors[2] = mTargetHeightField->GetTile(neighbor_index);
+					neighbors[2] = mTargetHeightField->GetLayerTexture(neighbor_index, inLayerID);
 			}
 		}
 
-		int2 pixel = (tile_coord - float2(index)) * float2(tile->GetHeightTexture()->GetDimensions());
-		int2 pixel_radius = int2(mCurrentBrush->GetRadius() * tile->GetPixelsPerMeter()) + 1;
+		int2 pixel = (tile_coord - float2(index)) * float2(target->GetDimensions());
+		float2 pixels_per_meter = float2(target->GetDimensions().x, target->GetDimensions().y) / float2(mTargetHeightField->GetTileScale().x, mTargetHeightField->GetTileScale().y);
+		int2 pixel_radius = int2(pixels_per_meter * mCurrentBrush->GetRadius()) + int2(1, 1);
 		rect paint_rect(pixel - pixel_radius, pixel + pixel_radius);
 
-		if (tile != nullptr)
+		if (target != nullptr)
 		{
-			mCurrentBrush->Apply(tile, paint_rect, tile_coord * float2(tile->GetHeightTexture()->GetDimensions()), neighbors);
+			mCurrentBrush->Apply(target, paint_rect, tile_coord * float2(target->GetDimensions()), neighbors);
 		}
 	}
 	/* TODO: required?

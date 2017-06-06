@@ -1,6 +1,5 @@
 #pragma once
 #include "Gaag.h"
-#include "HeightFieldTile.h"
 
 REGISTERCLASS(Brush);
 
@@ -11,7 +10,7 @@ public:
 	~Brush() {};
 	
 	void			Init(pComputeShader inShader, float inRadius = 10.0, float inFalloff = 0.5, float inStrength = 0.1, bool inSamplesNeighbors = false);
-	void			Apply(pHeightFieldTile inTile, const rect& inPixelRect, const float2& inWorldPosition, const apHeightFieldTile inNeighbors);
+	void			Apply(pRenderTarget inTile, const rect& inPixelRect, const float2& inWorldPosition, const apTexture inNeighbors);
 	
 	void			SetRadius(float inRadius)					{ mRadius = inRadius; }
 	float			GetRadius()									{ return mRadius; }

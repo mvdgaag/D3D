@@ -32,7 +32,7 @@ private:
 	void EndPaint(float3 inWorldPos);
 	void ContinuePaint(float3 inWorldPos);
 	
-	void ApplyPaint(float2 inWorldCoord);
+	void ApplyPaint(float2 inWorldCoord, const int inLayerID = 0);
 
 	pBrushLibrary mBrushLibrary;
 	pBrush mCurrentBrush;

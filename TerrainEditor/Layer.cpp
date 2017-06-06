@@ -14,8 +14,7 @@ void Layer::Init(int2 inNumTiles, int2 inTileResolution, Format inFormat)
 		for (int x = 0; x < mNumTiles.x; x++)
 		{
 			int idx = y * mNumTiles.x + x;
-			mRenderTargets[idx] = theResourceFactory.MakeRenderTarget(inTileResolution, 0, inFormat);
-			mRenderTargets[idx]->Init(inTileResolution.x, inTileResolution.y, 0, inFormat);
+			mRenderTargets[idx] = theResourceFactory.MakeRenderTarget(inTileResolution, 1, inFormat);
 		}
 	}
 }
