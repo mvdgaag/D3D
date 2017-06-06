@@ -153,6 +153,7 @@
   <ItemGroup>
     <ClInclude Include="Brush.h" />
     <ClInclude Include="BrushLibrary.h" />
+    <ClInclude Include="Layer.h" />
     <ClInclude Include="PaintTool.h" />
     <ClInclude Include="HeightField.h" />
     <ClInclude Include="TerrainEditor.h" />
@@ -163,6 +164,7 @@
   <ItemGroup>
     <ClCompile Include="Brush.cpp" />
     <ClCompile Include="BrushLibrary.cpp" />
+    <ClCompile Include="Layer.cpp" />
     <ClCompile Include="PaintTool.cpp" />
     <ClCompile Include="HeightField.cpp" />
     <ClCompile Include="TerrainEditor.cpp" />

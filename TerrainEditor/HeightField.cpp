@@ -47,4 +47,8 @@ void HeightField::CleanUp()
 	}
 	delete[] mTiles;
 	mTiles = nullptr;
+
+	for each (pLayer layer in mLayers)
+		layer->CleanUp();
+	mLayers.clear();
 }

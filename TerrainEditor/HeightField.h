@@ -1,6 +1,8 @@
 #pragma once
 #include "Gaag.h"
 #include "HeightFieldTile.h"
+#include "Layer.h"
+
 
 REGISTERCLASS(HeightField);
 
@@ -59,10 +61,12 @@ public:
 		return result;
 	}
 
+
 private:
 	int2 mNumTiles;
 	int2 mTileSegments;
 	float3 mTileScale;
 	pHeightFieldTile* mTiles = nullptr;
+	apLayer mLayers;
 };
 
