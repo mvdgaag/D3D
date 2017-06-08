@@ -19,6 +19,10 @@ public:
 	pTexture GetWaterDepthTexture() { return mWaterDepthTarget->GetTexture(); }
 	pTexture GetFluxTexture() { return mFluxRenderTarget->GetTexture(); }
 
+	pRenderTarget GetWaterHeightRenderTarget() { return mWaterHeightTarget; }
+	pRenderTarget GetWaterDepthRenderTarget() { return mWaterDepthTarget; }
+	pRenderTarget GetFluxRenderTarget() { return mFluxRenderTarget; }
+
 private:
 
 	pConstantBuffer	mFluxConstantBuffer;

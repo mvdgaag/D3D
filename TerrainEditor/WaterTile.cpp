@@ -46,7 +46,7 @@ void WaterTile::Init(pTexture inTerrainHeightTexture, pTexture inWaterHeightText
 	mFluxConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(float4));
 	mWaterConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(float4));
 
-	TextureUtil::TextureSet(mWaterDepthTarget->GetTexture(), float4(0.5, 0.5, 0.5, 0.5));
+	TextureUtil::TextureSet(mWaterDepthTarget->GetTexture(), float4(0.0, 0.0, 0.0, 0.0));
 }
 
 

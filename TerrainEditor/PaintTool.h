@@ -9,7 +9,7 @@ REGISTERCLASS(BrushLibrary);
 class PaintTool : public InputListener
 {
 public:
-	PaintTool() { mPainting = false; }
+	PaintTool() { mPainting = false; mTargetLayer = 0; }
 	~PaintTool() {}
 
 	void Init(pBrushLibrary inBrushLibrary);
@@ -19,6 +19,7 @@ public:
 	pBrush GetBrush() { return mCurrentBrush; }
 
 	void SetTargetTerrain(pTerrain inTerrain) { assert(inTerrain != nullptr); mTargetTerrain = inTerrain; }
+	void SetTargetLayer(int inLayer) { mTargetLayer = inLayer; }
 	pTerrain GetTargetTerrain() { return mTargetTerrain; }
 
 	void OnKeyDown(unsigned int inKey) override;
@@ -32,11 +33,12 @@ private:
 	void EndPaint(float3 inWorldPos);
 	void ContinuePaint(float3 inWorldPos);
 	
-	void ApplyPaint(float2 inWorldCoord, const int inLayerID = 0);
+	void ApplyPaint(float2 inWorldCoord);
 
 	pBrushLibrary mBrushLibrary;
 	pBrush mCurrentBrush;
 	pTerrain mTargetTerrain;
+	int mTargetLayer;
 	bool mPainting;
 };
 

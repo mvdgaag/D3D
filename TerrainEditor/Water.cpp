@@ -6,30 +6,35 @@
 void Water::Init(pTerrain inTerrainTerrain, pMaterial inMaterial, pMaterial inShadowMaterial)
 {
 	assert(inTerrainTerrain != nullptr);
-	mTerrainTerrain = inTerrainTerrain;
+	mTerrain = inTerrainTerrain;
 
-	mWaterTerrain = MAKE_NEW(Terrain);
-	mWaterTerrain->Init(mTerrainTerrain->GetNumTiles(), mTerrainTerrain->GetTileSegments(), mTerrainTerrain->GetTileScale(), inMaterial, inShadowMaterial);
+	mWaterSurface = MAKE_NEW(Terrain);
+	mWaterSurface->Init(mTerrain->GetNumTiles(), mTerrain->GetTileSegments(), mTerrain->GetTileScale(), inMaterial, inShadowMaterial);
 
-	mNumTiles = mWaterTerrain->GetNumTiles();
+	mNumTiles = mWaterSurface->GetNumTiles();
 	mWaterTiles = new pWaterTile*[mNumTiles.x];
+	apRenderTarget water_targets;
 	for (int x = 0; x < mNumTiles.x; x++)
 	{
 		mWaterTiles[x] = new pWaterTile[mNumTiles.y];
 		for (int y = 0; y < mNumTiles.y; y++)
 		{
 			int2 tile_coord(x, y);
-			pTexture terrain_height_texture = mTerrainTerrain->GetTile(tile_coord)->GetHeightTexture();
-			pTexture water_height_texture = mWaterTerrain->GetTile(tile_coord)->GetHeightTexture();
+			pTexture terrain_height_texture = mTerrain->GetTile(tile_coord)->GetHeightTexture();
+			pTexture water_height_texture = mWaterSurface->GetTile(tile_coord)->GetHeightTexture();
 			
 			pWaterTile water_tile = MAKE_NEW(WaterTile);
 			water_tile->Init(terrain_height_texture, water_height_texture, 
-				mWaterTerrain->GetTileScale().x / water_height_texture->GetDimensions().x, // pixelscale assumes square pixels
-				mWaterTerrain->GetTileScale().z);
+				mWaterSurface->GetTileScale().x / water_height_texture->GetDimensions().x, // pixelscale assumes square pixels
+				mWaterSurface->GetTileScale().z);
 
 			mWaterTiles[x][y] = water_tile;
+			water_targets.push_back(water_tile->GetWaterDepthRenderTarget());
 		}
 	}
+	pLayer water_layer = new Layer();
+	water_layer->Init(mWaterSurface->GetNumTiles(), water_targets);
+	mWaterSurface->SetLayer(water_layer, 1);
 }
 
 
@@ -45,8 +50,8 @@ void Water::CleanUp()
 	}
 	delete[] mWaterTiles;
 
-	mWaterTerrain = nullptr;
-	mTerrainTerrain = nullptr;
+	mWaterSurface = nullptr;
+	mTerrain = nullptr;
 }
 
 

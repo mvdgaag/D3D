@@ -74,7 +74,7 @@ void PaintTool::ContinuePaint(float3 inWorldPos)
 }
 
 
-void PaintTool::ApplyPaint(float2 inWorldCoord, int inLayerID)
+void PaintTool::ApplyPaint(float2 inWorldCoord)
 {
 	assert(mTargetTerrain != nullptr);
 
@@ -86,7 +86,7 @@ void PaintTool::ApplyPaint(float2 inWorldCoord, int inLayerID)
 	std::vector<int2> tile_indices = mTargetTerrain->GetTiles(rect(inWorldCoord - mCurrentBrush->GetRadius(), inWorldCoord + mCurrentBrush->GetRadius()));
 	for each (int2 index in tile_indices)
 	{
-		pRenderTarget target = mTargetTerrain->GetLayerRenderTarget(index, inLayerID);
+		pRenderTarget target = mTargetTerrain->GetLayerRenderTarget(index, mTargetLayer);
 		
 		// set neighbords array if needed
 		apTexture neighbors;
@@ -101,13 +101,13 @@ void PaintTool::ApplyPaint(float2 inWorldCoord, int inLayerID)
 
 				// horizontal neighbor
 				if (neighbor_index.y == index.y)
-					neighbors[0] = mTargetTerrain->GetLayerTexture(neighbor_index, inLayerID);
+					neighbors[0] = mTargetTerrain->GetLayerTexture(neighbor_index, mTargetLayer);
 				// vertical neighbor
 				else if (neighbor_index.x == index.x)
-					neighbors[1] = mTargetTerrain->GetLayerTexture(neighbor_index, inLayerID);
+					neighbors[1] = mTargetTerrain->GetLayerTexture(neighbor_index, mTargetLayer);
 				// diagonal neighbor
 				else
-					neighbors[2] = mTargetTerrain->GetLayerTexture(neighbor_index, inLayerID);
+					neighbors[2] = mTargetTerrain->GetLayerTexture(neighbor_index, mTargetLayer);
 			}
 		}
 
