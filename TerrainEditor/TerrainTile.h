@@ -9,9 +9,9 @@ public:
 	TerrainTile() : MeshObject() { mInitialized = false; }
 	~TerrainTile() {};
 
-	void Init(float3 inPosition, float3 inScale, int2 inNumSegments, pMaterial inMaterial, pMaterial inShadowMaterial, pTexture inHeightTexture);
+	void Init(float3 inPosition, float3 inScale, int2 inNumSegments, pMaterial inMaterial, pMaterial inShadowMaterial, pTexture inHeightTexture, pTexture inNormalTexture);
 	void CleanUp();
-	void UpdateNormals();
+	void UpdateNormals(apTexture inNeighborHeights);
 	void PrepareToDraw() override;
 	void FinalizeAfterDraw() override;
 	void PrepareToDrawShadow() override;
@@ -27,7 +27,8 @@ public:
 private:
 	struct ConstantBufferData
 	{
-		float4 scale;
+		float4	scale;
+		int4	textureInfo;
 	};
 
 	float2				mPixelsPerMeter;
@@ -39,8 +40,9 @@ private:
 	pTexture			mHeightMapTexture		= nullptr;
 	pRenderTarget		mNormalRenderTarget		= nullptr;
 	pTexture			mNormalTexture			= nullptr;
-	pComputeShader		mUpdateNormalShader		= nullptr;
 	pMaterial			mCustomShadowMaterial	= nullptr;
 	bool				mInitialized			= false;
+
+	static				pComputeShader sUpdateNormalShader;
 };
 

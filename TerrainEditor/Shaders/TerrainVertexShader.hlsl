@@ -4,6 +4,10 @@
 Texture2D cHeightTexture : register(t0);
 SamplerState cHeightSampler : register(s0);
 
+Texture2D cNormalTexture : register(t1);
+SamplerState cNormalSampler : register(s1);
+
+
 cbuffer cEveryFrame : register(b0)
 {
 	matrix viewMatrix;
@@ -54,6 +58,7 @@ PS_INPUT VS(VS_INPUT input)
 	float3 pos = input.Position;
 	pos.y += cTerrainScale.z * cHeightTexture.SampleLevel(cHeightSampler, input.TexCoord, 0).x;
 	
+	/*
 	float2 tex_size;
 	cHeightTexture.GetDimensions(tex_size.x, tex_size.y);
 	float2 rcp_tex_size = 1.0 / tex_size;
@@ -74,6 +79,10 @@ PS_INPUT VS(VS_INPUT input)
 	
 	float3 nor = normalize(cross(dz, dx));
 	output.Normal = mul(modelViewMatrix, float4(nor, 0.0)).xyz;
+	*/
+
+	float3 nor = cNormalTexture.SampleLevel(cNormalSampler, input.TexCoord, 0).xyz;// +float3(0, 1, 0);
+	output.Normal = mul(modelViewMatrix, float4(nor, 0.0)).xyz; 
 
 	// jitter for TAA
 	output.Position = mul(modelViewProjectionMatrix, float4(pos, 1.0));

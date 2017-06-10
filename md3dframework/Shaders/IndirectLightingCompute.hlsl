@@ -5,7 +5,7 @@ Texture2D<float4> lightTexture : register(t0);			// quarter res
 Texture2D<float2> normalTexture : register(t1);			// full or half res
 Texture2D<float> linearDepthTexture : register(t2);		// full or half res
 Texture2D<float4> diffuseTexture : register(t3);		// full res
-Texture2D<float> maxDepthTexture : register(t4);				// full res, 5 mips
+Texture2D<float> maxDepthTexture : register(t4);		// full res, 5 mips
 
 SamplerState lightSampler : register(s0);
 SamplerState normalSampler : register(s1);
@@ -17,7 +17,7 @@ cbuffer cIndirectLightingConstants : register(b0)
 {
 	float2	cViewReconstructionVector;
 	float2	cTargetSize;
-	float4	cFrameData; // world_up.xyz, random
+	float4	cFrameData; // world_up.xyz, random 0..1
 };
 
 #define MAX_SAMPLES 32
@@ -42,9 +42,12 @@ float4 SSGI(float3 inPos, float3 inNormal, float inDepth, float2 inCoord)
 							15.0, 7.0, 13.0, 5.0 };
 
 	float rnd = Random(coord + cFrameData.w);
-	rnd = Random(floor(100.0 * pos));
+	//rnd = Random(floor(100.0 * pos));
+	//rnd = 0.0;
+	//float rnd = cFrameData.w;
+	int irnd = cFrameData.w * 16.0;
 
-	float start_angle = (pattern[(coord.y % 4) * 4 + (coord.x % 4)] + rnd) / 16.0 * 2.0 * 3.1415;
+	float start_angle = (pattern[((coord.y % 4) * 4 + (coord.x % 4) + irnd) % 16]) / 16.0 * 2.0 * 3.1415;
 	float2 unit_vec = float2(sin(start_angle), cos(start_angle));
 
 	float cosa = cos(GOLDEN_ANGLE);
@@ -57,7 +60,7 @@ float4 SSGI(float3 inPos, float3 inNormal, float inDepth, float2 inCoord)
 	float running_weight_ao = 0.0001;
 	float running_weight_radiance = 1.0;
 
-	for (uint i = 0; i < MAX_SAMPLES, radius < ss_radius; i++, radius *= sqrt(2.0))
+	for (uint i = 0; i < MAX_SAMPLES, radius < ss_radius; i++, radius = max(radius * 1.25, radius + 2.0))
 	{
 		int2 samp_coord = coord + (unit_vec * radius);
 		if (any(samp_coord < int2(0, 0)) || any(samp_coord > int2(cTargetSize.xy) - 1))

@@ -1,0 +1,67 @@
+RWTexture2D<float4> rwNormal :		register(u0);
+
+Texture2D<float> tHeightCenter :	register(t0);
+Texture2D<float> tHeightNorth :		register(t1);
+Texture2D<float> tHeightEast :		register(t2);
+Texture2D<float> tHeightSouth :		register(t3);
+Texture2D<float> tHeightWest :		register(t4);
+
+
+cbuffer cConstantData : register(b0)
+{
+	float4	cTerrainScale;
+	int4	cTextureInfo;
+}
+
+// TODO optimize so this only happens for selective border pixels
+float SampleHeight(int2 inCoord)
+{
+	int tex_index = 0;
+	int tex_width = cTextureInfo.x;
+	int tex_height = cTextureInfo.y;
+
+	if (inCoord.x < 0)
+	{
+		inCoord.x += tex_width - 1; // minus one, because the border pixels overlap
+		return tHeightWest[inCoord];
+	}
+	else if (inCoord.x >= tex_width)
+	{
+		inCoord.x -= tex_width - 1; // minus one, because the border pixels overlap
+		return tHeightEast[inCoord];
+	}
+	if (inCoord.y < 0)
+	{
+		inCoord.y += tex_height - 1; // minus one, because the border pixels overlap
+		return tHeightSouth[inCoord];
+	}
+	else if (inCoord.y >= tex_height)
+	{
+		inCoord.y -= tex_height - 1; // minus one, because the border pixels overlap
+		return tHeightNorth[inCoord];
+	}
+	else
+	{
+		return tHeightCenter[inCoord];
+	}
+}
+
+
+
+[numthreads(8, 8, 1)]
+void CS(uint3 DTid : SV_DispatchThreadID)
+{
+	int2 coord = DTid.xy;
+
+	if ((coord.x < 0) || (coord.y < 0) || (coord.x >= cTextureInfo.x) || (coord.y >= cTextureInfo.y))
+		return;
+
+	float north = SampleHeight(coord + int2(0, 1));
+	float east = SampleHeight(coord + int2(1, 0));
+	float south = SampleHeight(coord - int2(0, 1));
+	float west = SampleHeight(coord - int2(1, 0));
+
+	float3 dx = float3(2.0 / cTerrainScale.x, (cTerrainScale.z / cTerrainScale.x) * (east - west), 0.0);
+	float3 dz = float3(0.0, (cTerrainScale.z / cTerrainScale.y) * (north - south), 2.0 * cTerrainScale.y);
+	rwNormal[coord] = float4(normalize(cross(dz, dx)), 1.0);
+}

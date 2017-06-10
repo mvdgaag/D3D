@@ -21,15 +21,23 @@ public:
 
 	pLayer GetLayer(int inIndex);
 	void SetLayer(pLayer inLayer, int inIndex);	
-	float2 WorldToTileSpace(float2 inWorldCoord);
-	pTerrainTile GetTile(const int2& inTileIndex);
-	pRenderTarget GetLayerRenderTarget(const int2& inTileIndex, const int inLayerID);
-	pTexture GetLayerTexture(const int2& inTileIndex, const int inLayerID);
-	pTerrainTile GetTile(const float2& inWorldCoord);
-	pRenderTarget GetLayerRenderTarget(const float2& inWorldCoord, const int inLayerID);
-	pTexture GetLayerTexture(const float2& inWorldCoord, const int inLayerID);
-	std::vector<int2> GetTiles(const rect& inWorldRect);
 
+	void SetDirty(int2 inTileIndex, int inLayerIndex);
+
+	void ProcessDirtyLayers();
+
+	float2 WorldToTileSpace(float2 inWorldCoord);
+	
+	pTerrainTile GetTile(const int2& inTileIndex);
+	pTerrainTile GetTile(const float2& inWorldCoord);
+
+	pRenderTarget GetLayerRenderTarget(const int2& inTileIndex, const int inLayerID);
+	pRenderTarget GetLayerRenderTarget(const float2& inWorldCoord, const int inLayerID);
+
+	pTexture GetLayerTexture(const int2& inTileIndex, const int inLayerID);
+	pTexture GetLayerTexture(const float2& inWorldCoord, const int inLayerID);
+
+	std::vector<int2> GetTiles(const rect& inWorldRect);
 
 private:
 	int2 mNumTiles;

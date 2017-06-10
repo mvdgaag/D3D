@@ -10,9 +10,16 @@ void Terrain::Init(int2 inNumTiles, int2 inTileSegments, float3 inTileScale, pMa
 	mTileSegments = inTileSegments;
 	mTileScale = inTileScale;
 
+	assert(LayerType::LAYER_HEIGHT < 2 && LayerType::LAYER_NORMAL < 2);
+	mLayers.resize(2);
+
 	pLayer height_layer = new Layer();
-	height_layer->Init(inNumTiles, int2(mTileSegments.x + 1, mTileSegments.y + 1), FORMAT_R32_FLOAT);
-	mLayers.push_back(height_layer);
+	height_layer->Init(inNumTiles, int2(mTileSegments.x + 1, mTileSegments.y + 1), FORMAT_R32_FLOAT, LayerType::LAYER_HEIGHT);
+	mLayers[(int)LayerType::LAYER_HEIGHT] = height_layer;
+
+	pLayer normal_layer = new Layer();
+	normal_layer->Init(inNumTiles, int2(mTileSegments.x + 1, mTileSegments.y + 1), FORMAT_R16G16B16A16_FLOAT, LayerType::LAYER_NORMAL);
+	mLayers[(int)LayerType::LAYER_NORMAL] = normal_layer;
 
 	mTiles = new pTerrainTile[mNumTiles.x * mNumTiles.y];
 	for (int y = 0; y < mNumTiles.y; y++)
@@ -28,8 +35,11 @@ void Terrain::Init(int2 inNumTiles, int2 inTileSegments, float3 inTileScale, pMa
 			
 			mTiles[idx] = MAKE_NEW(TerrainTile);
 			pMaterial material = theResourceFactory.CloneMaterial(inMaterial);
-			material->SetDiffuseValue(float4(1, 0, 0, 0));
-			mTiles[idx]->Init(tile_pos, mTileScale, mTileSegments, material, inShadowMaterial, height_layer->GetTileTexture(int2(x, y)));
+			
+			// devhack. TODO: why doesn't the diffuse color get assigned?
+			material->SetDiffuseValue(float4(0.7, 0.7, 0.7, 0));
+
+			mTiles[idx]->Init(tile_pos, mTileScale, mTileSegments, material, inShadowMaterial, height_layer->GetTileTexture(int2(x, y)), normal_layer->GetTileTexture(int2(x, y)));
 			
 			Gaag.RegisterObject(mTiles[idx]);
 		}
@@ -62,13 +72,60 @@ pLayer Terrain::GetLayer(int inIndex)
 }
 
 
-void Terrain::SetLayer(pLayer inLayer, int inIndex)
+void Terrain::SetLayer(pLayer inLayer, int inIndex = -1)
 {
 	assert(inIndex != 0);
+
+	if (inIndex == -1)
+		inIndex = mLayers.size();
+
 	if (inIndex >= mLayers.size())
 		mLayers.resize(inIndex + 1);
+
 	assert(mLayers[inIndex] == nullptr);
 	mLayers[inIndex] = inLayer;
+}
+
+
+void Terrain::SetDirty(int2 inTileIndex, int inLayerIndex)
+{
+	assert(inLayerIndex < mLayers.size());
+	assert(mLayers[inLayerIndex] != nullptr);
+
+	mLayers[inLayerIndex]->SetDirty(inTileIndex);
+
+	// If height is dirty so should the normals be.
+	if (inLayerIndex == (int)LayerType::LAYER_HEIGHT)
+		SetDirty(inTileIndex, (int)LayerType::LAYER_NORMAL);
+
+}
+
+
+void Terrain::ProcessDirtyLayers()
+{
+	for each (pLayer layer in mLayers)
+	{
+		int2 num_tiles = layer->GetNumTiles();
+		for (int y = 0; y < num_tiles.y; y++)
+		{
+			for (int x = 0; x < num_tiles.y; x++)
+			{
+				if (layer->GetDirty(int2(x, y)))
+				{
+					if (layer->GetType() == LayerType::LAYER_NORMAL)
+					{
+						apTexture neighbors;
+						neighbors.push_back(GetLayerTexture(int2(x, y + 1), (int)LayerType::LAYER_HEIGHT));
+						neighbors.push_back(GetLayerTexture(int2(x + 1, y), (int)LayerType::LAYER_HEIGHT));
+						neighbors.push_back(GetLayerTexture(int2(x, y - 1), (int)LayerType::LAYER_HEIGHT));
+						neighbors.push_back(GetLayerTexture(int2(x - 1, y), (int)LayerType::LAYER_HEIGHT));
+						mTiles[y * mNumTiles.x + x]->UpdateNormals(neighbors);
+					}
+					layer->SetDirty(int2(x, y), false);
+				}
+			}
+		}
+	}
 }
 
 
@@ -89,6 +146,13 @@ pTerrainTile Terrain::GetTile(const int2& inTileIndex)
 }
 
 
+pTerrainTile Terrain::GetTile(const float2& inWorldCoord)
+{
+	int2 tile_index = WorldToTileSpace(inWorldCoord);
+	return GetTile(tile_index);
+}
+
+
 pRenderTarget Terrain::GetLayerRenderTarget(const int2& inTileIndex, const int inLayerID)
 {
 	if (inTileIndex.x >= 0 && inTileIndex.x < mNumTiles.x && inTileIndex.y >= 0 && inTileIndex.y < mNumTiles.y && inLayerID < mLayers.size())
@@ -98,26 +162,19 @@ pRenderTarget Terrain::GetLayerRenderTarget(const int2& inTileIndex, const int i
 }
 
 
+pRenderTarget Terrain::GetLayerRenderTarget(const float2& inWorldCoord, const int inLayerID)
+{
+	int2 tile_index = WorldToTileSpace(inWorldCoord);
+	return GetLayerRenderTarget(tile_index, inLayerID);
+}
+
+
 pTexture Terrain::GetLayerTexture(const int2& inTileIndex, const int inLayerID)
 {
 	if (inTileIndex.x >= 0 && inTileIndex.x < mNumTiles.x && inTileIndex.y >= 0 && inTileIndex.y < mNumTiles.y && inLayerID < mLayers.size())
 		return mLayers[inLayerID]->GetTileTexture(inTileIndex);
 	else
 		return nullptr;
-}
-
-
-pTerrainTile Terrain::GetTile(const float2& inWorldCoord)
-{
-	int2 tile_index = WorldToTileSpace(inWorldCoord);
-	return GetTile(tile_index);
-}
-
-
-pRenderTarget Terrain::GetLayerRenderTarget(const float2& inWorldCoord, const int inLayerID)
-{
-	int2 tile_index = WorldToTileSpace(inWorldCoord);
-	return GetLayerRenderTarget(tile_index, inLayerID);
 }
 
 

@@ -84,10 +84,12 @@ void PaintTool::ApplyPaint(float2 inWorldCoord)
 	float2 tile_coord = mTargetTerrain->WorldToTileSpace(inWorldCoord);
 
 	std::vector<int2> tile_indices = mTargetTerrain->GetTiles(rect(inWorldCoord - mCurrentBrush->GetRadius(), inWorldCoord + mCurrentBrush->GetRadius()));
+
 	for each (int2 index in tile_indices)
 	{
 		pRenderTarget target = mTargetTerrain->GetLayerRenderTarget(index, mTargetLayer);
-		
+		mTargetTerrain->SetDirty(index, mTargetLayer);
+			
 		// set neighbords array if needed
 		apTexture neighbors;
 		if (mCurrentBrush->SamplesNeighbors())

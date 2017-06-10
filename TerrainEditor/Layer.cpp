@@ -1,26 +1,30 @@
 #include "Layer.h"
 
 
-void Layer::Init(int2 inNumTiles, int2 inTileResolution, Format inFormat)
+void Layer::Init(int2 inNumTiles, int2 inTileResolution, Format inFormat, LayerType inType)
 {
 	CleanUp();
 
 	mNumTiles = inNumTiles;
 	mTileResolution = inTileResolution;
 	mOwnsData = true;
+	mType = inType;
+
+	mIsDirty = new bool[mNumTiles.x * mNumTiles.y];
 	mRenderTargets = new pRenderTarget[mNumTiles.x * mNumTiles.y];
 	for (int y = 0; y < mNumTiles.y; y++)
 	{
 		for (int x = 0; x < mNumTiles.x; x++)
 		{
 			int idx = y * mNumTiles.x + x;
+			mIsDirty[idx] = true;
 			mRenderTargets[idx] = theResourceFactory.MakeRenderTarget(inTileResolution, 1, inFormat);
 		}
 	}
 }
 
 
-void Layer::Init(int2 inNumTiles, apRenderTarget inTargets)
+void Layer::Init(int2 inNumTiles, apRenderTarget inTargets, LayerType inType)
 {
 	assert(inTargets.size() == inNumTiles.x * inNumTiles.y);
 	
@@ -28,7 +32,9 @@ void Layer::Init(int2 inNumTiles, apRenderTarget inTargets)
 	mTileResolution = inTargets[0]->GetDimensions();
 	Format format = inTargets[0]->GetTexture()->GetFormat();
 	mOwnsData = false;
+	mType = inType;
 
+	mIsDirty = new bool[mNumTiles.x * mNumTiles.y];
 	mRenderTargets = new pRenderTarget[mNumTiles.x * mNumTiles.y];
 	for (int y = 0; y < mNumTiles.y; y++)
 	{
@@ -36,6 +42,7 @@ void Layer::Init(int2 inNumTiles, apRenderTarget inTargets)
 		{
 			int idx = x * mNumTiles.y + y;
 			int idx2 = y * mNumTiles.x + x;// TODO: this has X and Y flipped. Make consistent?
+			mIsDirty[idx] = true;
 			pRenderTarget target = inTargets[idx];
 			assert(target->GetDimensions() == mTileResolution);
 			assert(target->GetTexture()->GetFormat() == format);
@@ -60,5 +67,6 @@ void Layer::CleanUp()
 		}
 		delete[] mRenderTargets;
 	}
+	delete[] mIsDirty;
 	mRenderTargets = nullptr;
 }

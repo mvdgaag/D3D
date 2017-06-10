@@ -1,21 +1,28 @@
 #include "TerrainTile.h"
 
 
-void TerrainTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments, pMaterial inMaterial, pMaterial inShadowMaterial, pTexture inHeightTexture)
+// declare static variables
+pComputeShader TerrainTile::sUpdateNormalShader;
+
+
+void TerrainTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments, pMaterial inMaterial, pMaterial inShadowMaterial, pTexture inHeightTexture, pTexture inNormalTexture)
 {
 	CleanUp();
 
 	mNumSegments = inNumSegments;
 
-	mHeightMapRenderTarget = theResourceFactory.MakeRenderTarget(inHeightTexture);
-	mHeightMapTexture = mHeightMapRenderTarget->GetTexture();
+	mHeightMapTexture = inHeightTexture;
+	mHeightMapRenderTarget = theResourceFactory.MakeRenderTarget(mHeightMapTexture);
 	
-	mNormalTexture = theResourceFactory.MakeTexture(mHeightMapTexture->GetDimensions(),	1, Format::FORMAT_R8G8B8A8_SNORM, BindFlag::BIND_COMPUTE_TARGET);
+	mNormalTexture = inNormalTexture;
 	mNormalRenderTarget = theResourceFactory.MakeRenderTarget(mNormalTexture);
 
-	// TODO:
-	//mUpdateNormalShader = theResourceFactory.Get("TerrainUpdateNormalShader");
-	//UpdateNormals();
+	if (sUpdateNormalShader == nullptr)
+		sUpdateNormalShader = theResourceFactory.LoadComputeShader("Shaders/TerrainUpdateNormalShader.hlsl");
+	
+	apTexture dummy_heights;
+	dummy_heights.resize(4);
+	UpdateNormals(dummy_heights);
 
 	mHeightScale = inScale.z;
 	mPixelsPerMeter = float2(mHeightMapTexture->GetDimensions()) / float2(inScale);
@@ -62,8 +69,8 @@ void TerrainTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments, pM
 	Translate(inPosition);
 
 	mConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(mConstantBufferData));
-	
-	mConstantBufferData.scale = float4(inScale, 0);
+	mConstantBufferData.scale = float4(inScale, 0.0);
+	mConstantBufferData.textureInfo = int4(mHeightMapTexture->GetDimensions(), 0, 0);
 	theRenderContext.UpdateSubResource(*mConstantBuffer, &mConstantBufferData);
 
 	mCustomShadowMaterial = inShadowMaterial;
@@ -82,11 +89,32 @@ void TerrainTile::CleanUp()
 }
 
 
-void TerrainTile::UpdateNormals()
+void TerrainTile::UpdateNormals(apTexture inNeighborHeights)
 {
-	theRenderContext.CSSetShader(mUpdateNormalShader);
-}
+	assert(inNeighborHeights.size() == 4);
 
+	theRenderContext.CSSetShader(sUpdateNormalShader);
+	theRenderContext.CSSetRWTexture(mNormalRenderTarget, 0, 0);
+	theRenderContext.CSSetTexture(mHeightMapTexture, 0);
+
+	theRenderContext.CSSetTexture(inNeighborHeights[0], 1); // n
+	theRenderContext.CSSetTexture(inNeighborHeights[1], 2); // e
+	theRenderContext.CSSetTexture(inNeighborHeights[2], 3); // s
+	theRenderContext.CSSetTexture(inNeighborHeights[3], 4); // w
+	
+	theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);
+	int2 num_threads = (mNormalRenderTarget->GetDimensions() + 7) / 8;
+	theRenderContext.Dispatch(num_threads.x, num_threads.y, 1);
+	
+	theRenderContext.CSSetConstantBuffer(NULL, 0);
+	theRenderContext.CSSetRWTexture(NULL, 0, 0);
+	theRenderContext.CSSetTexture(NULL, 0);
+	theRenderContext.CSSetTexture(NULL, 1);
+	theRenderContext.CSSetTexture(NULL, 2);
+	theRenderContext.CSSetTexture(NULL, 3);
+	theRenderContext.CSSetTexture(NULL, 4);
+	theRenderContext.CSSetShader(NULL);
+}
 
 
 void TerrainTile::PrepareToDraw()
@@ -94,6 +122,7 @@ void TerrainTile::PrepareToDraw()
 	pSampler point_sampler = theResourceFactory.GetDefaultPointSampler();
 	theRenderContext.VSSetConstantBuffer(mConstantBuffer, 2);
 	theRenderContext.VSSetTextureAndSampler(mHeightMapTexture, point_sampler, 0);
+	theRenderContext.VSSetTextureAndSampler(mNormalTexture, point_sampler, 1);
 }
 
 
@@ -101,6 +130,7 @@ void TerrainTile::FinalizeAfterDraw()
 {
 	theRenderContext.VSSetConstantBuffer(NULL, 2);
 	theRenderContext.VSSetTextureAndSampler(NULL, NULL, 0);
+	theRenderContext.VSSetTextureAndSampler(NULL, NULL, 1);
 }
 
 

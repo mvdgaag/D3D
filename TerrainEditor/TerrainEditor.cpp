@@ -52,10 +52,12 @@ static void FrameFunc()
 	float angle = 0.1f * 2.0f * 3.1415f * time_step;
 	g_obj->Rotate(float3(0.0f, 1.0f, 0.0f), angle);
 
-	angle = 6.283f * glm::fract(theTime.GetTime() / 5.0);
-	g_lights[0]->SetPosition(float3(sin(angle), 1.0, cos(angle)) * 20.0f);
+	g_Terrain->ProcessDirtyLayers();
 
-	g_spot_light->LookAt(float3(sin(angle), 1.0, cos(angle)) * 20.0f);
+	//angle = 6.283f * glm::fract(theTime.GetTime() / 5.0);
+	//g_lights[0]->SetPosition(float3(sin(angle), 1.0, cos(angle)) * 20.0f);
+
+	//g_spot_light->LookAt(float3(sin(angle), 1.0, cos(angle)) * 20.0f);
 }
 
 
@@ -95,17 +97,17 @@ void InitContent()
 {
 	g_obj = MAKE_NEW(MeshObject);
 
-	for (int i = 0; i < 100; i++)
-	{
-		g_lights[i] = theResourceFactory.MakePointLight(float3((i/10 - 5) * 20.0f, 20.0f, (i%10 - 5) * 20.0f), 40.0f, float4(0.1));
+	//for (int i = 0; i < 100; i++)
+	//{
+		//g_lights[i] = theResourceFactory.MakePointLight(float3((i/10 - 5) * 20.0f, 20.0f, (i%10 - 5) * 20.0f), 40.0f, float4(0.1));
 		//Gaag.RegisterLight(g_lights[i]);
-	}
+	//}
 
-	//g_directional_light = theResourceFactory.MakeDirectionalLight(float3(1, -1, 1), float4(1, 1, 1, 1), 2048);
-	g_directional_light = theResourceFactory.MakeDirectionalLight(float3(1, -1, 1), float4(10.0, 10.0, 10.0, 1.0), 0);
+	g_directional_light = theResourceFactory.MakeDirectionalLight(float3(1, -1, 1), float4(10, 10, 10, 1), 2048);
+	//g_directional_light = theResourceFactory.MakeDirectionalLight(float3(1, -1, 1), float4(10.0, 10.0, 10.0, 1.0), 0);
 	Gaag.RegisterLight(g_directional_light);
 
-	g_spot_light = theResourceFactory.MakeSpotLight(float3(0, 10, 0), 50.0, float3(0, 0, 1), 0.5, float4(1, 0, 0, 1));
+	//g_spot_light = theResourceFactory.MakeSpotLight(float3(0, 10, 0), 50.0, float3(0, 0, 1), 0.5, float4(1, 0, 0, 1));
 	//Gaag.RegisterLight(g_spot_light);
 
 	g_mesh = theResourceFactory.LoadMesh("Models/sphere.obj");
@@ -132,8 +134,9 @@ void InitContent()
 	g_TerrainShadowMaterial->SetPixelShader(g_TerrainShadowPixelShader);
 
 	g_Terrain = MAKE_NEW(Terrain);
-	g_Terrain->Init(int2(5), int2(128), float3(50,50,5), g_TerrainMaterial, g_TerrainShadowMaterial);
+	g_Terrain->Init(int2(3), int2(64), float3(50,50,5), g_TerrainMaterial, g_TerrainShadowMaterial);
 
+	/*
 	g_water = MAKE_NEW(Water);
 	g_water->Init(g_Terrain, g_TerrainMaterial, g_TerrainShadowMaterial);
 	int2 num_tiles = g_water->GetTerrain()->GetNumTiles();
@@ -153,14 +156,18 @@ void InitContent()
 			material.SetRoughnessValue(0.1);
 		}
 	}
+	*/
 
 	g_brush_library = MAKE_NEW(BrushLibrary);
 	g_brush_library->Init();
 
 	g_paint_tool = MAKE_NEW(PaintTool);
 	g_paint_tool->Init(g_brush_library);
-	g_paint_tool->SetTargetTerrain(g_water->GetWaterSurface());
-	g_paint_tool->SetTargetLayer(1);
+	
+	//g_paint_tool->SetTargetTerrain(g_water->GetWaterSurface());
+	//g_paint_tool->SetTargetLayer(1);
+	g_paint_tool->SetTargetTerrain(g_Terrain);
+	g_paint_tool->SetTargetLayer(0);
 
 	g_camera_controller = MAKE_NEW(CameraController);
 	g_camera_controller->SetTargetCamera(Gaag.GetCamera());
