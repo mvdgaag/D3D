@@ -15,8 +15,10 @@ cbuffer cPaintData
 void CS(uint3 DTid : SV_DispatchThreadID)
 {
 	int2 coord_in_brush = DTid.xy;
-
 	int2 target_pixel = cPaintRect.xy + coord_in_brush;
+
+	if (target_pixel.x < 0 || target_pixel.y < 0 || target_pixel.x >= cTextureInfo.x || target_pixel.y >= cTextureInfo.y)
+		return;
 
 	float2 radius = (cPaintRect.zw - cPaintRect.xy) / 2.0;
 	float2 brush_center_pixel = cPaintRect.xy + radius;
