@@ -134,9 +134,8 @@ void InitContent()
 	g_TerrainShadowMaterial->SetPixelShader(g_TerrainShadowPixelShader);
 
 	g_Terrain = MAKE_NEW(Terrain);
-	g_Terrain->Init(int2(3), int2(64), float3(50,50,5), g_TerrainMaterial, g_TerrainShadowMaterial);
+	g_Terrain->Init(int2(3), int2(42), float3(50,50,5), g_TerrainMaterial, g_TerrainShadowMaterial);
 
-	/*
 	g_water = MAKE_NEW(Water);
 	g_water->Init(g_Terrain, g_TerrainMaterial, g_TerrainShadowMaterial);
 	int2 num_tiles = g_water->GetTerrain()->GetNumTiles();
@@ -145,8 +144,8 @@ void InitContent()
 		for (int y = 0; y < num_tiles.y; y++)
 		{
 			int2 coord(x, y);
-			pTexture texture = g_water->GetTile(coord)->GetFluxTexture();
 			Material& material = *g_water->GetWaterSurface()->GetTile(coord)->GetMaterial();
+			//pTexture texture = g_water->GetTile(coord)->GetFluxTexture();
 			//material.SetDiffuseTexture(texture);
 			material.SetDiffuseTexture(NULL);
 			material.SetNormalTexture(NULL);
@@ -156,7 +155,6 @@ void InitContent()
 			material.SetRoughnessValue(0.1);
 		}
 	}
-	*/
 
 	g_brush_library = MAKE_NEW(BrushLibrary);
 	g_brush_library->Init();
@@ -164,10 +162,14 @@ void InitContent()
 	g_paint_tool = MAKE_NEW(PaintTool);
 	g_paint_tool->Init(g_brush_library);
 	
-	//g_paint_tool->SetTargetTerrain(g_water->GetWaterSurface());
-	//g_paint_tool->SetTargetLayer(1);
 	g_paint_tool->SetTargetTerrain(g_Terrain);
 	g_paint_tool->SetTargetLayer(0);
+
+	if (g_water != nullptr)
+	{
+		g_paint_tool->SetTargetTerrain(g_water->GetWaterSurface());
+		g_paint_tool->SetTargetLayer(2);
+	}
 
 	g_camera_controller = MAKE_NEW(CameraController);
 	g_camera_controller->SetTargetCamera(Gaag.GetCamera());

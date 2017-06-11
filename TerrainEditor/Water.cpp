@@ -3,10 +3,10 @@
 #include "WaterTile.h"
 
 
-void Water::Init(pTerrain inTerrainTerrain, pMaterial inMaterial, pMaterial inShadowMaterial)
+void Water::Init(pTerrain inTerrain, pMaterial inMaterial, pMaterial inShadowMaterial)
 {
-	assert(inTerrainTerrain != nullptr);
-	mTerrain = inTerrainTerrain;
+	assert(inTerrain != nullptr);
+	mTerrain = inTerrain;
 
 	mWaterSurface = MAKE_NEW(Terrain);
 	mWaterSurface->Init(mTerrain->GetNumTiles(), mTerrain->GetTileSegments(), mTerrain->GetTileScale(), inMaterial, inShadowMaterial);
@@ -34,7 +34,7 @@ void Water::Init(pTerrain inTerrainTerrain, pMaterial inMaterial, pMaterial inSh
 	}
 	pLayer water_layer = new Layer();
 	water_layer->Init(mWaterSurface->GetNumTiles(), water_targets);
-	mWaterSurface->SetLayer(water_layer, 1);
+	mWaterSurface->SetLayer(water_layer, 2);
 }
 
 
@@ -67,12 +67,13 @@ void Water::Update(float inTimeStep)
 			pWaterTile south = nullptr;
 			pWaterTile west = nullptr;
 
+			north = mWaterTiles[x][(y + 1) % mNumTiles.y];
+			east = mWaterTiles[(x + 1) % mNumTiles.x][y];
 			south = mWaterTiles[x][(y + mNumTiles.y - 1) % mNumTiles.y];
 			west = mWaterTiles[(x + mNumTiles.x - 1) % mNumTiles.x][y];
-			east = mWaterTiles[(x + 1) % mNumTiles.x][y];
-			north = mWaterTiles[x][(y + 1) % mNumTiles.y];
-
+			
 			mWaterTiles[x][y]->UpdateWater(north, east, south, west);
+			mWaterSurface->SetDirty(int2(x, y), (int)LayerType::LAYER_HEIGHT); // Trigger recalculation of normals
 		}
 	}
 
@@ -86,12 +87,14 @@ void Water::Update(float inTimeStep)
 			pWaterTile south = nullptr;
 			pWaterTile west = nullptr;
 
+			north = mWaterTiles[x][(y + 1) % mNumTiles.y];
+			east = mWaterTiles[(x + 1) % mNumTiles.x][y];
 			south = mWaterTiles[x][(y + mNumTiles.y - 1) % mNumTiles.y];
 			west = mWaterTiles[(x + mNumTiles.x - 1) % mNumTiles.x][y];
-			east = mWaterTiles[(x + 1) % mNumTiles.x][y];
-			north = mWaterTiles[x][(y + 1) % mNumTiles.y];
-
+			
 			mWaterTiles[x][y]->UpdateFlux(north, east, south, west);
 		}
 	}
+
+	mWaterSurface->ProcessDirtyLayers();
 }

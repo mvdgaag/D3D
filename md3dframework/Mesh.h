@@ -24,7 +24,7 @@ class Mesh : public BaseResource
 public:
 	void InitFromData(SimpleVertex* inVertexData, int inNumVerts, unsigned short* inIndexData, int inNumIndices);
 	void InitCube(float3 inScale = { 1, 1, 1 });
-	void InitPlane(int2 inNumSegments, float2 inScale = { 1, 1 });
+	void InitPlane(int2 inNumVertices, float2 inScale = { 1, 1 });
 	void InitFullscreenTriangle();
 	void InitFromFile(std::string inFileName);
 	

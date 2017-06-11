@@ -5,11 +5,15 @@
 pComputeShader TerrainTile::sUpdateNormalShader;
 
 
-void TerrainTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments, pMaterial inMaterial, pMaterial inShadowMaterial, pTexture inHeightTexture, pTexture inNormalTexture)
+void TerrainTile::Init(float3 inPosition, float3 inScale, int2 inNumVertices, pMaterial inMaterial, pMaterial inShadowMaterial, pTexture inHeightTexture, pTexture inNormalTexture)
 {
 	CleanUp();
 
-	mNumSegments = inNumSegments;
+	// The tile uses one height and normal pixel per vertex.
+	assert(inHeightTexture->GetDimensions() == inNumVertices);
+	assert(inNormalTexture->GetDimensions() == inNumVertices);
+
+	mNumVertices = inNumVertices;
 
 	mHeightMapTexture = inHeightTexture;
 	mHeightMapRenderTarget = theResourceFactory.MakeRenderTarget(mHeightMapTexture);
@@ -35,30 +39,31 @@ void TerrainTile::Init(float3 inPosition, float3 inScale, int2 inNumSegments, pM
 	vert.Tangent = float3(0, 0, 1);
 
 	// generate plane
-	for (int y = 0; y <= inNumSegments.y; y++)
+	for (int y = 0; y < inNumVertices.y; y++)
 	{
-		float v = float(y) / float(inNumSegments.y);
-		for (int x = 0; x <= inNumSegments.x; x++)
+		float v = float(y) / float(inNumVertices.y - 1);
+		for (int x = 0; x < inNumVertices.x; x++)
 		{
-			float u = float(x) / float(inNumSegments.x);
-			vert.TexCoord = float2(u, v);
+			float u = float(x) / float(inNumVertices.x - 1);
+			// DEVHACK: use actual pixel coordinates for uvs
+			//vert.TexCoord = float2(u, v);
+			vert.TexCoord = float2(x, y); 
 			vert.Position = float3((u - 0.5) * inScale.x, 0, (v - 0.5) * inScale.y);
 			vertices.push_back(vert);
 		}
 	}
 
-	int row_offset = inNumSegments.x + 1;
-	for (int y = 0; y < inNumSegments.y; y++)
+	for (int y = 0; y < inNumVertices.y - 1; y++)
 	{
-		for (int x = 0; x < inNumSegments.x; x++)
+		for (int x = 0; x < inNumVertices.x - 1; x++)
 		{
-			int idx = y * row_offset + x;
+			int idx = y * inNumVertices.x + x;
 			indices.push_back(idx);
-			indices.push_back(idx + row_offset);
+			indices.push_back(idx + inNumVertices.x);
 			indices.push_back(idx + 1);
 			indices.push_back(idx + 1);
-			indices.push_back(idx + row_offset);
-			indices.push_back(idx + row_offset + 1);
+			indices.push_back(idx + inNumVertices.x);
+			indices.push_back(idx + inNumVertices.x + 1);
 		}
 	}
 

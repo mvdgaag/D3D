@@ -9,7 +9,7 @@ public:
 	TerrainTile() : MeshObject() { mInitialized = false; }
 	~TerrainTile() {};
 
-	void Init(float3 inPosition, float3 inScale, int2 inNumSegments, pMaterial inMaterial, pMaterial inShadowMaterial, pTexture inHeightTexture, pTexture inNormalTexture);
+	void Init(float3 inPosition, float3 inScale, int2 inNumVertices, pMaterial inMaterial, pMaterial inShadowMaterial, pTexture inHeightTexture, pTexture inNormalTexture);
 	void CleanUp();
 	void UpdateNormals(apTexture inNeighborHeights);
 	void PrepareToDraw() override;
@@ -22,7 +22,7 @@ public:
 	pRenderTarget	GetRenderTarget()				{ return mHeightMapRenderTarget; }
 	float2			GetPixelsPerMeter()				{ return mPixelsPerMeter; }
 	float			GetHeightScale()				{ return mHeightScale; }
-	int2			GetSegments()					{ return mNumSegments; }
+	int2			GetSegments()					{ return mNumVertices; }
 
 private:
 	struct ConstantBufferData
@@ -33,7 +33,7 @@ private:
 
 	float2				mPixelsPerMeter;
 	float				mHeightScale;
-	int2				mNumSegments;
+	int2				mNumVertices;
 	ConstantBufferData	mConstantBufferData;
 	pConstantBuffer		mConstantBuffer			= nullptr;
 	pRenderTarget		mHeightMapRenderTarget	= nullptr;

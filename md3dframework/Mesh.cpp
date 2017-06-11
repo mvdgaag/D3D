@@ -64,7 +64,7 @@ void Mesh::InitCube(float3 inScale)
 }
 
 
-void Mesh::InitPlane(int2 inNumSegments, float2 inScale)
+void Mesh::InitPlane(int2 inNumVertices, float2 inScale)
 {
 	std::vector<SimpleVertex> vertices;
 	std::vector<WORD> indices;
@@ -72,30 +72,29 @@ void Mesh::InitPlane(int2 inNumSegments, float2 inScale)
 	SimpleVertex vert;
 	vert.Normal = float3(0, 1, 0);
 	vert.Tangent = float3(0, 0, 1);
-	for (int y = 0; y <= inNumSegments.y; y++)
+	for (int y = 0; y < inNumVertices.y; y++)
 	{
-		float v = float(y) / float(inNumSegments.y);
-		for (int x = 0; x <= inNumSegments.x; x++)
+		float v = float(y) / float(inNumVertices.y - 1);
+		for (int x = 0; x < inNumVertices.x; x++)
 		{
-			float u = float(x) / float(inNumSegments.x);
+			float u = float(x) / float(inNumVertices.x - 1);
 			vert.TexCoord = float2(u, v);
 			vert.Position = float3((u - 0.5) * inScale.x, 0, (v - 0.5) * inScale.y);
 			vertices.push_back(vert);
 		}
 	}
 
-	int row_offset = inNumSegments.x + 1;
-	for (int y = 0; y < inNumSegments.y; y++)
+	for (int y = 0; y < inNumVertices.y - 1; y++)
 	{
-		for (int x = 0; x < inNumSegments.x; x++)
+		for (int x = 0; x < inNumVertices.x - 1; x++)
 		{
-			int idx = y * row_offset + x;
+			int idx = y * inNumVertices.x + x;
 			indices.push_back(idx);
-			indices.push_back(idx + row_offset);
+			indices.push_back(idx + inNumVertices.x);
 			indices.push_back(idx + 1);
 			indices.push_back(idx + 1);
-			indices.push_back(idx + row_offset);
-			indices.push_back(idx + row_offset + 1);
+			indices.push_back(idx + inNumVertices.x);
+			indices.push_back(idx + inNumVertices.x + 1);
 		}
 	}
 

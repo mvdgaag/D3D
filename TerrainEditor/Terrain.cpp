@@ -10,15 +10,15 @@ void Terrain::Init(int2 inNumTiles, int2 inTileSegments, float3 inTileScale, pMa
 	mTileSegments = inTileSegments;
 	mTileScale = inTileScale;
 
-	assert(LayerType::LAYER_HEIGHT < 2 && LayerType::LAYER_NORMAL < 2);
+	assert(LayerType::LAYER_HEIGHT == 0 && LayerType::LAYER_NORMAL == 1);
 	mLayers.resize(2);
 
 	pLayer height_layer = new Layer();
-	height_layer->Init(inNumTiles, int2(mTileSegments.x + 1, mTileSegments.y + 1), FORMAT_R32_FLOAT, LayerType::LAYER_HEIGHT);
+	height_layer->Init(inNumTiles, int2(mTileSegments.x, mTileSegments.y), FORMAT_R32_FLOAT, LayerType::LAYER_HEIGHT);
 	mLayers[(int)LayerType::LAYER_HEIGHT] = height_layer;
-
+	
 	pLayer normal_layer = new Layer();
-	normal_layer->Init(inNumTiles, int2(mTileSegments.x + 1, mTileSegments.y + 1), FORMAT_R16G16B16A16_FLOAT, LayerType::LAYER_NORMAL);
+	normal_layer->Init(inNumTiles, int2(mTileSegments.x, mTileSegments.y), FORMAT_R16G16B16A16_FLOAT, LayerType::LAYER_NORMAL);
 	mLayers[(int)LayerType::LAYER_NORMAL] = normal_layer;
 
 	mTiles = new pTerrainTile[mNumTiles.x * mNumTiles.y];
@@ -36,8 +36,10 @@ void Terrain::Init(int2 inNumTiles, int2 inTileSegments, float3 inTileScale, pMa
 			mTiles[idx] = MAKE_NEW(TerrainTile);
 			pMaterial material = theResourceFactory.CloneMaterial(inMaterial);
 			
-			// devhack. TODO: why doesn't the diffuse color get assigned?
 			material->SetDiffuseValue(float4(0.7, 0.7, 0.7, 0));
+
+			// DEVHACK
+			material->SetDiffuseTexture(height_layer->GetTileTexture(int2(x, y)));
 
 			mTiles[idx]->Init(tile_pos, mTileScale, mTileSegments, material, inShadowMaterial, height_layer->GetTileTexture(int2(x, y)), normal_layer->GetTileTexture(int2(x, y)));
 			

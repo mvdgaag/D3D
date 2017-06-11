@@ -106,7 +106,8 @@ void CS(uint3 DTid : SV_DispatchThreadID, uint3 GTid : SV_GroupThreadID)
 	float3 pos = ReconstructCSPosition(uv, depth, cViewReconstructionVector);
 	float3 normal = DecodeNormal(normalTexture.SampleLevel(lightSampler, uv, 0).xy);
 
-	float4 ssgi = SSGI(pos, normal, depth, coord);
+	//float4 ssgi = SSGI(pos, normal, depth, coord);
+	float4 ssgi = float4(0.0, 0.0, 0.0, 1.0);
 	
 	float3 up = cFrameData.xyz;
 	float3 sky_color = float3(0.5, 0.5, 0.5); // TODO: add skylight light instead

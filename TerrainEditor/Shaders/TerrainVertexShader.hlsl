@@ -35,7 +35,7 @@ struct VS_INPUT
 	float3 Position : POSITION;
 	float3 Normal	: NORMAL;
 	float3 Tangent	: TANGENT;
-	float2 TexCoord : TEXCOORD;
+	float2 TexCoord : TEXCOORD; // Assumes vertex coordinate instead of UV
 };
 
 
@@ -50,44 +50,73 @@ struct PS_INPUT
 };
 
 
-
 PS_INPUT VS(VS_INPUT input)
 {
-	PS_INPUT output = (PS_INPUT)0;
-	
-	float3 pos = input.Position;
-	pos.y += cTerrainScale.z * cHeightTexture.SampleLevel(cHeightSampler, input.TexCoord, 0).x;
-	
 	/*
+
 	float2 tex_size;
 	cHeightTexture.GetDimensions(tex_size.x, tex_size.y);
 	float2 rcp_tex_size = 1.0 / tex_size;
-	
+
 	float3 dx = float3(
-		2.0 * rcp_tex_size.x,
-		(cTerrainScale.z / cTerrainScale.x) *
-		(	cHeightTexture.SampleLevel(cHeightSampler, saturate(input.TexCoord + float2( rcp_tex_size.x, 0.0)), 0).x -
-			cHeightTexture.SampleLevel(cHeightSampler, saturate(input.TexCoord + float2(-rcp_tex_size.x, 0.0)), 0).x ),
-		0.0);
-	
+	2.0 * rcp_tex_size.x,
+	(cTerrainScale.z / cTerrainScale.x) *
+	(	cHeightTexture.SampleLevel(cHeightSampler, saturate(input.TexCoord + float2( rcp_tex_size.x, 0.0)), 0).x -
+	cHeightTexture.SampleLevel(cHeightSampler, saturate(input.TexCoord + float2(-rcp_tex_size.x, 0.0)), 0).x ),
+	0.0);
+
 	float3 dz = float3(
-		0.0,
-		(cTerrainScale.z / cTerrainScale.y) *
-		(	cHeightTexture.SampleLevel(cHeightSampler, saturate(input.TexCoord + float2(0.0,  rcp_tex_size.y)), 0).x -
-			cHeightTexture.SampleLevel(cHeightSampler, saturate(input.TexCoord + float2(0.0, -rcp_tex_size.y)), 0).x ),
-		2.0 * rcp_tex_size.y);
-	
+	0.0,
+	(cTerrainScale.z / cTerrainScale.y) *
+	(	cHeightTexture.SampleLevel(cHeightSampler, saturate(input.TexCoord + float2(0.0,  rcp_tex_size.y)), 0).x -
+	cHeightTexture.SampleLevel(cHeightSampler, saturate(input.TexCoord + float2(0.0, -rcp_tex_size.y)), 0).x ),
+	2.0 * rcp_tex_size.y);
+
 	float3 nor = normalize(cross(dz, dx));
 	output.Normal = mul(modelViewMatrix, float4(nor, 0.0)).xyz;
 	*/
 
-	float3 nor = cNormalTexture.SampleLevel(cNormalSampler, input.TexCoord, 0).xyz;// +float3(0, 1, 0);
+
+
+	PS_INPUT output = (PS_INPUT)0;
+	
+	/*
+	uv goes from 0..1 we want to sample center pixel. There is one vert per pixel.
+
+	0          0.5          1
+	.___.___.___.___.___.___.
+	| 0 | 1 | 2 | 3 | 4 | 5 |
+	.___.___.___.___.___.___.
+	|   |   |   |   |   |   |
+	.___.___.___.___.___.___.
+	|   |   |   |   |   |   |
+	.___.___.___.___.___.___.
+	|   |   |   |   |   |   |
+	.___.___.___.___.___.___.
+	|   |   |   |   |   |   |
+	.___.___.___.___.___.___.
+
+	*/
+	
+
+	
+	int3 pixel = int3(int2(input.TexCoord), 0);
+
+	float3 pos = input.Position;
+	pos.y += cTerrainScale.z * cHeightTexture.Load(pixel).x;
+	//pos.y += cTerrainScale.z * cHeightTexture.SampleLevel(cHeightSampler, input.TexCoord, 0).x;
+
+	float3 nor = cNormalTexture.Load(pixel).xyz;
+	//float3 nor = cNormalTexture.SampleLevel(cNormalSampler, input.TexCoord, 0).xyz;
 	output.Normal = mul(modelViewMatrix, float4(nor, 0.0)).xyz; 
 
 	// jitter for TAA
 	output.Position = mul(modelViewProjectionMatrix, float4(pos, 1.0));
 	output.Tangent = mul(modelViewMatrix, float4(input.Tangent, 0.0)).xyz;
-	output.TexCoord = input.TexCoord.xy;
+	
+	float2 tex_size;
+	cHeightTexture.GetDimensions(tex_size.x, tex_size.y);
+	output.TexCoord = input.TexCoord.xy / (tex_size - 1);
 
 	float4 cam_space_pos = mul(modelViewMatrix, float4(pos, 1.0));
 	output.LinearDepth = -cam_space_pos.z;
