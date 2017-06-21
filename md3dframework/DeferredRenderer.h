@@ -91,7 +91,7 @@ private:
 		float4x4 projectionMatrix;
 		float4x4 viewProjectionMatrix;
 		float4x4 inverseProjectionMatrix;
-		float4 frameData;								// jitter_offset.xy, frameID, 0
+		float4 frameData;								// jitter_offset.xy, frameID, time
 	};
 
 	struct ConstantDataEveryObject

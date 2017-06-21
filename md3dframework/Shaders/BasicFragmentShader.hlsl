@@ -15,13 +15,23 @@ SamplerState cSurfaceSampler : register(s2);
 #define HAS_SURFACE_MAP	(1 << 2)
 
 
-cbuffer cConstantData : register(b0)
+cbuffer cEveryFrame : register(b0)
+{
+	matrix viewMatrix;
+	matrix projectionMatrix;
+	matrix viewProjectionMatrix;
+	matrix inverseProjectionMatrix;
+	float4 frameData;								// jitter_offset.xy, frameID, time
+};
+
+
+cbuffer cConstantData : register(b1)
 {
 	float4 cDiffuse;
 	float4 cSurface;
 	uint cFlags;
 	float4 cPadding;
-}
+};
 
 
 struct PS_INPUT
@@ -86,6 +96,11 @@ PS_OUTPUT PS(PS_INPUT input)
 		output.Surface = cSurface;
 	else
 		output.Surface = cSurfaceTexture.Sample(cSurfaceSampler, input.TexCoord);
+
+
+	// DEVHACK
+	//output.Surface.x = frac(frameData.w);
+
 
 	if ((flags & HAS_NORMAL_MAP) == 0)
 		output.Normal = EncodeNormal(normalize(input.Normal));

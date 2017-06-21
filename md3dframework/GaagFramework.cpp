@@ -175,7 +175,7 @@ void GaagFramework::SetMaterial(pMaterial inMaterial)
 	if (surface_texture != nullptr)
 		theRenderContext.PSSetTextureAndSampler(surface_texture, mDefaultSampler, 2);
 	
-	theRenderContext.PSSetConstantBuffer(inMaterial->GetConstantBuffer(), 0);
+	theRenderContext.PSSetConstantBuffer(inMaterial->GetConstantBuffer(), 1); // 0 reserved for every frame
 }
 
 

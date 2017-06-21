@@ -138,6 +138,7 @@ void DeferredRenderer::Render(std::vector<pMeshObject> inDrawList)
 	
 	Camera& camera = *(Gaag.GetCamera());
 	int frame_id = Gaag.GetFrameID();
+	float time = Gaag.GetFrameTime();
 	float2 jitter_offset = TAARenderer::GetJitterOffset(frame_id);
 
 	ConstantDataEveryFrame constantData;
@@ -145,7 +146,7 @@ void DeferredRenderer::Render(std::vector<pMeshObject> inDrawList)
 	constantData.projectionMatrix = perspective(camera.GetFovY(), camera.GetAspect(), camera.GetNear(), camera.GetFar());
 	constantData.viewProjectionMatrix = constantData.projectionMatrix * constantData.viewMatrix;
 	constantData.inverseProjectionMatrix = inverse(constantData.projectionMatrix);
-	constantData.frameData = float4(jitter_offset.x, jitter_offset.y, frame_id, 0);
+	constantData.frameData = float4(jitter_offset.x, jitter_offset.y, frame_id, time);
 
 	theRenderContext.UpdateSubResource(*mConstantBufferEveryFrame, &constantData);
 
@@ -223,8 +224,10 @@ void DeferredRenderer::GeometryPass(std::vector<pMeshObject> inDrawList)
 
 		Gaag.SetMaterial(obj->GetMaterial());
 		
+		theRenderContext.PSSetConstantBuffer(mConstantBufferEveryFrame, 0);
 		theRenderContext.VSSetConstantBuffer(mConstantBufferEveryFrame, 0);
 		theRenderContext.VSSetConstantBuffer(mConstantBufferEveryObject, 1);
+
 		obj->PrepareToDraw();
 		theRenderContext.DrawMesh(*(obj->GetMesh()));
 		obj->FinalizeAfterDraw();

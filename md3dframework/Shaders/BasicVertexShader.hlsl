@@ -4,7 +4,7 @@ cbuffer cEveryFrame : register(b0)
 	matrix projectionMatrix;
 	matrix viewProjectionMatrix;
 	matrix inverseProjectionMatrix;
-	float4 frameData;								// jitter_offset.xy, frameID, 0
+	float4 frameData;								// jitter_offset.xy, frameID, time
 };
 
 
