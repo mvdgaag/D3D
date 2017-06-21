@@ -33,6 +33,7 @@ struct PS_INPUT
 	float2 TexCoord			: TEXCOORD0;
 	float2 MotionVectors	: TEXCOORD1;
 	float  LinearDepth		: TEXCOORD2;
+	float3 CameraPosition	: TEXCOORD3;
 };
 
 
@@ -50,6 +51,7 @@ PS_INPUT VS(VS_INPUT input)
 	output.TexCoord = input.TexCoord.xy;
 
 	float4 cam_space_pos = mul(modelViewMatrix, float4(input.Position, 1.0));
+	output.CameraPosition = cam_space_pos.xyz;
 	output.LinearDepth = -cam_space_pos.z;
 
 	// motion vectors

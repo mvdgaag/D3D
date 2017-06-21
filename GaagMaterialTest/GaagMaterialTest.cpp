@@ -110,7 +110,7 @@ void InitContent()
 	}
 
 	g_cube_surface_texture = theResourceFactory.LoadTexture("Textures/surface.dds", BindFlag::BIND_SHADER_RESOURCE | BindFlag::BIND_RENDER_TARGET);
-	g_cube_normal_texture = theResourceFactory.LoadTexture("Textures/normal.dds", BindFlag::BIND_SHADER_RESOURCE | BindFlag::BIND_RENDER_TARGET);
+	g_cube_normal_texture = theResourceFactory.LoadTexture("Textures/normal2.dds", BindFlag::BIND_SHADER_RESOURCE | BindFlag::BIND_RENDER_TARGET);
 	g_cube_diffuse_texture = theResourceFactory.LoadTexture("Textures/diffuse.dds", BindFlag::BIND_SHADER_RESOURCE | BindFlag::BIND_RENDER_TARGET);
 
 	g_cube_material = theResourceFactory.MakeMaterial();
