@@ -27,6 +27,7 @@ public:
 	void ProcessDirtyLayers();
 
 	float2 WorldToTileSpace(float2 inWorldCoord);
+	float2 TileToWorldSpace(float2 inTileCoord);
 	
 	pTerrainTile GetTile(const int2& inTileIndex);
 	pTerrainTile GetTile(const float2& inWorldCoord);

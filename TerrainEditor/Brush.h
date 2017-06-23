@@ -10,7 +10,7 @@ public:
 	~Brush() {};
 	
 	void			Init(pComputeShader inShader, float inRadius = 25.0, float inFalloff = 0.5, float inStrength = 0.1, bool inSamplesNeighbors = false);
-	void			Apply(pRenderTarget inTile, const rect& inPixelRect, const float2& inWorldPosition, const apTexture inNeighbors);
+	void			Apply(pRenderTarget inTile, const rect& inPixelRect, const rect& inWorldTileRect, const float2& inWorldPosition, const apTexture inNeighbors);
 	
 	void			SetRadius(float inRadius)					{ mRadius = inRadius; }
 	float			GetRadius()									{ return mRadius; }
@@ -27,7 +27,10 @@ private:
 		int4	rect;
 		int4	texInfo;
 		float4	paintData;
+		float4	brushData;
+		float4	worldTileRect;
 	};
+
 	ConstantBufferData mConstantBuffer;
 	float mRadius;
 	float mFalloffFraction;

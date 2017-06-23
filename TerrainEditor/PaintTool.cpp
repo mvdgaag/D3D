@@ -113,14 +113,16 @@ void PaintTool::ApplyPaint(float2 inWorldCoord)
 			}
 		}
 
-		int2 pixel = (tile_coord - float2(index)) * (float2(target->GetDimensions()));
-		float2 pixels_per_meter = float2(target->GetDimensions().x, target->GetDimensions().y) / float2(mTargetTerrain->GetTileScale().x, mTargetTerrain->GetTileScale().y);
-		int2 pixel_radius = int2(pixels_per_meter * mCurrentBrush->GetRadius() + float2(1.0, 1.0));
-		rect paint_rect(pixel - pixel_radius, pixel + pixel_radius);
+		float2 world_tile_scale =	float2(mTargetTerrain->GetTileScale().x, mTargetTerrain->GetTileScale().y);
+		int2 pixel =				(tile_coord - float2(index)) * float2(target->GetDimensions() - int2(1,1));
+		float2 pixels_per_meter =	float2(target->GetDimensions().x, target->GetDimensions().y) / float2(world_tile_scale.x, world_tile_scale.y);
+		int2 pixel_radius =			int2(pixels_per_meter * mCurrentBrush->GetRadius() + float2(1.0, 1.0));
+		rect paint_rect =			rect(pixel - pixel_radius, pixel + pixel_radius);
+		rect world_tile_rect =		rect(mTargetTerrain->TileToWorldSpace(float2(index)), mTargetTerrain->TileToWorldSpace(float2(index + 1)));
 
 		if (target != nullptr)
 		{
-			mCurrentBrush->Apply(target, paint_rect, inWorldCoord, neighbors);
+			mCurrentBrush->Apply(target, paint_rect, world_tile_rect, inWorldCoord, neighbors);
 		}
 	}
 	/* TODO: required? should be identical, but data is duplicated and hopefully treated exactly the same

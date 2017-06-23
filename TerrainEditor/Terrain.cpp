@@ -134,8 +134,14 @@ void Terrain::ProcessDirtyLayers()
 float2 Terrain::WorldToTileSpace(float2 inWorldCoord)
 {
 	float2 world_top_left = float2(mNumTiles.x, mNumTiles.y) * float2(mTileScale.x, mTileScale.y) / 2.0f;
-	float2 offset_coord = inWorldCoord + world_top_left;
-	return offset_coord / float2(mTileScale.x, mTileScale.y);
+	return (inWorldCoord + world_top_left) / float2(mTileScale.x, mTileScale.y);
+}
+
+
+float2 Terrain::TileToWorldSpace(float2 inTileCoord)
+{
+	float2 world_top_left = float2(mNumTiles.x, mNumTiles.y) * float2(mTileScale.x, mTileScale.y) / 2.0f;
+	return inTileCoord * float2(mTileScale.x, mTileScale.y) - world_top_left;
 }
 
 

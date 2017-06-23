@@ -11,7 +11,7 @@ void Brush::Init(pComputeShader inShader, float inRadius, float inFalloff, float
 }
 
 
-void Brush::Apply(pRenderTarget inTarget, const rect& inPixelRect, const float2& inWorldPosition, const apTexture inNeighbors)
+void Brush::Apply(pRenderTarget inTarget, const rect& inPixelRect, const rect& inWorldTileRect, const float2& inWorldPosition, const apTexture inNeighbors)
 {
 	assert(inTarget != nullptr);
 
@@ -21,7 +21,9 @@ void Brush::Apply(pRenderTarget inTarget, const rect& inPixelRect, const float2&
 
 	mConstantBuffer.rect = int4(inPixelRect.topLeft, inPixelRect.bottomRight);
 	mConstantBuffer.texInfo = int4(inTarget->GetDimensions(), 0, 0);
-	mConstantBuffer.paintData = float4(mStrength, mFalloffFraction, inWorldPosition);
+	mConstantBuffer.paintData = float4(inWorldPosition, 0.0, 0.0);
+	mConstantBuffer.brushData = float4(mRadius, mStrength, mFalloffFraction, 0.0);
+	mConstantBuffer.worldTileRect = float4(inWorldTileRect.topLeft, inWorldTileRect.bottomRight);
 
 	pConstantBuffer cbuf = theResourceFactory.MakeConstantBuffer(sizeof(mConstantBuffer));
 	theRenderContext.UpdateSubResource(*cbuf, &mConstantBuffer);
