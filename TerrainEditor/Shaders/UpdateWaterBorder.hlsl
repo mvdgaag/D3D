@@ -60,10 +60,10 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	// the flux in and out of the texels
 	float4 out_flux = GetFlux(tFlux, coord);
 	float4 in_flux;
-	in_flux.x = (coord.y == tex_size.y - 1) ?	GetFlux(tFluxNorth, int2(coord.x, 0)).z :				GetFlux(tFlux, coord + int2(0, 1)).z;
-	in_flux.y = (coord.x == tex_size.x - 1) ?	GetFlux(tFluxEast, int2(0, coord.y)).w :				GetFlux(tFlux, coord + int2(1, 0)).w;
-	in_flux.z = (coord.y == 0) ?				GetFlux(tFluxSouth, int2(coord.x, tex_size.y - 1)).x :	GetFlux(tFlux, coord - int2(0, 1)).x;
-	in_flux.w = (coord.x == 0) ?				GetFlux(tFluxWest, int2(tex_size.x - 1, coord.y)).y	:	GetFlux(tFlux, coord - int2(1, 0)).y;
+	in_flux.x = (coord.y == tex_size.y - 1) ?	GetFlux(tFluxNorth, int2(coord.x, 1)).z :				GetFlux(tFlux, coord + int2(0, 1)).z;
+	in_flux.y = (coord.x == tex_size.x - 1) ?	GetFlux(tFluxEast, int2(1, coord.y)).w :				GetFlux(tFlux, coord + int2(1, 0)).w;
+	in_flux.z = (coord.y == 0) ?				GetFlux(tFluxSouth, int2(coord.x, tex_size.y - 2)).x :	GetFlux(tFlux, coord - int2(0, 1)).x;
+	in_flux.w = (coord.x == 0) ?				GetFlux(tFluxWest, int2(tex_size.x - 2, coord.y)).y	:	GetFlux(tFlux, coord - int2(1, 0)).y;
 
 	// the sum of all incoming and outgoing flux
 	float sum_flux =	(in_flux.x + in_flux.y + in_flux.z + in_flux.w) - 
@@ -71,7 +71,6 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 
 	// update the water depth
 	water_depth += time_step * volume_scale * sum_flux;
-	water_depth += 0.001; // rain
 
 	// cannot be negative
 	water_depth = max(0.0, water_depth);

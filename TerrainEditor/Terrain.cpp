@@ -39,7 +39,7 @@ void Terrain::Init(int2 inNumTiles, int2 inTileSegments, float3 inTileScale, pMa
 			material->SetDiffuseValue(float4(0.7, 0.7, 0.7, 0));
 
 			// DEVHACK
-			material->SetDiffuseTexture(height_layer->GetTileTexture(int2(x, y)));
+			//material->SetDiffuseTexture(height_layer->GetTileTexture(int2(x, y)));
 
 			mTiles[idx]->Init(tile_pos, mTileScale, mTileSegments, material, inShadowMaterial, height_layer->GetTileTexture(int2(x, y)), normal_layer->GetTileTexture(int2(x, y)));
 			

@@ -22,22 +22,22 @@ float SampleHeight(int2 inCoord)
 
 	if (inCoord.x < 0)
 	{
-		inCoord.x += tex_width - 1; // minus one, because the border pixels overlap
+		inCoord.x = tex_width - 2;
 		return tHeightWest[inCoord];
 	}
 	else if (inCoord.x >= tex_width)
 	{
-		inCoord.x -= tex_width - 1; // minus one, because the border pixels overlap
+		inCoord.x = 1;
 		return tHeightEast[inCoord];
 	}
 	if (inCoord.y < 0)
 	{
-		inCoord.y += tex_height - 1; // minus one, because the border pixels overlap
+		inCoord.y = tex_height - 2;
 		return tHeightSouth[inCoord];
 	}
 	else if (inCoord.y >= tex_height)
 	{
-		inCoord.y -= tex_height - 1; // minus one, because the border pixels overlap
+		inCoord.y = 1;
 		return tHeightNorth[inCoord];
 	}
 	else

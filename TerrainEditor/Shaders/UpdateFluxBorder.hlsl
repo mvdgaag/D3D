@@ -73,10 +73,10 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 		return;
 
 	float c = tWaterHeight[coord];
-	float n = (coord.y == tex_size.y-1) ?	tWaterHeightNorth[int2(coord.x, 0)]					: tWaterHeight[coord + int2(0, 1)];
-	float e = (coord.x == tex_size.x-1) ?	tWaterHeightEast[ int2(0, coord.y)]					: tWaterHeight[coord + int2(1, 0)];
-	float s = (coord.y == 0) ?				tWaterHeightSouth[int2(coord.x, tex_size.y - 1)]	: tWaterHeight[coord - int2(0, 1)];
-	float w = (coord.x == 0) ?				tWaterHeightWest[ int2(tex_size.x - 1, coord.y)]	: tWaterHeight[coord - int2(1, 0)];
+	float n = (coord.y == tex_size.y-1) ?	tWaterHeightNorth[int2(coord.x, 1)]					: tWaterHeight[coord + int2(0, 1)];
+	float e = (coord.x == tex_size.x-1) ?	tWaterHeightEast[ int2(1, coord.y)]					: tWaterHeight[coord + int2(1, 0)];
+	float s = (coord.y == 0) ?				tWaterHeightSouth[int2(coord.x, tex_size.y - 2)]	: tWaterHeight[coord - int2(0, 1)];
+	float w = (coord.x == 0) ?				tWaterHeightWest[ int2(tex_size.x - 2, coord.y)]	: tWaterHeight[coord - int2(1, 0)];
 
 	// get the current flux
 	float4 flux = GetFlux(coord);

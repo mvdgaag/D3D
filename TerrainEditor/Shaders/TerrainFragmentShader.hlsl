@@ -96,7 +96,7 @@ PS_OUTPUT PS(PS_INPUT input)
 
 
 	// DEVHACK
-	output.Diffuse = float4(input.TexCoord, 0.0, 1.0);
+	//output.Diffuse = float4(input.TexCoord, 0.0, 1.0);
 
 
 	return output;
