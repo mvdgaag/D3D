@@ -180,7 +180,7 @@ void InitContent()
 	{
 		g_paint_tool->SetTargetLayer(g_flow->GetLayerIndex());
 		g_Terrain->SetHeightLayerIndex(g_flow->GetLayerIndex());
-		g_Terrain->SetLayerAsAlbedo(g_flow->GetLayerIndex());
+		//g_Terrain->SetLayerAsAlbedo(g_flow->GetLayerIndex());
 	}
 
 	g_camera_controller = MAKE_NEW(CameraController);

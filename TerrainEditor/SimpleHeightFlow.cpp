@@ -90,6 +90,8 @@ void SimpleHeightFlow::Update(float inTimeStep)
 			theRenderContext.CSSetRWTexture(NULL, 0, 0);
 			theRenderContext.CSSetTexture(NULL, 0);
 			theRenderContext.CSSetShader(NULL);
+
+			mLayer->SetDirty(int2(x, y));
 		}
 	}
 }

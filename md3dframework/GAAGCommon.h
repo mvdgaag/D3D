@@ -30,6 +30,10 @@
 #endif
 #endif
 
+#ifndef REGISTERTYPE
+#define REGISTERTYPE(x) typedef std::vector<x> a##x; typedef std::vector<x*> ap##x;
+#endif
+
 #ifndef REGISTERCLASS
 #define REGISTERCLASS(x) class x; typedef x* p##x; typedef std::vector<x> a##x; typedef std::vector<x*> ap##x; typedef x& r##x;
 #endif
@@ -41,3 +45,12 @@
 #ifndef MAKE_NEW
 #define MAKE_NEW(x) new x();
 #endif
+
+REGISTERTYPE(int)
+REGISTERTYPE(int2)
+REGISTERTYPE(int3)
+REGISTERTYPE(int4)
+REGISTERTYPE(float)
+REGISTERTYPE(float2)
+REGISTERTYPE(float3)
+REGISTERTYPE(float4)

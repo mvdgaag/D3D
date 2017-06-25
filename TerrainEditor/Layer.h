@@ -8,6 +8,7 @@ enum LayerType
 {
 	LAYER_HEIGHT,
 	LAYER_NORMAL,
+	LAYER_STACK,
 	LAYER_OTHER
 };
 

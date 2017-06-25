@@ -154,6 +154,7 @@
     <ClInclude Include="Brush.h" />
     <ClInclude Include="BrushLibrary.h" />
     <ClInclude Include="Layer.h" />
+    <ClInclude Include="LayerStack.h" />
     <ClInclude Include="PaintTool.h" />
     <ClInclude Include="SimpleHeightFlow.h" />
     <ClInclude Include="Terrain.h" />
@@ -166,6 +167,7 @@
     <ClCompile Include="Brush.cpp" />
     <ClCompile Include="BrushLibrary.cpp" />
     <ClCompile Include="Layer.cpp" />
+    <ClCompile Include="LayerStack.cpp" />
     <ClCompile Include="PaintTool.cpp" />
     <ClCompile Include="SimpleHeightFlow.cpp" />
     <ClCompile Include="Terrain.cpp" />
