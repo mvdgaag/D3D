@@ -52,6 +52,7 @@ void WaterTile::Init(pTexture inTerrainHeightTexture, pTexture inWaterHeightText
 
 void WaterTile::CleanUp()
 {
+	// TODO: delete the pointers if we own them!
 	mFluxConstantBuffer = nullptr;
 	mWaterConstantBuffer = nullptr;
 	mUpdateFluxShader = nullptr;

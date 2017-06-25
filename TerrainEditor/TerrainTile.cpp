@@ -1,35 +1,19 @@
 #include "TerrainTile.h"
+#include "Terrain.h"
 
 
-// declare static variables
-pComputeShader TerrainTile::sUpdateNormalShader;
-
-
-void TerrainTile::Init(float3 inPosition, float3 inScale, int2 inNumVertices, pMaterial inMaterial, pMaterial inShadowMaterial, pTexture inHeightTexture, pTexture inNormalTexture)
+void TerrainTile::Init(pTerrain inTerrain, int2 inIndex, pMaterial inMaterial, pMaterial inShadowMaterial)
 {
 	CleanUp();
 
-	// The tile uses one height and normal pixel per vertex.
-	assert(inHeightTexture->GetDimensions() == inNumVertices);
-	assert(inNormalTexture->GetDimensions() == inNumVertices);
+	assert(inTerrain != nullptr);
+	assert(inIndex.x >= 0 && inIndex.y >= 0 && inIndex.x < inTerrain->GetNumTiles().x && inIndex.y < inTerrain->GetNumTiles().y);
 
-	mNumVertices = inNumVertices;
+	mTerrain = inTerrain;
+	mIndex = inIndex;
 
-	mHeightMapTexture = inHeightTexture;
-	mHeightMapRenderTarget = theResourceFactory.MakeRenderTarget(mHeightMapTexture);
-	
-	mNormalTexture = inNormalTexture;
-	mNormalRenderTarget = theResourceFactory.MakeRenderTarget(mNormalTexture);
-
-	if (sUpdateNormalShader == nullptr)
-		sUpdateNormalShader = theResourceFactory.LoadComputeShader("Shaders/TerrainUpdateNormalShader.hlsl");
-	
-	apTexture dummy_heights;
-	dummy_heights.resize(4);
-	UpdateNormals(dummy_heights);
-
-	mHeightScale = inScale.z;
-	mPixelsPerMeter = float2(mHeightMapTexture->GetDimensions()) / float2(inScale);
+	int2 resolution = inTerrain->GetTileResolution();
+	float3 scale = inTerrain->GetTileScale();
 	
 	std::vector<SimpleVertex> vertices;
 	std::vector<WORD> indices;
@@ -39,31 +23,31 @@ void TerrainTile::Init(float3 inPosition, float3 inScale, int2 inNumVertices, pM
 	vert.Tangent = float3(0, 0, 1);
 
 	// generate plane
-	for (int y = 0; y < inNumVertices.y; y++)
+	for (int y = 0; y < resolution.y; y++)
 	{
-		float v = float(y) / float(inNumVertices.y - 1);
-		for (int x = 0; x < inNumVertices.x; x++)
+		float v = float(y) / float(resolution.y - 1);
+		for (int x = 0; x < resolution.x; x++)
 		{
-			float u = float(x) / float(inNumVertices.x - 1);
+			float u = float(x) / float(resolution.x - 1);
 			// DEVHACK: use actual pixel coordinates for uvs
 			//vert.TexCoord = float2(u, v);
 			vert.TexCoord = float2(x, y); 
-			vert.Position = float3((u - 0.5) * inScale.x, 0, (v - 0.5) * inScale.y);
+			vert.Position = float3((u - 0.5) * scale.x, 0, (v - 0.5) * scale.y);
 			vertices.push_back(vert);
 		}
 	}
 
-	for (int y = 0; y < inNumVertices.y - 1; y++)
+	for (int y = 0; y < resolution.y - 1; y++)
 	{
-		for (int x = 0; x < inNumVertices.x - 1; x++)
+		for (int x = 0; x < resolution.x - 1; x++)
 		{
-			int idx = y * inNumVertices.x + x;
+			int idx = y * resolution.x + x;
 			indices.push_back(idx);
-			indices.push_back(idx + inNumVertices.x);
+			indices.push_back(idx + resolution.x);
 			indices.push_back(idx + 1);
 			indices.push_back(idx + 1);
-			indices.push_back(idx + inNumVertices.x);
-			indices.push_back(idx + inNumVertices.x + 1);
+			indices.push_back(idx + resolution.x);
+			indices.push_back(idx + resolution.x + 1);
 		}
 	}
 
@@ -71,13 +55,18 @@ void TerrainTile::Init(float3 inPosition, float3 inScale, int2 inNumVertices, pM
 	mesh->InitFromData(vertices.data(), vertices.size(), indices.data(), indices.size());
 	
 	MeshObject::Init(mesh, inMaterial);
-	Translate(inPosition);
+
+	float3 tile_pos;
+	tile_pos.x = (float(inIndex.x) - float(inTerrain->GetNumTiles().x - 1) / 2.0) * scale.x;
+	tile_pos.y = 0.0;
+	tile_pos.z = (float(inIndex.y) - float(inTerrain->GetNumTiles().y - 1) / 2.0) * scale.y;
+	Translate(tile_pos);
 
 	mConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(mConstantBufferData));
-	mConstantBufferData.scale = float4(inScale, 0.0);
-	mConstantBufferData.textureInfo = int4(mHeightMapTexture->GetDimensions(), 0, 0);
+	mConstantBufferData.scale = float4(scale, 0.0);
+	mConstantBufferData.textureInfo = int4(resolution, 0, 0);
 	theRenderContext.UpdateSubResource(*mConstantBuffer, &mConstantBufferData);
-
+	
 	mCustomShadowMaterial = inShadowMaterial;
 
 	mInitialized = true; 
@@ -87,38 +76,8 @@ void TerrainTile::Init(float3 inPosition, float3 inScale, int2 inNumVertices, pM
 void TerrainTile::CleanUp()
 {
 	MeshObject::CleanUp();
-	mHeightMapTexture = nullptr;
-	mHeightMapRenderTarget = nullptr;
 	mConstantBuffer = nullptr;
 	mInitialized = false;
-}
-
-
-void TerrainTile::UpdateNormals(apTexture inNeighborHeights)
-{
-	assert(inNeighborHeights.size() == 4);
-
-	theRenderContext.CSSetShader(sUpdateNormalShader);
-	theRenderContext.CSSetRWTexture(mNormalRenderTarget, 0, 0);
-	theRenderContext.CSSetTexture(mHeightMapTexture, 0);
-
-	theRenderContext.CSSetTexture(inNeighborHeights[0], 1); // n
-	theRenderContext.CSSetTexture(inNeighborHeights[1], 2); // e
-	theRenderContext.CSSetTexture(inNeighborHeights[2], 3); // s
-	theRenderContext.CSSetTexture(inNeighborHeights[3], 4); // w
-	
-	theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);
-	int2 num_threads = (mNormalRenderTarget->GetDimensions() + 7) / 8;
-	theRenderContext.Dispatch(num_threads.x, num_threads.y, 1);
-	
-	theRenderContext.CSSetConstantBuffer(NULL, 0);
-	theRenderContext.CSSetRWTexture(NULL, 0, 0);
-	theRenderContext.CSSetTexture(NULL, 0);
-	theRenderContext.CSSetTexture(NULL, 1);
-	theRenderContext.CSSetTexture(NULL, 2);
-	theRenderContext.CSSetTexture(NULL, 3);
-	theRenderContext.CSSetTexture(NULL, 4);
-	theRenderContext.CSSetShader(NULL);
 }
 
 
@@ -126,8 +85,8 @@ void TerrainTile::PrepareToDraw()
 {
 	pSampler point_sampler = theResourceFactory.GetDefaultPointSampler();
 	theRenderContext.VSSetConstantBuffer(mConstantBuffer, 2);
-	theRenderContext.VSSetTextureAndSampler(mHeightMapTexture, point_sampler, 0);
-	theRenderContext.VSSetTextureAndSampler(mNormalTexture, point_sampler, 1);
+	theRenderContext.VSSetTextureAndSampler(mTerrain->GetLayerTexture(mIndex, mTerrain->GetHeightLayerIndex()), point_sampler, 0);
+	theRenderContext.VSSetTextureAndSampler(mTerrain->GetLayerTexture(mIndex, mTerrain->GetNormalLayerIndex()), point_sampler, 1);
 }
 
 
@@ -145,7 +104,7 @@ void TerrainTile::PrepareToDrawShadow()
 	theRenderContext.VSSetShader(mCustomShadowMaterial->GetVertexShader());
 	theRenderContext.PSSetShader(mCustomShadowMaterial->GetPixelShader());
 	theRenderContext.VSSetConstantBuffer(mConstantBuffer, 1);
-	theRenderContext.VSSetTextureAndSampler(mHeightMapTexture, point_sampler, 0);
+	theRenderContext.VSSetTextureAndSampler(mTerrain->GetLayerTexture(mIndex, mTerrain->GetHeightLayerIndex()), point_sampler, 0);
 }
 
 

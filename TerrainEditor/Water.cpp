@@ -9,7 +9,7 @@ void Water::Init(pTerrain inTerrain, pMaterial inMaterial, pMaterial inShadowMat
 	mTerrain = inTerrain;
 
 	mWaterSurface = MAKE_NEW(Terrain);
-	mWaterSurface->Init(mTerrain->GetNumTiles(), mTerrain->GetTileSegments(), mTerrain->GetTileScale(), inMaterial, inShadowMaterial);
+	mWaterSurface->Init(mTerrain->GetNumTiles(), mTerrain->GetTileResolution(), mTerrain->GetTileScale(), inMaterial, inShadowMaterial);
 
 	mNumTiles = mWaterSurface->GetNumTiles();
 	mWaterTiles = new pWaterTile*[mNumTiles.x];
@@ -20,8 +20,8 @@ void Water::Init(pTerrain inTerrain, pMaterial inMaterial, pMaterial inShadowMat
 		for (int y = 0; y < mNumTiles.y; y++)
 		{
 			int2 tile_coord(x, y);
-			pTexture terrain_height_texture = mTerrain->GetTile(tile_coord)->GetHeightTexture();
-			pTexture water_height_texture = mWaterSurface->GetTile(tile_coord)->GetHeightTexture();
+			pTexture terrain_height_texture = mTerrain->GetLayerTexture(tile_coord, mTerrain->GetHeightLayerIndex());
+			pTexture water_height_texture = mWaterSurface->GetLayerTexture(tile_coord, mTerrain->GetHeightLayerIndex());
 			
 			pWaterTile water_tile = MAKE_NEW(WaterTile);
 			water_tile->Init(terrain_height_texture, water_height_texture, 

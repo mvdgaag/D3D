@@ -2,24 +2,34 @@
 #include "TerrainTile.h"
 
 
-void Terrain::Init(int2 inNumTiles, int2 inTileSegments, float3 inTileScale, pMaterial inMaterial, pMaterial inShadowMaterial)
+// declare static variables
+pComputeShader Terrain::sUpdateNormalShader;
+
+
+
+
+void Terrain::Init(int2 inNumTiles, int2 inTileResolution, float3 inTileScale, pMaterial inMaterial, pMaterial inShadowMaterial)
 {
 	CleanUp();
 	
+	if (sUpdateNormalShader == nullptr)
+		sUpdateNormalShader = theResourceFactory.LoadComputeShader("Shaders/TerrainUpdateNormalShader.hlsl");
+
 	mNumTiles = inNumTiles;
-	mTileSegments = inTileSegments;
+	mTileResolution = inTileResolution;
 	mTileScale = inTileScale;
 
-	assert(LayerType::LAYER_HEIGHT == 0 && LayerType::LAYER_NORMAL == 1);
 	mLayers.resize(2);
 
 	pLayer height_layer = new Layer();
-	height_layer->Init(inNumTiles, int2(mTileSegments.x, mTileSegments.y), FORMAT_R32_FLOAT, LayerType::LAYER_HEIGHT);
-	mLayers[(int)LayerType::LAYER_HEIGHT] = height_layer;
-	
+	height_layer->Init(inNumTiles, int2(mTileResolution.x, mTileResolution.y), FORMAT_R32_FLOAT, LayerType::LAYER_HEIGHT);
+	mLayers[0] = height_layer;
+	mHeightLayerIndex = 0;
+
 	pLayer normal_layer = new Layer();
-	normal_layer->Init(inNumTiles, int2(mTileSegments.x, mTileSegments.y), FORMAT_R16G16B16A16_FLOAT, LayerType::LAYER_NORMAL);
-	mLayers[(int)LayerType::LAYER_NORMAL] = normal_layer;
+	normal_layer->Init(inNumTiles, int2(mTileResolution.x, mTileResolution.y), FORMAT_R16G16B16A16_FLOAT, LayerType::LAYER_NORMAL);
+	mLayers[1] = normal_layer;
+	mNormalLayerIndex = 1;
 
 	mTiles = new pTerrainTile[mNumTiles.x * mNumTiles.y];
 	for (int y = 0; y < mNumTiles.y; y++)
@@ -38,14 +48,16 @@ void Terrain::Init(int2 inNumTiles, int2 inTileSegments, float3 inTileScale, pMa
 			
 			material->SetDiffuseValue(float4(0.7, 0.7, 0.7, 0));
 
-			// DEVHACK
-			//material->SetDiffuseTexture(height_layer->GetTileTexture(int2(x, y)));
-
-			mTiles[idx]->Init(tile_pos, mTileScale, mTileSegments, material, inShadowMaterial, height_layer->GetTileTexture(int2(x, y)), normal_layer->GetTileTexture(int2(x, y)));
+			mTiles[idx]->Init(this, int2(x, y), material, inShadowMaterial);
 			
 			Gaag.RegisterObject(mTiles[idx]);
 		}
 	}
+
+	mConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(mConstantBufferData));
+	mConstantBufferData.scale = float4(mTileScale, 0.0);
+	mConstantBufferData.textureInfo = int4(mTileResolution, 0, 0);
+	theRenderContext.UpdateSubResource(*mConstantBuffer, &mConstantBufferData);
 }
 
 
@@ -65,19 +77,20 @@ void Terrain::CleanUp()
 	for each (pLayer layer in mLayers)
 		layer->CleanUp();
 	mLayers.clear();
+
+	mConstantBuffer = nullptr;
 }
 
 
 pLayer Terrain::GetLayer(int inIndex)
 {
+	assert(ValidateLayerIndex(inIndex));
 	return mLayers[inIndex];
 }
 
 
-void Terrain::SetLayer(pLayer inLayer, int inIndex = -1)
+int Terrain::SetLayer(pLayer inLayer, int inIndex)
 {
-	assert(inIndex != 0);
-
 	if (inIndex == -1)
 		inIndex = mLayers.size();
 
@@ -86,19 +99,58 @@ void Terrain::SetLayer(pLayer inLayer, int inIndex = -1)
 
 	assert(mLayers[inIndex] == nullptr);
 	mLayers[inIndex] = inLayer;
+	return inIndex;
+}
+
+
+int Terrain::FindLayer(pLayer inLayer)
+{
+	for (int i = 0; i < mLayers.size(); i++)
+	{
+		if (mLayers[i] == inLayer);
+			return i;
+	}
+	return -1;
+}
+
+
+void Terrain::UpdateNormals(pRenderTarget inTarget, apTexture inHeights)
+{
+	assert(inHeights.size() == 5);
+
+	theRenderContext.CSSetShader(sUpdateNormalShader);
+	theRenderContext.CSSetRWTexture(inTarget, 0, 0);
+	theRenderContext.CSSetTexture(inHeights[0], 0); // c
+	theRenderContext.CSSetTexture(inHeights[1], 1); // n
+	theRenderContext.CSSetTexture(inHeights[2], 2); // e
+	theRenderContext.CSSetTexture(inHeights[3], 3); // s
+	theRenderContext.CSSetTexture(inHeights[4], 4); // w
+
+	theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);
+	int2 num_threads = (inTarget->GetDimensions() + 7) / 8;
+	theRenderContext.Dispatch(num_threads.x, num_threads.y, 1);
+
+	theRenderContext.CSSetConstantBuffer(NULL, 0);
+	theRenderContext.CSSetRWTexture(NULL, 0, 0);
+	theRenderContext.CSSetTexture(NULL, 0);
+	theRenderContext.CSSetTexture(NULL, 1);
+	theRenderContext.CSSetTexture(NULL, 2);
+	theRenderContext.CSSetTexture(NULL, 3);
+	theRenderContext.CSSetTexture(NULL, 4);
+	theRenderContext.CSSetShader(NULL);
 }
 
 
 void Terrain::SetDirty(int2 inTileIndex, int inLayerIndex)
 {
-	assert(inLayerIndex < mLayers.size());
+	assert(ValidateLayerIndex(inLayerIndex));
 	assert(mLayers[inLayerIndex] != nullptr);
 
 	mLayers[inLayerIndex]->SetDirty(inTileIndex);
 
 	// If height is dirty so should the normals be.
-	if (inLayerIndex == (int)LayerType::LAYER_HEIGHT)
-		SetDirty(inTileIndex, (int)LayerType::LAYER_NORMAL);
+	if (inLayerIndex == mHeightLayerIndex)
+		SetDirty(inTileIndex, mNormalLayerIndex);
 
 }
 
@@ -116,18 +168,44 @@ void Terrain::ProcessDirtyLayers()
 				{
 					if (layer->GetType() == LayerType::LAYER_NORMAL)
 					{
-						apTexture neighbors;
-						neighbors.push_back(GetLayerTexture(int2(x, y + 1), (int)LayerType::LAYER_HEIGHT));
-						neighbors.push_back(GetLayerTexture(int2(x + 1, y), (int)LayerType::LAYER_HEIGHT));
-						neighbors.push_back(GetLayerTexture(int2(x, y - 1), (int)LayerType::LAYER_HEIGHT));
-						neighbors.push_back(GetLayerTexture(int2(x - 1, y), (int)LayerType::LAYER_HEIGHT));
-						mTiles[y * mNumTiles.x + x]->UpdateNormals(neighbors);
+						apTexture heights;
+						heights.push_back(GetLayerTexture(int2(x, y), mHeightLayerIndex));
+						heights.push_back(GetLayerTexture(int2(x, y + 1), mHeightLayerIndex));
+						heights.push_back(GetLayerTexture(int2(x + 1, y), mHeightLayerIndex));
+						heights.push_back(GetLayerTexture(int2(x, y - 1), mHeightLayerIndex));
+						heights.push_back(GetLayerTexture(int2(x - 1, y), mHeightLayerIndex));
+						UpdateNormals(GetLayerRenderTarget(int2(x, y), mNormalLayerIndex), heights);
 					}
 					layer->SetDirty(int2(x, y), false);
 				}
 			}
 		}
 	}
+}
+
+
+void Terrain::SetLayerAsAlbedo(int inLayerIndex)
+{
+	assert(ValidateLayerIndex(inLayerIndex));
+	assert(mLayers[inLayerIndex] != nullptr);
+
+	for (int y = 0; y < mNumTiles.y; y++)
+	{
+		for (int x = 0; x < mNumTiles.y; x++)
+		{
+			int idx = y * mNumTiles.x + x;
+			mTiles[idx]->GetMaterial()->SetDiffuseTexture(mLayers[inLayerIndex]->GetTileTexture(int2(x, y)));
+		}
+	}
+}
+
+
+void Terrain::SetLayerAsHeight(int inLayerIndex)
+{
+	assert(ValidateLayerIndex(inLayerIndex));
+	assert(mLayers[inLayerIndex] != nullptr);
+
+	mHeightLayerIndex = inLayerIndex;
 }
 
 
@@ -147,7 +225,7 @@ float2 Terrain::TileToWorldSpace(float2 inTileCoord)
 
 pTerrainTile Terrain::GetTile(const int2& inTileIndex)
 {
-	if (inTileIndex.x >= 0 && inTileIndex.x < mNumTiles.x && inTileIndex.y >= 0 && inTileIndex.y < mNumTiles.y)
+	if (ValidateTileIndex(inTileIndex))
 		return mTiles[inTileIndex.y * mNumTiles.x + inTileIndex.x];
 	else
 		return nullptr;
@@ -161,35 +239,35 @@ pTerrainTile Terrain::GetTile(const float2& inWorldCoord)
 }
 
 
-pRenderTarget Terrain::GetLayerRenderTarget(const int2& inTileIndex, const int inLayerID)
+pRenderTarget Terrain::GetLayerRenderTarget(const int2& inTileIndex, const int inLayerIndex)
 {
-	if (inTileIndex.x >= 0 && inTileIndex.x < mNumTiles.x && inTileIndex.y >= 0 && inTileIndex.y < mNumTiles.y && inLayerID < mLayers.size())
-		return mLayers[inLayerID]->GetTileRenderTarget(inTileIndex);
+	if (ValidateTileIndex(inTileIndex) && ValidateLayerIndex(inLayerIndex))
+		return mLayers[inLayerIndex]->GetTileRenderTarget(inTileIndex);
 	else
 		return nullptr;
 }
 
 
-pRenderTarget Terrain::GetLayerRenderTarget(const float2& inWorldCoord, const int inLayerID)
+pRenderTarget Terrain::GetLayerRenderTarget(const float2& inWorldCoord, const int inLayerIndex)
 {
 	int2 tile_index = WorldToTileSpace(inWorldCoord);
-	return GetLayerRenderTarget(tile_index, inLayerID);
+	return GetLayerRenderTarget(tile_index, inLayerIndex);
 }
 
 
-pTexture Terrain::GetLayerTexture(const int2& inTileIndex, const int inLayerID)
+pTexture Terrain::GetLayerTexture(const int2& inTileIndex, const int inLayerIndex)
 {
-	if (inTileIndex.x >= 0 && inTileIndex.x < mNumTiles.x && inTileIndex.y >= 0 && inTileIndex.y < mNumTiles.y && inLayerID < mLayers.size())
-		return mLayers[inLayerID]->GetTileTexture(inTileIndex);
+	if (ValidateTileIndex(inTileIndex) && ValidateLayerIndex(inLayerIndex))
+		return mLayers[inLayerIndex]->GetTileTexture(inTileIndex);
 	else
 		return nullptr;
 }
 
 
-pTexture Terrain::GetLayerTexture(const float2& inWorldCoord, const int inLayerID)
+pTexture Terrain::GetLayerTexture(const float2& inWorldCoord, const int inLayerIndex)
 {
 	int2 tile_index = WorldToTileSpace(inWorldCoord);
-	return GetLayerTexture(tile_index, inLayerID);
+	return GetLayerTexture(tile_index, inLayerIndex);
 }
 
 

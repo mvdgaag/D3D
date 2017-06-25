@@ -54,7 +54,10 @@ public:
 
 	pTexture GetTileTexture(const int2& inTileIndex)
 	{
-		return GetTileRenderTarget(inTileIndex)->GetTexture();
+		if (inTileIndex.x >= 0 && inTileIndex.x < mNumTiles.x && inTileIndex.y >= 0 && inTileIndex.y < mNumTiles.y)
+			return GetTileRenderTarget(inTileIndex)->GetTexture();
+		else
+			return nullptr;
 	}
 
 

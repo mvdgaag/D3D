@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <windowsx.h>
 #include "Terrain.h"
+#include "SimpleHeightFlow.h"
 #include "PaintTool.h"
 #include "BrushLibrary.h"
 #include "Brush.h"
@@ -32,6 +33,7 @@ pTexture g_surface_texture;
 pTexture g_heightmap;
 pTerrain g_Terrain;
 pWater g_water;
+pSimpleHeightFlow g_flow;
 
 pPaintTool g_paint_tool;
 pBrushLibrary g_brush_library;
@@ -48,6 +50,9 @@ static void FrameFunc()
 
 	if (g_water != nullptr)
 		g_water->Update(time_step);
+
+	if (g_flow != nullptr)
+		g_flow->Update(time_step);
 	
 	float angle = 0.1f * 2.0f * 3.1415f * time_step;
 	g_obj->Rotate(float3(0.0f, 1.0f, 0.0f), angle);
@@ -136,7 +141,11 @@ void InitContent()
 	g_Terrain = MAKE_NEW(Terrain);
 	g_Terrain->Init(int2(3), int2(64), float3(50,50,5), g_TerrainMaterial, g_TerrainShadowMaterial);
 
-	
+	g_flow = MAKE_NEW(SimpleHeightFlow);
+	g_flow->Init(g_Terrain);
+
+
+	/*
 	g_water = MAKE_NEW(Water);
 	g_water->Init(g_Terrain, g_TerrainMaterial, g_TerrainShadowMaterial);
 	int2 num_tiles = g_water->GetTerrain()->GetNumTiles();
@@ -156,7 +165,7 @@ void InitContent()
 			material.SetRoughnessValue(0.1);
 		}
 	}
-	
+	*/
 
 	g_brush_library = MAKE_NEW(BrushLibrary);
 	g_brush_library->Init();
@@ -165,12 +174,13 @@ void InitContent()
 	g_paint_tool->Init(g_brush_library);
 	
 	g_paint_tool->SetTargetTerrain(g_Terrain);
-	g_paint_tool->SetTargetLayer(0);
+	g_paint_tool->SetTargetLayer(g_Terrain->GetHeightLayerIndex());
 
-	if (g_water != nullptr)
+	if (g_flow != nullptr)
 	{
-		g_paint_tool->SetTargetTerrain(g_water->GetWaterSurface());
-		g_paint_tool->SetTargetLayer(2);
+		g_paint_tool->SetTargetLayer(g_flow->GetLayerIndex());
+		g_Terrain->SetHeightLayerIndex(g_flow->GetLayerIndex());
+		g_Terrain->SetLayerAsAlbedo(g_flow->GetLayerIndex());
 	}
 
 	g_camera_controller = MAKE_NEW(CameraController);

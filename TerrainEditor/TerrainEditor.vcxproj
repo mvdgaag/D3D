@@ -155,6 +155,7 @@
     <ClInclude Include="BrushLibrary.h" />
     <ClInclude Include="Layer.h" />
     <ClInclude Include="PaintTool.h" />
+    <ClInclude Include="SimpleHeightFlow.h" />
     <ClInclude Include="Terrain.h" />
     <ClInclude Include="TerrainEditor.h" />
     <ClInclude Include="TerrainTile.h" />
@@ -166,6 +167,7 @@
     <ClCompile Include="BrushLibrary.cpp" />
     <ClCompile Include="Layer.cpp" />
     <ClCompile Include="PaintTool.cpp" />
+    <ClCompile Include="SimpleHeightFlow.cpp" />
     <ClCompile Include="Terrain.cpp" />
     <ClCompile Include="TerrainEditor.cpp" />
     <ClCompile Include="TerrainTile.cpp" />
@@ -243,6 +245,10 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
     <FxCompile Include="Shaders\UpdateFluxBorder.hlsl">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </FxCompile>
+    <FxCompile Include="Shaders\UpdateSimpleHeightFlow.hlsl">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
