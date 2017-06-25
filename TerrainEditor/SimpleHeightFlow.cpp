@@ -28,6 +28,7 @@ void SimpleHeightFlow::Init(pTerrain inTerrain)
 	mHistoryLayerIndex = inTerrain->SetLayer(mHistoryLayer);
 
 	mUpdateShader = theResourceFactory.LoadComputeShader("Shaders/UpdateSimpleHeightFlow.hlsl");
+	mUpdateBorderShader = theResourceFactory.LoadComputeShader("Shaders/UpdateSimpleHeightFlowBorder.hlsl");
 	mConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(mConstantBufferData));
 
 	for (int y = 0; y < mLayer->GetNumTiles().y; y++)
@@ -48,8 +49,23 @@ void SimpleHeightFlow::CleanUp()
 	mLayer = nullptr;
 
 	// TODO: tell resource factory to free these resources?
-	mConstantBuffer = nullptr;
-	mUpdateShader = nullptr;
+	if (mConstantBuffer != nullptr)
+	{
+		theResourceFactory.DestroyItem(mConstantBuffer);
+		mConstantBuffer = nullptr;
+	}
+
+	if (mUpdateShader != nullptr)
+	{
+		theResourceFactory.DestroyItem(mUpdateShader);
+		mUpdateShader = nullptr;
+	}
+
+	if (mUpdateBorderShader != nullptr)
+	{
+		theResourceFactory.DestroyItem(mUpdateBorderShader);
+		mUpdateBorderShader = nullptr;
+	}
 
 	mInitialized = false;
 }
@@ -63,7 +79,7 @@ void SimpleHeightFlow::Update(float inTimeStep)
 	if (!mInitialized)
 		return;
 
-	mConstantBufferData.params = float4(min(1.0, mFluidity * inTimeStep), mFriction, mTalusAngle, 0.0);
+	mConstantBufferData.params = float4(min(1.0, mFluidity * 0.5 * inTimeStep), mFriction, mTalusAngle, 0.0);
 	mConstantBufferData.resolution = float4(float2(mLayer->GetTileResolution()), float2(1.0, 1.0) / float2(mLayer->GetTileResolution()));
 	mConstantBufferData.scale = float4(mScale, 0.0);
 	theRenderContext.UpdateSubResource(*mConstantBuffer, &mConstantBufferData);
@@ -72,23 +88,53 @@ void SimpleHeightFlow::Update(float inTimeStep)
 	{
 		for (int x = 0; x < mLayer->GetNumTiles().x; x++)
 		{
-			theRenderContext.CSSetShader(mUpdateShader);
-			theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);
+			int2 tile_index = int2(x, y);
 			int2 num_threads = (mResolution + 7) / 8;
 
-			// ping
-			theRenderContext.CSSetRWTexture(mHistoryLayer->GetTileRenderTarget(int2(x, y)), 0, 0);
-			theRenderContext.CSSetTexture(mLayer->GetTileTexture(int2(x, y)), 0);
+			// ping center
+			theRenderContext.CSSetShader(mUpdateShader);
+			theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);
+			theRenderContext.CSSetRWTexture(mHistoryLayer->GetTileRenderTarget(tile_index), 0, 0);
+			theRenderContext.CSSetTexture(mLayer->GetTileTexture(tile_index), 0);
 			theRenderContext.Dispatch(num_threads.x, num_threads.y, 1);
 
-			// pong
-			theRenderContext.CSSetRWTexture(mLayer->GetTileRenderTarget(int2(x, y)), 0, 0);
-			theRenderContext.CSSetTexture(mHistoryLayer->GetTileTexture(int2(x, y)), 0);
+			// ping borders
+			theRenderContext.CSSetShader(mUpdateBorderShader);
+			theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);
+			theRenderContext.CSSetRWTexture(mHistoryLayer->GetTileRenderTarget(tile_index), 0, 0);
+			theRenderContext.CSSetTexture(mLayer->GetTileTexture(tile_index), 0);
+			theRenderContext.CSSetTexture(mLayer->GetTileTexture(tile_index + int2(0, 1)), 1);
+			theRenderContext.CSSetTexture(mLayer->GetTileTexture(tile_index + int2(1, 0)), 2);
+			theRenderContext.CSSetTexture(mLayer->GetTileTexture(tile_index - int2(0, 1)), 3);
+			theRenderContext.CSSetTexture(mLayer->GetTileTexture(tile_index - int2(1, 0)), 4);
+			theRenderContext.Dispatch(num_threads.x, 4, 1); // assumes square texture
+			
+			// pong center
+			theRenderContext.CSSetShader(mUpdateShader);
+			theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);
+			theRenderContext.CSSetRWTexture(mLayer->GetTileRenderTarget(tile_index), 0, 0);
+			theRenderContext.CSSetTexture(mHistoryLayer->GetTileTexture(tile_index), 0);
 			theRenderContext.Dispatch(num_threads.x, num_threads.y, 1);
 
+			// pong borders
+			theRenderContext.CSSetShader(mUpdateBorderShader);
+			theRenderContext.CSSetConstantBuffer(mConstantBuffer, 0);
+			theRenderContext.CSSetRWTexture(mLayer->GetTileRenderTarget(tile_index), 0, 0);
+			theRenderContext.CSSetTexture(mHistoryLayer->GetTileTexture(tile_index), 0);
+			theRenderContext.CSSetTexture(mHistoryLayer->GetTileTexture(tile_index + int2(0, 1)), 1);
+			theRenderContext.CSSetTexture(mHistoryLayer->GetTileTexture(tile_index + int2(1, 0)), 2);
+			theRenderContext.CSSetTexture(mHistoryLayer->GetTileTexture(tile_index - int2(0, 1)), 3);
+			theRenderContext.CSSetTexture(mHistoryLayer->GetTileTexture(tile_index - int2(1, 0)), 4);
+			theRenderContext.Dispatch(num_threads.x, 4, 1); // assumes square texture
+
+			// reset state
 			theRenderContext.CSSetConstantBuffer(NULL, 0);
 			theRenderContext.CSSetRWTexture(NULL, 0, 0);
 			theRenderContext.CSSetTexture(NULL, 0);
+			theRenderContext.CSSetTexture(NULL, 1);
+			theRenderContext.CSSetTexture(NULL, 2);
+			theRenderContext.CSSetTexture(NULL, 3);
+			theRenderContext.CSSetTexture(NULL, 4);
 			theRenderContext.CSSetShader(NULL);
 
 			mLayer->SetDirty(int2(x, y));

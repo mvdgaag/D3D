@@ -50,5 +50,6 @@ private:
 
 	pConstantBuffer	mConstantBuffer;
 	pComputeShader	mUpdateShader;
+	pComputeShader	mUpdateBorderShader;
 };
 

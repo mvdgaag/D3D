@@ -1,3 +1,5 @@
+#include "LibFluid.hlsl"
+
 RWTexture2D<float4> tValue : register(u0);
 Texture2D<float4>	tHistory : register(t0);
 
@@ -13,10 +15,10 @@ cbuffer cConstantData : register(b0)
 [numthreads(8, 8, 1)]
 void CS(uint3 DTid : SV_DispatchThreadID)
 {
-	// skip border pixels
 	int2 coord = DTid.xy;
 
-	if ((coord.x < 0) || (coord.x >= cResolution.x) || (coord.y < 0) || (coord.y >= cResolution.y))
+	// skip border pixels
+	if ((coord.x < 1) || (coord.x >= cResolution.x - 1) || (coord.y < 1) || (coord.y >= cResolution.y - 1))
 		return;
 
 	// get constants
@@ -24,18 +26,11 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	const float friction = cParams.y;
 	const float talus_angle = cParams.z;
 
-	// find the data for this texel and its neighbors. The z component holds the unaffected last frame's value
-	float4 c = tHistory[coord];
+	float4 value = tHistory[coord];
 	float n = tHistory[coord + int2(0, 1)].x;
 	float e = tHistory[coord + int2(1, 0)].x;
 	float s = tHistory[coord - int2(0, 1)].x;
 	float w = tHistory[coord - int2(1, 0)].x;
 
-	float height_diff = ((n + e + s + w) / 4.0 - c.x);
-	height_diff = height_diff < 0.0 ? min(0.0, height_diff + talus_angle) : max(0.0, height_diff - talus_angle);
-
-	float velocity = friction * c.y + time_scale * height_diff;
-	float height = max(0.0, c.x + velocity);
-
-	tValue[coord] = float4(height, velocity, 0.0, 0.0);
+	tValue[coord] = UpdateSimpleFlow(value, float4(n, e, s, w), time_scale, friction, talus_angle);
 }

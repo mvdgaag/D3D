@@ -73,7 +73,7 @@ void Water::Update(float inTimeStep)
 			west = mWaterTiles[(x + mNumTiles.x - 1) % mNumTiles.x][y];
 			
 			mWaterTiles[x][y]->UpdateWater(north, east, south, west);
-			mWaterSurface->SetDirty(int2(x, y), (int)LayerType::LAYER_HEIGHT); // Trigger recalculation of normals
+			mWaterSurface->SetDirty(int2(x, y), mWaterSurface->GetHeightLayerIndex()); // Trigger recalculation of normals
 		}
 	}
 
