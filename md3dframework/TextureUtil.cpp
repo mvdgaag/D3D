@@ -312,6 +312,24 @@ namespace TextureUtil
 	}
 
 
+	void TextureBlend(pRenderTarget inDst, pTexture inTop, pTexture inBottom, float inOpacity)
+	{
+		apTexture sources;
+		sources.push_back(inTop);
+		sources.push_back(inBottom);
+		GPUTextureFunc(inDst, sources, float4(inOpacity), *gTextureBlendConstantShader);
+	}
+
+
+	void TextureBlend(pTexture inDst, pTexture inTop, pTexture inBottom, float inOpacity)
+	{
+		apTexture sources;
+		sources.push_back(inTop);
+		sources.push_back(inBottom);
+		GPUTextureFunc(inDst, sources, float4(inOpacity), *gTextureBlendConstantShader);
+	}
+
+
 	void TextureBlend(pRenderTarget inDst, pTexture inTop, pTexture inBottom, pTexture inOpacity)
 	{
 		apTexture sources;

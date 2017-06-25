@@ -27,6 +27,9 @@ namespace TextureUtil
 	void TextureDownSample(pRenderTarget target, pTexture source, pSampler sampler);
 	void TextureDownSample(pTexture target, pTexture source, pSampler sampler);
 
+	void TextureBlend(pRenderTarget inDst, pTexture inTop, pTexture inBottom, float inOpacity);
+	void TextureBlend(pTexture inDst, pTexture inTop, pTexture inBottom, float inOpacity); 
+
 	void TextureBlend(pRenderTarget inDst, pTexture inTop, pTexture inBottom, pTexture inOpacity);
 	void TextureBlend(pTexture inDst, pTexture inTop, pTexture inBottom, pTexture inOpacity);
 
