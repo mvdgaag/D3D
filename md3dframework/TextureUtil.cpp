@@ -20,6 +20,7 @@ namespace TextureUtil
 	pComputeShader gTextureClampConstantShader;
 
 	pComputeShader gTextureCopyShader;
+	pComputeShader gTextureCopyOffsetShader;
 	
 	pComputeShader gTextureDivShader;
 	pComputeShader gTextureDivConstantShader;
@@ -73,6 +74,7 @@ namespace TextureUtil
 		gTextureClampConstantShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureClampConstant.hlsl");
 
 		gTextureCopyShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureCopy.hlsl");
+		gTextureCopyOffsetShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureCopyOffset.hlsl");
 		
 		gTextureDivShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureDiv.hlsl");
 		gTextureDivConstantShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureDivConstant.hlsl");
@@ -125,6 +127,7 @@ namespace TextureUtil
 		theResourceFactory.DestroyItem(gTextureClampShader);
 		theResourceFactory.DestroyItem(gTextureClampConstantShader);
 		theResourceFactory.DestroyItem(gTextureCopyShader);
+		theResourceFactory.DestroyItem(gTextureCopyOffsetShader);
 		theResourceFactory.DestroyItem(gTextureDivShader);
 		theResourceFactory.DestroyItem(gTextureDivConstantShader);
 		theResourceFactory.DestroyItem(gTextureMaxShader);
@@ -158,6 +161,7 @@ namespace TextureUtil
 		gTextureClampShader = nullptr;
 		gTextureClampConstantShader = nullptr;
 		gTextureCopyShader = nullptr;
+		gTextureCopyOffsetShader = nullptr;
 		gTextureDivShader = nullptr;
 		gTextureDivConstantShader = nullptr;
 		gTextureMaxShader = nullptr;
@@ -363,6 +367,40 @@ namespace TextureUtil
 		apTexture sources;
 		sources.push_back(inSrc);
 		GPUTextureFunc(inDst, sources, *gTextureCopyShader);
+	}
+
+
+	void TextureCopyOffset(pRenderTarget inDst, pTexture inSrc, int2 inOffset)
+	{
+		pConstantBuffer cb = theResourceFactory.MakeConstantBuffer(sizeof(float4));
+
+		theRenderContext.CSSetShader(gTextureCopyOffsetShader);
+		theRenderContext.CSSetRWTexture(inDst, 0, 0);
+		theRenderContext.CSSetTexture(inSrc, 0);
+		
+		float4 params = float4(inOffset, inDst->GetDimensions());
+		theRenderContext.UpdateSubResource(*cb, &params);
+		theRenderContext.CSSetConstantBuffer(cb, 0);
+
+		int2 groups = (inSrc->GetDimensions() + 7) / 8;
+		theRenderContext.Dispatch(groups.x, groups.y, 1);
+		theRenderContext.Flush();
+
+		theRenderContext.CSSetConstantBuffer(nullptr, 0);
+
+		theRenderContext.CSSetTexture(nullptr, 0);
+		theRenderContext.CSSetRWTexture(nullptr, 0, 0);
+		theRenderContext.CSSetShader(nullptr);
+
+		theResourceFactory.DestroyItem(cb);
+	}
+
+
+	void TextureCopyOffset(pTexture inDst, pTexture inSrc, int2 inOffset)
+	{
+		pRenderTarget rt = theResourceFactory.MakeRenderTarget(inDst);
+		TextureCopyOffset(inDst, inSrc, inOffset);
+		theResourceFactory.DestroyItem(rt);
 	}
 	
 

@@ -1,4 +1,4 @@
-/* texture max function */
+/* texture copy function */
 RWTexture2D<float4> dst : register(u0);
 Texture2D<float4> source : register(t0);
 
