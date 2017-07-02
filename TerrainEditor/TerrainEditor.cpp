@@ -141,10 +141,12 @@ void InitContent()
 	g_Terrain = MAKE_NEW(Terrain);
 	g_Terrain->Init(int2(3), int2(64), float3(50,50,5), g_TerrainMaterial, g_TerrainShadowMaterial);
 
+	/*
 	pLayer albedo = new Layer();
 	albedo->Init(g_Terrain->GetNumTiles(), g_Terrain->GetTileResolution());
 	int albedo_layer_index = g_Terrain->SetLayer(albedo);
 	g_Terrain->SetDiffuseLayerIndex(albedo_layer_index);
+	*/
 
 	g_flow = MAKE_NEW(SimpleHeightFlow);
 	g_flow->Init(g_Terrain);
@@ -180,7 +182,7 @@ void InitContent()
 	
 	g_paint_tool->SetTargetTerrain(g_Terrain);
 	g_paint_tool->SetTargetLayer(g_Terrain->GetHeightLayerIndex());
-	g_paint_tool->SetTargetLayer(g_Terrain->GetDiffuseLayerIndex());
+	//g_paint_tool->SetTargetLayer(g_Terrain->GetDiffuseLayerIndex());
 
 	if (g_flow != nullptr)
 	{
