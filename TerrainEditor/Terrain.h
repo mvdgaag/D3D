@@ -21,10 +21,16 @@ public:
 	pLayer		GetLayer(int inIndex);
 	
 	int			GetHeightLayerIndex()					{ return mHeightLayerIndex; }
-	void		SetHeightLayerIndex(int inIndex)		{ assert(ValidateLayerIndex(inIndex)); mHeightLayerIndex = inIndex; }
+	void		SetHeightLayerIndex(int inIndex);
 	
+	int			GetDiffuseLayerIndex()					{ return mDiffuseLayerIndex; }
+	void		SetDiffuseLayerIndex(int inIndex);
+
 	int			GetNormalLayerIndex()					{ return mNormalLayerIndex; }
-	void		SetNormalLayerIndex(int inIndex)		{ assert(ValidateLayerIndex(inIndex)); mHeightLayerIndex = inIndex; }
+	void		SetNormalLayerIndex(int inIndex);
+
+	int			GetSurfaceLayerIndex()					{ return mSurfaceLayerIndex; }
+	void		SetSurfaceLayerIndex(int inIndex);
 		
 	int SetLayer(pLayer inLayer, int inIndex = -1);	
 	int FindLayer(pLayer inLayer);
@@ -34,9 +40,6 @@ public:
 	void SetDirty(int2 inTileIndex, int inLayerIndex);
 	void ProcessDirtyLayers();
 	
-	void SetLayerAsAlbedo(int inLayerIndex);
-	void SetLayerAsHeight(int inLayerIndex);
-
 	float2 WorldToTileSpace(float2 inWorldCoord);
 	float2 TileToWorldSpace(float2 inTileCoord);
 	
@@ -66,7 +69,9 @@ private:
 	pTerrainTile*			mTiles = nullptr;
 	apLayer					mLayers;
 	int						mHeightLayerIndex;
+	int						mDiffuseLayerIndex;
 	int						mNormalLayerIndex;
+	int						mSurfaceLayerIndex;
 
 	bool					ValidateLayerIndex(int inIndex)		{ return inIndex >= 0 && inIndex < mLayers.size(); }
 	bool					ValidateTileIndex(int2 inIndex)		{ return inIndex.x >= 0 && inIndex.y >= 0 && inIndex.x < mNumTiles.x && inIndex.y < mNumTiles.y; }

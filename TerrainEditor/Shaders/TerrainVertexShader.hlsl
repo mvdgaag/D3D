@@ -116,7 +116,7 @@ PS_INPUT VS(VS_INPUT input)
 	
 	float2 tex_size;
 	cHeightTexture.GetDimensions(tex_size.x, tex_size.y);
-	output.TexCoord = input.TexCoord.xy / (tex_size - 1);
+	output.TexCoord = input.TexCoord.xy / tex_size;
 
 	float4 cam_space_pos = mul(modelViewMatrix, float4(pos, 1.0));
 	output.LinearDepth = -cam_space_pos.z;

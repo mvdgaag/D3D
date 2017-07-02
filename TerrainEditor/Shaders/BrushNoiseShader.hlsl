@@ -1,6 +1,7 @@
 #include "LibSimplexNoiseShader.hlsli"
 
-RWTexture2D<float> rwTarget : register(u0);
+RWTexture2D<float4>		rwTarget :	register(u0);
+Texture2D<float4>		tBase :		register(t0);
 
 
 cbuffer cPaintData
@@ -9,6 +10,7 @@ cbuffer cPaintData
 	int4	cTextureInfo;	// width height 0 0
 	float4	cPaintData;		// worldPosition.xy
 	float4	cBrushData;		// radius, height add, falloff radius fraction
+	float4	cColor;			// RGBA
 	float4	cTileWorldRect; // top left bottom right
 };
 
@@ -45,5 +47,5 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	noise += snoise(0.025 * world_pos + 666.0);
 	noise /= 1.75;
 
-	rwTarget[target_pixel] += falloff * height_add * noise;
+	rwTarget[target_pixel] = tBase[target_pixel] + cColor * falloff * height_add * noise;
 }

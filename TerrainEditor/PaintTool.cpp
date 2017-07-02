@@ -91,10 +91,11 @@ void PaintTool::ApplyPaint(float2 inWorldCoord)
 		mTargetTerrain->SetDirty(index, mTargetLayer);
 			
 		// set neighbords array if needed
-		apTexture neighbors;
+		apTexture neighborhood;
+		neighborhood.push_back(mTargetTerrain->GetLayerTexture(index, mTargetLayer));
 		if (mCurrentBrush->SamplesNeighbors())
 		{
-			neighbors.resize(3);
+			neighborhood.resize(4);
 			assert(tile_indices.size() <= 4);
 			for each (int2 neighbor_index in tile_indices)
 			{
@@ -103,13 +104,13 @@ void PaintTool::ApplyPaint(float2 inWorldCoord)
 
 				// horizontal neighbor
 				if (neighbor_index.y == index.y)
-					neighbors[0] = mTargetTerrain->GetLayerTexture(neighbor_index, mTargetLayer);
+					neighborhood[1] = mTargetTerrain->GetLayerTexture(neighbor_index, mTargetLayer);
 				// vertical neighbor
 				else if (neighbor_index.x == index.x)
-					neighbors[1] = mTargetTerrain->GetLayerTexture(neighbor_index, mTargetLayer);
+					neighborhood[2] = mTargetTerrain->GetLayerTexture(neighbor_index, mTargetLayer);
 				// diagonal neighbor
 				else
-					neighbors[2] = mTargetTerrain->GetLayerTexture(neighbor_index, mTargetLayer);
+					neighborhood[3] = mTargetTerrain->GetLayerTexture(neighbor_index, mTargetLayer);
 			}
 		}
 
@@ -122,9 +123,10 @@ void PaintTool::ApplyPaint(float2 inWorldCoord)
 
 		if (target != nullptr)
 		{
-			mCurrentBrush->Apply(target, paint_rect, world_tile_rect, inWorldCoord, neighbors);
+			mCurrentBrush->Apply(target, paint_rect, world_tile_rect, inWorldCoord, neighborhood);
 		}
 	}
+
 	/* TODO: required? should be identical, but data is duplicated and hopefully treated exactly the same
 	cannot hurt to ensure with a copy
 

@@ -184,28 +184,54 @@ void Terrain::ProcessDirtyLayers()
 }
 
 
-void Terrain::SetLayerAsAlbedo(int inLayerIndex)
-{
-	assert(ValidateLayerIndex(inLayerIndex));
-	assert(mLayers[inLayerIndex] != nullptr);
+
+void Terrain::SetHeightLayerIndex(int inIndex)	
+{ 
+	assert(ValidateLayerIndex(inIndex));
+	mHeightLayerIndex = inIndex; 
+}
+
+
+void Terrain::SetDiffuseLayerIndex(int inIndex)		
+{ 
+	assert(ValidateLayerIndex(inIndex));
+	assert(mLayers[inIndex] != nullptr);
 
 	for (int y = 0; y < mNumTiles.y; y++)
 	{
 		for (int x = 0; x < mNumTiles.y; x++)
 		{
 			int idx = y * mNumTiles.x + x;
-			mTiles[idx]->GetMaterial()->SetDiffuseTexture(mLayers[inLayerIndex]->GetTileTexture(int2(x, y)));
+			mTiles[idx]->GetMaterial()->SetDiffuseTexture(mLayers[inIndex]->GetTileTexture(int2(x, y)));
 		}
 	}
+
+	mDiffuseLayerIndex = inIndex;
 }
 
 
-void Terrain::SetLayerAsHeight(int inLayerIndex)
-{
-	assert(ValidateLayerIndex(inLayerIndex));
-	assert(mLayers[inLayerIndex] != nullptr);
+void Terrain::SetNormalLayerIndex(int inIndex)		
+{ 
+	assert(ValidateLayerIndex(inIndex)); 
+	mHeightLayerIndex = inIndex; 
+}
 
-	mHeightLayerIndex = inLayerIndex;
+
+void Terrain::SetSurfaceLayerIndex(int inIndex)
+{
+	assert(ValidateLayerIndex(inIndex));
+	assert(mLayers[inIndex] != nullptr);
+
+	for (int y = 0; y < mNumTiles.y; y++)
+	{
+		for (int x = 0; x < mNumTiles.y; x++)
+		{
+			int idx = y * mNumTiles.x + x;
+			mTiles[idx]->GetMaterial()->SetSurfaceTexture(mLayers[inIndex]->GetTileTexture(int2(x, y)));
+		}
+	}
+
+	mDiffuseLayerIndex = inIndex;
 }
 
 

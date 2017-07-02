@@ -1,7 +1,9 @@
-RWTexture2D<float> rwTarget : register(u0);
-Texture2D<float> neighbor_hor :  register(t0);
-Texture2D<float> neighbor_ver :  register(t1);
-Texture2D<float> neighbor_dia :  register(t2);
+RWTexture2D<float4> rwTarget	:	register(u0);
+Texture2D<float4> tBase			:	register(t0);
+Texture2D<float4> neighbor_hor	:	register(t1);
+Texture2D<float4> neighbor_ver	:	register(t2);
+Texture2D<float4> neighbor_dia	:	register(t3);
+
 
 cbuffer cPaintData
 {
@@ -9,6 +11,7 @@ cbuffer cPaintData
 	int4	cTextureInfo;	// width height 0 0
 	float4	cPaintData;		// worldPosition.xy
 	float4	cBrushData;		// radius, height add, falloff radius fraction
+	float4	cColor;			// RGBA
 	float4	cTileWorldRect; // top left bottom right
 };
 
@@ -19,7 +22,6 @@ float2 TextureToWorld(int2 inTexel, int2 inTexSize, float4 inTileWorldRect)
 	float2 uv = float2(inTexel) / float2(inTexSize - int2(1, 1));
 		return inTileWorldRect.xy + uv * (inTileWorldRect.zw - inTileWorldRect.xy);
 }
-
 
 
 float SampleHeight(int2 inCoord)
@@ -88,7 +90,7 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	falloff = saturate((1.0 - falloff) / falloff_start_frac);
 	falloff = smoothstep(0.0, 1.0, falloff);
 
-	float original = rwTarget[target_pixel];
+	float original = tBase[target_pixel];
 	float neighbors = 0.0;
 	neighbors += SampleHeight(target_pixel + int2( 1, 0));
 	neighbors += SampleHeight(target_pixel + int2( 0, 1));

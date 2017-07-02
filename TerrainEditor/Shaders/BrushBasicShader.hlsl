@@ -1,4 +1,5 @@
-RWTexture2D<float> rwTarget : register(u0);
+RWTexture2D<float4>		rwTarget :	register(u0);
+Texture2D<float4>		tBase :		register(t0);
 
 
 cbuffer cPaintData
@@ -7,6 +8,7 @@ cbuffer cPaintData
 	int4	cTextureInfo;	// width height 0 0
 	float4	cPaintData;		// worldPosition.xy
 	float4	cBrushData;		// radius, height add, falloff radius fraction
+	float4	cColor;			// RGBA
 	float4	cTileWorldRect; // top left bottom right
 };
 
@@ -38,5 +40,5 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	falloff = saturate((1.0 - falloff) / falloff_start_frac);
 	falloff = smoothstep(0.0, 1.0, falloff);
 
-	rwTarget[target_pixel] += falloff * height_add;
+	rwTarget[target_pixel] = tBase[target_pixel] + cColor * falloff * height_add;
 }
