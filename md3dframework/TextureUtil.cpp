@@ -15,6 +15,7 @@ namespace TextureUtil
 
 	pComputeShader gTextureBlendShader;
 	pComputeShader gTextureBlendConstantShader;
+	pComputeShader gTextureAlphaBlendShader;
 
 	pComputeShader gTextureClampShader;
 	pComputeShader gTextureClampConstantShader;
@@ -69,6 +70,7 @@ namespace TextureUtil
 
 		gTextureBlendShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureBlend.hlsl");
 		gTextureBlendConstantShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureBlendConstant.hlsl");
+		gTextureAlphaBlendShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureAlphaBlend.hlsl");
 
 		gTextureClampShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureClamp.hlsl");
 		gTextureClampConstantShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureClampConstant.hlsl");
@@ -124,6 +126,7 @@ namespace TextureUtil
 		theResourceFactory.DestroyItem(gTextureAddConstantShader);
 		theResourceFactory.DestroyItem(gTextureBlendShader);
 		theResourceFactory.DestroyItem(gTextureBlendConstantShader);
+		theResourceFactory.DestroyItem(gTextureAlphaBlendShader);
 		theResourceFactory.DestroyItem(gTextureClampShader);
 		theResourceFactory.DestroyItem(gTextureClampConstantShader);
 		theResourceFactory.DestroyItem(gTextureCopyShader);
@@ -157,6 +160,7 @@ namespace TextureUtil
 		gTextureAddShader = nullptr;
 		gTextureAddConstantShader = nullptr;
 		gTextureBlendShader = nullptr;
+		gTextureAlphaBlendShader = nullptr;
 		gTextureBlendConstantShader = nullptr;
 		gTextureClampShader = nullptr;
 		gTextureClampConstantShader = nullptr;
@@ -351,6 +355,24 @@ namespace TextureUtil
 		sources.push_back(inBottom);
 		sources.push_back(inOpacity);
 		GPUTextureFunc(inDst, sources, *gTextureBlendShader);
+	}
+
+
+	void TextureAlphaBlend(pRenderTarget inDst, pTexture inTop, pTexture inBottom)
+	{
+		apTexture sources;
+		sources.push_back(inTop);
+		sources.push_back(inBottom);
+		GPUTextureFunc(inDst, sources, *gTextureAlphaBlendShader);
+	}
+
+
+	void TextureAlphaBlend(pTexture inDst, pTexture inTop, pTexture inBottom)
+	{
+		apTexture sources;
+		sources.push_back(inTop);
+		sources.push_back(inBottom);
+		GPUTextureFunc(inDst, sources, *gTextureAlphaBlendShader);
 	}
 
 

@@ -1,4 +1,4 @@
-/* texture max function */
+/* texture blend constant function */
 RWTexture2D<float4> dst : register(u0);
 Texture2D<float4> source1 : register(t0);
 Texture2D<float4> source2 : register(t1);

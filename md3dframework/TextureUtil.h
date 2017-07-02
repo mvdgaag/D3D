@@ -33,8 +33,14 @@ namespace TextureUtil
 	void TextureBlend(pRenderTarget inDst, pTexture inTop, pTexture inBottom, pTexture inOpacity);
 	void TextureBlend(pTexture inDst, pTexture inTop, pTexture inBottom, pTexture inOpacity);
 
+	void TextureAlphaBlend(pRenderTarget inDst, pTexture inTop, pTexture inBottom);
+	void TextureAlphaBlend(pTexture inDst, pTexture inTop, pTexture inBottom);
+
 	void TextureCopy(pRenderTarget inDst, pTexture inSrc);
 	void TextureCopy(pTexture inDst, pTexture inSrc);
+
+	void TextureCopyOffset(pRenderTarget inDst, pTexture inSrc, int2 inOffset);
+	void TextureCopyOffset(pTexture inDst, pTexture inSrc, int2 inOffset);
 
 	void TextureSet(pRenderTarget inDst, float4 inVal);
 	void TextureSet(pTexture inDst, float4 inVal);
