@@ -186,8 +186,9 @@ void InitContent()
 
 	if (g_flow != nullptr)
 	{
-		//g_paint_tool->SetTargetLayer(g_flow->GetLayerIndex());
-		//g_Terrain->SetHeightLayerIndex(g_flow->GetLayerIndex());
+		g_paint_tool->SetTargetLayer(g_flow->GetLayerIndex());
+		g_Terrain->SetHeightLayerIndex(g_flow->GetLayerIndex());
+		//g_Terrain->SetDiffuseLayerIndex(g_Terrain->GetNormalLayerIndex());
 		//g_Terrain->SetLayerAsAlbedo(g_flow->GetLayerIndex());
 	}
 

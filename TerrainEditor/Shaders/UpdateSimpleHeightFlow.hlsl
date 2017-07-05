@@ -6,7 +6,7 @@ Texture2D<float4>	tHistory : register(t0);
 
 cbuffer cConstantData : register(b0)
 {
-	float4 cParams;		// time_scale, friction, talus angle
+	float4 cParams;		// time_scale, friction, talus slope
 	float4 cResolution;	// width, height, 1/width, 1/height
 	float4 cScale;		// pixels/m x, pixels/m y, heightscale
 }
@@ -24,7 +24,7 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	// get constants
 	const float time_scale = cParams.x;
 	const float friction = cParams.y;
-	const float talus_angle = cParams.z;
+	const float talus_slope = cParams.z;
 
 	float4 value = tHistory[coord];
 	float n = tHistory[coord + int2(0, 1)].x;
@@ -32,5 +32,5 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	float s = tHistory[coord - int2(0, 1)].x;
 	float w = tHistory[coord - int2(1, 0)].x;
 
-	tValue[coord] = UpdateSimpleFlow(value, float4(n, e, s, w), time_scale, friction, talus_angle);
+	tValue[coord] = UpdateSimpleFlow(value, float4(n, e, s, w), cScale, time_scale, friction, talus_slope);
 }

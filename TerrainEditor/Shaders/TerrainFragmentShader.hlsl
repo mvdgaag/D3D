@@ -53,19 +53,6 @@ struct PS_OUTPUT
 	half2 MotionVectors		: SV_Target4;
 };
 
-
-float3 NormalMap(float3 inGeometryNormal, float3 inTangent, float2 inTexCoord)
-{
-	float3 normal = normalize(inGeometryNormal);
-	float3 tangent = normalize(inTangent);
-	float3 bi_tangent = cross(tangent, normal);
-	float3 tex_normal = cNormalTexture.Sample(cNormalSampler, inTexCoord).xyz * 2.0 - 1.0;
-	tex_normal.y *= -1;
-	float3x3 TBN = float3x3(tangent, bi_tangent, normal);
-	return normalize(mul(tex_normal, TBN));	
-}
-
-
 //--------------------------------------------------------------------------------------
 // Pixel Shader
 //--------------------------------------------------------------------------------------
@@ -82,10 +69,8 @@ PS_OUTPUT PS(PS_INPUT input)
 	else
 		output.Diffuse = cDiffuseTexture.Sample(cDiffuseSampler, input.TexCoord);
 
-	if ((flags & HAS_NORMAL_MAP) == 0)
-		output.Normal = EncodeNormal(normalize(input.Normal));
-	else
-		output.Normal = EncodeNormal(NormalMap(normalize(input.Normal), input.Tangent, input.TexCoord));
+	// terrain always needs normalmap
+	output.Normal = EncodeNormal(input.Normal.xyz);
 
 	if ((flags & HAS_SURFACE_MAP) == 0)
 		output.Surface = cSurface;

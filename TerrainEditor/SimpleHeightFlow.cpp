@@ -12,12 +12,13 @@ void SimpleHeightFlow::Init(pTerrain inTerrain)
 
 	assert(inTerrain != nullptr);
 	
+	mTerrain = inTerrain;
 	mResolution = inTerrain->GetTileResolution();
 	mScale = inTerrain->GetTileScale();
 
 	mFluidity = 10.0f;
-	mFriction = 0.99f;
-	mTalusAngle = 0.0f * mScale.z / (mScale.x / mResolution.x); // assume square pixels!
+	mFriction = 0.9f;
+	mTalusSlope = 1.0f;
 
 	mLayer = new Layer();
 	mLayer->Init(inTerrain->GetNumTiles(), mResolution, Format::FORMAT_R16G16B16A16_FLOAT);
@@ -74,14 +75,15 @@ void SimpleHeightFlow::CleanUp()
 void SimpleHeightFlow::Update(float inTimeStep)
 {
 	// DEVHACK
-	//assert(inTimeStep * mFluidity <= 1.0);
+//	assert(0.5 * inTimeStep * mFluidity <= 1.0);
 
 	if (!mInitialized)
 		return;
 
-	mConstantBufferData.params = float4(min(1.0, mFluidity * 0.5 * inTimeStep), mFriction, mTalusAngle, 0.0);
+	mConstantBufferData.params = float4(min(1.0, mFluidity * 0.5 * inTimeStep), mFriction, mTalusSlope, 0.0);
 	mConstantBufferData.resolution = float4(float2(mLayer->GetTileResolution()), float2(1.0, 1.0) / float2(mLayer->GetTileResolution()));
-	mConstantBufferData.scale = float4(mScale, 0.0);
+	mConstantBufferData.scale = float4(mScale.x / mResolution.x, mScale.y / mResolution.y, mScale.z, 0.0);
+
 	theRenderContext.UpdateSubResource(*mConstantBuffer, &mConstantBufferData);
 
 	for (int y = 0; y < mLayer->GetNumTiles().y; y++)

@@ -147,16 +147,26 @@ void Terrain::SetDirty(int2 inTileIndex, int inLayerIndex)
 	assert(mLayers[inLayerIndex] != nullptr);
 
 	mLayers[inLayerIndex]->SetDirty(inTileIndex);
-
-	// If height is dirty so should the normals be.
-	if (inLayerIndex == mHeightLayerIndex)
-		SetDirty(inTileIndex, mNormalLayerIndex);
-
 }
 
 
 void Terrain::ProcessDirtyLayers()
 {
+	pLayer height_layer = mLayers[mHeightLayerIndex];
+	int2 num_tiles = height_layer->GetNumTiles();
+	for (int y = 0; y < num_tiles.y; y++)
+	{
+		for (int x = 0; x < num_tiles.y; x++)
+		{
+			if (height_layer->GetDirty(int2(x, y)))
+			{
+				// TODO: neighbor tiles as well
+				if (mNormalLayerIndex != -1 && mLayers[mNormalLayerIndex] != nullptr)
+					mLayers[mNormalLayerIndex]->SetDirty(int2(x, y), true);
+			}
+		}
+	}
+
 	for each (pLayer layer in mLayers)
 	{
 		int2 num_tiles = layer->GetNumTiles();

@@ -61,7 +61,8 @@ void CS(uint3 DTid : SV_DispatchThreadID)
 	float south = SampleHeight(coord - int2(0, 1));
 	float west = SampleHeight(coord - int2(1, 0));
 
-	float3 dx = float3(2.0 / cTerrainScale.x, (cTerrainScale.z / cTerrainScale.x) * (east - west), 0.0);
-	float3 dz = float3(0.0, (cTerrainScale.z / cTerrainScale.y) * (north - south), 2.0 * cTerrainScale.y);
-	rwNormal[coord] = float4(normalize(cross(dz, dx)), 1.0);
+	float2 meter_step = cTerrainScale.xy / cTextureInfo.xy;
+	float3 dx = float3(2.0 * meter_step.x,	0.0,				cTerrainScale.z * (east - west));
+	float3 dy = float3(0.0,					2.0 * meter_step.y,	cTerrainScale.z * (north - south));
+	rwNormal[coord] = float4(-normalize(cross(dy, dx)) * 0.5 + 0.5, 1.0);
 }

@@ -104,13 +104,11 @@ PS_INPUT VS(VS_INPUT input)
 
 	float3 pos = input.Position;
 	pos.y += cTerrainScale.z * cHeightTexture.Load(pixel).x;
-	//pos.y += cTerrainScale.z * cHeightTexture.SampleLevel(cHeightSampler, input.TexCoord, 0).x;
 
-	float3 nor = cNormalTexture.Load(pixel).xyz;
-	//float3 nor = cNormalTexture.SampleLevel(cNormalSampler, input.TexCoord, 0).xyz;
+	// in world y is up. other axis are aligned by normal calculation
+	float3 nor = cNormalTexture.Load(pixel).xzy * 2.0 - 1.0;
 	output.Normal = mul(modelViewMatrix, float4(nor, 0.0)).xyz; 
 
-	// jitter for TAA
 	output.Position = mul(modelViewProjectionMatrix, float4(pos, 1.0));
 	output.Tangent = mul(modelViewMatrix, float4(input.Tangent, 0.0)).xyz;
 	
