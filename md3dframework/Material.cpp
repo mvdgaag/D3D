@@ -45,6 +45,8 @@ void Material::Init()
 
 void Material::CleanUp()
 {
+	if (mConstantBuffer)
+		theResourceFactory.DestroyItem(mConstantBuffer);
 	mConstantBuffer = nullptr;
 }
 

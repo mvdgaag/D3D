@@ -15,7 +15,10 @@ public:
 	~Window() {};
 	
 	HRESULT Init(HINSTANCE hInstance, int inWidth, int inHeight);
-
+	HRESULT Init(HWND inWindowHandle);
+	HWND GetHandle()			{ return mHWnd; }
+	HINSTANCE GetInstance()		{ return mHInst; }
+	
 protected:
 	static LRESULT CALLBACK WndProc(HWND, UINT, WPARAM, LPARAM);
 

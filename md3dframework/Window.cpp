@@ -40,6 +40,20 @@ HRESULT Window::Init(HINSTANCE hInstance, int inWidth, int inHeight)
 }
 
 
+HRESULT Window::Init(HWND inWindowHandle)
+{
+	assert(IsWindow(inWindowHandle));
+	mHWnd = inWindowHandle;
+	RECT rc;
+	GetClientRect(mHWnd, &rc);
+	mWidth = rc.right - rc.left;
+	mHeight = rc.bottom - rc.top;
+	mHInst = GetModuleHandle(NULL); // TODO: apparently this will return the .exe instance and could go wrong with dll
+
+	return S_OK;
+}
+
+
 LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	PAINTSTRUCT ps;

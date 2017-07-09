@@ -1,6 +1,7 @@
 #pragma once
 #include "GaagCommon.h"
 #include "ResourceFactory.h"
+#include "Window.h"
 
 struct ID3D11Device;
 struct ID3D11Device1;
@@ -61,7 +62,7 @@ public:
 	unsigned int			GetHeight() const					{ return mHeight; }
 	bool					IsInitialized() const				{ return mInitialized; }
 
-	void Init(pWindow inWindow);
+	void Init(const HWND inWindowHandle, const int inWidth, const int inHeight);
 	void CleanUp();
 
 	void BeginEvent(std::string inEventString);
@@ -118,13 +119,9 @@ private:
 
 	// for d3d interface
 	ID3D11Device*					mD3DDevice = nullptr;
-	ID3D11Device1*					mD3DDevice1 = nullptr;
 	ID3D11DeviceContext*			mImmediateContext = nullptr;
-	ID3D11DeviceContext1*			mImmediateContext1 = nullptr;
 	IDXGISwapChain*					mSwapChain = nullptr;
-	IDXGISwapChain1*				mSwapChain1 = nullptr;
 	ID3D11RasterizerState*			mRasterState = nullptr;
-	ID3D11RasterizerState1*			mRasterState1 = nullptr;
 	ID3DUserDefinedAnnotation*		mAnnotation = nullptr;
 
 	pTexture						mBackBuffer;

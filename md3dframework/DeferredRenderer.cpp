@@ -76,6 +76,8 @@ void DeferredRenderer::Init(int inWidth, int inHeight)
 void DeferredRenderer::CleanUp()
 {
 	delete mGBuffer;
+	assert(mInitialized == true);
+
 	theResourceFactory.DestroyItem(mDepthMinPyramid);
 	theResourceFactory.DestroyItem(mDepthMaxPyramid);
 	theResourceFactory.DestroyItem(mDirectLightingDiffuse);

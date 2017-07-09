@@ -22,9 +22,12 @@ void ResourceFactory::Init()
 
 void ResourceFactory::CleanUp()
 {
+	apBaseResource all_resources;
 	for (auto it = mResources.begin(); it != mResources.end(); ++it)
-		delete it->second;
-	mResources.clear();
+		all_resources.push_back(it->second);
+	for (int i = 0; i < all_resources.size(); i++)
+		UnRegisterResource(all_resources[i]);
+	assert(mResources.size() == 0);
 }
 
 

@@ -23,21 +23,30 @@ GaagFramework::~GaagFramework()
 }
 
 
-//--------------------------------------------------------------------------------------
-// Create Direct3D device and swap chain
-//--------------------------------------------------------------------------------------
 HRESULT GaagFramework::Init(HINSTANCE hInstance, int inWidth, int inHeight)
+{
+	mWindow = MAKE_NEW(Window);
+	mWindow->Init(hInstance, inWidth, inHeight);
+	return Init(mWindow);
+}
+
+
+HRESULT GaagFramework::Init(pWindow inWindow)
 {
 	assert(mInitialized == false);
 
-	mWindow = MAKE_NEW(Window);
-	mWindow->Init(hInstance, inWidth, inHeight);
-	theRenderContext.Init(mWindow);
+	mWindow = inWindow;
+	RECT rc;
+	GetClientRect(mWindow->GetHandle(), &rc);
+	int width = rc.right - rc.left;
+	int height = rc.bottom - rc.top;
+
+	theRenderContext.Init(mWindow->GetHandle(), width, height);
 	theResourceFactory.Init();
 	theTime.Init();
 	theInput.Init();
 	TextureUtil::InitTextureUtil();
-	
+
 	mDeferredRenderer = MAKE_NEW(DeferredRenderer);
 	mDeferredRenderer->Init(theRenderContext.GetWidth(), theRenderContext.GetHeight());
 

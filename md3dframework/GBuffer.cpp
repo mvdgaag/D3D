@@ -45,7 +45,13 @@ void GBuffer::Init(int inWidth, int inHeight)
 void GBuffer::CleanUp()
 {
 	for (int i = 0; i < NUM_RENDER_TARGETS; i++)
+	{
+		if (mRenderTargets[i])
+			theResourceFactory.DestroyItem(mRenderTargets[i]);
 		mRenderTargets[i] = nullptr;
+	}
+	if (mDepthStencilTarget)
+		theResourceFactory.DestroyItem(mDepthStencilTarget);
 	mDepthStencilTarget = nullptr;
 	mInitialized = false;
 }

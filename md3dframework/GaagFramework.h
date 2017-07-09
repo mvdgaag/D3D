@@ -27,6 +27,7 @@ public:
 	}
 
 	HRESULT Init(HINSTANCE hInstance, int inWidth, int inHeight);
+	HRESULT Init(pWindow inWindow);
 	bool IsInitialized() { return mInitialized; }
 	void CleanUp();
 

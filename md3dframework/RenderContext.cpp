@@ -24,149 +24,39 @@ RenderContext::~RenderContext()
 }
 
 
-void RenderContext::Init(pWindow inWindow)
+void RenderContext::Init(const HWND inWindowHandle, const int inWidth, const int inHeight)
 {
 	CleanUp();
 
-	HWND hWnd = inWindow->mHWnd;
+	DXGI_SWAP_CHAIN_DESC swapchain_desc;
+	ZeroMemory(&swapchain_desc, sizeof(DXGI_SWAP_CHAIN_DESC));
 
-	D3D_DRIVER_TYPE driver_type = D3D_DRIVER_TYPE_NULL;
-	D3D_FEATURE_LEVEL feature_level = D3D_FEATURE_LEVEL_11_0;
-	HRESULT hr = S_OK;
+	mWidth = inWidth;
+	mHeight = inHeight;
 
-	RECT rc;
-	GetClientRect(hWnd, &rc);
-	mWidth = rc.right - rc.left;
-	mHeight = rc.bottom - rc.top;
+	swapchain_desc.BufferCount = 1;
+	swapchain_desc.BufferDesc.Width = mWidth;
+	swapchain_desc.BufferDesc.Height = mHeight;
+	swapchain_desc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	swapchain_desc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT | DXGI_USAGE_UNORDERED_ACCESS;
+	swapchain_desc.SampleDesc.Count = 1; // 4?
+	swapchain_desc.SampleDesc.Quality = 0;
+	swapchain_desc.Windowed = true;
+	swapchain_desc.OutputWindow = inWindowHandle;
+	swapchain_desc.BufferDesc.RefreshRate.Numerator = 60;
+	swapchain_desc.BufferDesc.RefreshRate.Denominator = 1;
 
-	UINT createDeviceFlags = 0;
-#ifdef _DEBUG
-	createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
-	createDeviceFlags |= D3D11_CREATE_DEVICE_DISABLE_GPU_TIMEOUT;
-#endif
-
-	D3D_DRIVER_TYPE driverTypes[] =
-	{
-		D3D_DRIVER_TYPE_HARDWARE,
-		D3D_DRIVER_TYPE_WARP,
-		D3D_DRIVER_TYPE_REFERENCE,
-	};
-	UINT numDriverTypes = ARRAYSIZE(driverTypes);
-
-	D3D_FEATURE_LEVEL featureLevels[] =
-	{
-		D3D_FEATURE_LEVEL_11_1,
-		D3D_FEATURE_LEVEL_11_0,
-		D3D_FEATURE_LEVEL_10_1,
-		D3D_FEATURE_LEVEL_10_0,
-	};
-	UINT numFeatureLevels = ARRAYSIZE(featureLevels);
-
-	for (UINT driverTypeIndex = 0; driverTypeIndex < numDriverTypes; driverTypeIndex++)
-	{
-		driver_type = driverTypes[driverTypeIndex];
-		hr = D3D11CreateDevice(nullptr, driver_type, nullptr, createDeviceFlags, featureLevels, numFeatureLevels,
-			D3D11_SDK_VERSION, &mD3DDevice, &feature_level, &mImmediateContext);
-		if (hr == E_INVALIDARG)
-		{
-			hr = D3D11CreateDevice(nullptr, driver_type, nullptr, createDeviceFlags, &featureLevels[1], numFeatureLevels - 1,
-				D3D11_SDK_VERSION, &mD3DDevice, &feature_level, &mImmediateContext);
-		}
-		if (SUCCEEDED(hr))
-			break;
-	}
-	if (FAILED(hr))
-	{
-		exit(hr);
-	}
-	// Obtain DXGI factory from device (since we used nullptr for pAdapter above)
-	IDXGIFactory1* dxgiFactory = nullptr;
-	{
-		IDXGIDevice* dxgiDevice = nullptr;
-		hr = mD3DDevice->QueryInterface(__uuidof(IDXGIDevice), reinterpret_cast<void**>(&dxgiDevice));
-		if (SUCCEEDED(hr))
-		{
-			IDXGIAdapter* adapter = nullptr;
-			hr = dxgiDevice->GetAdapter(&adapter);
-			if (SUCCEEDED(hr))
-			{
-				hr = adapter->GetParent(__uuidof(IDXGIFactory1), reinterpret_cast<void**>(&dxgiFactory));
-				adapter->Release();
-			}
-			dxgiDevice->Release();
-		}
-	}
-	if (FAILED(hr))
-	{
-		exit(hr);
-	}
-
-	// Create swap chain
-	IDXGIFactory2* dxgiFactory2 = nullptr;
-	hr = dxgiFactory->QueryInterface(__uuidof(IDXGIFactory2), reinterpret_cast<void**>(&dxgiFactory2));
-	if (dxgiFactory2)
-	{
-		// DirectX 11.1 or later
-		hr = mD3DDevice->QueryInterface(__uuidof(ID3D11Device1), reinterpret_cast<void**>(&mD3DDevice1));
-		if (SUCCEEDED(hr))
-		{
-			(void)mImmediateContext->QueryInterface(__uuidof(ID3D11DeviceContext1), reinterpret_cast<void**>(&mImmediateContext1));
-		}
-
-		DXGI_SWAP_CHAIN_DESC1 sd;
-		ZeroMemory(&sd, sizeof(sd));
-		sd.Width = mWidth;
-		sd.Height = mHeight;
-		sd.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		sd.SampleDesc.Count = 1;
-		sd.SampleDesc.Quality = 0;
-		sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT | DXGI_USAGE_UNORDERED_ACCESS;
-		sd.BufferCount = 1;
-
-		hr = dxgiFactory2->CreateSwapChainForHwnd(mD3DDevice, hWnd, &sd, nullptr, nullptr, &mSwapChain1);
-		if (SUCCEEDED(hr))
-		{
-			hr = mSwapChain1->QueryInterface(__uuidof(IDXGISwapChain), reinterpret_cast<void**>(&mSwapChain));
-		}
-
-		dxgiFactory2->Release();
-	}
-	else
-	{
-		// DirectX 11.0 systems
-		DXGI_SWAP_CHAIN_DESC sd;
-		ZeroMemory(&sd, sizeof(sd));
-		sd.BufferCount = 1;
-		sd.BufferDesc.Width = mWidth;
-		sd.BufferDesc.Height = mHeight;
-		sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-		sd.BufferDesc.RefreshRate.Numerator = 60;
-		sd.BufferDesc.RefreshRate.Denominator = 1;
-		sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT | DXGI_USAGE_SHADER_INPUT | DXGI_USAGE_UNORDERED_ACCESS;
-		sd.OutputWindow = hWnd;
-		sd.SampleDesc.Count = 1;
-		sd.SampleDesc.Quality = 0;
-		sd.Windowed = TRUE;
-
-		hr = dxgiFactory->CreateSwapChain(mD3DDevice, &sd, &mSwapChain);
-	}
-
-	// Note this tutorial doesn't handle full-screen swapchains so we block the ALT+ENTER shortcut
-	dxgiFactory->MakeWindowAssociation(hWnd, DXGI_MWA_NO_ALT_ENTER);
-	dxgiFactory->Release();
-
-	if (FAILED(hr))
-	{
-		exit(hr);
-	}
+	HRESULT hr;
+	hr = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL, 0,
+		NULL, NULL, D3D11_SDK_VERSION,
+		&swapchain_desc, &mSwapChain, &mD3DDevice,
+		NULL, &mImmediateContext);
+	assert(!FAILED(hr));
 
 	// Create a render target view
 	ID3D11Texture2D* pBackBuffer = nullptr;
 	hr = mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&pBackBuffer));
-	if (FAILED(hr))
-	{
-		exit(hr);
-	}
+	assert(!FAILED(hr));
 
 	mBackBuffer = MAKE_NEW(Texture);
 	mBackBuffer->Init(pBackBuffer);
@@ -176,9 +66,9 @@ void RenderContext::Init(pWindow inWindow)
 
 	// setup rasterizer
 	SetRasterizerState(FILL_SOLID, CULL_BACK, true, 0, 0.0f, 0.0f, true, false, false, false);
-	
+
 	D3D11_DEPTH_STENCIL_DESC dsDesc;
-	
+
 	dsDesc.DepthEnable = true;
 	dsDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	dsDesc.DepthFunc = D3D11_COMPARISON_LESS;
@@ -205,10 +95,7 @@ void RenderContext::Init(pWindow inWindow)
 	SetViewport(int2(mWidth, mHeight), 0.0f, 1.0f, int2(0, 0));
 
 	hr = mImmediateContext->QueryInterface(__uuidof(mAnnotation), reinterpret_cast<void**>(&mAnnotation));
-	if (FAILED(hr))
-	{
-		exit(hr);
-	}
+	assert(!FAILED(hr));
 
 	mInitialized = true;
 }
@@ -221,13 +108,9 @@ void RenderContext::CleanUp()
 
 	if (mImmediateContext) mImmediateContext->ClearState();
 	
-	if (mSwapChain1) mSwapChain1->Release();
 	if (mSwapChain) mSwapChain->Release();
 	if (mRasterState) mRasterState->Release();
-	if (mRasterState1) mRasterState1->Release();
-	if (mImmediateContext1) mImmediateContext1->Release();
 	if (mImmediateContext) mImmediateContext->Release();
-	if (mD3DDevice1) mD3DDevice1->Release();
 	if (mD3DDevice) mD3DDevice->Release();
 
 	mInitialized = false;
