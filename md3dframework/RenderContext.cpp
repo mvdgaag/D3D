@@ -33,6 +33,7 @@ void RenderContext::Init(const HWND inWindowHandle, const int inWidth, const int
 
 	mWidth = inWidth;
 	mHeight = inHeight;
+	mHWnd = inWindowHandle;
 
 	swapchain_desc.BufferCount = 1;
 	swapchain_desc.BufferDesc.Width = mWidth;
@@ -103,17 +104,67 @@ void RenderContext::Init(const HWND inWindowHandle, const int inWidth, const int
 
 void RenderContext::CleanUp()
 {
-	mOutputRenderTarget = nullptr;
-//	delete mBackBuffer; Already deleted by mOutputRenderTarget
+	if (mOutputRenderTarget)
+	{
+		delete mOutputRenderTarget;
+		mOutputRenderTarget = nullptr;
+	}
+
+	if (mBackBuffer)
+	{
+		delete mBackBuffer;
+		mBackBuffer = nullptr;
+	}
 
 	if (mImmediateContext) mImmediateContext->ClearState();
-	
+
 	if (mSwapChain) mSwapChain->Release();
 	if (mRasterState) mRasterState->Release();
 	if (mImmediateContext) mImmediateContext->Release();
 	if (mD3DDevice) mD3DDevice->Release();
 
 	mInitialized = false;
+}
+
+
+// TODO: Can we just resize the backbuffer without losing context?!
+void RenderContext::Resize(int inWidth, int inHeight)
+{
+	if (mSwapChain)
+	{
+		mWidth = inWidth;
+		mHeight = inHeight;
+
+		SetRenderTargets(0, NULL, NULL);
+
+		// Release all outstanding references to the swap chain's buffers.
+		delete mOutputRenderTarget;
+		delete mBackBuffer;
+
+		// Preserve the existing buffer count and format.
+		// Automatically choose the width and height to match the client rect for HWNDs.
+		HRESULT hr;
+		hr = mSwapChain->ResizeBuffers(0, mWidth, mHeight, DXGI_FORMAT_UNKNOWN, 0);
+		assert(!FAILED(hr));
+
+		// Get buffer and create a render-target-view.
+		ID3D11Texture2D* pBuffer;
+		ID3D11Texture2D* pBackBuffer = nullptr;
+		hr = mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&pBackBuffer);
+		
+		mBackBuffer = MAKE_NEW(Texture);
+		mBackBuffer->Init(pBackBuffer);
+
+		mOutputRenderTarget = MAKE_NEW(RenderTarget);
+		mOutputRenderTarget->Init(mBackBuffer);
+
+		// Setup the viewport
+		SetRenderTargets(1, &mOutputRenderTarget, NULL);
+		SetViewport(int2(mWidth, mHeight), 0.0f, 1.0f, int2(0, 0));
+
+		hr = mImmediateContext->QueryInterface(__uuidof(mAnnotation), reinterpret_cast<void**>(&mAnnotation));
+		assert(!FAILED(hr));
+	}
 }
 
 

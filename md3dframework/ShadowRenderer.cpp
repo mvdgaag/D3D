@@ -10,8 +10,8 @@ void ShadowRenderer::Init()
 {
 	assert(mInitialized == false);
 	
-	mPixelShader = theResourceFactory.LoadPixelShader("../md3dFramework/Shaders/ShadowPixelShader.hlsl");
-	mVertexShader = theResourceFactory.LoadVertexShader("../md3dFramework/Shaders/ShadowVertexShader.hlsl");
+	mPixelShader = theResourceFactory.LoadPixelShader(Gaag.GetDirectory("Shaders/ShadowPixelShader.hlsl"));
+	mVertexShader = theResourceFactory.LoadVertexShader(Gaag.GetDirectory("Shaders/ShadowVertexShader.hlsl"));
 	mConstantBufferEveryObject = theResourceFactory.MakeConstantBuffer(sizeof(ShadowRenderer::ConstantDataEveryObject));
 
 	mInitialized = true;

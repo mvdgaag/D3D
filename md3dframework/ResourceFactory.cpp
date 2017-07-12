@@ -1,16 +1,17 @@
 #include "ResourceFactory.h"
+#include "GaagFramework.h"
 
 
 void ResourceFactory::Init()
 {
 	mDefaultMaterial = MakeMaterial();
-	mDefaultMaterial->SetPixelShader(LoadPixelShader("../md3dFramework/Shaders/BasicFragmentShader.hlsl"));
-	mDefaultMaterial->SetVertexShader(LoadVertexShader("../md3dFramework/Shaders/BasicVertexShader.hlsl"));
+	mDefaultMaterial->SetPixelShader(LoadPixelShader(Gaag.GetDirectory("Shaders/BasicFragmentShader.hlsl")));
+	mDefaultMaterial->SetVertexShader(LoadVertexShader(Gaag.GetDirectory("Shaders/BasicVertexShader.hlsl")));
 	mDefaultMaterial->SetDiffuseValue(float4(0.5, 0.5, 0.5, 1.0));
 	mDefaultMaterial->SetReflectivityValue(0.5);
 	mDefaultMaterial->SetRoughnessValue(0.5);
 
-	mCopyShader = LoadComputeShader("../md3dFramework/Shaders/CopyCompute.hlsl");
+	mCopyShader = LoadComputeShader(Gaag.GetDirectory("Shaders/CopyCompute.hlsl"));
 
 	mDefaultLinearSampler = MakeSampler(FILTER_MIN_MAG_MIP_LINEAR, SAMPLER_ADDRESS_CLAMP, SAMPLER_ADDRESS_CLAMP);
 	mDefaultPointSampler = MakeSampler(FILTER_MIN_MAG_MIP_POINT, SAMPLER_ADDRESS_CLAMP, SAMPLER_ADDRESS_CLAMP);

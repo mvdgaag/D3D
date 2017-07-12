@@ -43,6 +43,7 @@ public:
 	~DeferredRenderer() { CleanUp(); }
 
 	void		Init(int inWidth, int inHeight);
+	void		Resize(int inWidth, int inHeight);
 	void		CleanUp();
 	void		SetRenderState(const RenderState &inRenderState)	{ mRenderState = inRenderState; };
 	RenderState GetRenderState() const								{ return mRenderState; };
@@ -71,6 +72,8 @@ private:
 	DeferredRenderer(DeferredRenderer const&) = delete;
 	void operator=(DeferredRenderer const&) = delete;
 
+	void InitBuffers(int inWidth, int inHeight);
+	void CleanUpBuffers();
 	void GeometryPass(std::vector<pMeshObject> inDrawList);
 	void LightingPass();
 	void PostProcessPass();

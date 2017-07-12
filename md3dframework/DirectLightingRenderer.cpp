@@ -147,9 +147,9 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 void DirectLightingRenderer::Init()
 {
 	assert(mInitialized == false);
-	mDirectionalLightShader = theResourceFactory.LoadComputeShader("../md3dFramework/Shaders/DirectionalLightCompute.hlsl");
-	mPointLightShader = theResourceFactory.LoadComputeShader("../md3dFramework/Shaders/PointLightCompute.hlsl");
-	mSpotLightShader = theResourceFactory.LoadComputeShader("../md3dFramework/Shaders/SpotLightCompute.hlsl");
+	mDirectionalLightShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("Shaders/DirectionalLightCompute.hlsl"));
+	mPointLightShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("/Shaders/PointLightCompute.hlsl"));
+	mSpotLightShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("/Shaders/SpotLightCompute.hlsl"));
 	mConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(ConstantBufferData));
 	mConstantBufferPointLights = theResourceFactory.MakeConstantBuffer(sizeof(ConstantBufferPointLightData));
 	mConstantBufferSpotLights = theResourceFactory.MakeConstantBuffer(sizeof(ConstantBufferSpotLightData));
@@ -163,6 +163,9 @@ void DirectLightingRenderer::Init()
 
 void DirectLightingRenderer::CleanUp()
 {
+	if (mInitialized == false)
+		return;
+
 	theResourceFactory.DestroyItem(mDirectionalLightShader);
 	theResourceFactory.DestroyItem(mPointLightShader);
 	theResourceFactory.DestroyItem(mSpotLightShader);

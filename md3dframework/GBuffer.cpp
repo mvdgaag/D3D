@@ -41,7 +41,6 @@ void GBuffer::Init(int inWidth, int inHeight)
 }
 
 
-
 void GBuffer::CleanUp()
 {
 	for (int i = 0; i < NUM_RENDER_TARGETS; i++)

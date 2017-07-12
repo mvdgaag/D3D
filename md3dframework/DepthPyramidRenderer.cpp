@@ -44,5 +44,8 @@ void DepthPyramidRenderer::Init()
 
 void DepthPyramidRenderer::CleanUp()
 {
+	if (mInitialized == false)
+		return;
+
 	mInitialized = false;
 }

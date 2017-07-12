@@ -144,9 +144,9 @@ void ReflectionRenderer::Init()
 {
 	assert(mInitialized == false);
 	
-	mShader = theResourceFactory.LoadComputeShader("../md3dFramework/Shaders/ReflectionCompute.hlsl");
-	mCubemapFilterShader = theResourceFactory.LoadComputeShader("../md3dFramework/Shaders/CubemapFilter.hlsl");
-	mGenerateBRDFLookupShader = theResourceFactory.LoadComputeShader("../md3dFramework/Shaders/GenerateBRDFLookup.hlsl");
+	mShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("Shaders/ReflectionCompute.hlsl"));
+	mCubemapFilterShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("Shaders/CubemapFilter.hlsl"));
+	mGenerateBRDFLookupShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("Shaders/GenerateBRDFLookup.hlsl"));
 
 	mBRDFLookupTarget = theResourceFactory.MakeRenderTarget(int2(256, 256), 1, FORMAT_R16G16_FLOAT);
 
@@ -162,6 +162,9 @@ void ReflectionRenderer::Init()
 
 void ReflectionRenderer::CleanUp()
 {
+	if (mInitialized == false)
+		return;
+
 	theResourceFactory.DestroyItem(mShader);	
 	mShader = nullptr;
 	

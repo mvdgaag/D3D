@@ -49,7 +49,7 @@ void TAARenderer::Render(pTexture inSource, pRenderTarget inHistory, pTexture in
 void TAARenderer::Init()
 {
 	assert(mInitialized == false);
-	mShader = theResourceFactory.LoadComputeShader("../md3dFramework/Shaders/TemporalAACompute.hlsl");
+	mShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("Shaders/TemporalAACompute.hlsl"));
 	mConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(ConstantBufferData));
 	mInitialized = true;
 }
@@ -57,6 +57,9 @@ void TAARenderer::Init()
 
 void TAARenderer::CleanUp()
 {
+	if (mInitialized == false)
+		return;
+
 	theResourceFactory.DestroyItem(mShader);
 	theResourceFactory.DestroyItem(mConstantBuffer);
 	mShader = nullptr;

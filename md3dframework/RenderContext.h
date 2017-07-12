@@ -64,6 +64,7 @@ public:
 
 	void Init(const HWND inWindowHandle, const int inWidth, const int inHeight);
 	void CleanUp();
+	void Resize(int inWidth, int inHeight);
 
 	void BeginEvent(std::string inEventString);
 	void EndEvent();
@@ -140,6 +141,7 @@ private:
 	pSampler						mVSBoundSamplers[8];
 	pConstantBuffer					mVSBoundConstantBuffers[8];
 	unsigned int					mWidth, mHeight;
+	HWND							mHWnd;
 	bool							mInitialized = false;
 };
 

@@ -16,6 +16,9 @@
 #include "Material.h"
 #include "Time.h"
 
+// crt_dupenv_s.c  
+#include  <stdlib.h>  
+
 
 GaagFramework::~GaagFramework()
 {
@@ -23,25 +26,28 @@ GaagFramework::~GaagFramework()
 }
 
 
-HRESULT GaagFramework::Init(HINSTANCE hInstance, int inWidth, int inHeight)
+HRESULT GaagFramework::Init(HWND inHWND, int inWidth, int inHeight)
 {
-	mWindow = MAKE_NEW(Window);
-	mWindow->Init(hInstance, inWidth, inHeight);
-	return Init(mWindow);
-}
-
-
-HRESULT GaagFramework::Init(pWindow inWindow)
-{
+	CleanUp();
 	assert(mInitialized == false);
 
-	mWindow = inWindow;
-	RECT rc;
-	GetClientRect(mWindow->GetHandle(), &rc);
-	int width = rc.right - rc.left;
-	int height = rc.bottom - rc.top;
+	char *pValue;
+	size_t len;
+	getenv_s(&len, nullptr, 0, "GAAGDIR");
+	
+	assert(len != 0);
+	if (len != 0)
+	{
+		pValue = (char*)malloc(len * sizeof(char));
+		getenv_s(&len, pValue, len, "GAAGDIR");
+		assert(pValue != nullptr);
+		mDirectory = pValue;
+		free(pValue);
+	}
 
-	theRenderContext.Init(mWindow->GetHandle(), width, height);
+	assert(mDirectory != "");
+
+	theRenderContext.Init(inHWND, inWidth, inHeight);
 	theResourceFactory.Init();
 	theTime.Init();
 	theInput.Init();
@@ -68,16 +74,45 @@ HRESULT GaagFramework::Init(pWindow inWindow)
 }
 
 
+HRESULT GaagFramework::Init(HINSTANCE hInstance, int inWidth, int inHeight)
+{
+	mWindow = MAKE_NEW(Window);
+	mWindow->Init(hInstance, inWidth, inHeight);
+	return Init(mWindow);
+}
+
+
+HRESULT GaagFramework::Init(pWindow inWindow)
+{
+	mWindow = inWindow;
+	RECT rc;
+	GetClientRect(mWindow->GetHandle(), &rc);
+	int width = rc.right - rc.left;
+	int height = rc.bottom - rc.top;
+
+	return Init(inWindow->GetHandle(), width, height);
+}
+
+
 void GaagFramework::CleanUp()
 {
 	if (mInitialized == false)
 		return;
 
-	mCamera = nullptr;
-	mDeferredRenderer = nullptr;
-	mFullScreenTriangle = nullptr;
-	mDefaultSampler = nullptr;
-	mCopyShader = nullptr;
+	if (mCamera)
+	{
+		delete mCamera;
+		mCamera = nullptr;
+	}
+	if (mDeferredRenderer)
+	{
+		delete mDeferredRenderer;
+		mDeferredRenderer = nullptr;
+	}
+	theResourceFactory.DestroyItem(mFullScreenTriangle);
+	theResourceFactory.DestroyItem(mDefaultSampler);
+	theResourceFactory.DestroyItem(mCopyShader);
+	theResourceFactory.DestroyItem(mCopyConstantBuffer);
 
 	TextureUtil::CleanUpTextureUtil();
 	theInput.CleanUp();
@@ -86,6 +121,14 @@ void GaagFramework::CleanUp()
 	mWindow = nullptr;
 
 	mInitialized = false;
+}
+
+
+void GaagFramework::Resize(int inWidth, int inHeight)
+{
+	assert(mInitialized);
+	theRenderContext.Resize(inWidth, inHeight);
+	mDeferredRenderer->Resize(inWidth, inHeight);
 }
 
 

@@ -30,35 +30,7 @@ void DeferredRenderer::Init(int inWidth, int inHeight)
 	assert(mInitialized == false);
 	assert(inWidth > 0 && inHeight > 0);
 
-	mGBuffer = MAKE_NEW(GBuffer);
-	mGBuffer->Init(inWidth, inHeight);
-
-	mDepthMinPyramid = theResourceFactory.MakeRenderTarget(int2(inWidth / 2, inHeight / 2), 8, FORMAT_R16_FLOAT);
-	mDepthMaxPyramid = theResourceFactory.MakeRenderTarget(int2(inWidth / 2, inHeight / 2), 8, FORMAT_R16_FLOAT);
-	mDirectLightingDiffuse = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
-	mDirectLightingDiffuseTemp = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
-	mDirectLightingSpecular = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
-	mDirectLightingSpecularTemp = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
-#ifdef HALF_RES_INDIRECT
-	mIndirectLighting = theResourceFactory.MakeRenderTarget(int2(inWidth / 2, inHeight / 2), 1, FORMAT_R16G16B16A16_FLOAT);
-#else
-	mIndirectLighting = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
-#endif
-	mReflections = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
-	mLightComposed = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
-	mAntiAliased = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
-	mAAHistoryFrame = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
-	mPostProcessed = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
-	mFullResRGBATemp = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
-	mHalfResRGBATemp = theResourceFactory.MakeRenderTarget(int2(inWidth / 2, inHeight / 2), 1, FORMAT_R16G16B16A16_FLOAT);
-	mQuarterResRGBATemp = theResourceFactory.MakeRenderTarget(int2(inWidth / 4, inHeight / 4), 1, FORMAT_R16G16B16A16_FLOAT);
-	mEightResRGBATemp = theResourceFactory.MakeRenderTarget(int2(inWidth / 8, inHeight / 8), 1, FORMAT_R16G16B16A16_FLOAT);
-	mHalfLinearDepth = theResourceFactory.MakeRenderTarget(int2(inWidth / 2, inHeight / 2), 1, FORMAT_R32_FLOAT);
-	mHalfNormals = theResourceFactory.MakeRenderTarget(int2(inWidth / 2, inHeight / 2), 1, FORMAT_R16G16_FLOAT);
-	
-	mConstantBufferEveryFrame = theResourceFactory.MakeConstantBuffer(sizeof(ConstantDataEveryFrame));
-	mConstantBufferEveryObject = theResourceFactory.MakeConstantBuffer(sizeof(ConstantDataEveryObject));
-	mConstantBufferOnDemand = theResourceFactory.MakeConstantBuffer(sizeof(ConstantDataOnDemand));
+	InitBuffers(inWidth, inHeight);
 
 	mShadowRenderer.Init();
 	mDirectLightingRenderer.Init();
@@ -73,54 +45,21 @@ void DeferredRenderer::Init(int inWidth, int inHeight)
 }
 
 
+void DeferredRenderer::Resize(int inWidth, int inHeight)
+{
+	assert(theRenderContext.IsInitialized());
+	assert(mInitialized == true);
+	assert(inWidth > 0 && inHeight > 0);
+	InitBuffers(inWidth, inHeight);
+}
+
+
 void DeferredRenderer::CleanUp()
 {
-	delete mGBuffer;
-	assert(mInitialized == true);
+	if (mInitialized == false)
+		return;
 
-	theResourceFactory.DestroyItem(mDepthMinPyramid);
-	theResourceFactory.DestroyItem(mDepthMaxPyramid);
-	theResourceFactory.DestroyItem(mDirectLightingDiffuse);
-	theResourceFactory.DestroyItem(mDirectLightingDiffuseTemp);
-	theResourceFactory.DestroyItem(mDirectLightingSpecular);
-	theResourceFactory.DestroyItem(mDirectLightingSpecularTemp);
-	theResourceFactory.DestroyItem(mIndirectLighting);
-	theResourceFactory.DestroyItem(mReflections);
-	theResourceFactory.DestroyItem(mLightComposed);
-	theResourceFactory.DestroyItem(mAntiAliased);
-	theResourceFactory.DestroyItem(mAAHistoryFrame);
-	theResourceFactory.DestroyItem(mPostProcessed);
-
-	theResourceFactory.DestroyItem(mFullResRGBATemp);
-	theResourceFactory.DestroyItem(mHalfResRGBATemp);
-	theResourceFactory.DestroyItem(mQuarterResRGBATemp);
-	theResourceFactory.DestroyItem(mEightResRGBATemp);
-	
-	theResourceFactory.DestroyItem(mConstantBufferEveryFrame);
-	theResourceFactory.DestroyItem(mConstantBufferEveryObject);
-	theResourceFactory.DestroyItem(mConstantBufferOnDemand);
-
-	mGBuffer = nullptr;
-	mDepthMinPyramid = nullptr;
-	mDepthMaxPyramid = nullptr;
-	mDirectLightingDiffuse = nullptr;
-	mDirectLightingDiffuseTemp = nullptr;
-	mDirectLightingSpecular = nullptr;
-	mDirectLightingSpecularTemp = nullptr;
-	mIndirectLighting = nullptr;
-	mReflections = nullptr;
-	mLightComposed = nullptr;
-	mAntiAliased = nullptr;
-	mAAHistoryFrame = nullptr;
-	mPostProcessed = nullptr;
-	mFullResRGBATemp = nullptr;
-	mHalfResRGBATemp = nullptr;
-	mQuarterResRGBATemp = nullptr;
-	mEightResRGBATemp = nullptr;
-	mConstantBufferEveryFrame = nullptr;
-	mConstantBufferEveryObject = nullptr;
-	mConstantBufferOnDemand = nullptr;
-
+	CleanUpBuffers();
 
 	mShadowRenderer.CleanUp();
 	mDirectLightingRenderer.CleanUp();
@@ -130,6 +69,8 @@ void DeferredRenderer::CleanUp()
 	mLightComposeRenderer.CleanUp();
 	mTAARenderer.CleanUp();
 	mPostProcessRenderer.CleanUp();
+	
+	mInitialized = false;
 }
 
 
@@ -189,6 +130,93 @@ pTexture DeferredRenderer::PreFilterCubemap(pTexture inCubemap)
 {
 	assert(mInitialized);
 	return mReflectionRenderer.FilterCubemap(inCubemap);
+}
+
+
+
+void DeferredRenderer::InitBuffers(int inWidth, int inHeight)
+{
+	if (mInitialized)
+		CleanUpBuffers();
+
+	mGBuffer = MAKE_NEW(GBuffer);
+	mGBuffer->Init(inWidth, inHeight);
+
+	mDepthMinPyramid = theResourceFactory.MakeRenderTarget(int2(inWidth / 2, inHeight / 2), 8, FORMAT_R16_FLOAT);
+	mDepthMaxPyramid = theResourceFactory.MakeRenderTarget(int2(inWidth / 2, inHeight / 2), 8, FORMAT_R16_FLOAT);
+	mDirectLightingDiffuse = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
+	mDirectLightingDiffuseTemp = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
+	mDirectLightingSpecular = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
+	mDirectLightingSpecularTemp = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
+#ifdef HALF_RES_INDIRECT
+	mIndirectLighting = theResourceFactory.MakeRenderTarget(int2(inWidth / 2, inHeight / 2), 1, FORMAT_R16G16B16A16_FLOAT);
+#else
+	mIndirectLighting = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
+#endif
+	mReflections = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
+	mLightComposed = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
+	mAntiAliased = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
+	mAAHistoryFrame = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
+	mPostProcessed = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
+	mFullResRGBATemp = theResourceFactory.MakeRenderTarget(int2(inWidth, inHeight), 1, FORMAT_R16G16B16A16_FLOAT);
+	mHalfResRGBATemp = theResourceFactory.MakeRenderTarget(int2(inWidth / 2, inHeight / 2), 1, FORMAT_R16G16B16A16_FLOAT);
+	mQuarterResRGBATemp = theResourceFactory.MakeRenderTarget(int2(inWidth / 4, inHeight / 4), 1, FORMAT_R16G16B16A16_FLOAT);
+	mEightResRGBATemp = theResourceFactory.MakeRenderTarget(int2(inWidth / 8, inHeight / 8), 1, FORMAT_R16G16B16A16_FLOAT);
+	mHalfLinearDepth = theResourceFactory.MakeRenderTarget(int2(inWidth / 2, inHeight / 2), 1, FORMAT_R32_FLOAT);
+	mHalfNormals = theResourceFactory.MakeRenderTarget(int2(inWidth / 2, inHeight / 2), 1, FORMAT_R16G16_FLOAT);
+
+	mConstantBufferEveryFrame = theResourceFactory.MakeConstantBuffer(sizeof(ConstantDataEveryFrame));
+	mConstantBufferEveryObject = theResourceFactory.MakeConstantBuffer(sizeof(ConstantDataEveryObject));
+	mConstantBufferOnDemand = theResourceFactory.MakeConstantBuffer(sizeof(ConstantDataOnDemand));
+}
+
+
+void DeferredRenderer::CleanUpBuffers()
+{
+	delete mGBuffer;
+
+	theResourceFactory.DestroyItem(mDepthMinPyramid);
+	theResourceFactory.DestroyItem(mDepthMaxPyramid);
+	theResourceFactory.DestroyItem(mDirectLightingDiffuse);
+	theResourceFactory.DestroyItem(mDirectLightingDiffuseTemp);
+	theResourceFactory.DestroyItem(mDirectLightingSpecular);
+	theResourceFactory.DestroyItem(mDirectLightingSpecularTemp);
+	theResourceFactory.DestroyItem(mIndirectLighting);
+	theResourceFactory.DestroyItem(mReflections);
+	theResourceFactory.DestroyItem(mLightComposed);
+	theResourceFactory.DestroyItem(mAntiAliased);
+	theResourceFactory.DestroyItem(mAAHistoryFrame);
+	theResourceFactory.DestroyItem(mPostProcessed);
+
+	theResourceFactory.DestroyItem(mFullResRGBATemp);
+	theResourceFactory.DestroyItem(mHalfResRGBATemp);
+	theResourceFactory.DestroyItem(mQuarterResRGBATemp);
+	theResourceFactory.DestroyItem(mEightResRGBATemp);
+
+	theResourceFactory.DestroyItem(mConstantBufferEveryFrame);
+	theResourceFactory.DestroyItem(mConstantBufferEveryObject);
+	theResourceFactory.DestroyItem(mConstantBufferOnDemand);
+
+	mGBuffer = nullptr;
+	mDepthMinPyramid = nullptr;
+	mDepthMaxPyramid = nullptr;
+	mDirectLightingDiffuse = nullptr;
+	mDirectLightingDiffuseTemp = nullptr;
+	mDirectLightingSpecular = nullptr;
+	mDirectLightingSpecularTemp = nullptr;
+	mIndirectLighting = nullptr;
+	mReflections = nullptr;
+	mLightComposed = nullptr;
+	mAntiAliased = nullptr;
+	mAAHistoryFrame = nullptr;
+	mPostProcessed = nullptr;
+	mFullResRGBATemp = nullptr;
+	mHalfResRGBATemp = nullptr;
+	mQuarterResRGBATemp = nullptr;
+	mEightResRGBATemp = nullptr;
+	mConstantBufferEveryFrame = nullptr;
+	mConstantBufferEveryObject = nullptr;
+	mConstantBufferOnDemand = nullptr;
 }
 
 

@@ -101,8 +101,8 @@ void IndirectLightingRenderer::ApplyIndirect(pTexture inSource, pTexture inNorma
 void IndirectLightingRenderer::Init()
 {
 	assert(mInitialized == false);
-	mLightingShader = theResourceFactory.LoadComputeShader("../md3dFramework/Shaders/IndirectLightingCompute.hlsl");
-	mBlurShader = theResourceFactory.LoadComputeShader("../md3dFramework/Shaders/IndirectBlurCompute.hlsl");
+	mLightingShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("/Shaders/IndirectLightingCompute.hlsl"));
+	mBlurShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("/Shaders/IndirectBlurCompute.hlsl"));
 	mConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(ConstantBufferData));
 	mInitialized = true;
 }
@@ -110,6 +110,9 @@ void IndirectLightingRenderer::Init()
 
 void IndirectLightingRenderer::CleanUp()
 {
+	if (mInitialized == false)
+		return;
+
 	theResourceFactory.DestroyItem(mLightingShader);
 	theResourceFactory.DestroyItem(mBlurShader);
 	theResourceFactory.DestroyItem(mConstantBuffer);

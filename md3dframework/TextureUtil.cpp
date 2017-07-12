@@ -4,6 +4,7 @@
 #include "RenderTarget.h"
 #include "ComputeShader.h"
 #include "ConstantBuffer.h"
+#include "GaagFramework.h"
 
 
 namespace TextureUtil
@@ -63,54 +64,54 @@ namespace TextureUtil
 	{
 		assert(gTextureUtilInitialized == false);
 
-		gTextureDownSampleShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureDownSample.hlsl");
+		gTextureDownSampleShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureDownSample.hlsl"));
 
-		gTextureAddShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureAdd.hlsl");
-		gTextureAddConstantShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureAddConstant.hlsl");
+		gTextureAddShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureAdd.hlsl"));
+		gTextureAddConstantShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureAddConstant.hlsl"));
 
-		gTextureBlendShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureBlend.hlsl");
-		gTextureBlendConstantShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureBlendConstant.hlsl");
-		gTextureAlphaBlendShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureAlphaBlend.hlsl");
+		gTextureBlendShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureBlend.hlsl"));
+		gTextureBlendConstantShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureBlendConstant.hlsl"));
+		gTextureAlphaBlendShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureAlphaBlend.hlsl"));
 
-		gTextureClampShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureClamp.hlsl");
-		gTextureClampConstantShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureClampConstant.hlsl");
+		gTextureClampShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureClamp.hlsl"));
+		gTextureClampConstantShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureClampConstant.hlsl"));
 
-		gTextureCopyShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureCopy.hlsl");
-		gTextureCopyOffsetShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureCopyOffset.hlsl");
+		gTextureCopyShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureCopy.hlsl"));
+		gTextureCopyOffsetShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureCopyOffset.hlsl"));
 		
-		gTextureDivShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureDiv.hlsl");
-		gTextureDivConstantShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureDivConstant.hlsl");
+		gTextureDivShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureDiv.hlsl"));
+		gTextureDivConstantShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureDivConstant.hlsl"));
 
-		gTextureMaxShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureMax.hlsl");
-		gTextureMaxConstantShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureMaxConstant.hlsl");
+		gTextureMaxShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureMax.hlsl"));
+		gTextureMaxConstantShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureMaxConstant.hlsl"));
 
-		gTextureMinShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureMin.hlsl");
-		gTextureMinConstantShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureMinConstant.hlsl");
+		gTextureMinShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureMin.hlsl"));
+		gTextureMinConstantShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureMinConstant.hlsl"));
 
-		gTextureMulShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureMul.hlsl");
-		gTextureMulConstantShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureMulConstant.hlsl");
+		gTextureMulShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureMul.hlsl"));
+		gTextureMulConstantShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureMulConstant.hlsl"));
 
-		gTextureSetShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureSet.hlsl");
+		gTextureSetShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureSet.hlsl"));
 		
-		gTextureSubShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureSub.hlsl");
-		gTextureSubConstantShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureSubConstant.hlsl");
+		gTextureSubShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureSub.hlsl"));
+		gTextureSubConstantShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureSubConstant.hlsl"));
 		
-		gTextureTresholdShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureTreshold.hlsl");
-		gTextureTresholdConstantShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureTresholdConstant.hlsl");
+		gTextureTresholdShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureTreshold.hlsl"));
+		gTextureTresholdConstantShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureTresholdConstant.hlsl"));
 
-		gTextureBoxBlurShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureBoxBlur.hlsl");
-		gTextureGaussianBlurShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureGaussianBlur.hlsl");
+		gTextureBoxBlurShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureBoxBlur.hlsl"));
+		gTextureGaussianBlurShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureGaussianBlur.hlsl"));
 
-		gTextureStitchNorthShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureStitchNorth.hlsl");
-		gTextureStitchEastShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureStitchEast.hlsl");
-		gTextureStitchSouthShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureStitchSouth.hlsl");
-		gTextureStitchWestShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureStitchWest.hlsl");
+		gTextureStitchNorthShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureStitchNorth.hlsl"));
+		gTextureStitchEastShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureStitchEast.hlsl"));
+		gTextureStitchSouthShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureStitchSouth.hlsl"));
+		gTextureStitchWestShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureStitchWest.hlsl"));
 
-		gTextureMipAvgShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureMipAvg.hlsl");
-		gTextureMipAvgNormalShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureMipAvgNormal.hlsl");
-		gTextureMipNearestShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureMipNearest.hlsl");
-		gTextureMipMinShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureMipMin.hlsl");
-		gTextureMipMaxShader = theResourceFactory.LoadComputeShader("../md3dFramework/TextureFuncShaders/TextureMipMax.hlsl");
+		gTextureMipAvgShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureMipAvg.hlsl"));
+		gTextureMipAvgNormalShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureMipAvgNormal.hlsl"));
+		gTextureMipNearestShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureMipNearest.hlsl"));
+		gTextureMipMinShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureMipMin.hlsl"));
+		gTextureMipMaxShader = theResourceFactory.LoadComputeShader(Gaag.GetDirectory("TextureFuncShaders/TextureMipMax.hlsl"));
 
 		gTextureUtilInitialized = true;
 	}
@@ -421,7 +422,7 @@ namespace TextureUtil
 	void TextureCopyOffset(pTexture inDst, pTexture inSrc, int2 inOffset)
 	{
 		pRenderTarget rt = theResourceFactory.MakeRenderTarget(inDst);
-		TextureCopyOffset(inDst, inSrc, inOffset);
+		TextureCopyOffset(rt, inSrc, inOffset);
 		theResourceFactory.DestroyItem(rt);
 	}
 	

@@ -26,11 +26,13 @@ public:
 		return instance;
 	}
 
+	HRESULT Init(HWND inHWND, int inWidth, int inHeight);
 	HRESULT Init(HINSTANCE hInstance, int inWidth, int inHeight);
 	HRESULT Init(pWindow inWindow);
 	bool IsInitialized() { return mInitialized; }
 	void CleanUp();
 
+	void Resize(int inWidth, int inHeight);
 	void Render();
 	void SetFrameCallback(void(*inCallBack)(void)) { mFrameCallback = inCallBack; }
 	
@@ -49,6 +51,8 @@ public:
 	float3 WorldToCameraNormal(float3 inCameraNormal);
 	float3 CameraToWorldNormal(float3 inCameraNormal);
 
+	std::string	GetDirectory()													{ return mDirectory; }
+	std::string	GetDirectory(std::string subfolder)								{ return mDirectory + "/" + subfolder; }
 	pCamera		GetCamera()														{ return mCamera; }
 	int			GetFrameID()													{ return mFrameID; }
 	float		GetRandom()														{ return float(rand()) / RAND_MAX; }
@@ -78,5 +82,6 @@ private:
 	double							mDeltaTime;
 	bool							mInitialized = false;
 	void							(*mFrameCallback)(void);
+	std::string						mDirectory;
 };
 

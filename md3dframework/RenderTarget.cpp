@@ -23,6 +23,7 @@ void RenderTarget::Init(pTexture inTexture)
 	assert(!mInitialized);
 
 	mTexture = inTexture;
+	mOwnsTexture = false;
 	unsigned int required_flags = D3D11_BIND_RENDER_TARGET;
 	assert((mTexture->mDesc->BindFlags & required_flags) == required_flags);
 
