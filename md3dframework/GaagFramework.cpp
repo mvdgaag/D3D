@@ -28,6 +28,9 @@ GaagFramework::~GaagFramework()
 
 HRESULT GaagFramework::Init(HWND inHWND, int inWidth, int inHeight)
 {
+	assert(inWidth > 0 && inHeight > 0 && inWidth <= 1920 && inHeight <= 1080);
+	assert(IsWindow(inHWND));
+
 	CleanUp();
 	assert(mInitialized == false);
 
@@ -62,9 +65,9 @@ HRESULT GaagFramework::Init(HWND inHWND, int inWidth, int inHeight)
 	mCopyConstantBuffer = theResourceFactory.MakeConstantBuffer(sizeof(float4));
 
 	mCamera = MAKE_NEW(Camera);
-	mCamera->SetPosition(1.0, 1.0, 1.0);
+	mCamera->SetPosition(10.0, 10.0, 10.0);
 	mCamera->SetTarget(0.0, 0.0, 0.0);
-	mCamera->SetWorldUp(0.0, 1.0, 0.0);
+	mCamera->SetWorldUp(0.0, 0.0, 1.0);
 
 	mFrameID = 0;
 	mFrameTime = theTime.GetTime();
