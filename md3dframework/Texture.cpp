@@ -45,7 +45,7 @@ void Texture::Init(int inWidth, int inHeight, int inMipLevels, Format inFormat,
 	shaderResourceViewDesc.Format = format;
 	shaderResourceViewDesc.ViewDimension = (inMiscFlags & MiscFlag::TEXTURECUBE == MiscFlag::TEXTURECUBE) ? D3D11_SRV_DIMENSION_TEXTURECUBE : D3D11_SRV_DIMENSION_TEXTURE2D;
 	shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
-	shaderResourceViewDesc.Texture2D.MipLevels = -1;
+	shaderResourceViewDesc.Texture2D.MipLevels = (unsigned int)(-1); // all mips, the cast from -1 is from the msdn docs
 	D3DCall(theRenderContext.GetDevice()->CreateShaderResourceView(mTexture, &shaderResourceViewDesc, &mShaderResourceView));
 
 	assert(mTexture != nullptr);
@@ -153,7 +153,7 @@ float4 Texture::GetPixel(int2 inPixelCoordinate)
 		result.x = floatPtr[0];
 		break;
 	case DXGI_FORMAT_R8_UNORM:
-		result.x = (float)bytePtr[0] / 256.0;
+		result.x = (float)bytePtr[0] / 256.0f;
 		break;
 
 	case DXGI_FORMAT_R32G32_FLOAT:
@@ -161,8 +161,8 @@ float4 Texture::GetPixel(int2 inPixelCoordinate)
 		result.y = floatPtr[1];
 		break;
 	case DXGI_FORMAT_R8G8_UNORM:
-		result.x = (float)bytePtr[0] / 256.0;
-		result.y = (float)bytePtr[1] / 256.0;
+		result.x = (float)bytePtr[0] / 256.0f;
+		result.y = (float)bytePtr[1] / 256.0f;
 		break;
 
 	case DXGI_FORMAT_R32G32B32_FLOAT:
@@ -178,10 +178,10 @@ float4 Texture::GetPixel(int2 inPixelCoordinate)
 		result.w = floatPtr[3];
 		break;
 	case DXGI_FORMAT_R8G8B8A8_UNORM:
-		result.x = (float)bytePtr[0] / 256.0;
-		result.y = (float)bytePtr[1] / 256.0;
-		result.z = (float)bytePtr[2] / 256.0;
-		result.w = (float)bytePtr[3] / 256.0;
+		result.x = (float)bytePtr[0] / 256.0f;
+		result.y = (float)bytePtr[1] / 256.0f;
+		result.z = (float)bytePtr[2] / 256.0f;
+		result.w = (float)bytePtr[3] / 256.0f;
 		break;
 	}
 	
@@ -210,7 +210,7 @@ void Texture::CleanUp()
 	}
 	if (mMipShaderResourceViews)
 	{
-		for (int i = 0; i < mMipLevels; i++)
+		for (unsigned int i = 0; i < mMipLevels; i++)
 			mMipShaderResourceViews[i]->Release();
 		delete[] mMipShaderResourceViews;
 		mMipShaderResourceViews = nullptr;
@@ -227,7 +227,7 @@ void Texture::SetMipShaderResourceViews()
 
 	mMipShaderResourceViews = new ID3D11ShaderResourceView*[mMipLevels];
 	int num_layers = (mMiscFlags & MiscFlag::TEXTURECUBE) ? 6 : 1;
-	for (int i = 0; i < mMipLevels; i++)
+	for (unsigned int i = 0; i < mMipLevels; i++)
 	{
 		shaderResourceViewDesc.Texture2D.MostDetailedMip = i;
 		D3DCall(theRenderContext.GetDevice()->CreateShaderResourceView(mTexture, &shaderResourceViewDesc, &mMipShaderResourceViews[i]));

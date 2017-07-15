@@ -37,11 +37,11 @@ void IndirectLightingRenderer::ApplyBlur(pTexture inSource, pTexture inNormal, p
 	theRenderContext.CSSetRWTexture(inTarget, 0, 0);
 
 	pCamera cam = Gaag.GetCamera();
-	mConstantBufferData.viewspaceReconstructionVector.x = 1.0 / cam->GetProjectionMatrix()[0][0];
-	mConstantBufferData.viewspaceReconstructionVector.y = 1.0 / cam->GetProjectionMatrix()[1][1];
+	mConstantBufferData.viewspaceReconstructionVector.x = 1.0f / cam->GetProjectionMatrix()[0][0];
+	mConstantBufferData.viewspaceReconstructionVector.y = 1.0f / cam->GetProjectionMatrix()[1][1];
 	mConstantBufferData.targetSize.x = (float)theRenderContext.GetWidth();
 	mConstantBufferData.targetSize.y = (float)theRenderContext.GetHeight();
-	mConstantBufferData.frameData.x = inHorizontal ? 1 : 0;
+	mConstantBufferData.frameData.x = inHorizontal ? 1.0f : 0.0f;
 	mConstantBufferData.frameData.y = 4; // pattern has a radius of 4 pixels, this radius attempts to remove the pattern
 
 	theRenderContext.UpdateSubResource(*mConstantBuffer, &mConstantBufferData);
@@ -74,8 +74,8 @@ void IndirectLightingRenderer::ApplyIndirect(pTexture inSource, pTexture inNorma
 	theRenderContext.CSSetRWTexture(inTarget, 0, 0);
 
 	pCamera cam = Gaag.GetCamera();
-	mConstantBufferData.viewspaceReconstructionVector.x = 1.0 / cam->GetProjectionMatrix()[0][0];
-	mConstantBufferData.viewspaceReconstructionVector.y = 1.0 / cam->GetProjectionMatrix()[1][1];
+	mConstantBufferData.viewspaceReconstructionVector.x = 1.0f / cam->GetProjectionMatrix()[0][0];
+	mConstantBufferData.viewspaceReconstructionVector.y = 1.0f / cam->GetProjectionMatrix()[1][1];
 	mConstantBufferData.targetSize = inTarget->GetDimensions();
 	mConstantBufferData.frameData = float4(Gaag.WorldToCameraNormal(float3(0.0, 1.0, 0.0)), Gaag.GetRandom());
 

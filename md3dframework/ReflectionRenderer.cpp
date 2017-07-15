@@ -22,8 +22,8 @@ void ReflectionRenderer::Render(pTexture inSource, pRenderTarget inTarget, pText
 
 	// set general constant buffer data
 	pCamera cam = Gaag.GetCamera();
-	mConstantBufferData.viewspaceReconstructionVector.x = 1.0 / cam->GetProjectionMatrix()[0][0];
-	mConstantBufferData.viewspaceReconstructionVector.y = 1.0 / cam->GetProjectionMatrix()[1][1];
+	mConstantBufferData.viewspaceReconstructionVector.x = 1.0f / cam->GetProjectionMatrix()[0][0];
+	mConstantBufferData.viewspaceReconstructionVector.y = 1.0f / cam->GetProjectionMatrix()[1][1];
 	mConstantBufferData.targetSize = (float2)inTarget->GetTexture()->GetDimensions();
 	mConstantBufferData.params = float4(Gaag.GetFrameID(), inCubemap->GetMipLevels(), 0, 0);
 	mConstantBufferData.inverseViewMatrix = inverse(Gaag.GetCamera()->GetViewMatrix());

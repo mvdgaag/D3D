@@ -81,7 +81,7 @@ void DeferredRenderer::Render(std::vector<pMeshObject> inDrawList)
 	
 	Camera& camera = *(Gaag.GetCamera());
 	int frame_id = Gaag.GetFrameID();
-	float time = Gaag.GetFrameTime();
+	float time = (float)Gaag.GetFrameTime();
 	float2 jitter_offset = TAARenderer::GetJitterOffset(frame_id);
 
 	ConstantDataEveryFrame constantData;
@@ -234,6 +234,10 @@ void DeferredRenderer::GeometryPass(std::vector<pMeshObject> inDrawList)
 	theRenderContext.SetRenderTargets(GBuffer::NUM_RENDER_TARGETS, mGBuffer->GetRenderTargets(), mGBuffer->GetDepthStencilTarget());
 
 	Camera& camera = *(Gaag.GetCamera());
+
+	// in case the window resized
+	camera.SetProjectionMatrix(camera.GetNear(), camera.GetFar(), camera.GetFovY());
+
 	Frustum camera_frustum = camera.ExtractFrustum();
 	for each (pMeshObject obj in inDrawList)
 	{

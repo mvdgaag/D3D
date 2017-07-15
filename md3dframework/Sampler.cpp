@@ -18,8 +18,8 @@ void Sampler::Init(SamplerFilter inFilter, SamplerAddressMode inAddressU, Sample
 	mAddressModeV = inAddressV;
 	samp_desc->AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
 	samp_desc->ComparisonFunc = D3D11_COMPARISON_NEVER;
-	samp_desc->MinLOD = mMinLod = inMinLod;
-	samp_desc->MaxLOD = mMaxLod = inMaxLod;
+	samp_desc->MinLOD = (float)(mMinLod = inMinLod);
+	samp_desc->MaxLOD = (float)(mMaxLod = inMaxLod);
 	
 	D3DCall(theRenderContext.GetDevice()->CreateSamplerState(samp_desc, &mSamplerState));
 

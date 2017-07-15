@@ -89,17 +89,17 @@ void Mesh::InitPlane(int2 inNumVertices, float2 inScale)
 		for (int x = 0; x < inNumVertices.x - 1; x++)
 		{
 			int idx = y * inNumVertices.x + x;
-			indices.push_back(idx);
-			indices.push_back(idx + inNumVertices.x);
-			indices.push_back(idx + 1);
-			indices.push_back(idx + 1);
-			indices.push_back(idx + inNumVertices.x);
-			indices.push_back(idx + inNumVertices.x + 1);
+			indices.push_back((WORD)(idx));
+			indices.push_back((WORD)(idx + inNumVertices.x));
+			indices.push_back((WORD)(idx + 1));
+			indices.push_back((WORD)(idx + 1));
+			indices.push_back((WORD)(idx + inNumVertices.x));
+			indices.push_back((WORD)(idx + inNumVertices.x + 1));
 		}
 	}
 
 
-	InitFromData(vertices.data(), vertices.size(), indices.data(), indices.size());
+	InitFromData(vertices.data(), (int)vertices.size(), indices.data(), (int)indices.size());
 }
 
 
@@ -130,7 +130,7 @@ void Mesh::InitFullscreenTriangle()
 	indices.push_back(1);
 	indices.push_back(2);
 
-	InitFromData(vertices.data(), vertices.size(), indices.data(), indices.size());
+	InitFromData(vertices.data(), (int)vertices.size(), indices.data(), (int)indices.size());
 }
 
 
@@ -277,12 +277,12 @@ void Mesh::InitFromFile(std::string inFileName)
 
 				// search backwards (likely to be near the end for faces sharing verts)
 				// could be optimized by using a hash table
-				for (int j = vertices.size()-1; j >= -1; j--)
+				for (int j = (int)vertices.size() - 1; j >= -1; j--)
 				{
 					// nothing found means new unique vertex
 					if (j == -1)
 					{
-						indices.push_back(vertices.size());
+						indices.push_back((WORD)vertices.size());
 						vertices.push_back(vert);
 					}
 					// check if this vertex is the same
@@ -290,7 +290,7 @@ void Mesh::InitFromFile(std::string inFileName)
 								vertices[j].TexCoord == vert.TexCoord &&
 								vertices[j].Normal == vert.Normal)
 					{
-						indices.push_back(j);
+						indices.push_back((WORD)j);
 						break;
 					}
 				}
@@ -332,7 +332,7 @@ void Mesh::InitFromFile(std::string inFileName)
 		float2 edge_uv1 = uv2 - uv1;
 		float2 edge_uv2 = uv3 - uv1;
 
-		float r = 1.0 / (edge_uv1.x * edge_uv2.y - edge_uv2.x * edge_uv1.y);
+		float r = 1.0f / (edge_uv1.x * edge_uv2.y - edge_uv2.x * edge_uv1.y);
 		
 		float3 sdir((edge_uv2.y * edge_pos1.x - edge_uv1.y * edge_pos2.x) * r, (edge_uv2.y * edge_pos1.y - edge_uv1.y * edge_pos2.y) * r,
 			(edge_uv2.y * edge_pos1.z - edge_uv1.y * edge_pos2.z) * r);
@@ -359,7 +359,7 @@ void Mesh::InitFromFile(std::string inFileName)
 		vertices[i].Tangent *= (dot(cross(n, t), tan2[i]) < 0.0) ? -1.0 : 1.0;
 	}
 
-	InitFromData(vertices.data(), vertices.size(), indices.data(), indices.size());
+	InitFromData(vertices.data(), (int)vertices.size(), indices.data(), (int)indices.size());
 }
 
 

@@ -599,7 +599,7 @@ namespace TextureUtil
 	{
 		apTexture sources;
 		sources.push_back(inSrc);
-		GPUTextureFunc(inDst, sources, *gTextureMaxShader);
+		GPUTextureFunc(inDst, sources, inVal, *gTextureMaxShader);
 	}
 
 
@@ -607,7 +607,7 @@ namespace TextureUtil
 	{
 		apTexture sources;
 		sources.push_back(inSrc);
-		GPUTextureFunc(inDst, sources, *gTextureMaxShader);
+		GPUTextureFunc(inDst, sources, inVal, *gTextureMaxShader);
 	}
 
 
@@ -763,7 +763,7 @@ namespace TextureUtil
 		theRenderContext.UpdateSubResource(*cb, &params);
 		theRenderContext.CSSetConstantBuffer(cb, 0);
 
-		int threads_x = (params.x + 31) / 32;
+		int threads_x = (int)((params.x + 31) / 32);
 		theRenderContext.Dispatch(threads_x, 1, 1);
 		theRenderContext.Flush();
 
@@ -791,7 +791,7 @@ namespace TextureUtil
 		theRenderContext.UpdateSubResource(*cb, &params);
 		theRenderContext.CSSetConstantBuffer(cb, 0);
 
-		int threads_x = (params.x + 31) / 32;
+		int threads_x = (int)((params.x + 31) / 32);
 		theRenderContext.Dispatch(threads_x, 1, 1);
 		theRenderContext.Flush();
 
@@ -819,7 +819,7 @@ namespace TextureUtil
 		theRenderContext.UpdateSubResource(*cb, &params);
 		theRenderContext.CSSetConstantBuffer(cb, 0);
 
-		int threads_y = (params.y + 31) / 32;
+		int threads_y = (int)((params.y + 31) / 32);
 		theRenderContext.Dispatch(1, threads_y, 1);
 		theRenderContext.Flush();
 
@@ -847,7 +847,7 @@ namespace TextureUtil
 		theRenderContext.UpdateSubResource(*cb, &params);
 		theRenderContext.CSSetConstantBuffer(cb, 0);
 
-		int threads_y = (params.y + 31) / 32;
+		int threads_y = (int)((params.y + 31) / 32);
 		theRenderContext.Dispatch(1, threads_y, 1);
 		theRenderContext.Flush();
 

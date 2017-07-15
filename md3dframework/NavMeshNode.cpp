@@ -5,6 +5,7 @@
 aFloat2 NavMeshNode::CalculatePath(float2 inPos, float2 inTarget)
 {
 	aFloat2 result;
+	// TODO: implement
 	return result;
 }
 
@@ -12,7 +13,7 @@ aFloat2 NavMeshNode::CalculatePath(float2 inPos, float2 inTarget)
 bool NavMeshNode::IsConvex()
 {
 	assert(mPoints.size() >= 3);
-	int num_points = mPoints.size();
+	int num_points = (int)mPoints.size();
 	float2 last_dir = mPoints.back() - mPoints.front();
 	for (int i = 0; i < num_points - 1; i++)
 	{
@@ -34,7 +35,7 @@ apNavMeshNode NavMeshNode::SplitToConvex()
 	result.push_back(this);
 
 	// loop through all points
-	int num_points = mPoints.size();
+	int num_points = (int)mPoints.size();
 	float2 last_dir = mPoints.back() - mPoints.front();
 	for (int i = 0; i < num_points - 1; i++)
 	{

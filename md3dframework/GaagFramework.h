@@ -51,15 +51,15 @@ public:
 	float3 WorldToCameraNormal(float3 inCameraNormal);
 	float3 CameraToWorldNormal(float3 inCameraNormal);
 
-	std::string	GetDirectory()													{ return mDirectory; }
-	std::string	GetDirectory(std::string subfolder)								{ return mDirectory + "/" + subfolder; }
-	pCamera		GetCamera()														{ return mCamera; }
-	int			GetFrameID()													{ return mFrameID; }
-	float		GetRandom()														{ return float(rand()) / RAND_MAX; }
-	double		GetFrameTime()													{ return mFrameTime; }
-	double		GetFrameDeltaTime()												{ return mDeltaTime; }
-	void		SetRenderState(RenderState inRenderState)						{ assert(mDeferredRenderer != nullptr); mDeferredRenderer->SetRenderState(inRenderState); }
-	RenderState	GetRenderState(RenderState inRenderState)						{ assert(mDeferredRenderer != nullptr); return mDeferredRenderer->GetRenderState(); }
+	std::string	GetDirectory()							 			{ return mDirectory; }
+	std::string	GetDirectory(std::string subfolder)		 			{ return mDirectory + "/" + subfolder; }
+	pCamera		GetCamera()								 			{ return mCamera; }
+	int			GetFrameID()							 			{ return mFrameID; }
+	float		GetRandom()								 			{ return float(rand()) / RAND_MAX; }
+	double		GetFrameTime()							 			{ return mFrameTime; }
+	double		GetFrameDeltaTime()						 			{ return mDeltaTime; }
+	void		SetRenderState(RenderState inRenderState)			{ assert(mDeferredRenderer != nullptr); mDeferredRenderer->SetRenderState(inRenderState); }
+	RenderState	GetRenderState()									{ assert(mDeferredRenderer != nullptr); return mDeferredRenderer->GetRenderState(); }
 	void		SetMaterial(pMaterial inMaterial);
 	void		CopyToRenderTarget(pRenderTarget inTarget, pTexture inSource, int inMipLevel);
 

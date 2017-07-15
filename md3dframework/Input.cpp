@@ -20,6 +20,7 @@ void Input::CleanUp()
 
 void Input::OnKeyDown(unsigned int inKey)
 {
+	assert(inKey >= 0 && inKey <= 255);
 	mKeys[inKey] = true;
 	for each (InputListener* listener in mListeners)
 		listener->OnKeyDown(inKey);
@@ -28,6 +29,7 @@ void Input::OnKeyDown(unsigned int inKey)
 
 void Input::OnKeyUp(unsigned int inKey)
 {
+	assert(inKey >= 0 && inKey <= 255);
 	mKeys[inKey] = false;
 	for each (InputListener* listener in mListeners)
 		listener->OnKeyUp(inKey);

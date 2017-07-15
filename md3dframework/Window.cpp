@@ -71,11 +71,11 @@ LRESULT CALLBACK Window::WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
 		break;
 
 	case WM_KEYDOWN:
-		theInput.OnKeyDown(wParam);
+		theInput.OnKeyDown((unsigned int)wParam);
 		break;
 
 	case WM_KEYUP:
-		theInput.OnKeyUp(wParam);
+		theInput.OnKeyUp((unsigned int)wParam);
 		break;
 
 	case WM_MOUSEMOVE:

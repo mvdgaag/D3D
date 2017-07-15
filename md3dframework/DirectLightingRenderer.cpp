@@ -32,8 +32,8 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 	// set general constant buffer data
 	pCamera cam = Gaag.GetCamera();
 	mConstantBufferData.projectionMatrix = cam->GetProjectionMatrix();
-	mConstantBufferData.viewspaceReconstructionVector.x = 1.0 / cam->GetProjectionMatrix()[0][0];
-	mConstantBufferData.viewspaceReconstructionVector.y = 1.0 / cam->GetProjectionMatrix()[1][1];
+	mConstantBufferData.viewspaceReconstructionVector.x = 1.0f / cam->GetProjectionMatrix()[0][0];
+	mConstantBufferData.viewspaceReconstructionVector.y = 1.0f / cam->GetProjectionMatrix()[1][1];
 	mConstantBufferData.targetSize.x = (float)theRenderContext.GetWidth();
 	mConstantBufferData.targetSize.y = (float)theRenderContext.GetHeight();
 	mConstantBufferData.frameData.x = (float)Gaag.GetFrameID();
@@ -56,7 +56,7 @@ void DirectLightingRenderer::Render(pGBuffer inSource, pRenderTarget inTargetDif
 		// set constant data for directional light
 		mConstantBufferDirectionalLightData.lightDirection = float4(Gaag.WorldToCameraNormal(float3(-inDirectionalLights[i]->GetDirection())), 1.0);
 		float4 color = inDirectionalLights[i]->GetColor();
-		color.w = (inDirectionalLights[i]->GetShadowMap() == nullptr) ? 0.0 : 1.0;
+		color.w = (inDirectionalLights[i]->GetShadowMap() == nullptr) ? 0.0f : 1.0f;
 		mConstantBufferDirectionalLightData.lightColor = color;
 		float4x4& shadow_matrix = inDirectionalLights[i]->GetShadowMatrix();
 		float4x4 inverse_view = inverse(cam->GetViewMatrix());

@@ -48,7 +48,7 @@ void VertexShader::InitFromFile(std::string inFileName)
 
 	// Read input layout description from shader info
 	std::vector<D3D11_INPUT_ELEMENT_DESC> inputLayoutDesc;
-	for (int i = 0; i < shaderDesc.InputParameters; i++)
+	for (unsigned int i = 0; i < shaderDesc.InputParameters; i++)
 	{
 		D3D11_SIGNATURE_PARAMETER_DESC paramDesc;
 		pVertexShaderReflection->GetInputParameterDesc(i, &paramDesc);
@@ -96,7 +96,7 @@ void VertexShader::InitFromFile(std::string inFileName)
 	}
 
 	// Try to create Input Layout
-	D3DCall(theRenderContext.GetDevice()->CreateInputLayout(&inputLayoutDesc[0], inputLayoutDesc.size(), pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), &mVertexLayout));
+	D3DCall(theRenderContext.GetDevice()->CreateInputLayout(&inputLayoutDesc[0], (unsigned int)inputLayoutDesc.size(), pVSBlob->GetBufferPointer(), pVSBlob->GetBufferSize(), &mVertexLayout));
 
 	//Free allocation shader reflection memory
 	pVertexShaderReflection->Release();

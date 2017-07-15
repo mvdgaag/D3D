@@ -13,6 +13,10 @@
 #include "Frustum.h"
 #include "AABB.h"
 
+//#ifndef UNREFERENCED_PARAMETER
+//#define UNREFERENCED_PARAMETER(x) x
+//#endif
+
 
 #ifndef D3DCall
 #ifdef _DEBUG
